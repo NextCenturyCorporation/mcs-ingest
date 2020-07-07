@@ -25,4 +25,4 @@ class MCSElasticSearch(object):
         res = self.es.bulk(index=MCSElasticSearch.index_name , body=bulk_data, refresh=True, request_timeout=30)
 
         if res['errors']: 
-            print("Result: {}".format(res))
+            print("Errors: {}".format(res['errors']))

@@ -47,9 +47,25 @@ _scene_schema = {
                         },
                         "moveable": {"type": "boolean"},
                         "pickupable": {"type": "boolean"},
+                        "receptacle": {"type": "boolean"},
+                        "stackTarget": {"type": "boolean"},
                         "original_location": {
                             "properties": {
                                 "position": {
+                                    "properties": {
+                                        "x": {"type": "double"},
+                                        "y": {"type": "double"},
+                                        "z": {"type": "double"}
+                                    }
+                                },
+                                "rotation": {
+                                    "properties": {
+                                        "x": {"type": "double"},
+                                        "y": {"type": "double"},
+                                        "z": {"type": "double"}
+                                    }
+                                },
+                                "bounding_box": {
                                     "properties": {
                                         "x": {"type": "double"},
                                         "y": {"type": "double"},
@@ -69,6 +85,20 @@ _scene_schema = {
                                 },
                                 "stepBegin": {"type": "integer"},
                                 "scale": {
+                                    "properties": {
+                                        "x": {"type": "double"},
+                                        "y": {"type": "double"},
+                                        "z": {"type": "double"}
+                                    }
+                                },
+                                "rotation": {
+                                    "properties": {
+                                        "x": {"type": "double"},
+                                        "y": {"type": "double"},
+                                        "z": {"type": "double"}
+                                    }
+                                },
+                                "bounding_box": {
                                     "properties": {
                                         "x": {"type": "double"},
                                         "y": {"type": "double"},
@@ -188,7 +218,20 @@ _scene_schema = {
                         "last_step": {"type": "integer"},
                         "action_list": {"type": "nested"},
                         "info_list": {"type": "keyword"},
-                        "series_id": {"type": "keyword"}
+                        "series_id": {"type": "keyword"},
+                        "metadata": {
+                            "properties" : {
+                                "target_1" : {
+                                    "properties": {
+                                        "id": {"type": "keyword"},
+                                        "info": {"type": "keyword"},
+                                        "match_image": {"type": "boolean"},
+                                        "image_name": {"type": "keyword"}
+                                    }
+                                },
+                                "relationship": {"type": "keyword"}
+                            }
+                        }
                     }
                 },
                 "answer": {
