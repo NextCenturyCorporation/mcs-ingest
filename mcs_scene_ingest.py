@@ -72,10 +72,10 @@ def get_index_dict(index: str, index_type: str) -> dict:
     }
 
 
-def get_scene_name_from_history_file(file_name: str) -> str:
+def get_scene_name_from_history_file(file_name: str, regex_str: str) -> str:
     # Currently checking for the part of the file name before the data, we could remove this by adding
     #    the scene name into the history file at some point in a future ticket.
-    reg = re.compile("-202.+-")
+    reg = re.compile(regex_str)
     for match in re.finditer(reg, file_name):
         return file_name[0:match.start()]
 
@@ -98,7 +98,7 @@ def ingest_scene_files(folder: str, eval_name: str, performer: str) -> None:
     ingest_elastic_search(SCENE_INDEX, eval_name, False, mcs_scene_schema.get_scene_schema(), ingest_scenes)
 
 
-def ingest_history_files(folder: str, eval_name: str, performer: str) -> None:
+def ingest_history_files(folder: str, eval_name: str, performer: str, scene_folder: str) -> None:
     history_files = find_history_files(folder)
     ingest_history = []
 
@@ -109,7 +109,8 @@ def ingest_history_files(folder: str, eval_name: str, performer: str) -> None:
         history_item = {}
         history_item["eval"] = eval_name
         history_item["performer"] = performer
-        history_item["name"] = get_scene_name_from_history_file(file)
+        history_item["name"] = get_scene_name_from_history_file(file, "-202.+-")
+        history_item["testType"] = get_scene_name_from_history_file(history_item["name"], "-.+-")
 
         steps = []
         for step in history:
@@ -124,10 +125,86 @@ def ingest_history_files(folder: str, eval_name: str, performer: str) -> None:
                 history_item["score"]["classification"] = step["classification"]
                 history_item["score"]["confidence"] = step["confidence"]
 
-        history_item["steps"] = steps
+        # Because Elastic doesn't allow table to go across indexes, adding some scene info here that will be useful
+        if scene_folder:
+            scene = load_scene_file(scene_folder, history_item["name"] + "-debug.json")
+            if scene:
+                if "score" in history_item:
+                    history_item["score"]["score"] = 1 if history_item["score"]["classification"] == scene["answer"]["choice"] else 0
+                    history_item["score"]["ground_truth"] = 1 if "plausible" == scene["answer"]["choice"] else 0
+                else:
+                    history_item["score"] = {}
+                    history_item["score"]["score"] = -1
+                    history_item["score"]["ground_truth"] = 1 if "plausible" == scene["answer"]["choice"] else 0
 
-        ingest_history.append(get_index_dict(HISTORY_INDEX, HISTORY_TYPE))
-        ingest_history.append(history_item)
+                # Adjusting confidence for plausibility 
+                if "confidence" in history_item["score"]:
+                    if history_item["score"]["confidence"] == 1 and history_item["score"]["classification"] == "implausible":
+                        history_item["score"]["adjusted_confidence"] = 0
+                    elif history_item["score"]["confidence"] == 1:
+                        history_item["score"]["adjusted_confidence"] = 1
+
+                # Psychologists wanted to see a definitive answer of correctness
+                if history_item["score"]["score"] == 1:
+                    history_item["score"]["score_description"] = "Correct"
+                elif history_item["score"]["score"] == 0:
+                    history_item["score"]["score_description"] = "Incorrect"
+                elif history_item["score"]["score"] == -1:
+                    history_item["score"]["score_description"] = "No answer"
+
+                history_item["scene"] = {}
+                history_item["scene"]["answer_choice"] = scene["answer"]["choice"]
+                history_item["scene"]["category"] = scene["goal"]["category"]
+                history_item["scene"]["domain_list"] = scene["goal"]["domain_list"]
+                history_item["scene"]["type_list"] = scene["goal"]["type_list"]
+                history_item["scene"]["task_list"] = scene["goal"]["task_list"]
+                history_item["scene"]["info_list"] = scene["goal"]["info_list"]
+
+                objects = []
+                for scene_obj in scene["objects"]:
+                    obj = {}
+                    obj["type"] = scene_obj["type"]
+                    obj["mass"] = scene_obj["mass"]
+                    obj["info"] = scene_obj["info"]
+                    obj["type"] = scene_obj["type"]
+
+                    if "shape" in scene_obj:
+                        obj["shape"] = scene_obj["shape"]
+                    if "novel_color" in scene_obj:
+                        obj["novel_color"] = scene_obj["novel_color"]
+                    if "novel_combination" in scene_obj:
+                        obj["novel_combination"] = scene_obj["novel_combination"]
+                    if "novel_shape" in scene_obj:
+                        obj["novel_shape"] = scene_obj["novel_shape"]
+                    if "goal_string" in scene_obj:
+                        obj["goal_string"] = scene_obj["goal_string"]
+                    if "intphys_option" in scene_obj:
+                        if "is_occluder" in scene_obj["intphys_option"]:
+                            obj["is_occluder"] = scene_obj["intphys_option"]["is_occluder"] 
+
+                    objects.append(obj)
+
+                # For determining the counts of different objects "context", "occluders", and "objects"
+                num_objects = 0
+                for item in history_item["scene"]["type_list"]:
+                    if "background objects" in item:
+                        history_item["scene"]["num_context_objects"] = int(item[-2:])
+                    if "occluders" in item:
+                        history_item["scene"]["num_occluders"] = int(item[-2:])
+                    if "targets" in item:
+                        num_objects += int(item[-2:])
+                    if "distractors" in item:
+                        num_objects += int(item[-2:])
+                
+                history_item["scene"]["num_objects"] = num_objects
+                history_item["scene"]["objects"] = objects
+                
+        # Check for duplicate Mess History files that don't include any steps
+        if steps:
+            history_item["steps"] = steps
+
+            ingest_history.append(get_index_dict(HISTORY_INDEX, HISTORY_TYPE))
+            ingest_history.append(history_item)
 
     ingest_elastic_search("mcs_history", eval_name, False, mcs_scene_history_schema.get_scene_history_schema(), ingest_history)
 
@@ -137,6 +214,7 @@ def main(argv) -> None:
     parser.add_argument('--folder', required=True, help='Folder location of files to important')
     parser.add_argument('--eval_name', required=True, help='Name for this eval')
     parser.add_argument('--performer', required=False, help='Associate this ingest with a performer')
+    parser.add_argument('--scene_folder', required=False, help='Path to folder to link scene history with scene')
     parser.add_argument('--type', required=True, help='Choose if ingesting scenes or history', choices=['scene', 'history'])
 
     args = parser.parse_args(argv[1:])
@@ -144,7 +222,7 @@ def main(argv) -> None:
     if args.type == 'scene':
         ingest_scene_files(args.folder, args.eval_name, args.performer)
     if args.type == 'history':
-        ingest_history_files(args.folder, args.eval_name, args.performer)
+        ingest_history_files(args.folder, args.eval_name, args.performer, args.scene_folder)
 
 
 if __name__ == '__main__':
