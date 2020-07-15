@@ -236,7 +236,13 @@ _scene_schema = {
                 },
                 "answer": {
                     "properties": {
-                        "choice": {"type": "keyword"}
+                        "choice": {"type": "keyword"},
+                        "actions": {
+                            "properties": {
+                                "action": {"type": "keyword"},
+                                "params": {"type": "object"}
+                            }
+                        }
                     }
                 },
                 "observation": {"type": "boolean"}

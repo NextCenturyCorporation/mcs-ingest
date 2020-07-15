@@ -22,7 +22,10 @@ _scene_history_schema = {
                         "adjusted_confidence": {"type": "double"},
                         "score": {"type": "integer"},
                         "score_description": {"type": "keyword"},
-                        "ground_truth": {"type": "integer"}
+                        "ground_truth": {"type": "integer"},
+                        "mse_loss": {"type": "double"},
+                        "performer_steps": {"type": "integer"},
+                        "goal_ideal_steps": {"type": "integer"}
                     }
                 },
                 "scene": {
@@ -38,6 +41,12 @@ _scene_history_schema = {
                         "num_objects": {"type": "integer"},
                         "num_occluders": {"type": "integer"},
                         "num_context_objects": {"type": "integer"},
+                        "num_interior_walls": {"type": "integer"},
+                        "num_confusors": {"type": "integer"},
+                        "num_obstructors": {"type": "integer"},
+                        "has_novel_color": {"type": "keyword"},
+                        "has_novel_shape": {"type": "keyword"},
+                        "has_novel_combination": {"type": "keyword"},
                         "objects": {
                             "properties": {
                                 "type": {"type": "keyword"},

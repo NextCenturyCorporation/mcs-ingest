@@ -3,6 +3,7 @@ import os
 import re
 import sys
 import argparse
+import math
 import mcs_scene_schema
 import mcs_scene_history_schema
 
@@ -141,8 +142,14 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
                 if "confidence" in history_item["score"]:
                     if history_item["score"]["confidence"] == 1 and history_item["score"]["classification"] == "implausible":
                         history_item["score"]["adjusted_confidence"] = 0
+                    elif history_item["score"]["classification"] == "implausible" and history_item["score"]["confidence"] > 0.5:
+                        history_item["score"]["adjusted_confidence"] = 1 - history_item["score"]["confidence"]
                     elif history_item["score"]["confidence"] == 1:
                         history_item["score"]["adjusted_confidence"] = 1
+                    else: 
+                        history_item["score"]["adjusted_confidence"] = history_item["score"]["confidence"]
+
+                history_item["score"]["mse_loss"] = math.pow((history_item["score"]["ground_truth"] - round(float("{0:.9f}".format(history_item["score"]["score"])))), 2)
 
                 # Psychologists wanted to see a definitive answer of correctness
                 if history_item["score"]["score"] == 1:
@@ -186,11 +193,26 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
 
                 # For determining the counts of different objects "context", "occluders", and "objects"
                 num_objects = 0
+                history_item["scene"]["has_novel_color"] = "False"
+                history_item["scene"]["has_novel_shape"] = "False"
+                history_item["scene"]["has_novel_combination"] = "False"
                 for item in history_item["scene"]["type_list"]:
                     if "background objects" in item:
                         history_item["scene"]["num_context_objects"] = int(item[-2:])
                     if "occluders" in item:
                         history_item["scene"]["num_occluders"] = int(item[-2:])
+                    if "walls" in item:
+                        history_item["scene"]["num_interior_walls"] = int(item[-2:])
+                    if "obstructors" in item:
+                        history_item["scene"]["num_obstructors"] = int(item[-2:])
+                    if "confusors" in item:
+                        history_item["scene"]["num_confusors"] = int(item[-2:])
+                    if "distractor novel color" in item or "target novel color" in item or "confusor novel color" in item or "obstructor novel color" in item:
+                        history_item["scene"]["has_novel_color"] = "True"
+                    if "distractor novel shape" in item or "target novel shape" in item or "confusor novel shape" in item or "obstructor novel shape" in item:
+                        history_item["scene"]["has_novel_shape"] = "True"
+                    if "distractor novel combination" in item or "target novel combination" in item or "confusor novel combination" in item or "obstructor novel combination" in item:
+                        history_item["scene"]["has_novel_combination"] = "True"
                     if "targets" in item:
                         num_objects += int(item[-2:])
                     if "distractors" in item:
