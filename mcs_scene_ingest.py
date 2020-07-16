@@ -20,6 +20,8 @@ SCENE_TYPE = "scenes"
 HISTORY_INDEX = "mcs_history"
 HISTORY_TYPE = "history"
 
+COLOR_LIST = ["black","blue","brown","green","grey","orange","purple","red","white","yellow"]
+MATERIAL_LIST = ["ceramic","food","glass","hollow","fabric","metal","organic","paper","plastic","rubber","soap","sponge","stone","wax","wood"]
 
 def load_scene_file(folder: str, file_name: str) -> dict:
     with open(os.path.join(folder, file_name)) as json_file:
@@ -185,6 +187,44 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
                         obj["novel_shape"] = scene_obj["novel_shape"]
                     if "goal_string" in scene_obj:
                         obj["goal_string"] = scene_obj["goal_string"]
+
+                        descriptors = []
+                        obj_colors = []
+                        obj_materials = []
+                        goal_words = obj["goal_string"].split()
+                        for obj_str in goal_words:
+                            if obj_str in COLOR_LIST:
+                                obj_colors.append(obj_str)
+                            if obj_str in MATERIAL_LIST:
+                                obj_materials.append(obj_str)
+
+                        # Add color + shape to descriptors
+                        if len(obj_colors) == 2: 
+                            descriptors.append(obj_colors[0] + " " + obj["shape"])
+                            descriptors.append(obj_colors[1] + " " + obj["shape"])
+                            descriptors.append(obj_colors[0] + " " + obj_colors[1] + " " + obj["shape"])
+                        elif len(obj_colors) == 1:
+                            descriptors.append(obj_colors[0] + " " + obj["shape"])
+
+                        # Add material + shape to descriptors
+                        if len(obj_materials) == 2:
+                            descriptors.append(obj_materials[0] + " " + obj["shape"])
+                            descriptors.append(obj_materials[1] + " " + obj["shape"])
+                            descriptors.append(obj_materials[0] + " " + obj_materials[1] + " " + obj["shape"])
+                        elif len(obj_materials) == 1:
+                            descriptors.append(obj_materials[0] + " " + obj["shape"])
+
+                        # Add color + materials + shape to descriptors
+                        full_str = ""
+                        for color in obj_colors:
+                            full_str = full_str + color + " "
+                        for material in obj_materials:
+                            full_str = full_str + material + " "
+
+                        if len(full_str) > 0:
+                            descriptors.append(full_str + obj["shape"])
+                            obj["descriptors"] = descriptors
+
                     if "intphys_option" in scene_obj:
                         if "is_occluder" in scene_obj["intphys_option"]:
                             obj["is_occluder"] = scene_obj["intphys_option"]["is_occluder"] 

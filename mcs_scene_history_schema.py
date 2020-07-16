@@ -56,7 +56,8 @@ _scene_history_schema = {
                                 "novel_shape": {"type": "boolean"},
                                 "goal_string": {"type": "keyword"},
                                 "shape": {"type": "keyword"},
-                                "is_occluder": {"type": "boolean"}
+                                "is_occluder": {"type": "boolean"},
+                                "descriptors": {"type": "keyword"}
                             }
                         }
                     }
