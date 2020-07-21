@@ -7,7 +7,10 @@ _scene_history_schema = {
                 "eval": {"type": "keyword"},
                 "performer": {"type": "keyword"},
                 "name": {"type": "keyword"},
-                "testType": {"type": "keyword"},
+                "test_type": {"type": "keyword"},
+                "scene_num": {"type": "keyword"},
+                "scene_part_num": {"type": "keyword"},
+                "url_string": {"type": "keyword"},
                 "steps": {
                     "properties": {
                         "stepNumber": {"type": "integer"},

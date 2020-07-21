@@ -92,6 +92,9 @@ def ingest_scene_files(folder: str, eval_name: str, performer: str) -> None:
         scene = load_scene_file(folder, file)
         scene["eval"] = eval_name
         scene["performer"] = performer
+        scene["test_type"] = scene["name"][:-7]
+        scene["scene_num"] = scene["name"][-6:-2]
+        scene["scene_part_num"] = scene["name"][-1:]
 
         scene = delete_keys_from_scene(scene, KEYS_TO_DELETE)
 
@@ -113,7 +116,11 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
         history_item["eval"] = eval_name
         history_item["performer"] = performer
         history_item["name"] = get_scene_name_from_history_file(file, "-202.+-")
-        history_item["testType"] = get_scene_name_from_history_file(history_item["name"], "-.+-")
+
+        history_item["test_type"] = history_item["name"][:-7]
+        history_item["scene_num"] = history_item["name"][-6:-2]
+        history_item["scene_part_num"] = history_item["name"][-1:]
+        history_item["url_string"] = "test_type=" + history_item["test_type"] + "&scene_num=" + history_item["scene_num"]
 
         steps = []
         for step in history:
