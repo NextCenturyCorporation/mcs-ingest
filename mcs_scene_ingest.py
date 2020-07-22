@@ -120,7 +120,7 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
         history_item["test_type"] = history_item["name"][:-7]
         history_item["scene_num"] = history_item["name"][-6:-2]
         history_item["scene_part_num"] = history_item["name"][-1:]
-        history_item["url_string"] = "test_type=" + history_item["test_type"] + "&scene_num=" + history_item["scene_num"]
+        history_item["url_string"] = "test_type=" + history_item["test_type"] + "&scene_num=" + history_item["scene_num"] + "&scene_part_num=" + history_item["scene_part_num"]
 
         steps = []
         for step in history:
@@ -158,7 +158,7 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
                     else: 
                         history_item["score"]["adjusted_confidence"] = history_item["score"]["confidence"]
 
-                history_item["score"]["mse_loss"] = math.pow((history_item["score"]["ground_truth"] - round(float("{0:.9f}".format(history_item["score"]["score"])))), 2)
+                    history_item["score"]["mse_loss"] = math.pow((history_item["score"]["ground_truth"] - round(float("{0:.9f}".format(history_item["score"]["adjusted_confidence"])))), 2)
 
                 # Psychologists wanted to see a definitive answer of correctness
                 if history_item["score"]["score"] == 1:
