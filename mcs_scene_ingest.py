@@ -122,7 +122,7 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
         history_item["test_type"] = history_item["name"][:-7]
         history_item["scene_num"] = history_item["name"][-6:-2]
         history_item["scene_part_num"] = history_item["name"][-1:]
-        history_item["url_string"] = "test_type=" + history_item["test_type"] + "&scene_num=" + history_item["scene_num"] + "&scene_part_num=" + history_item["scene_part_num"]
+        history_item["url_string"] = "test_type=" + history_item["test_type"] + "&scene_num=" + history_item["scene_num"] + "&scene_part_num=" + history_item["scene_part_num"] + + "&performer=" + history_item["performer"]
 
         history_item["flags"] = {}
         history_item["flags"]["remove"] = False
