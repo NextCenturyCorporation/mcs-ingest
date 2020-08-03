@@ -6,6 +6,7 @@ import argparse
 import math
 import mcs_scene_schema
 import mcs_scene_history_schema
+import io
 
 from mcs_elasticsearch import MCSElasticSearch
 from collections.abc import MutableMapping
@@ -24,13 +25,14 @@ COLOR_LIST = ["black","blue","brown","green","grey","orange","purple","red","whi
 MATERIAL_LIST = ["ceramic","food","glass","hollow","fabric","metal","organic","paper","plastic","rubber","soap","sponge","stone","wax","wood"]
 
 def load_scene_file(folder: str, file_name: str) -> dict:
-    with open(os.path.join(folder, file_name)) as json_file:
-        return json.load(json_file)
+    with io.open(os.path.join(folder, file_name), mode='r', encoding='utf-8-sig') as json_file:
+        return json.loads(json_file.read())
 
 
 def load_history_file(folder: str, file_name: str) -> dict:
     with open(os.path.join(folder, file_name)) as file:
-        data = "[" + file.read().replace('}{', '},{') + "]"
+        no_line_breaks = file.read().replace("\n", "")
+        data = "[" + no_line_breaks.replace('}{', '},{') + "]"
         return json.loads(data) 
 
 
@@ -122,30 +124,69 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
         history_item["scene_part_num"] = history_item["name"][-1:]
         history_item["url_string"] = "test_type=" + history_item["test_type"] + "&scene_num=" + history_item["scene_num"] + "&scene_part_num=" + history_item["scene_part_num"]
 
+        history_item["flags"] = {}
+        history_item["flags"]["remove"] = False
+        history_item["flags"]["interest"] = False
+
         steps = []
+        number_steps = 0
+        interactive_goal_achieved = 0
         for step in history:
             if "step" in step:
+                number_steps += 1
                 new_step = {}
                 new_step["stepNumber"] = step["step"]
                 new_step["action"] = step["action"]
                 new_step["args"] = step["args"]
+                output = {}
+                if("output" in step):
+                    output["return_status"] = step["output"]["return_status"]
+                    output["reward"] = step["output"]["reward"]
+                    if(output["reward"] == 1):
+                        interactive_goal_achieved = 1
+                new_step["output"] = output
                 steps.append(new_step)
             if "classification" in step:
                 history_item["score"] = {}
                 history_item["score"]["classification"] = step["classification"]
                 history_item["score"]["confidence"] = step["confidence"]
 
+        history_item["step_counter"] = number_steps
+
         # Because Elastic doesn't allow table to go across indexes, adding some scene info here that will be useful
         if scene_folder:
             scene = load_scene_file(scene_folder, history_item["name"] + "-debug.json")
             if scene:
-                if "score" in history_item:
-                    history_item["score"]["score"] = 1 if history_item["score"]["classification"] == scene["answer"]["choice"] else 0
-                    history_item["score"]["ground_truth"] = 1 if "plausible" == scene["answer"]["choice"] else 0
+                if("observation" in scene):
+                    if(scene["observation"]):
+                        history_item["category"] = "observation"
+                        history_item["category_type"] = history_item["test_type"]
+                    else:
+                        history_item["category"] = "interactive"
+                        type_parts = history_item["test_type"].rsplit('-', 1)
+                        history_item["category_type"] = type_parts[1]
+                        history_item["category_pair"] = type_parts[0]
                 else:
-                    history_item["score"] = {}
-                    history_item["score"]["score"] = -1
-                    history_item["score"]["ground_truth"] = 1 if "plausible" == scene["answer"]["choice"] else 0
+                    history_item["category"] = "interactive"
+                    type_parts = history_item["test_type"].rsplit('_', 1)
+                    history_item["category_type"] = type_parts[1]
+                    history_item["category_pair"] = type_parts[0]
+
+                if(history_item["category"] == "interactive"):
+                    if "score" not in history_item:
+                        history_item["score"] = {}
+                        history_item["score"]["classification"] = "end"
+                        history_item["score"]["confidence"] = 0
+                    history_item["score"]["score"] = interactive_goal_achieved
+                    history_item["score"]["ground_truth"] = 1
+                else:
+                    if "score" in history_item:
+                        history_item["score"]["score"] = 1 if history_item["score"]["classification"] == scene["answer"]["choice"] else 0
+                        history_item["score"]["ground_truth"] = 1 if "plausible" == scene["answer"]["choice"] else 0
+                    else:
+                        history_item["score"] = {}
+                        history_item["score"]["score"] = -1
+                        history_item["score"]["ground_truth"] = 1 if "plausible" == scene["answer"]["choice"] else 0
 
                 # Adjusting confidence for plausibility 
                 if "confidence" in history_item["score"]:
@@ -156,9 +197,9 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
                     elif history_item["score"]["confidence"] == 1:
                         history_item["score"]["adjusted_confidence"] = 1
                     else: 
-                        history_item["score"]["adjusted_confidence"] = history_item["score"]["confidence"]
+                        history_item["score"]["adjusted_confidence"] = float(history_item["score"]["confidence"])
 
-                    history_item["score"]["mse_loss"] = math.pow((history_item["score"]["ground_truth"] - round(float("{0:.9f}".format(history_item["score"]["adjusted_confidence"])))), 2)
+                    history_item["score"]["mse"] = math.pow((history_item["score"]["ground_truth"] - round(float("{0:.9f}".format(history_item["score"]["adjusted_confidence"])))), 2)
 
                 # Psychologists wanted to see a definitive answer of correctness
                 if history_item["score"]["score"] == 1:
@@ -169,7 +210,8 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
                     history_item["score"]["score_description"] = "No answer"
 
                 history_item["scene"] = {}
-                history_item["scene"]["answer_choice"] = scene["answer"]["choice"]
+                if "choice" in scene["answer"]:
+                    history_item["scene"]["answer_choice"] = scene["answer"]["choice"]
                 history_item["scene"]["category"] = scene["goal"]["category"]
                 history_item["scene"]["domain_list"] = scene["goal"]["domain_list"]
                 history_item["scene"]["type_list"] = scene["goal"]["type_list"]

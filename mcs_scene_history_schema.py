@@ -11,11 +11,27 @@ _scene_history_schema = {
                 "scene_num": {"type": "keyword"},
                 "scene_part_num": {"type": "keyword"},
                 "url_string": {"type": "keyword"},
+                "category": {"type": "keyword"},
+                "category_type": {"type": "keyword"},
+                "category_pair": {"type": "keyword"},
+                "flags": {
+                    "properties": {
+                        "remove": {"type": "boolean"},
+                        "interest": {"type": "boolean"}
+                    }
+                },
+                "step_counter": {"type": "integer"},
                 "steps": {
                     "properties": {
                         "stepNumber": {"type": "integer"},
                         "action": {"type": "keyword"},
-                        "args": {"type": "object"}
+                        "args": {"type": "object"},
+                        "output": {
+                            "properties": {
+                                "return_status": {"type": "keyword"},
+                                "reward": {"type": "integer"}
+                            }
+                        }
                     }
                 },
                 "score": {
@@ -26,7 +42,7 @@ _scene_history_schema = {
                         "score": {"type": "integer"},
                         "score_description": {"type": "keyword"},
                         "ground_truth": {"type": "integer"},
-                        "mse_loss": {"type": "double"},
+                        "mse": {"type": "double"},
                         "performer_steps": {"type": "integer"},
                         "goal_ideal_steps": {"type": "integer"}
                     }
