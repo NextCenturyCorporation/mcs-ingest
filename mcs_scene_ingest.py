@@ -48,8 +48,8 @@ def delete_keys_from_scene(scene, keys) -> dict:
     return new_scene
 
 
-def ingest_elastic_search(index: str, eval_name: str, replace_index: bool, schema:dict, ingest_files: dict) -> None:
-    elastic_search = MCSElasticSearch(index, eval_name, replace_index, schema)
+def ingest_elastic_search(index: str, replace_index: bool, schema:dict, ingest_files: dict) -> None:
+    elastic_search = MCSElasticSearch(index, replace_index, schema)
     elastic_search.bulk_upload(ingest_files)
 
 
@@ -103,7 +103,7 @@ def ingest_scene_files(folder: str, eval_name: str, performer: str) -> None:
         ingest_scenes.append(get_index_dict(SCENE_INDEX, SCENE_TYPE))
         ingest_scenes.append(scene)
 
-    ingest_elastic_search(SCENE_INDEX, eval_name, False, mcs_scene_schema.get_scene_schema(), ingest_scenes)
+    ingest_elastic_search(SCENE_INDEX, False, mcs_scene_schema.get_scene_schema(), ingest_scenes)
 
 
 def ingest_history_files(folder: str, eval_name: str, performer: str, scene_folder: str) -> None:
@@ -317,7 +317,7 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
             ingest_history.append(get_index_dict(HISTORY_INDEX, HISTORY_TYPE))
             ingest_history.append(history_item)
 
-    ingest_elastic_search("mcs_history", eval_name, False, mcs_scene_history_schema.get_scene_history_schema(), ingest_history)
+    ingest_elastic_search("mcs_history", False, mcs_scene_history_schema.get_scene_history_schema(), ingest_history)
 
 
 def main(argv) -> None:

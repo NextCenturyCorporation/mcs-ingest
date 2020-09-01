@@ -6,7 +6,7 @@ class MCSElasticSearch(object):
     elastic_port = 9200
     index_name = ''
 
-    def __init__(self, index_name: str, index_type: str, delete_index: bool, settings: dict):
+    def __init__(self, index_name: str, delete_index: bool, settings: dict):
         MCSElasticSearch.index_name = index_name
 
         # connect to es
@@ -19,7 +19,7 @@ class MCSElasticSearch(object):
                 self.es.indices.delete(index=index_name)
 
         # create index
-        self.es.indices.create(index=index_name, body=settings, ignore=400,)
+        self.es.indices.create(index=index_name, body=settings, ignore=400)
 
     def bulk_upload(self, bulk_data: dict):
         res = self.es.bulk(index=MCSElasticSearch.index_name , body=bulk_data, refresh=True, request_timeout=30)

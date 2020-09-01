@@ -130,25 +130,6 @@ _scene_schema = {
                                 }
                             }
                         },
-                        "shows": {
-                            "properties": {
-                                "stepBegin": {"type": "integer"},
-                                "position": {
-                                    "properties": {
-                                        "x": {"type": "double"},
-                                        "y": {"type": "double"},
-                                        "z": {"type": "double"}
-                                    }
-                                },
-                                "scale": {
-                                    "properties": {
-                                        "x": {"type": "double"},
-                                        "y": {"type": "double"},
-                                        "z": {"type": "double"}
-                                    }
-                                }
-                            }
-                        },
                         "moves": {
                             "properties": {
                                 "stepBegin": {"type": "integer"},
@@ -225,6 +206,22 @@ _scene_schema = {
                         "metadata": {
                             "properties" : {
                                 "target_1" : {
+                                    "properties": {
+                                        "id": {"type": "keyword"},
+                                        "info": {"type": "keyword"},
+                                        "match_image": {"type": "boolean"},
+                                        "image_name": {"type": "keyword"}
+                                    }
+                                },
+                                "target_2" : {
+                                    "properties": {
+                                        "id": {"type": "keyword"},
+                                        "info": {"type": "keyword"},
+                                        "match_image": {"type": "boolean"},
+                                        "image_name": {"type": "keyword"}
+                                    }
+                                },
+                                "target_3" : {
                                     "properties": {
                                         "id": {"type": "keyword"},
                                         "info": {"type": "keyword"},
