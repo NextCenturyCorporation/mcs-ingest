@@ -1,0 +1,4 @@
+__pycache__
+eval1/ground_truth.txt
+eval1/submission*
+.DS_Store
