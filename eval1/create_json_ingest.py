@@ -30,6 +30,8 @@ import io
 from elasticsearch import Elasticsearch
 from collections import defaultdict
 
+from pymongo import MongoClient
+
 config = {
     'elastic_host': 'localhost',
     'elastic_port': 9200,
@@ -140,15 +142,18 @@ class JsonImportCreator:
         self.ground_truth_filename = "ground_truth.txt"
 
         # connect to es
-        self.es = Elasticsearch([{'host': config['elastic_host'], 'port': config['elastic_port']}])
+        #self.es = Elasticsearch([{'host': config['elastic_host'], 'port': config['elastic_port']}])
 
         # delete index if exists
-        if self.es.indices.exists(config['index_name']):
-            print("Removing existing index " + config['index_name'])
-            self.es.indices.delete(index=config['index_name'])
+        #if self.es.indices.exists(config['index_name']):
+            #print("Removing existing index " + config['index_name'])
+            #self.es.indices.delete(index=config['index_name'])
 
         # create index
-        self.es.indices.create(index=config['index_name'], ignore=400, body=settings)
+        #self.es.indices.create(index=config['index_name'], ignore=400, body=settings)
+
+        client = MongoClient('mongodb://mongomcs:mongomcspassword@localhost:27017/mcs')
+        self.mongoDB = client['mcs'] 
 
     def process(self):
         # Get the metadata
@@ -234,7 +239,10 @@ class JsonImportCreator:
 
                     self.object_id = self.object_id + 1
 
-        res = self.es.bulk(index=config['index_name'], body=bulk_data, refresh=True, request_timeout=30)
+        #res = self.es.bulk(index=config['index_name'], body=bulk_data, refresh=True, request_timeout=30)
+
+        collection = self.mongoDB[config['index_name']]
+        result = collection.insert_many(bulk_data)
         # print("Result: {}".format(res))
 
     def get_metadata(self):
@@ -376,4 +384,4 @@ class JsonImportCreator:
 if __name__ == "__main__":
     handler = JsonImportCreator()
     handler.process()
-    handler.check()
+    #handler.check()
