@@ -24,16 +24,9 @@ HISTORY_TYPE = "history"
 COLOR_LIST = ["black","blue","brown","green","grey","orange","purple","red","white","yellow"]
 MATERIAL_LIST = ["ceramic","food","glass","hollow","fabric","metal","organic","paper","plastic","rubber","soap","sponge","stone","wax","wood"]
 
-def load_scene_file(folder: str, file_name: str) -> dict:
+def load_json_file(folder: str, file_name: str) -> dict:
     with io.open(os.path.join(folder, file_name), mode='r', encoding='utf-8-sig') as json_file:
         return json.loads(json_file.read())
-
-
-def load_history_file(folder: str, file_name: str) -> dict:
-    with open(os.path.join(folder, file_name)) as file:
-        no_line_breaks = file.read().replace("\n", "")
-        data = "[" + no_line_breaks.replace('}{', '},{') + "]"
-        return json.loads(data) 
 
 
 def delete_keys_from_scene(scene, keys) -> dict:
@@ -63,7 +56,7 @@ def find_scene_files(folder: str) -> dict:
 
 
 def find_history_files(folder: str) -> dict:
-    history_files = [f for f in os.listdir(folder) if str(f).endswith(".txt")]
+    history_files = [f for f in os.listdir(folder) if str(f).endswith(".json")]
     history_files.sort()
     return history_files
 
@@ -77,21 +70,13 @@ def get_index_dict(index: str, index_type: str) -> dict:
     }
 
 
-def get_scene_name_from_history_file(file_name: str, regex_str: str) -> str:
-    # Currently checking for the part of the file name before the data, we could remove this by adding
-    #    the scene name into the history file at some point in a future ticket.
-    reg = re.compile(regex_str)
-    for match in re.finditer(reg, file_name):
-        return file_name[0:match.start()]
-
-
 def ingest_scene_files(folder: str, eval_name: str, performer: str) -> None:
     scene_files = find_scene_files(folder)
     ingest_scenes = []
 
     for file in scene_files:
         print("Ingest scene file: {}".format(file))
-        scene = load_scene_file(folder, file)
+        scene = load_json_file(folder, file)
         scene["eval"] = eval_name
         scene["performer"] = performer
         scene["test_type"] = scene["name"][:-7]
@@ -112,12 +97,12 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
 
     for file in history_files:
         print("Ingest history files: {}".format(file))
-        history = load_history_file(folder, file)
+        history = load_json_file(folder, file)
 
         history_item = {}
         history_item["eval"] = eval_name
         history_item["performer"] = performer
-        history_item["name"] = get_scene_name_from_history_file(file, "-202.+-")
+        history_item["name"] = history["info"]["name"]
 
         history_item["test_type"] = history_item["name"][:-7]
         history_item["scene_num"] = history_item["name"][-6:-2]
@@ -131,31 +116,27 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
         steps = []
         number_steps = 0
         interactive_goal_achieved = 0
-        for step in history:
-            if "step" in step:
-                number_steps += 1
-                new_step = {}
-                new_step["stepNumber"] = step["step"]
-                new_step["action"] = step["action"]
-                new_step["args"] = step["args"]
-                output = {}
-                if("output" in step):
-                    output["return_status"] = step["output"]["return_status"]
-                    output["reward"] = step["output"]["reward"]
-                    if(output["reward"] == 1):
-                        interactive_goal_achieved = 1
-                new_step["output"] = output
-                steps.append(new_step)
-            if "classification" in step:
-                history_item["score"] = {}
-                history_item["score"]["classification"] = step["classification"]
-                history_item["score"]["confidence"] = step["confidence"]
+        for step in history["steps"]:
+            number_steps += 1
+            new_step = {}
+            new_step["stepNumber"] = step["step"]
+            new_step["action"] = step["action"]
+            new_step["args"] = step["args"]
+            output = {}
+            if("output" in step):
+                output["return_status"] = step["output"]["return_status"]
+                output["reward"] = step["output"]["reward"]
+                if(output["reward"] == 1):
+                    interactive_goal_achieved = 1
+            new_step["output"] = output
+            steps.append(new_step)
 
+        history_item["score"] = history["score"]
         history_item["step_counter"] = number_steps
 
         # Because Elastic doesn't allow table to go across indexes, adding some scene info here that will be useful
         if scene_folder:
-            scene = load_scene_file(scene_folder, history_item["name"] + "-debug.json")
+            scene = load_json_file(scene_folder, history_item["name"] + "-debug.json")
             if scene:
                 if("observation" in scene):
                     if(scene["observation"]):
