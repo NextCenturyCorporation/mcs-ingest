@@ -141,24 +141,12 @@ class JsonImportCreator:
         self.metadata_filename = "metadata.json"
         self.ground_truth_filename = "ground_truth.txt"
 
-        # connect to es
-        #self.es = Elasticsearch([{'host': config['elastic_host'], 'port': config['elastic_port']}])
-
-        # delete index if exists
-        #if self.es.indices.exists(config['index_name']):
-            #print("Removing existing index " + config['index_name'])
-            #self.es.indices.delete(index=config['index_name'])
-
-        # create index
-        #self.es.indices.create(index=config['index_name'], ignore=400, body=settings)
-
         client = MongoClient('mongodb://mongomcs:mongomcspassword@localhost:27017/mcs')
         self.mongoDB = client['mcs'] 
 
     def process(self):
         # Get the metadata
         self.metadata = self.get_metadata()
-        # print(" metadata {}".format(self.metadata))
 
         # Get the ground truth data
         self.ground_truth = self.get_ground_truth()

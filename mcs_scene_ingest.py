@@ -45,11 +45,6 @@ def delete_keys_from_scene(scene, keys) -> dict:
     return new_scene
 
 
-def ingest_elastic_search(index: str, replace_index: bool, schema:dict, ingest_files: dict) -> None:
-    elastic_search = MCSElasticSearch(index, replace_index, schema)
-    elastic_search.bulk_upload(ingest_files)
-
-
 def recursive_find_keys(x, keys, append_string):
     l = list(x.keys())
     for item in l:
@@ -80,7 +75,6 @@ def ingest_to_mongo(index: str, ingest_files: dict):
     collection.drop()
     result = collection.insert_one(keys_dict)
     print(result)
-
 
 
 def find_scene_files(folder: str) -> dict:
@@ -121,13 +115,8 @@ def ingest_scene_files(folder: str, eval_name: str, performer: str) -> None:
         scene["scene_part_num"] = scene["name"][-1:]
 
         scene = delete_keys_from_scene(scene, KEYS_TO_DELETE)
-
-        # Not needed for mongo db
-        #ingest_scenes.append(get_index_dict(SCENE_INDEX, SCENE_TYPE))
         ingest_scenes.append(scene)
 
-    # For Elastic
-    #ingest_elastic_search(SCENE_INDEX, False, mcs_scene_schema.get_scene_schema(), ingest_scenes)
     ingest_to_mongo(SCENE_INDEX, ingest_scenes)
 
 
@@ -229,118 +218,12 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
                     history_item["score"]["score_description"] = "Incorrect"
                 elif history_item["score"]["score"] == -1:
                     history_item["score"]["score_description"] = "No answer"
-
-                # history_item["scene"] = {}
-                # if "choice" in scene["answer"]:
-                #     history_item["scene"]["answer_choice"] = scene["answer"]["choice"]
-                # history_item["scene"]["category"] = scene["goal"]["category"]
-                # history_item["scene"]["domain_list"] = scene["goal"]["domain_list"]
-                # history_item["scene"]["type_list"] = scene["goal"]["type_list"]
-                # history_item["scene"]["task_list"] = scene["goal"]["task_list"]
-                # history_item["scene"]["info_list"] = scene["goal"]["info_list"]
-
-                # objects = []
-                # for scene_obj in scene["objects"]:
-                #     obj = {}
-                #     obj["type"] = scene_obj["type"]
-                #     obj["mass"] = scene_obj["mass"]
-                #     obj["info"] = scene_obj["info"]
-                #     obj["type"] = scene_obj["type"]
-
-                #     if "shape" in scene_obj:
-                #         obj["shape"] = scene_obj["shape"]
-                #     if "novel_color" in scene_obj:
-                #         obj["novel_color"] = scene_obj["novel_color"]
-                #     if "novel_combination" in scene_obj:
-                #         obj["novel_combination"] = scene_obj["novel_combination"]
-                #     if "novel_shape" in scene_obj:
-                #         obj["novel_shape"] = scene_obj["novel_shape"]
-                #     if "goal_string" in scene_obj:
-                #         obj["goal_string"] = scene_obj["goal_string"]
-
-                #         descriptors = []
-                #         obj_colors = []
-                #         obj_materials = []
-                #         goal_words = obj["goal_string"].split()
-                #         for obj_str in goal_words:
-                #             if obj_str in COLOR_LIST:
-                #                 obj_colors.append(obj_str)
-                #             if obj_str in MATERIAL_LIST:
-                #                 obj_materials.append(obj_str)
-
-                #         # Add color + shape to descriptors
-                #         if len(obj_colors) == 2: 
-                #             descriptors.append(obj_colors[0] + " " + obj["shape"])
-                #             descriptors.append(obj_colors[1] + " " + obj["shape"])
-                #             descriptors.append(obj_colors[0] + " " + obj_colors[1] + " " + obj["shape"])
-                #         elif len(obj_colors) == 1:
-                #             descriptors.append(obj_colors[0] + " " + obj["shape"])
-
-                #         # Add material + shape to descriptors
-                #         if len(obj_materials) == 2:
-                #             descriptors.append(obj_materials[0] + " " + obj["shape"])
-                #             descriptors.append(obj_materials[1] + " " + obj["shape"])
-                #             descriptors.append(obj_materials[0] + " " + obj_materials[1] + " " + obj["shape"])
-                #         elif len(obj_materials) == 1:
-                #             descriptors.append(obj_materials[0] + " " + obj["shape"])
-
-                #         # Add color + materials + shape to descriptors
-                #         full_str = ""
-                #         for color in obj_colors:
-                #             full_str = full_str + color + " "
-                #         for material in obj_materials:
-                #             full_str = full_str + material + " "
-
-                #         if len(full_str) > 0:
-                #             descriptors.append(full_str + obj["shape"])
-                #             obj["descriptors"] = descriptors
-
-                #     if "intphys_option" in scene_obj:
-                #         if "is_occluder" in scene_obj["intphys_option"]:
-                #             obj["is_occluder"] = scene_obj["intphys_option"]["is_occluder"] 
-
-                #     objects.append(obj)
-
-                # # For determining the counts of different objects "context", "occluders", and "objects"
-                # num_objects = 0
-                # history_item["scene"]["has_novel_color"] = "False"
-                # history_item["scene"]["has_novel_shape"] = "False"
-                # history_item["scene"]["has_novel_combination"] = "False"
-                # for item in history_item["scene"]["type_list"]:
-                #     if "background objects" in item:
-                #         history_item["scene"]["num_context_objects"] = int(item[-2:])
-                #     if "occluders" in item:
-                #         history_item["scene"]["num_occluders"] = int(item[-2:])
-                #     if "walls" in item:
-                #         history_item["scene"]["num_interior_walls"] = int(item[-2:])
-                #     if "obstructors" in item:
-                #         history_item["scene"]["num_obstructors"] = int(item[-2:])
-                #     if "confusors" in item:
-                #         history_item["scene"]["num_confusors"] = int(item[-2:])
-                #     if "distractor novel color" in item or "target novel color" in item or "confusor novel color" in item or "obstructor novel color" in item:
-                #         history_item["scene"]["has_novel_color"] = "True"
-                #     if "distractor novel shape" in item or "target novel shape" in item or "confusor novel shape" in item or "obstructor novel shape" in item:
-                #         history_item["scene"]["has_novel_shape"] = "True"
-                #     if "distractor novel combination" in item or "target novel combination" in item or "confusor novel combination" in item or "obstructor novel combination" in item:
-                #         history_item["scene"]["has_novel_combination"] = "True"
-                #     if "targets" in item:
-                #         num_objects += int(item[-2:])
-                #     if "distractors" in item:
-                #         num_objects += int(item[-2:])
-                
-                # history_item["scene"]["num_objects"] = num_objects
-                # history_item["scene"]["objects"] = objects
                 
         # Check for duplicate Mess History files that don't include any steps
         if steps:
             history_item["steps"] = steps
-
-            # Not needed for mongo ingest
-            #ingest_history.append(get_index_dict(HISTORY_INDEX, HISTORY_TYPE))
             ingest_history.append(history_item)
     
-    # For Elastic
-    #ingest_elastic_search("mcs_history", False, mcs_scene_history_schema.get_scene_history_schema(), ingest_history)
     ingest_to_mongo(HISTORY_INDEX, ingest_history)
 
 
