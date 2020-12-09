@@ -4,14 +4,12 @@ import re
 import sys
 import argparse
 import math
-import mcs_scene_schema
-import mcs_scene_history_schema
 import io
 
-from mcs_elasticsearch import MCSElasticSearch
 from collections.abc import MutableMapping 
 from pymongo import MongoClient
 
+# We might want to move mongo user/pass to new file
 client = MongoClient('mongodb://mongomcs:mongomcspassword@localhost:27017/mcs')
 mongoDB = client['mcs']
 
@@ -19,18 +17,22 @@ mongoDB = client['mcs']
 #    or remove so much from the schema that we want to just map the fields we want to the schema
 KEYS_TO_DELETE = ['image']
 
-# Elastic Search Schema Constants
 SCENE_INDEX = "mcs_scenes"
-SCENE_TYPE = "scenes"
 HISTORY_INDEX = "mcs_history"
-HISTORY_TYPE = "history"
 
-COLOR_LIST = ["black","blue","brown","green","grey","orange","purple","red","white","yellow"]
-MATERIAL_LIST = ["ceramic","food","glass","hollow","fabric","metal","organic","paper","plastic","rubber","soap","sponge","stone","wax","wood"]
 
 def load_json_file(folder: str, file_name: str) -> dict:
     with io.open(os.path.join(folder, file_name), mode='r', encoding='utf-8-sig') as json_file:
         return json.loads(json_file.read())
+
+
+def load_history_text_file(folder: str, file_name: str) -> dict:
+    # For loading Eval 2 history files which are txt files and not
+    #    properly formatted json
+    with open(os.path.join(folder, file_name)) as file:
+        no_line_breaks = file.read().replace("\n", "")
+        data = "[" + no_line_breaks.replace('}{', '},{') + "]"
+        return json.loads(data) 
 
 
 def delete_keys_from_scene(scene, keys) -> dict:
@@ -63,10 +65,12 @@ def ingest_to_mongo(index: str, ingest_files: dict):
     result = collection.insert_many(ingest_files)
     print(result)
 
+    # Loop through documents to generate a keys collection to help
+    #   speed in loading keys in UI
     keys = []
-    mydoc = collection.find()
-    for x in mydoc:
-        recursive_find_keys(x, keys, "")
+    documents = collection.find()
+    for doc in documents:
+        recursive_find_keys(doc, keys, "")
 
     keys_dict = {}
     keys_dict["keys"] = keys
@@ -86,8 +90,8 @@ def find_scene_files(folder: str) -> dict:
     return scene_files
 
 
-def find_history_files(folder: str) -> dict:
-    history_files = [f for f in os.listdir(folder) if str(f).endswith(".json")]
+def find_history_files(folder: str, extension: str) -> dict:
+    history_files = [f for f in os.listdir(folder) if str(f).endswith("." + extension)]
     history_files.sort()
     return history_files
 
@@ -99,6 +103,14 @@ def get_index_dict(index: str, index_type: str) -> dict:
             "_type": index_type
         }
     }
+
+
+def get_scene_name_from_history_text_file(file_name: str, regex_str: str) -> str:
+    # Currently checking for the part of the file name before the data, do not remove
+    #   we need this to ingest legacy eval 2 files
+    reg = re.compile(regex_str)
+    for match in re.finditer(reg, file_name):
+        return file_name[0:match.start()]
 
 
 def ingest_scene_files(folder: str, eval_name: str, performer: str) -> None:
@@ -120,18 +132,29 @@ def ingest_scene_files(folder: str, eval_name: str, performer: str) -> None:
     ingest_to_mongo(SCENE_INDEX, ingest_scenes)
 
 
-def ingest_history_files(folder: str, eval_name: str, performer: str, scene_folder: str) -> None:
-    history_files = find_history_files(folder)
+def ingest_history_files(folder: str, eval_name: str, performer: str, scene_folder: str, extension: str="json") -> None:
+    history_files = find_history_files(folder, extension)
     ingest_history = []
 
     for file in history_files:
         print("Ingest history files: {}".format(file))
-        history = load_json_file(folder, file)
+        history = {}
+
+        # Legacy Eval 2 History files will be txt files and not json
+        if extension == 'txt':
+            history = load_history_text_file(folder, file)
+        else:
+            history = load_json_file(folder, file)
 
         history_item = {}
         history_item["eval"] = eval_name
         history_item["performer"] = performer
-        history_item["name"] = history["info"]["name"]
+
+        # Legacy Eval 2 History files will be txt files and not json
+        if extension == 'txt':
+            history_item["name"] = get_scene_name_from_history_text_file(file, "-202.+-")
+        else:
+            history_item["name"] = history["info"]["name"]
 
         history_item["test_type"] = history_item["name"][:-7]
         history_item["scene_num"] = history_item["name"][-6:-2]
@@ -145,22 +168,46 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
         steps = []
         number_steps = 0
         interactive_goal_achieved = 0
-        for step in history["steps"]:
-            number_steps += 1
-            new_step = {}
-            new_step["stepNumber"] = step["step"]
-            new_step["action"] = step["action"]
-            new_step["args"] = step["args"]
-            output = {}
-            if("output" in step):
-                output["return_status"] = step["output"]["return_status"]
-                output["reward"] = step["output"]["reward"]
-                if(output["reward"] == 1):
-                    interactive_goal_achieved = 1
-            new_step["output"] = output
-            steps.append(new_step)
 
-        history_item["score"] = history["score"]
+        # Legacy Eval 2 History files will be txt files and not json
+        if extension == 'txt':
+            for step in history:
+                if "step" in step:
+                    number_steps += 1
+                    new_step = {}
+                    new_step["stepNumber"] = step["step"]
+                    new_step["action"] = step["action"]
+                    new_step["args"] = step["args"]
+                    output = {}
+                    if("output" in step):
+                        output["return_status"] = step["output"]["return_status"]
+                        output["reward"] = step["output"]["reward"]
+                        if(output["reward"] == 1):
+                            interactive_goal_achieved = 1
+                    new_step["output"] = output
+                    steps.append(new_step)
+                if "classification" in step:
+                    history_item["score"] = {}
+                    history_item["score"]["classification"] = step["classification"]
+                    history_item["score"]["confidence"] = step["confidence"]
+        else:
+            for step in history["steps"]:
+                number_steps += 1
+                new_step = {}
+                new_step["stepNumber"] = step["step"]
+                new_step["action"] = step["action"]
+                new_step["args"] = step["args"]
+                output = {}
+                if("output" in step):
+                    output["return_status"] = step["output"]["return_status"]
+                    output["reward"] = step["output"]["reward"]
+                    if(output["reward"] == 1):
+                        interactive_goal_achieved = 1
+                new_step["output"] = output
+                steps.append(new_step)
+
+            history_item["score"] = history["score"]
+        
         history_item["step_counter"] = number_steps
 
         # Because Elastic doesn't allow table to go across indexes, adding some scene info here that will be useful
@@ -223,7 +270,7 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
         if steps:
             history_item["steps"] = steps
             ingest_history.append(history_item)
-    
+
     ingest_to_mongo(HISTORY_INDEX, ingest_history)
 
 
@@ -234,13 +281,15 @@ def main(argv) -> None:
     parser.add_argument('--performer', required=False, help='Associate this ingest with a performer')
     parser.add_argument('--scene_folder', required=False, help='Path to folder to link scene history with scene')
     parser.add_argument('--type', required=True, help='Choose if ingesting scenes or history', choices=['scene', 'history'])
+    parser.add_argument('--extension', required=False, help='History file extension for legacy ingest')
 
     args = parser.parse_args(argv[1:])
 
     if args.type == 'scene':
         ingest_scene_files(args.folder, args.eval_name, args.performer)
     if args.type == 'history':
-        ingest_history_files(args.folder, args.eval_name, args.performer, args.scene_folder)
+        print(args.extension)
+        ingest_history_files(args.folder, args.eval_name, args.performer, args.scene_folder, args.extension)
 
 
 if __name__ == '__main__':

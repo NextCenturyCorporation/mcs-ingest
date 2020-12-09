@@ -27,14 +27,11 @@ import zipfile
 from pathlib import Path
 import os
 import io
-from elasticsearch import Elasticsearch
 from collections import defaultdict
 
 from pymongo import MongoClient
 
 config = {
-    'elastic_host': 'localhost',
-    'elastic_port': 9200,
     'index_name': 'msc_eval',
     'index_type': 'eval1'
 }
@@ -175,16 +172,6 @@ class JsonImportCreator:
                     # print("block {} test {} scene {}: score {}".
                     #   format(block, test, scene, answer[block][test][scene]))
 
-                    # Get the dictionary entry
-                    op_dict = {
-                        "index": {
-                            "_index": config['index_name'],
-                            "_type": config['index_type'],
-                            "_id": self.object_id
-                        }
-                    }
-                    bulk_data.append(op_dict)
-
                     # Get the data
                     data_dict = {}
 
@@ -226,8 +213,6 @@ class JsonImportCreator:
                     bulk_data.append(data_dict)
 
                     self.object_id = self.object_id + 1
-
-        #res = self.es.bulk(index=config['index_name'], body=bulk_data, refresh=True, request_timeout=30)
 
         collection = self.mongoDB[config['index_name']]
         result = collection.insert_many(bulk_data)
@@ -354,10 +339,6 @@ class JsonImportCreator:
 
         return voe_signal_dict, voe_signal_list
 
-    def check(self):
-        # sanity check
-        res = self.es.search(index=config['index_name'], size=2, body={"query": {"match_all": {}}})
-        # print("Query response: '{}'".format(res))
 
     def nested_dict(self, n, type):
         """ Create a multi dimensional dictionary of dimension n.
@@ -372,4 +353,3 @@ class JsonImportCreator:
 if __name__ == "__main__":
     handler = JsonImportCreator()
     handler.process()
-    #handler.check()
