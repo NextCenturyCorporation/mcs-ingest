@@ -27,12 +27,11 @@ import zipfile
 from pathlib import Path
 import os
 import io
-from elasticsearch import Elasticsearch
 from collections import defaultdict
 
+from pymongo import MongoClient
+
 config = {
-    'elastic_host': 'localhost',
-    'elastic_port': 9200,
     'index_name': 'msc_eval',
     'index_type': 'eval1'
 }
@@ -139,21 +138,12 @@ class JsonImportCreator:
         self.metadata_filename = "metadata.json"
         self.ground_truth_filename = "ground_truth.txt"
 
-        # connect to es
-        self.es = Elasticsearch([{'host': config['elastic_host'], 'port': config['elastic_port']}])
-
-        # delete index if exists
-        if self.es.indices.exists(config['index_name']):
-            print("Removing existing index " + config['index_name'])
-            self.es.indices.delete(index=config['index_name'])
-
-        # create index
-        self.es.indices.create(index=config['index_name'], ignore=400, body=settings)
+        client = MongoClient('mongodb://mongomcs:mongomcspassword@localhost:27017/mcs')
+        self.mongoDB = client['mcs'] 
 
     def process(self):
         # Get the metadata
         self.metadata = self.get_metadata()
-        # print(" metadata {}".format(self.metadata))
 
         # Get the ground truth data
         self.ground_truth = self.get_ground_truth()
@@ -181,16 +171,6 @@ class JsonImportCreator:
                 for scene in answer[block][test]:
                     # print("block {} test {} scene {}: score {}".
                     #   format(block, test, scene, answer[block][test][scene]))
-
-                    # Get the dictionary entry
-                    op_dict = {
-                        "index": {
-                            "_index": config['index_name'],
-                            "_type": config['index_type'],
-                            "_id": self.object_id
-                        }
-                    }
-                    bulk_data.append(op_dict)
 
                     # Get the data
                     data_dict = {}
@@ -234,7 +214,8 @@ class JsonImportCreator:
 
                     self.object_id = self.object_id + 1
 
-        res = self.es.bulk(index=config['index_name'], body=bulk_data, refresh=True, request_timeout=30)
+        collection = self.mongoDB[config['index_name']]
+        result = collection.insert_many(bulk_data)
         # print("Result: {}".format(res))
 
     def get_metadata(self):
@@ -358,10 +339,6 @@ class JsonImportCreator:
 
         return voe_signal_dict, voe_signal_list
 
-    def check(self):
-        # sanity check
-        res = self.es.search(index=config['index_name'], size=2, body={"query": {"match_all": {}}})
-        # print("Query response: '{}'".format(res))
 
     def nested_dict(self, n, type):
         """ Create a multi dimensional dictionary of dimension n.
@@ -376,4 +353,3 @@ class JsonImportCreator:
 if __name__ == "__main__":
     handler = JsonImportCreator()
     handler.process()
-    handler.check()

@@ -4,29 +4,35 @@ import re
 import sys
 import argparse
 import math
-import mcs_scene_schema
-import mcs_scene_history_schema
 import io
 
-from mcs_elasticsearch import MCSElasticSearch
-from collections.abc import MutableMapping
+from collections.abc import MutableMapping 
+from pymongo import MongoClient
+
+# We might want to move mongo user/pass to new file
+client = MongoClient('mongodb://mongomcs:mongomcspassword@localhost:27017/mcs')
+mongoDB = client['mcs']
 
 # Currently just removing image mag from scene files, might wish to move more keys, 
 #    or remove so much from the schema that we want to just map the fields we want to the schema
 KEYS_TO_DELETE = ['image']
 
-# Elastic Search Schema Constants
 SCENE_INDEX = "mcs_scenes"
-SCENE_TYPE = "scenes"
 HISTORY_INDEX = "mcs_history"
-HISTORY_TYPE = "history"
 
-COLOR_LIST = ["black","blue","brown","green","grey","orange","purple","red","white","yellow"]
-MATERIAL_LIST = ["ceramic","food","glass","hollow","fabric","metal","organic","paper","plastic","rubber","soap","sponge","stone","wax","wood"]
 
 def load_json_file(folder: str, file_name: str) -> dict:
     with io.open(os.path.join(folder, file_name), mode='r', encoding='utf-8-sig') as json_file:
         return json.loads(json_file.read())
+
+
+def load_history_text_file(folder: str, file_name: str) -> dict:
+    # For loading Eval 2 history files which are txt files and not
+    #    properly formatted json
+    with open(os.path.join(folder, file_name)) as file:
+        no_line_breaks = file.read().replace("\n", "")
+        data = "[" + no_line_breaks.replace('}{', '},{') + "]"
+        return json.loads(data) 
 
 
 def delete_keys_from_scene(scene, keys) -> dict:
@@ -41,9 +47,38 @@ def delete_keys_from_scene(scene, keys) -> dict:
     return new_scene
 
 
-def ingest_elastic_search(index: str, replace_index: bool, schema:dict, ingest_files: dict) -> None:
-    elastic_search = MCSElasticSearch(index, replace_index, schema)
-    elastic_search.bulk_upload(ingest_files)
+def recursive_find_keys(x, keys, append_string):
+    l = list(x.keys())
+    for item in l:
+        if isinstance(x[item], dict):
+            recursive_find_keys(x[item], keys, append_string + item + ".")
+        elif isinstance(x[item], list):
+            for arrayItem in x[item]:
+                if isinstance(arrayItem, dict):
+                    recursive_find_keys(arrayItem, keys, append_string + item + ".")        
+        elif append_string + item not in keys:
+            keys.append(append_string + item)
+
+
+def ingest_to_mongo(index: str, ingest_files: dict):
+    collection = mongoDB[index]
+    result = collection.insert_many(ingest_files)
+    print(result)
+
+    # Loop through documents to generate a keys collection to help
+    #   speed in loading keys in UI
+    keys = []
+    documents = collection.find()
+    for doc in documents:
+        recursive_find_keys(doc, keys, "")
+
+    keys_dict = {}
+    keys_dict["keys"] = keys
+
+    collection = mongoDB[index + "_keys"]
+    collection.drop()
+    result = collection.insert_one(keys_dict)
+    print(result)
 
 
 def find_scene_files(folder: str) -> dict:
@@ -55,8 +90,8 @@ def find_scene_files(folder: str) -> dict:
     return scene_files
 
 
-def find_history_files(folder: str) -> dict:
-    history_files = [f for f in os.listdir(folder) if str(f).endswith(".json")]
+def find_history_files(folder: str, extension: str) -> dict:
+    history_files = [f for f in os.listdir(folder) if str(f).endswith("." + extension)]
     history_files.sort()
     return history_files
 
@@ -68,6 +103,14 @@ def get_index_dict(index: str, index_type: str) -> dict:
             "_type": index_type
         }
     }
+
+
+def get_scene_name_from_history_text_file(file_name: str, regex_str: str) -> str:
+    # Currently checking for the part of the file name before the data, do not remove
+    #   we need this to ingest legacy eval 2 files
+    reg = re.compile(regex_str)
+    for match in re.finditer(reg, file_name):
+        return file_name[0:match.start()]
 
 
 def ingest_scene_files(folder: str, eval_name: str, performer: str) -> None:
@@ -84,25 +127,34 @@ def ingest_scene_files(folder: str, eval_name: str, performer: str) -> None:
         scene["scene_part_num"] = scene["name"][-1:]
 
         scene = delete_keys_from_scene(scene, KEYS_TO_DELETE)
-
-        ingest_scenes.append(get_index_dict(SCENE_INDEX, SCENE_TYPE))
         ingest_scenes.append(scene)
 
-    ingest_elastic_search(SCENE_INDEX, False, mcs_scene_schema.get_scene_schema(), ingest_scenes)
+    ingest_to_mongo(SCENE_INDEX, ingest_scenes)
 
 
-def ingest_history_files(folder: str, eval_name: str, performer: str, scene_folder: str) -> None:
-    history_files = find_history_files(folder)
+def ingest_history_files(folder: str, eval_name: str, performer: str, scene_folder: str, extension: str="json") -> None:
+    history_files = find_history_files(folder, extension)
     ingest_history = []
 
     for file in history_files:
         print("Ingest history files: {}".format(file))
-        history = load_json_file(folder, file)
+        history = {}
+
+        # Legacy Eval 2 History files will be txt files and not json
+        if extension == 'txt':
+            history = load_history_text_file(folder, file)
+        else:
+            history = load_json_file(folder, file)
 
         history_item = {}
         history_item["eval"] = eval_name
         history_item["performer"] = performer
-        history_item["name"] = history["info"]["name"]
+
+        # Legacy Eval 2 History files will be txt files and not json
+        if extension == 'txt':
+            history_item["name"] = get_scene_name_from_history_text_file(file, "-202.+-")
+        else:
+            history_item["name"] = history["info"]["name"]
 
         history_item["test_type"] = history_item["name"][:-7]
         history_item["scene_num"] = history_item["name"][-6:-2]
@@ -116,22 +168,46 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
         steps = []
         number_steps = 0
         interactive_goal_achieved = 0
-        for step in history["steps"]:
-            number_steps += 1
-            new_step = {}
-            new_step["stepNumber"] = step["step"]
-            new_step["action"] = step["action"]
-            new_step["args"] = step["args"]
-            output = {}
-            if("output" in step):
-                output["return_status"] = step["output"]["return_status"]
-                output["reward"] = step["output"]["reward"]
-                if(output["reward"] == 1):
-                    interactive_goal_achieved = 1
-            new_step["output"] = output
-            steps.append(new_step)
 
-        history_item["score"] = history["score"]
+        # Legacy Eval 2 History files will be txt files and not json
+        if extension == 'txt':
+            for step in history:
+                if "step" in step:
+                    number_steps += 1
+                    new_step = {}
+                    new_step["stepNumber"] = step["step"]
+                    new_step["action"] = step["action"]
+                    new_step["args"] = step["args"]
+                    output = {}
+                    if("output" in step):
+                        output["return_status"] = step["output"]["return_status"]
+                        output["reward"] = step["output"]["reward"]
+                        if(output["reward"] == 1):
+                            interactive_goal_achieved = 1
+                    new_step["output"] = output
+                    steps.append(new_step)
+                if "classification" in step:
+                    history_item["score"] = {}
+                    history_item["score"]["classification"] = step["classification"]
+                    history_item["score"]["confidence"] = step["confidence"]
+        else:
+            for step in history["steps"]:
+                number_steps += 1
+                new_step = {}
+                new_step["stepNumber"] = step["step"]
+                new_step["action"] = step["action"]
+                new_step["args"] = step["args"]
+                output = {}
+                if("output" in step):
+                    output["return_status"] = step["output"]["return_status"]
+                    output["reward"] = step["output"]["reward"]
+                    if(output["reward"] == 1):
+                        interactive_goal_achieved = 1
+                new_step["output"] = output
+                steps.append(new_step)
+
+            history_item["score"] = history["score"]
+        
         history_item["step_counter"] = number_steps
 
         # Because Elastic doesn't allow table to go across indexes, adding some scene info here that will be useful
@@ -189,116 +265,13 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
                     history_item["score"]["score_description"] = "Incorrect"
                 elif history_item["score"]["score"] == -1:
                     history_item["score"]["score_description"] = "No answer"
-
-                history_item["scene"] = {}
-                if "choice" in scene["answer"]:
-                    history_item["scene"]["answer_choice"] = scene["answer"]["choice"]
-                history_item["scene"]["category"] = scene["goal"]["category"]
-                history_item["scene"]["domain_list"] = scene["goal"]["domain_list"]
-                history_item["scene"]["type_list"] = scene["goal"]["type_list"]
-                history_item["scene"]["task_list"] = scene["goal"]["task_list"]
-                history_item["scene"]["info_list"] = scene["goal"]["info_list"]
-
-                objects = []
-                for scene_obj in scene["objects"]:
-                    obj = {}
-                    obj["type"] = scene_obj["type"]
-                    obj["mass"] = scene_obj["mass"]
-                    obj["info"] = scene_obj["info"]
-                    obj["type"] = scene_obj["type"]
-
-                    if "shape" in scene_obj:
-                        obj["shape"] = scene_obj["shape"]
-                    if "novel_color" in scene_obj:
-                        obj["novel_color"] = scene_obj["novel_color"]
-                    if "novel_combination" in scene_obj:
-                        obj["novel_combination"] = scene_obj["novel_combination"]
-                    if "novel_shape" in scene_obj:
-                        obj["novel_shape"] = scene_obj["novel_shape"]
-                    if "goal_string" in scene_obj:
-                        obj["goal_string"] = scene_obj["goal_string"]
-
-                        descriptors = []
-                        obj_colors = []
-                        obj_materials = []
-                        goal_words = obj["goal_string"].split()
-                        for obj_str in goal_words:
-                            if obj_str in COLOR_LIST:
-                                obj_colors.append(obj_str)
-                            if obj_str in MATERIAL_LIST:
-                                obj_materials.append(obj_str)
-
-                        # Add color + shape to descriptors
-                        if len(obj_colors) == 2: 
-                            descriptors.append(obj_colors[0] + " " + obj["shape"])
-                            descriptors.append(obj_colors[1] + " " + obj["shape"])
-                            descriptors.append(obj_colors[0] + " " + obj_colors[1] + " " + obj["shape"])
-                        elif len(obj_colors) == 1:
-                            descriptors.append(obj_colors[0] + " " + obj["shape"])
-
-                        # Add material + shape to descriptors
-                        if len(obj_materials) == 2:
-                            descriptors.append(obj_materials[0] + " " + obj["shape"])
-                            descriptors.append(obj_materials[1] + " " + obj["shape"])
-                            descriptors.append(obj_materials[0] + " " + obj_materials[1] + " " + obj["shape"])
-                        elif len(obj_materials) == 1:
-                            descriptors.append(obj_materials[0] + " " + obj["shape"])
-
-                        # Add color + materials + shape to descriptors
-                        full_str = ""
-                        for color in obj_colors:
-                            full_str = full_str + color + " "
-                        for material in obj_materials:
-                            full_str = full_str + material + " "
-
-                        if len(full_str) > 0:
-                            descriptors.append(full_str + obj["shape"])
-                            obj["descriptors"] = descriptors
-
-                    if "intphys_option" in scene_obj:
-                        if "is_occluder" in scene_obj["intphys_option"]:
-                            obj["is_occluder"] = scene_obj["intphys_option"]["is_occluder"] 
-
-                    objects.append(obj)
-
-                # For determining the counts of different objects "context", "occluders", and "objects"
-                num_objects = 0
-                history_item["scene"]["has_novel_color"] = "False"
-                history_item["scene"]["has_novel_shape"] = "False"
-                history_item["scene"]["has_novel_combination"] = "False"
-                for item in history_item["scene"]["type_list"]:
-                    if "background objects" in item:
-                        history_item["scene"]["num_context_objects"] = int(item[-2:])
-                    if "occluders" in item:
-                        history_item["scene"]["num_occluders"] = int(item[-2:])
-                    if "walls" in item:
-                        history_item["scene"]["num_interior_walls"] = int(item[-2:])
-                    if "obstructors" in item:
-                        history_item["scene"]["num_obstructors"] = int(item[-2:])
-                    if "confusors" in item:
-                        history_item["scene"]["num_confusors"] = int(item[-2:])
-                    if "distractor novel color" in item or "target novel color" in item or "confusor novel color" in item or "obstructor novel color" in item:
-                        history_item["scene"]["has_novel_color"] = "True"
-                    if "distractor novel shape" in item or "target novel shape" in item or "confusor novel shape" in item or "obstructor novel shape" in item:
-                        history_item["scene"]["has_novel_shape"] = "True"
-                    if "distractor novel combination" in item or "target novel combination" in item or "confusor novel combination" in item or "obstructor novel combination" in item:
-                        history_item["scene"]["has_novel_combination"] = "True"
-                    if "targets" in item:
-                        num_objects += int(item[-2:])
-                    if "distractors" in item:
-                        num_objects += int(item[-2:])
-                
-                history_item["scene"]["num_objects"] = num_objects
-                history_item["scene"]["objects"] = objects
                 
         # Check for duplicate Mess History files that don't include any steps
         if steps:
             history_item["steps"] = steps
-
-            ingest_history.append(get_index_dict(HISTORY_INDEX, HISTORY_TYPE))
             ingest_history.append(history_item)
 
-    ingest_elastic_search("mcs_history", False, mcs_scene_history_schema.get_scene_history_schema(), ingest_history)
+    ingest_to_mongo(HISTORY_INDEX, ingest_history)
 
 
 def main(argv) -> None:
@@ -308,13 +281,15 @@ def main(argv) -> None:
     parser.add_argument('--performer', required=False, help='Associate this ingest with a performer')
     parser.add_argument('--scene_folder', required=False, help='Path to folder to link scene history with scene')
     parser.add_argument('--type', required=True, help='Choose if ingesting scenes or history', choices=['scene', 'history'])
+    parser.add_argument('--extension', required=False, help='History file extension for legacy ingest')
 
     args = parser.parse_args(argv[1:])
 
     if args.type == 'scene':
         ingest_scene_files(args.folder, args.eval_name, args.performer)
     if args.type == 'history':
-        ingest_history_files(args.folder, args.eval_name, args.performer, args.scene_folder)
+        print(args.extension)
+        ingest_history_files(args.folder, args.eval_name, args.performer, args.scene_folder, args.extension)
 
 
 if __name__ == '__main__':
