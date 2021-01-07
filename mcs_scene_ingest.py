@@ -170,6 +170,10 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
             history_item["performer"] = TEAM_MAPPING_DICT[history["info"]["team"]]
             history_item["name"] = history["info"]["name"]
             history_item["metadata"] = history["info"]["metadata"]
+            history_item["fullFilename"] = os.path.splitext(file)[0]
+            fileNameParts = history_item["fullFilename"].split("-", 1)
+            history_item["filename"] = fileNameParts[0]
+            history_item["fileTimestamp"] = fileNameParts[1]
 
         history_item["flags"] = {}
         history_item["flags"]["remove"] = False
@@ -300,9 +304,20 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
         # Check for duplicate Mess History files that don't include any steps
         if steps:
             history_item["steps"] = steps
-            ingest_history.append(history_item)
 
-    ingest_to_mongo(HISTORY_INDEX, ingest_history)
+            replacementIndex = -1
+            for index, item in enumerate(ingest_history):
+                if item["filename"] == history_item["filename"] and history_item["fileTimestamp"] > item["fileTimestamp"]:
+                    replacementIndex = index
+
+            if replacementIndex == -1:
+                ingest_history.append(history_item)
+            else:
+                ingest_history[replacementIndex] = history_item
+
+    print(len(ingest_history))
+
+    #ingest_to_mongo(HISTORY_INDEX, ingest_history)
 
 
 def main(argv) -> None:
