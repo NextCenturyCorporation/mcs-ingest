@@ -26,6 +26,13 @@ TEAM_MAPPING_DICT = {
     "opics": "OPICS (OSU, UU, NYU)"
 }
 
+OBJ_PERM_DUPLICATE_CUBE = ["S1", "T1", "U1", "S2", "T2", "U2", "V2", "W2", "X2", "Y2", "Z2", "AA2"]
+OBJ_PERM_TRIPLE_CUBE = ["S3", "T3", "U3", "V3", "W3", "X3", "Y3", "Z3", "AA3", "S4", "T4", "U4", "V4", "W4", "X4", "Y4", "Z4", "AA4"]
+SPATIO_TEMP_ELIMINATE_CUBE = ["A1", "A2", "A3", "A4", "D1", "D2", "D3", "D4", "G1", "G2", "G3", "G4",
+    "J1", "J2", "J3", "J4", "M1", "M2", "M3", "M4", "P1", "P2", "P3", "P4"]
+SHAPE_CONSTANCY_DUPLICATE_CUBE = ["A1", "B1", "A2", "B2", "C2", "D2"]
+SHAPE_CONSTANCY_TRIPLE_CUBE = ["A3", "B3", "C3", "D3", "A4", "B4", "C4", "D4"]
+
 
 def load_json_file(folder: str, file_name: str) -> dict:
     with io.open(os.path.join(folder, file_name), mode='r', encoding='utf-8-sig') as json_file:
@@ -212,6 +219,9 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
                 new_step["stepNumber"] = step["step"]
                 new_step["action"] = step["action"]
                 new_step["args"] = step["args"]
+                new_step["classification"] = step["classification"]
+                new_step["confidence"] = step["confidence"]
+                new_step["violations_xy_list"] = step["violations_xy_list"]
                 output = {}
                 if("output" in step):
                     output["return_status"] = step["output"]["return_status"]
@@ -235,6 +245,7 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
                     history_item["scene_num"] = scene["sceneNumber"]
                     history_item["scene_part_num"] = scene["sequenceNumber"]
 
+                    history_item["scene_goal_id"] = scene["goal"]["sceneInfo"]["id"][0]
                     history_item["test_type"] = scene["goal"]["sceneInfo"]["secondaryType"]
                     history_item["category"] = scene["goal"]["sceneInfo"]["primaryType"] 
                     if scene["goal"]["sceneInfo"]["tertiaryType"] == "retrieval":
@@ -300,7 +311,59 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
                     history_item["score"]["score_description"] = "Incorrect"
                 elif history_item["score"]["score"] == -1:
                     history_item["score"]["score_description"] = "No answer"
+
+                # Add Cube Weighted Scoring Here
+                if "goal" in scene:
+                    if "sceneInfo" in scene["goal"]:
+                        if scene["goal"]["sceneInfo"]["tertiaryType"] == "object permanence":
+                            if history_item["scene_goal_id"] in OBJ_PERM_DUPLICATE_CUBE:
+                                history_item["score"]["weighted_score"] = history_item["score"]["score"] * 2
+                                history_item["score"]["weighted_score_worth"] = 2
+                                history_item["score"]["weighted_confidence"] = float(history_item["score"]["confidence"]) * 2
+                            elif history_item["scene_goal_id"] in OBJ_PERM_TRIPLE_CUBE:
+                                history_item["score"]["weighted_score"] = history_item["score"]["score"] * 3
+                                history_item["score"]["weighted_score_worth"] = 3
+                                history_item["score"]["weighted_confidence"] = float(history_item["score"]["confidence"]) * 3
+                            else:
+                                history_item["score"]["weighted_score"] = history_item["score"]["score"]
+                                history_item["score"]["weighted_score_worth"] = 1
+                                history_item["score"]["weighted_confidence"] = history_item["score"]["confidence"]
+                        elif scene["goal"]["sceneInfo"]["tertiaryType"] == "shape constancy":
+                            if history_item["scene_goal_id"] in SHAPE_CONSTANCY_DUPLICATE_CUBE:
+                                history_item["score"]["weighted_score"] = history_item["score"]["score"] * 2
+                                history_item["score"]["weighted_score_worth"] = 2
+                                history_item["score"]["weighted_confidence"] = float(history_item["score"]["confidence"]) * 2
+                            elif history_item["scene_goal_id"] in SHAPE_CONSTANCY_TRIPLE_CUBE:
+                                history_item["score"]["weighted_score"] = history_item["score"]["score"] * 3
+                                history_item["score"]["weighted_score_worth"] = 3
+                                history_item["score"]["weighted_confidence"] = float(history_item["score"]["confidence"]) * 3
+                            else:
+                                history_item["score"]["weighted_score"] = history_item["score"]["score"]
+                                history_item["score"]["weighted_score_worth"] = 1
+                                history_item["score"]["weighted_confidence"] = history_item["score"]["confidence"]
+                        elif scene["goal"]["sceneInfo"]["tertiaryType"] == "spatio temporal continuity":
+                            if history_item["scene_goal_id"] in SPATIO_TEMP_ELIMINATE_CUBE:
+                                history_item["score"]["weighted_score"] = 0
+                                history_item["score"]["weighted_score_worth"] = 0
+                                history_item["score"]["weighted_confidence"] = 0
+                            else:
+                                history_item["score"]["weighted_score"] = history_item["score"]["score"]
+                                history_item["score"]["weighted_score_worth"] = 1
+                                history_item["score"]["weighted_confidence"] = history_item["score"]["confidence"]
+                        else:
+                            history_item["score"]["weighted_score"] = history_item["score"]["score"]
+                            history_item["score"]["weighted_score_worth"] = 1
+                            history_item["score"]["weighted_confidence"] = history_item["score"]["confidence"]
+                    else:
+                        history_item["score"]["weighted_score"] = history_item["score"]["score"]
+                        history_item["score"]["weighted_score_worth"] = 1
+                        history_item["score"]["weighted_confidence"] = history_item["score"]["confidence"]
+                else:
+                    history_item["score"]["weighted_score"] = history_item["score"]["score"]
+                    history_item["score"]["weighted_score_worth"] = 1
+                    history_item["score"]["weighted_confidence"] = history_item["score"]["confidence"]
                 
+        print(history_item["score"])
         # Check for duplicate Mess History files that don't include any steps
         if steps:
             history_item["steps"] = steps
@@ -315,7 +378,7 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
             else:
                 ingest_history[replacementIndex] = history_item
 
-    ingest_to_mongo(HISTORY_INDEX, ingest_history)
+    #ingest_to_mongo(HISTORY_INDEX, ingest_history)
 
 
 def main(argv) -> None:
