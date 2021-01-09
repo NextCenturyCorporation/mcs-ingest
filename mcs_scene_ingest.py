@@ -378,7 +378,7 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
             else:
                 ingest_history[replacementIndex] = history_item
 
-    #ingest_to_mongo(HISTORY_INDEX, ingest_history)
+    ingest_to_mongo(HISTORY_INDEX, ingest_history)
 
 
 def main(argv) -> None:
