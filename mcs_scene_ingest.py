@@ -26,12 +26,12 @@ TEAM_MAPPING_DICT = {
     "opics": "OPICS (OSU, UU, NYU)"
 }
 
-OBJ_PERM_DUPLICATE_CUBE = ["S1", "T1", "U1", "S2", "T2", "U2", "V2", "W2", "X2", "Y2", "Z2", "AA2"]
-OBJ_PERM_TRIPLE_CUBE = ["S3", "T3", "U3", "V3", "W3", "X3", "Y3", "Z3", "AA3", "S4", "T4", "U4", "V4", "W4", "X4", "Y4", "Z4", "AA4"]
+OBJ_PERM_DUPLICATE_CUBE = ["S1", "T1", "U1"]
+OBJ_PERM_8X_CUBE = ["S2", "T2", "U2", "V2", "W2", "X2", "Y2", "Z2", "AA2"]
 SPATIO_TEMP_ELIMINATE_CUBE = ["A1", "A2", "A3", "A4", "D1", "D2", "D3", "D4", "G1", "G2", "G3", "G4",
     "J1", "J2", "J3", "J4", "M1", "M2", "M3", "M4", "P1", "P2", "P3", "P4"]
-SHAPE_CONSTANCY_DUPLICATE_CUBE = ["A1", "B1", "A2", "B2", "C2", "D2"]
-SHAPE_CONSTANCY_TRIPLE_CUBE = ["A3", "B3", "C3", "D3", "A4", "B4", "C4", "D4"]
+SHAPE_CONSTANCY_DUPLICATE_CUBE = ["A1", "B1"]
+SHAPE_CONSTANCY_8X_CUBE = ["A2", "B2", "C2", "D2"]
 
 
 def load_json_file(folder: str, file_name: str) -> dict:
@@ -320,10 +320,10 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
                                 history_item["score"]["weighted_score"] = history_item["score"]["score"] * 2
                                 history_item["score"]["weighted_score_worth"] = 2
                                 history_item["score"]["weighted_confidence"] = float(history_item["score"]["confidence"]) * 2
-                            elif history_item["scene_goal_id"] in OBJ_PERM_TRIPLE_CUBE:
-                                history_item["score"]["weighted_score"] = history_item["score"]["score"] * 3
-                                history_item["score"]["weighted_score_worth"] = 3
-                                history_item["score"]["weighted_confidence"] = float(history_item["score"]["confidence"]) * 3
+                            elif history_item["scene_goal_id"] in OBJ_PERM_8X_CUBE:
+                                history_item["score"]["weighted_score"] = history_item["score"]["score"] * 8
+                                history_item["score"]["weighted_score_worth"] = 8
+                                history_item["score"]["weighted_confidence"] = float(history_item["score"]["confidence"]) * 8
                             else:
                                 history_item["score"]["weighted_score"] = history_item["score"]["score"]
                                 history_item["score"]["weighted_score_worth"] = 1
@@ -333,10 +333,10 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
                                 history_item["score"]["weighted_score"] = history_item["score"]["score"] * 2
                                 history_item["score"]["weighted_score_worth"] = 2
                                 history_item["score"]["weighted_confidence"] = float(history_item["score"]["confidence"]) * 2
-                            elif history_item["scene_goal_id"] in SHAPE_CONSTANCY_TRIPLE_CUBE:
-                                history_item["score"]["weighted_score"] = history_item["score"]["score"] * 3
-                                history_item["score"]["weighted_score_worth"] = 3
-                                history_item["score"]["weighted_confidence"] = float(history_item["score"]["confidence"]) * 3
+                            elif history_item["scene_goal_id"] in SHAPE_CONSTANCY_8X_CUBE:
+                                history_item["score"]["weighted_score"] = history_item["score"]["score"] * 8
+                                history_item["score"]["weighted_score_worth"] = 8
+                                history_item["score"]["weighted_confidence"] = float(history_item["score"]["confidence"]) * 8
                             else:
                                 history_item["score"]["weighted_score"] = history_item["score"]["score"]
                                 history_item["score"]["weighted_score_worth"] = 1
