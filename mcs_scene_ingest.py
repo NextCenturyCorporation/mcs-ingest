@@ -78,20 +78,21 @@ def ingest_to_mongo(index: str, ingest_files: dict):
     result = collection.insert_many(ingest_files)
     print(result)
 
+    # ----- Moving to create_keys_script that will run after ingestion -----
     # Loop through documents to generate a keys collection to help
     #   speed in loading keys in UI
-    keys = []
-    documents = collection.find()
-    for doc in documents:
-        recursive_find_keys(doc, keys, "")
+    # keys = []
+    # documents = collection.find()
+    # for doc in documents:
+    #     recursive_find_keys(doc, keys, "")
 
-    keys_dict = {}
-    keys_dict["keys"] = keys
+    # keys_dict = {}
+    # keys_dict["keys"] = keys
 
-    collection = mongoDB[index + "_keys"]
-    collection.drop()
-    result = collection.insert_one(keys_dict)
-    print(result)
+    # collection = mongoDB[index + "_keys"]
+    # collection.drop()
+    # result = collection.insert_one(keys_dict)
+    # print(result)
 
 
 def find_scene_files(folder: str) -> dict:
