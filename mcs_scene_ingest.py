@@ -23,7 +23,8 @@ HISTORY_INDEX = "mcs_history"
 TEAM_MAPPING_DICT = {
     "mess": "MESS-UCBerkeley",
     "mit": "IBM-MIT-Harvard-Stanford",
-    "opics": "OPICS (OSU, UU, NYU)"
+    "opics": "OPICS (OSU, UU, NYU)",
+    "baseline": "Baseline"
 }
 
 OBJ_PERM_DUPLICATE_CUBE = ["S1", "T1", "U1"]
