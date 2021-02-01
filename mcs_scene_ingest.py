@@ -20,6 +20,20 @@ KEYS_TO_DELETE = ['image']
 SCENE_INDEX = "mcs_scenes"
 HISTORY_INDEX = "mcs_history"
 
+TEAM_MAPPING_DICT = {
+    "mess": "MESS-UCBerkeley",
+    "mit": "IBM-MIT-Harvard-Stanford",
+    "opics": "OPICS (OSU, UU, NYU)",
+    "baseline": "Baseline"
+}
+
+OBJ_PERM_DUPLICATE_CUBE = ["S1", "T1", "U1"]
+OBJ_PERM_8X_CUBE = ["S2", "T2", "U2", "V2", "W2", "X2", "Y2", "Z2", "AA2"]
+SPATIO_TEMP_ELIMINATE_CUBE = ["A1", "A2", "A3", "A4", "D1", "D2", "D3", "D4", "G1", "G2", "G3", "G4",
+    "J1", "J2", "J3", "J4", "M1", "M2", "M3", "M4", "P1", "P2", "P3", "P4"]
+SHAPE_CONSTANCY_DUPLICATE_CUBE = ["A1", "B1"]
+SHAPE_CONSTANCY_8X_CUBE = ["A2", "B2", "C2", "D2"]
+
 
 def load_json_file(folder: str, file_name: str) -> dict:
     with io.open(os.path.join(folder, file_name), mode='r', encoding='utf-8-sig') as json_file:
@@ -65,20 +79,21 @@ def ingest_to_mongo(index: str, ingest_files: dict):
     result = collection.insert_many(ingest_files)
     print(result)
 
+    # ----- Moving to create_keys_script that will run after ingestion -----
     # Loop through documents to generate a keys collection to help
     #   speed in loading keys in UI
-    keys = []
-    documents = collection.find()
-    for doc in documents:
-        recursive_find_keys(doc, keys, "")
+    # keys = []
+    # documents = collection.find()
+    # for doc in documents:
+    #     recursive_find_keys(doc, keys, "")
 
-    keys_dict = {}
-    keys_dict["keys"] = keys
+    # keys_dict = {}
+    # keys_dict["keys"] = keys
 
-    collection = mongoDB[index + "_keys"]
-    collection.drop()
-    result = collection.insert_one(keys_dict)
-    print(result)
+    # collection = mongoDB[index + "_keys"]
+    # collection.drop()
+    # result = collection.insert_one(keys_dict)
+    # print(result)
 
 
 def find_scene_files(folder: str) -> dict:
@@ -122,9 +137,10 @@ def ingest_scene_files(folder: str, eval_name: str, performer: str) -> None:
         scene = load_json_file(folder, file)
         scene["eval"] = eval_name
         scene["performer"] = performer
-        scene["test_type"] = scene["name"][:-7]
-        scene["scene_num"] = scene["name"][-6:-2]
-        scene["scene_part_num"] = scene["name"][-1:]
+        if "2" in eval_name:
+            scene["test_type"] = scene["name"][:-7]
+            scene["scene_num"] = scene["name"][-6:-2]
+            scene["scene_part_num"] = scene["name"][-1:]
 
         scene = delete_keys_from_scene(scene, KEYS_TO_DELETE)
         ingest_scenes.append(scene)
@@ -132,9 +148,10 @@ def ingest_scene_files(folder: str, eval_name: str, performer: str) -> None:
     ingest_to_mongo(SCENE_INDEX, ingest_scenes)
 
 
-def ingest_history_files(folder: str, eval_name: str, performer: str, scene_folder: str, extension: str="json") -> None:
+def ingest_history_files(folder: str, eval_name: str, performer: str, scene_folder: str, extension: str) -> None:
     history_files = find_history_files(folder, extension)
     ingest_history = []
+    SCENE_DEBUG_EXTENSION = "_debug.json"
 
     for file in history_files:
         print("Ingest history files: {}".format(file))
@@ -148,18 +165,24 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
 
         history_item = {}
         history_item["eval"] = eval_name
-        history_item["performer"] = performer
 
         # Legacy Eval 2 History files will be txt files and not json
         if extension == 'txt':
+            history_item["performer"] = performer
             history_item["name"] = get_scene_name_from_history_text_file(file, "-202.+-")
-        else:
+            SCENE_DEBUG_EXTENSION = "-debug.json"
+            history_item["test_type"] = history_item["name"][:-7]
+            history_item["scene_num"] = history_item["name"][-6:-2]
+            history_item["scene_part_num"] = history_item["name"][-1:]
+            history_item["url_string"] = "test_type=" + history_item["test_type"] + "&scene_num=" + history_item["scene_num"] + "&scene_part_num=" + history_item["scene_part_num"] + "&performer=" + history_item["performer"]
+        else: 
+            history_item["performer"] = TEAM_MAPPING_DICT[history["info"]["team"]]
             history_item["name"] = history["info"]["name"]
-
-        history_item["test_type"] = history_item["name"][:-7]
-        history_item["scene_num"] = history_item["name"][-6:-2]
-        history_item["scene_part_num"] = history_item["name"][-1:]
-        history_item["url_string"] = "test_type=" + history_item["test_type"] + "&scene_num=" + history_item["scene_num"] + "&scene_part_num=" + history_item["scene_part_num"] + "&performer=" + history_item["performer"]
+            history_item["metadata"] = history["info"]["metadata"]
+            history_item["fullFilename"] = os.path.splitext(file)[0]
+            fileNameParts = history_item["fullFilename"].split("-", 1)
+            history_item["filename"] = fileNameParts[0]
+            history_item["fileTimestamp"] = fileNameParts[1]
 
         history_item["flags"] = {}
         history_item["flags"]["remove"] = False
@@ -168,6 +191,7 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
         steps = []
         number_steps = 0
         interactive_goal_achieved = 0
+        interactive_reward = 0
 
         # Legacy Eval 2 History files will be txt files and not json
         if extension == 'txt':
@@ -197,11 +221,15 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
                 new_step["stepNumber"] = step["step"]
                 new_step["action"] = step["action"]
                 new_step["args"] = step["args"]
+                new_step["classification"] = step["classification"]
+                new_step["confidence"] = step["confidence"]
+                new_step["violations_xy_list"] = step["violations_xy_list"]
                 output = {}
                 if("output" in step):
                     output["return_status"] = step["output"]["return_status"]
                     output["reward"] = step["output"]["reward"]
-                    if(output["reward"] == 1):
+                    interactive_reward = output["reward"]
+                    if(output["reward"] >= (0 - ((number_steps-1) * 0.001) + 1)):
                         interactive_goal_achieved = 1
                 new_step["output"] = output
                 steps.append(new_step)
@@ -212,22 +240,38 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
 
         # Because Elastic doesn't allow table to go across indexes, adding some scene info here that will be useful
         if scene_folder:
-            scene = load_json_file(scene_folder, history_item["name"] + "-debug.json")
+            scene = load_json_file(scene_folder, history_item["name"] + SCENE_DEBUG_EXTENSION)
             if scene:
-                if("observation" in scene):
-                    if(scene["observation"]):
-                        history_item["category"] = "observation"
-                        history_item["category_type"] = history_item["test_type"]
+                # For eval 3 going forward
+                if "test_type" not in history_item:
+                    # Investigate making sure these corespond to the correct attribute for Eval 4, I believe
+                    #  Thomas changed sequence to cube series or something similar 
+                    history_item["scene_num"] = scene["sceneNumber"]
+                    history_item["scene_part_num"] = scene["sequenceNumber"]
+
+                    history_item["scene_goal_id"] = scene["goal"]["sceneInfo"]["id"][0]
+                    history_item["test_type"] = scene["goal"]["sceneInfo"]["secondaryType"]
+                    history_item["category"] = scene["goal"]["sceneInfo"]["primaryType"] 
+                    if scene["goal"]["sceneInfo"]["tertiaryType"] == "retrieval":
+                        history_item["category_type"] = scene["goal"]["sceneInfo"]["name"][:-3]
+                    else:
+                        history_item["category_type"] = scene["goal"]["sceneInfo"]["tertiaryType"]
+                # For eval 2 
+                else:
+                    if("observation" in scene):
+                        if(scene["observation"]):
+                            history_item["category"] = "observation"
+                            history_item["category_type"] = history_item["test_type"]
+                        else:
+                            history_item["category"] = "interactive"
+                            type_parts = history_item["test_type"].rsplit('-', 1)
+                            history_item["category_type"] = type_parts[1]
+                            history_item["category_pair"] = type_parts[0]
                     else:
                         history_item["category"] = "interactive"
-                        type_parts = history_item["test_type"].rsplit('-', 1)
+                        type_parts = history_item["test_type"].rsplit('_', 1)
                         history_item["category_type"] = type_parts[1]
                         history_item["category_pair"] = type_parts[0]
-                else:
-                    history_item["category"] = "interactive"
-                    type_parts = history_item["test_type"].rsplit('_', 1)
-                    history_item["category_type"] = type_parts[1]
-                    history_item["category_pair"] = type_parts[0]
 
                 if(history_item["category"] == "interactive"):
                     if "score" not in history_item:
@@ -235,11 +279,17 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
                         history_item["score"]["classification"] = "end"
                         history_item["score"]["confidence"] = 0
                     history_item["score"]["score"] = interactive_goal_achieved
+                    history_item["score"]["reward"] = interactive_reward
                     history_item["score"]["ground_truth"] = 1
                 else:
                     if "score" in history_item:
-                        history_item["score"]["score"] = 1 if history_item["score"]["classification"] == scene["answer"]["choice"] else 0
-                        history_item["score"]["ground_truth"] = 1 if "plausible" == scene["answer"]["choice"] else 0
+                        if "answer" in scene: 
+                            history_item["score"]["score"] = 1 if history_item["score"]["classification"] == scene["answer"]["choice"] else 0
+                            history_item["score"]["ground_truth"] = 1 if "plausible" == scene["answer"]["choice"] else 0
+                        else:
+                            history_item["score"]["score"] = 1 if history_item["score"]["classification"] == scene["goal"]["answer"]["choice"] else 0
+                            history_item["score"]["ground_truth"] = 1 if ("plausible" == scene["goal"]["answer"]["choice"]
+                                or "expected" == scene["goal"]["answer"]["choice"]) else 0
                     else:
                         history_item["score"] = {}
                         history_item["score"]["score"] = -1
@@ -249,8 +299,8 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
                 if "confidence" in history_item["score"]:
                     if history_item["score"]["confidence"] == 1 and history_item["score"]["classification"] == "implausible":
                         history_item["score"]["adjusted_confidence"] = 0
-                    elif history_item["score"]["classification"] == "implausible" and history_item["score"]["confidence"] > 0.5:
-                        history_item["score"]["adjusted_confidence"] = 1 - history_item["score"]["confidence"]
+                    elif history_item["score"]["classification"] == "implausible" and float(history_item["score"]["confidence"]) > 0.5:
+                        history_item["score"]["adjusted_confidence"] = 1 - float(history_item["score"]["confidence"])
                     elif history_item["score"]["confidence"] == 1:
                         history_item["score"]["adjusted_confidence"] = 1
                     else: 
@@ -265,11 +315,72 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
                     history_item["score"]["score_description"] = "Incorrect"
                 elif history_item["score"]["score"] == -1:
                     history_item["score"]["score_description"] = "No answer"
+
+                # Add Cube Weighted Scoring Here
+                if "goal" in scene:
+                    if "sceneInfo" in scene["goal"]:
+                        if scene["goal"]["sceneInfo"]["tertiaryType"] == "object permanence":
+                            if history_item["scene_goal_id"] in OBJ_PERM_DUPLICATE_CUBE:
+                                history_item["score"]["weighted_score"] = history_item["score"]["score"] * 2
+                                history_item["score"]["weighted_score_worth"] = 2
+                                history_item["score"]["weighted_confidence"] = float(history_item["score"]["confidence"]) * 2
+                            elif history_item["scene_goal_id"] in OBJ_PERM_8X_CUBE:
+                                history_item["score"]["weighted_score"] = history_item["score"]["score"] * 8
+                                history_item["score"]["weighted_score_worth"] = 8
+                                history_item["score"]["weighted_confidence"] = float(history_item["score"]["confidence"]) * 8
+                            else:
+                                history_item["score"]["weighted_score"] = history_item["score"]["score"]
+                                history_item["score"]["weighted_score_worth"] = 1
+                                history_item["score"]["weighted_confidence"] = history_item["score"]["confidence"]
+                        elif scene["goal"]["sceneInfo"]["tertiaryType"] == "shape constancy":
+                            if history_item["scene_goal_id"] in SHAPE_CONSTANCY_DUPLICATE_CUBE:
+                                history_item["score"]["weighted_score"] = history_item["score"]["score"] * 2
+                                history_item["score"]["weighted_score_worth"] = 2
+                                history_item["score"]["weighted_confidence"] = float(history_item["score"]["confidence"]) * 2
+                            elif history_item["scene_goal_id"] in SHAPE_CONSTANCY_8X_CUBE:
+                                history_item["score"]["weighted_score"] = history_item["score"]["score"] * 8
+                                history_item["score"]["weighted_score_worth"] = 8
+                                history_item["score"]["weighted_confidence"] = float(history_item["score"]["confidence"]) * 8
+                            else:
+                                history_item["score"]["weighted_score"] = history_item["score"]["score"]
+                                history_item["score"]["weighted_score_worth"] = 1
+                                history_item["score"]["weighted_confidence"] = history_item["score"]["confidence"]
+                        elif scene["goal"]["sceneInfo"]["tertiaryType"] == "spatio temporal continuity":
+                            if history_item["scene_goal_id"] in SPATIO_TEMP_ELIMINATE_CUBE:
+                                history_item["score"]["weighted_score"] = 0
+                                history_item["score"]["weighted_score_worth"] = 0
+                                history_item["score"]["weighted_confidence"] = 0
+                            else:
+                                history_item["score"]["weighted_score"] = history_item["score"]["score"]
+                                history_item["score"]["weighted_score_worth"] = 1
+                                history_item["score"]["weighted_confidence"] = history_item["score"]["confidence"]
+                        else:
+                            history_item["score"]["weighted_score"] = history_item["score"]["score"]
+                            history_item["score"]["weighted_score_worth"] = 1
+                            history_item["score"]["weighted_confidence"] = history_item["score"]["confidence"]
+                    else:
+                        history_item["score"]["weighted_score"] = history_item["score"]["score"]
+                        history_item["score"]["weighted_score_worth"] = 1
+                        history_item["score"]["weighted_confidence"] = history_item["score"]["confidence"]
+                else:
+                    history_item["score"]["weighted_score"] = history_item["score"]["score"]
+                    history_item["score"]["weighted_score_worth"] = 1
+                    history_item["score"]["weighted_confidence"] = history_item["score"]["confidence"]
                 
+        print(history_item["score"])
         # Check for duplicate Mess History files that don't include any steps
         if steps:
             history_item["steps"] = steps
-            ingest_history.append(history_item)
+
+            replacementIndex = -1
+            for index, item in enumerate(ingest_history):
+                if item["filename"] == history_item["filename"] and history_item["fileTimestamp"] > item["fileTimestamp"]:
+                    replacementIndex = index
+
+            if replacementIndex == -1:
+                ingest_history.append(history_item)
+            else:
+                ingest_history[replacementIndex] = history_item
 
     ingest_to_mongo(HISTORY_INDEX, ingest_history)
 
@@ -284,12 +395,14 @@ def main(argv) -> None:
     parser.add_argument('--extension', required=False, help='History file extension for legacy ingest')
 
     args = parser.parse_args(argv[1:])
+    extension = args.extension
+    if extension is None:
+        extension = "json"
 
     if args.type == 'scene':
         ingest_scene_files(args.folder, args.eval_name, args.performer)
     if args.type == 'history':
-        print(args.extension)
-        ingest_history_files(args.folder, args.eval_name, args.performer, args.scene_folder, args.extension)
+        ingest_history_files(args.folder, args.eval_name, args.performer, args.scene_folder, extension)
 
 
 if __name__ == '__main__':
