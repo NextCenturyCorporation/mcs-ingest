@@ -244,6 +244,8 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
             if scene:
                 # For eval 3 going forward
                 if "test_type" not in history_item:
+                    # Investigate making sure these corespond to the correct attribute for Eval 4, I believe
+                    #  Thomas changed sequence to cube series or something similar 
                     history_item["scene_num"] = scene["sceneNumber"]
                     history_item["scene_part_num"] = scene["sequenceNumber"]
 
