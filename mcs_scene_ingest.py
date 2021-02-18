@@ -15,7 +15,7 @@ mongoDB = client['mcs']
 
 # Currently just removing image mag from scene files, might wish to move more keys, 
 #    or remove so much from the schema that we want to just map the fields we want to the schema
-KEYS_TO_DELETE = ['image']
+KEYS_TO_DELETE = ['image', 'sequenceNumber', 'hypercubeNumber', 'sceneNumber']
 
 SCENE_INDEX = "mcs_scenes"
 HISTORY_INDEX = "mcs_history"
