@@ -139,9 +139,14 @@ def ingest_scene_files(folder: str, eval_name: str, performer: str) -> None:
         scene["performer"] = performer
         if "2" in eval_name:
             scene["test_type"] = scene["name"][:-7]
-            scene["scene_num"] = scene["name"][-6:-2]
-            scene["scene_part_num"] = scene["name"][-1:]
-
+            scene["test_num"] = int(scene["name"][-6:-2])
+            scene["scene_num"] = int(scene["name"][-1:])
+        else:
+            if "sequenceNumber" in scene:
+                scene["test_num"] = scene["sequenceNumber"]
+            else:
+                scene["test_num"] = scene["hypercubeNumber"]
+            scene["scene_num"] = scene["sceneNumber"]
         scene = delete_keys_from_scene(scene, KEYS_TO_DELETE)
         ingest_scenes.append(scene)
 
@@ -172,9 +177,10 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
             history_item["name"] = get_scene_name_from_history_text_file(file, "-202.+-")
             SCENE_DEBUG_EXTENSION = "-debug.json"
             history_item["test_type"] = history_item["name"][:-7]
-            history_item["scene_num"] = history_item["name"][-6:-2]
-            history_item["scene_part_num"] = history_item["name"][-1:]
-            history_item["url_string"] = "test_type=" + history_item["test_type"] + "&scene_num=" + history_item["scene_num"] + "&scene_part_num=" + history_item["scene_part_num"] + "&performer=" + history_item["performer"]
+            history_item["test_num"] = int(history_item["name"][-6:-2])
+            history_item["scene_num"] = int(history_item["name"][-1:])
+            history_item["url_string"] = ("eval=" + history_item["eval"] + "&test_type=" + history_item["test_type"] +
+                                         "&test_num=" + str(history_item["test_num"]) + "&scene=" + str(history_item["scene_num"]))
         else: 
             history_item["performer"] = TEAM_MAPPING_DICT[history["info"]["team"]]
             history_item["name"] = history["info"]["name"]
@@ -244,11 +250,11 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
             if scene:
                 # For eval 3 going forward
                 if "test_type" not in history_item:
-                    # Investigate making sure these corespond to the correct attribute for Eval 4, I believe
-                    #  Thomas changed sequence to cube series or something similar 
                     history_item["scene_num"] = scene["sceneNumber"]
-                    history_item["scene_part_num"] = scene["sequenceNumber"]
-
+                    if "sequenceNumber" in scene:
+                        history_item["test_num"] = scene["sequenceNumber"]
+                    else: 
+                        history_item["test_num"] = scene["hypercubeNumber"]
                     history_item["scene_goal_id"] = scene["goal"]["sceneInfo"]["id"][0]
                     history_item["test_type"] = scene["goal"]["sceneInfo"]["secondaryType"]
                     history_item["category"] = scene["goal"]["sceneInfo"]["primaryType"] 
@@ -256,6 +262,8 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
                         history_item["category_type"] = scene["goal"]["sceneInfo"]["name"][:-3]
                     else:
                         history_item["category_type"] = scene["goal"]["sceneInfo"]["tertiaryType"]
+                    history_item["url_string"] = ("eval=" + history_item["eval"] + "&category_type=" + history_item["category_type"] +
+                        "&test_num=" + str(history_item["test_num"]) + "&scene=" + str(history_item["scene_num"]))
                 # For eval 2 
                 else:
                     if("observation" in scene):
@@ -361,7 +369,8 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
                     else:
                         history_item["score"]["weighted_score"] = history_item["score"]["score"]
                         history_item["score"]["weighted_score_worth"] = 1
-                        history_item["score"]["weighted_confidence"] = history_item["score"]["confidence"]
+                        if "confidence" in history_item["score"]:
+                            history_item["score"]["weighted_confidence"] = history_item["score"]["confidence"]
                 else:
                     history_item["score"]["weighted_score"] = history_item["score"]["score"]
                     history_item["score"]["weighted_score_worth"] = 1
@@ -374,8 +383,8 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
 
             replacementIndex = -1
             for index, item in enumerate(ingest_history):
-                if item["filename"] == history_item["filename"] and history_item["fileTimestamp"] > item["fileTimestamp"]:
-                    replacementIndex = index
+                if 'filename' in item and item["filename"] == history_item["filename"] and history_item["fileTimestamp"] > item["fileTimestamp"]:
+                   replacementIndex = index
 
             if replacementIndex == -1:
                 ingest_history.append(history_item)
