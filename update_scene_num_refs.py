@@ -25,15 +25,32 @@ def update_scene_num_refs_history_eval_3():
     print("Begin Processing " + EVAL_3_RESULTS)
     collection = mongoDB[HISTORY_INDEX]
 
-    documents = list(collection.find({"eval": EVAL_3_RESULTS, "scene_num" : {"$exists" : True}, "scene_part_num": {"$exists": True}, "url_string": {"$exists": False}}).batch_size(1000))
-    print("Found " + str(len(documents)) + " results")
+    # rename scene_part_num field to test_num
+    result = collection.update_many({"eval": EVAL_3_RESULTS, "scene_part_num": {"$exists": True}}, {"$rename": {'scene_part_num' : 'test_num'}}, False)
+    print("update_many performed on " + str(result.matched_count) + " documents")
 
-    for doc in documents:
-        hypercube_num = doc["scene_part_num"]
-        scene = doc["scene_num"]
-        url_string = "eval=" + doc["eval"] + "&category_type=" + doc["category_type"] + "&test_num=" + str(hypercube_num) + "&scene=" + str(scene)
-        
-        result = collection.update_one({"_id": ObjectId(doc["_id"])}, [{"$set": {'scene_num': scene, 'test_num': hypercube_num, "url_string": url_string}}, {"$unset": ['scene_part_num']}], True)
+    categories = [
+        "agents efficient action path lure",
+        "agents efficient action time control",
+        "agents object preference",
+        "object permanence",
+        "retrieval_container",
+        "retrieval_obstacle",
+        "retrieval_occluder",
+        "shape constancy",
+        "spatio temporal continuity"
+    ]
+    
+    # update url_string one by one
+    for cat in categories:
+        documents = list(collection.find({"eval": EVAL_3_RESULTS, "category_type": cat, "url_string": {"$exists": False}}).batch_size(1000))
+        print("Found " + str(len(documents)) + " results for category_type " + cat)
+
+        for doc in documents:
+            url_string = "eval=" + doc["eval"] + "&category_type=" + doc["category_type"] + "&test_num=" + str(doc["test_num"]) + "&scene=" + str(doc["scene_num"])
+            
+            result = collection.update_one({"_id": ObjectId(doc["_id"])}, {"$set": { "url_string": url_string}}, True)
+
 
 def update_scene_num_refs_history_eval_2():
     print("Begin Processing " + EVAL_2_RESULTS)
@@ -125,7 +142,7 @@ def update_mcs_history_keys():
     print("Found " + str(len(documents)) + " results")
 
     for doc in documents:
-        if "scene_part_num" in doc:
+        if "scene_part_num" in doc["keys"]:
             result = collection.update_one({"_id": ObjectId(doc["_id"])}, {"$push": {'keys': "test_num"}}, True)
             result = collection.update_one({"_id": ObjectId(doc["_id"])}, {"$pull": {'keys': "scene_part_num"}}, True)
 
@@ -141,19 +158,19 @@ def update_mcs_scenes_keys():
     for doc in documents:
 
         # check keys to add
-        if "test_num" not in doc:
+        if "test_num" not in doc["keys"]:
             keys_to_add.append("test_num")
-        if "goal.sceneInfo.hypercubeId" not in doc:
+        if "goal.sceneInfo.hypercubeId" not in doc["keys"]:
             keys_to_add.append("goal.sceneInfo.hypercubeId")
 
         # check keys to remove
-        if "scene_part_num" in doc:
+        if "scene_part_num" in doc["keys"]:
             keys_to_remove.append("scene_part_num")
-        if "goal.sceneInfo.sequenceId" in doc:
+        if "goal.sceneInfo.sequenceId" in doc["keys"]:
             keys_to_remove.append("goal.sceneInfo.sequenceId")
-        if "sequenceNumber" in doc:
+        if "sequenceNumber" in doc["keys"]:
             keys_to_remove.append("sequenceNumber")
-        if "sceneNumber" in doc:
+        if "sceneNumber" in doc["keys"]:
             keys_to_remove.append("sceneNumber")
 
         result = collection.update_one({"_id": ObjectId(doc["_id"])}, {"$push": {'keys': { "$each": keys_to_add}}}, True)
