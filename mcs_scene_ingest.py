@@ -147,6 +147,9 @@ def ingest_scene_files(folder: str, eval_name: str, performer: str) -> None:
             else:
                 scene["test_num"] = scene["hypercubeNumber"]
             scene["scene_num"] = scene["sceneNumber"]
+            if "sequenceId" in scene["goal"]["sceneInfo"]:
+                scene["goal"]["sceneInfo"]["hypercubeId"] = scene["goal"]["sceneInfo"]["sequenceId"]
+                del scene["goal"]["sceneInfo"]["sequenceId"]
         scene = delete_keys_from_scene(scene, KEYS_TO_DELETE)
         ingest_scenes.append(scene)
 
