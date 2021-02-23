@@ -182,8 +182,6 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
             history_item["test_type"] = history_item["name"][:-7]
             history_item["test_num"] = int(history_item["name"][-6:-2])
             history_item["scene_num"] = int(history_item["name"][-1:])
-            history_item["url_string"] = ("eval=" + history_item["eval"] + "&test_type=" + history_item["test_type"] +
-                                         "&test_num=" + str(history_item["test_num"]) + "&scene=" + str(history_item["scene_num"]))
         else: 
             history_item["performer"] = TEAM_MAPPING_DICT[history["info"]["team"]]
             history_item["name"] = history["info"]["name"]
@@ -265,8 +263,6 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
                         history_item["category_type"] = scene["goal"]["sceneInfo"]["name"][:-3]
                     else:
                         history_item["category_type"] = scene["goal"]["sceneInfo"]["tertiaryType"]
-                    history_item["url_string"] = ("eval=" + history_item["eval"] + "&category_type=" + history_item["category_type"] +
-                        "&test_num=" + str(history_item["test_num"]) + "&scene=" + str(history_item["scene_num"]))
                 # For eval 2 
                 else:
                     if("observation" in scene):

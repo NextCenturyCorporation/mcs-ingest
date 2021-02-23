@@ -29,29 +29,6 @@ def update_scene_num_refs_history_eval_3():
     result = collection.update_many({"eval": EVAL_3_RESULTS, "scene_part_num": {"$exists": True}}, {"$rename": {'scene_part_num' : 'test_num'}}, False)
     print("update_many performed on " + str(result.matched_count) + " documents")
 
-    categories = [
-        "agents efficient action path lure",
-        "agents efficient action time control",
-        "agents object preference",
-        "object permanence",
-        "retrieval_container",
-        "retrieval_obstacle",
-        "retrieval_occluder",
-        "shape constancy",
-        "spatio temporal continuity"
-    ]
-    
-    # update url_string one by one
-    for cat in categories:
-        documents = list(collection.find({"eval": EVAL_3_RESULTS, "category_type": cat, "url_string": {"$exists": False}}).batch_size(1000))
-        print("Found " + str(len(documents)) + " results for category_type " + cat)
-
-        for doc in documents:
-            url_string = "eval=" + doc["eval"] + "&category_type=" + doc["category_type"] + "&test_num=" + str(doc["test_num"]) + "&scene=" + str(doc["scene_num"])
-            
-            result = collection.update_one({"_id": ObjectId(doc["_id"])}, {"$set": { "url_string": url_string}}, True)
-
-
 def update_scene_num_refs_history_eval_2():
     print("Begin Processing " + EVAL_2_RESULTS)
     collection = mongoDB[HISTORY_INDEX]
@@ -63,9 +40,8 @@ def update_scene_num_refs_history_eval_2():
 
         test_num = int(doc["scene_num"])
         scene = int(doc["scene_part_num"])
-        url_string = "eval=" + doc["eval"] + "&test_type=" + doc["test_type"] + "&test_num=" + str(test_num) + "&scene=" + str(scene)
     
-        result = collection.update_one({"_id": ObjectId(doc["_id"])}, [{"$set": {'scene_num': scene, 'test_num': test_num, 'url_string': url_string}}, {"$unset": ['scene_part_num']}], True)
+        result = collection.update_one({"_id": ObjectId(doc["_id"])}, [{"$set": {'scene_num': scene, 'test_num': test_num}}, {"$unset": ['scene_part_num', 'url_string']}], True)
 
 def update_scene_num_refs_scenes_eval_2():
     print("Begin Processing " + EVAL_2_SCENES)
