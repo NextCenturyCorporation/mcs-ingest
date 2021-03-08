@@ -142,11 +142,11 @@ def ingest_scene_files(folder: str, eval_name: str, performer: str) -> None:
             scene["test_num"] = int(scene["name"][-6:-2])
             scene["scene_num"] = int(scene["name"][-1:])
         else:
+            scene["scene_num"] = scene["sceneNumber"]
             if "sequenceNumber" in scene:
                 scene["test_num"] = scene["sequenceNumber"]
             else:
                 scene["test_num"] = scene["hypercubeNumber"]
-            scene["scene_num"] = scene["sceneNumber"]
             if "sequenceId" in scene["goal"]["sceneInfo"]:
                 scene["goal"]["sceneInfo"]["hypercubeId"] = scene["goal"]["sceneInfo"]["sequenceId"]
                 del scene["goal"]["sceneInfo"]["sequenceId"]
