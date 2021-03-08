@@ -34,6 +34,7 @@ SPATIO_TEMP_ELIMINATE_CUBE = ["A1", "A2", "A3", "A4", "D1", "D2", "D3", "D4", "G
 SHAPE_CONSTANCY_DUPLICATE_CUBE = ["A1", "B1"]
 SHAPE_CONSTANCY_8X_CUBE = ["A2", "B2", "C2", "D2"]
 
+MAX_XY_VIOLATIONS = 50
 
 def load_json_file(folder: str, file_name: str) -> dict:
     with io.open(os.path.join(folder, file_name), mode='r', encoding='utf-8-sig') as json_file:
@@ -233,7 +234,14 @@ def ingest_history_files(folder: str, eval_name: str, performer: str, scene_fold
                 new_step["args"] = step["args"]
                 new_step["classification"] = step["classification"]
                 new_step["confidence"] = step["confidence"]
-                new_step["violations_xy_list"] = step["violations_xy_list"]
+                # If too many items in violations_xy_list, take the first 50
+                if(step["violations_xy_list"] and isinstance(step["violations_xy_list"], list) and
+                   len(step["violations_xy_list"]) > MAX_XY_VIOLATIONS):
+                    new_step["violations_xy_list"] = step["violations_xy_list"][:MAX_XY_VIOLATIONS]
+                else:
+                    new_step["violations_xy_list"] = step["violations_xy_list"]
+                new_step["internal_state"] = step["internal_state"]
+
                 output = {}
                 if("output" in step):
                     output["return_status"] = step["output"]["return_status"]
