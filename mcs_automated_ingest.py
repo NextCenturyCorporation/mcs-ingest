@@ -5,13 +5,16 @@ import mcs_scene_ingest
 
 # Create SQS client
 sqs = boto3.resource('sqs')
-queue = sqs.get_queue_by_name(QueueName='mongo-mcs-ingestion-queue')
+history_queue = sqs.get_queue_by_name(QueueName='mongo-mcs-ingestion-queue')
+scene_queue = sqs.get_queue_by_name(QueueName='mcs-scene-ingestion-queue')
 s3 = boto3.resource('s3')
 
-def process_message(message):
-    receipt_handle = message.message_id
-    message_body = json.loads(message.body)
+# Message Type Constants
+HISTORY_MESSAGE = "history"
+SCENE_MESSAGE = "scene"
 
+def process_message(message, message_type):
+    message_body = json.loads(message.body)
     for record in message_body["Records"]:
         # Download File
         bucket = s3.Bucket(record["s3"]["bucket"]["name"])
@@ -21,7 +24,10 @@ def process_message(message):
         bucket.download_file(history_file, basename)
 
         # Ingest File
-        mcs_scene_ingest.automated_history_ingest_file(basename, "")
+        if message_type == HISTORY_MESSAGE:
+            mcs_scene_ingest.automated_history_ingest_file(basename, "")
+        if message_type == SCENE_MESSAGE:
+            mcs_scene_ingest.automated_scene_ingest_file(basename, "")
 
         # Delete File
         print(f"Deleting {basename}")
@@ -29,9 +35,16 @@ def process_message(message):
 
 def main():
     while True:
-        all_messages = queue.receive_messages()
-        for message in all_messages:
-            process_message(message)
+        # Check for messages on history queue
+        history_messages = history_queue.receive_messages()
+        for message in history_messages:
+            process_message(message, HISTORY_MESSAGE)
+            message.delete()
+
+        # Check for messages on scene queue
+        scene_messages = scene_queue.receive_messages()
+        for message in scene_messages:
+            process_message(message, SCENE_MESSAGE)
             message.delete()
 
 
