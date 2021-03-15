@@ -113,38 +113,60 @@ def get_scene_name_from_history_text_file(file_name: str, regex_str: str) -> str
         return file_name[0:match.start()]
 
 
-def ingest_scene_files(folder: str, eval_name: str, performer: str) -> None:
+def automated_scene_ingest_file(file_name: str, folder: str) -> None:
+    scene_item = build_scene_item(file_name, folder, None)
+    collection = mongoDB[SCENE_INDEX]
+    check_exists = collection.find({"name": scene_item["name"], "evaluation": scene_item["evaluation"]})
+
+    # Do not insert a scene if we already have it in the database for this particular eval
+    if check_exists.count() == 0:
+        print(f"Inserting {scene_item['name']}")
+        collection.insert_one(scene_item)
+
+
+def build_scene_item(file_name: str, folder: str, eval_name: str) -> dict:
+    print("Ingest scene file: {}".format(file_name))
+    scene = load_json_file(folder, file_name)
+    
+    if eval_name is None:
+        scene["eval"] = scene["evaluation"]
+        eval_name = scene["evaluation"]
+    else:
+        scene["eval"] = eval_name
+
+    if "2" in eval_name:
+        scene["test_type"] = scene["name"][:-7]
+        scene["test_num"] = int(scene["name"][-6:-2])
+        scene["scene_num"] = int(scene["name"][-1:])
+    else:
+        scene["scene_num"] = scene["sceneNumber"]
+
+        if "sequenceNumber" in scene:
+            scene["test_num"] = scene["sequenceNumber"]
+        else:
+            scene["test_num"] = scene["hypercubeNumber"]
+
+        if "sequenceId" in scene["goal"]["sceneInfo"]:
+            scene["goal"]["sceneInfo"]["hypercubeId"] = scene["goal"]["sceneInfo"]["sequenceId"]
+            del scene["goal"]["sceneInfo"]["sequenceId"]
+
+    scene = delete_keys_from_scene(scene, KEYS_TO_DELETE)
+
+    return scene
+
+
+def ingest_scene_files(folder: str, eval_name: str) -> None:
     scene_files = find_scene_files(folder)
     ingest_scenes = []
 
     for file in scene_files:
-        print("Ingest scene file: {}".format(file))
-        scene = load_json_file(folder, file)
-        scene["eval"] = eval_name
-        scene["performer"] = performer
-        if "2" in eval_name:
-            scene["test_type"] = scene["name"][:-7]
-            scene["test_num"] = int(scene["name"][-6:-2])
-            scene["scene_num"] = int(scene["name"][-1:])
-        else:
-            scene["scene_num"] = scene["sceneNumber"]
-
-            if "sequenceNumber" in scene:
-                scene["test_num"] = scene["sequenceNumber"]
-            else:
-                scene["test_num"] = scene["hypercubeNumber"]
-
-            if "sequenceId" in scene["goal"]["sceneInfo"]:
-                scene["goal"]["sceneInfo"]["hypercubeId"] = scene["goal"]["sceneInfo"]["sequenceId"]
-                del scene["goal"]["sceneInfo"]["sequenceId"]
-
-        scene = delete_keys_from_scene(scene, KEYS_TO_DELETE)
+        scene = build_scene_item(file, folder, eval_name)
         ingest_scenes.append(scene)
 
     ingest_to_mongo(SCENE_INDEX, ingest_scenes)
 
 
-def automated_history_ingest_file(history_file: str, folder: str):
+def automated_history_ingest_file(history_file: str, folder: str) -> None:
     history_item = build_history_item(history_file, folder, None, None, None, "json")
     collection = mongoDB[HISTORY_INDEX]
     check_exists = collection.find({"name": history_item["name"], "eval": history_item["eval"],
@@ -424,7 +446,7 @@ def main(argv) -> None:
         extension = "json"
 
     if args.type == 'scene':
-        ingest_scene_files(args.folder, args.eval_name, args.performer)
+        ingest_scene_files(args.folder, args.eval_name)
     if args.type == 'history':
         ingest_history_files(args.folder, args.eval_name, args.performer, args.scene_folder, extension)
 
