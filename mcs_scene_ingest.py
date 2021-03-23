@@ -27,6 +27,10 @@ TEAM_MAPPING_DICT = {
     "baseline": "TA2 Baseline"
 }
 
+EVAL_MAPPING_DICT = {
+    "eval_3-5": "Evaluation 3.5 Results"
+}
+
 OBJ_PERM_DUPLICATE_CUBE = ["S1", "T1", "U1"]
 OBJ_PERM_8X_CUBE = ["S2", "T2", "U2", "V2", "W2", "X2", "Y2", "Z2", "AA2"]
 SPATIO_TEMP_ELIMINATE_CUBE = ["A1", "A2", "A3", "A4", "D1", "D2", "D3", "D4", "G1", "G2", "G3", "G4",
@@ -195,7 +199,7 @@ def build_history_item(history_file: str, folder: str, eval_name: str, performer
 
     history_item = {}
     if eval_name is None: 
-        history_item["eval"] = history["info"]["evaluation_name"]
+        history_item["eval"] = EVAL_MAPPING_DICT[history["info"]["evaluation_name"]]
     else:    
         history_item["eval"] = eval_name
 
