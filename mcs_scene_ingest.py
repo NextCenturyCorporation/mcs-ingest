@@ -289,11 +289,8 @@ def build_history_item(history_file: str, folder: str, eval_name: str, performer
     if scene:
         # For eval 3 going forward
         if "test_type" not in history_item:
-            history_item["scene_num"] = scene["sceneNumber"]
-            if "sequenceNumber" in scene:
-                history_item["test_num"] = scene["sequenceNumber"]
-            else: 
-                history_item["test_num"] = scene["hypercubeNumber"]
+            history_item["scene_num"] = scene["scene_num"]
+            history_item["test_num"] = scene["test_num"]
             history_item["scene_goal_id"] = scene["goal"]["sceneInfo"]["id"][0]
             history_item["test_type"] = scene["goal"]["sceneInfo"]["secondaryType"]
             history_item["category"] = scene["goal"]["sceneInfo"]["primaryType"] 
