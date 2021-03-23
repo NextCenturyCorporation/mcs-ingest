@@ -24,7 +24,7 @@ TEAM_MAPPING_DICT = {
     "mess": "MESS-UCBerkeley",
     "mit": "IBM-MIT-Harvard-Stanford",
     "opics": "OPICS (OSU, UU, NYU)",
-    "baseline": "Baseline"
+    "baseline": "TA2 Baseline"
 }
 
 OBJ_PERM_DUPLICATE_CUBE = ["S1", "T1", "U1"]
