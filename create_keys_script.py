@@ -51,8 +51,10 @@ def main():
     print("Starting Key Processing")
     find_collection_keys(HISTORY_INDEX, "Evaluation 2 Results")
     find_collection_keys(HISTORY_INDEX, "Evaluation 3 Results")
+    find_collection_keys(HISTORY_INDEX, "Evaluation 3.5 Results")
     find_collection_keys(SCENE_INDEX, "Evaluation 2 Scenes")
     find_collection_keys(SCENE_INDEX, "Evaluation 3 Scenes")
+    find_collection_keys(SCENE_INDEX, "Evaluation 3.5 Scenes")
 
 if __name__ == "__main__":
     main()
