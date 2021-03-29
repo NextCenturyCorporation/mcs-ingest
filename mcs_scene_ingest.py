@@ -240,13 +240,6 @@ def build_history_item(history_file: str, folder: str, eval_name: str, performer
                 new_step["args"] = step["args"]
                 new_step["classification"] = step["classification"]
                 new_step["confidence"] = step["confidence"]
-                # If too many items in violations_xy_list, take the first 50
-                if(step["violations_xy_list"] and isinstance(step["violations_xy_list"], list) and
-                   len(step["violations_xy_list"]) > MAX_XY_VIOLATIONS):
-                    new_step["violations_xy_list"] = step["violations_xy_list"][:MAX_XY_VIOLATIONS]
-                else:
-                    new_step["violations_xy_list"] = step["violations_xy_list"]
-                new_step["internal_state"] = step["internal_state"]
                 output = {}
                 if("output" in step):
                     output["return_status"] = step["output"]["return_status"]
@@ -268,7 +261,15 @@ def build_history_item(history_file: str, folder: str, eval_name: str, performer
             new_step["args"] = step["args"]
             new_step["classification"] = step["classification"]
             new_step["confidence"] = step["confidence"]
-            new_step["violations_xy_list"] = step["violations_xy_list"]
+            new_step["internal_state"] = step["internal_state"]
+
+            # If too many items in violations_xy_list, take the first 50
+            if(step["violations_xy_list"] and isinstance(step["violations_xy_list"], list) and
+                len(step["violations_xy_list"]) > MAX_XY_VIOLATIONS):
+                new_step["violations_xy_list"] = step["violations_xy_list"][:MAX_XY_VIOLATIONS]
+            else:
+                new_step["violations_xy_list"] = step["violations_xy_list"]
+
             output = {}
             if("output" in step):
                 output["return_status"] = step["output"]["return_status"]
