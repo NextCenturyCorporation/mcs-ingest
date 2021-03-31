@@ -156,10 +156,22 @@ def ingest_scene_files(folder: str, eval_name: str) -> None:
 def determine_evaluation_name(eval_name: str, history_eval_name: str) -> str:
     eval_str = ""
     if eval_name is None:
-        eval_str = EVAL_MAPPING_DICT[history_eval_name]
+        if history_eval_name in EVAL_MAPPING_DICT:
+            eval_str = EVAL_MAPPING_DICT[history_eval_name]
+        else:
+            eval_str = history_eval_name
     else:
         eval_str = eval_name
     return eval_str
+
+
+def determine_team_mapping_name(info_team: str) -> str:
+    name_str = ""
+    if info_team in TEAM_MAPPING_DICT:
+        name_str = TEAM_MAPPING_DICT[info_team]
+    else:
+        name_str = info_team
+    return name_str
 
 
 def build_new_step_obj(
@@ -289,7 +301,8 @@ def build_history_item(
         eval_name,
         history["info"]["evaluation_name"]
     )
-    history_item["performer"] = TEAM_MAPPING_DICT[history["info"]["team"]]
+    history_item["performer"] = determine_team_mapping_name(
+        history["info"]["team"])
     history_item["name"] = history["info"]["name"]
     history_item["metadata"] = history["info"]["metadata"]
     history_item["fullFilename"] = os.path.splitext(history_file)[0]
