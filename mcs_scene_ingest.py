@@ -328,6 +328,7 @@ def build_history_item(
             number_steps)
         steps.append(new_step)
 
+    history_item["steps"] = steps
     history_item["step_counter"] = number_steps
 
     # Load Scene from Database or File
@@ -350,6 +351,7 @@ def build_history_item(
 
         # TODO: Make sure this was fixed so we no longer need to do
         #   check, might need quaternary type
+        # MCS-578 https://nextcentury.atlassian.net/jira/software/projects/MCS/boards/94?selectedIssue=MCS-578&text=578 # noqa: E501
         if scene["goal"]["sceneInfo"]["tertiaryType"] == "retrieval":
             history_item["category_type"] = scene[
                 "goal"]["sceneInfo"]["name"][:-3]
@@ -404,7 +406,8 @@ def ingest_history_files(
 
         replacementIndex = -1
         for index, item in enumerate(ingest_history):
-            if item["filename"] == history_item["filename"] and history_item[
+            if item["fullFilename"] == history_item[
+                    "fullFilename"] and history_item[
                     "fileTimestamp"] > item["fileTimestamp"]:
                 replacementIndex = index
 

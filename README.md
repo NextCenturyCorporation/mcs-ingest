@@ -6,3 +6,6 @@ python3 mcs_scene_ingest.py --folder ../generated_scenes/eval2/SCENE_HISTORY_OPI
 
 # Example of ingesting a scene file
 python3 mcs_scene_ingest.py --folder ../generated_scenes/intphys_scenes/ --eval_name eval2_intphys_training --type scene
+
+# Unit tests
+To run the unit tests, run the command:  python3 -m unittest
