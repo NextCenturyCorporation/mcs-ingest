@@ -1,13 +1,5 @@
-import argparse
-import cmd
-import os
-import io
-import json
-
-from collections.abc import MutableMapping 
 from pymongo import MongoClient
 from bson.objectid import ObjectId
-import copy
 
 HISTORY_INDEX = "mcs_history"
 SCENE_INDEX = "mcs_scenes"
@@ -21,55 +13,121 @@ EVAL_2_SCENES = "Evaluation 2 Scenes"
 client = MongoClient('mongodb://mongomcs:mongomcspassword@localhost:27017/mcs')
 mongoDB = client['mcs']
 
+
 def update_scene_num_refs_history_eval_3():
     print("Begin Processing " + EVAL_3_RESULTS)
     collection = mongoDB[HISTORY_INDEX]
 
     # rename scene_part_num field to test_num
-    result = collection.update_many({"eval": EVAL_3_RESULTS, "scene_part_num": {"$exists": True}}, {"$rename": {'scene_part_num' : 'test_num'}}, False)
-    print("update_many performed on " + str(result.matched_count) + " documents")
+    result = collection.update_many(
+        {
+            "eval": EVAL_3_RESULTS,
+            "scene_part_num": {"$exists": True}
+        }, {
+            "$rename": {'scene_part_num': 'test_num'}
+        }, False)
+
+    print("update_many performed on " + str(
+        result.matched_count) + " documents")
+
 
 def update_scene_num_refs_history_eval_2():
     print("Begin Processing " + EVAL_2_RESULTS)
     collection = mongoDB[HISTORY_INDEX]
 
-    documents = list(collection.find({"eval": EVAL_2_RESULTS, "scene_num" : {"$exists" : True}, "scene_part_num": {"$exists": True}}).batch_size(1000))
+    documents = list(collection.find(
+        {
+            "eval": EVAL_2_RESULTS,
+            "scene_num": {"$exists": True},
+            "scene_part_num": {"$exists": True}
+        }).batch_size(1000))
+
     print("Found " + str(len(documents)) + " results")
 
     for doc in documents:
 
         test_num = int(doc["scene_num"])
         scene = int(doc["scene_part_num"])
-    
-        result = collection.update_one({"_id": ObjectId(doc["_id"])}, [{"$set": {'scene_num': scene, 'test_num': test_num}}, {"$unset": ['scene_part_num', 'url_string']}], True)
+
+        collection.update_one(
+            {"_id": ObjectId(doc["_id"])}, [
+                {
+                    "$set": {'scene_num': scene, 'test_num': test_num}
+                }, {
+                    "$unset": ['scene_part_num', 'url_string']
+                }
+            ], True)
+
 
 def update_scene_num_refs_scenes_eval_2():
     print("Begin Processing " + EVAL_2_SCENES)
     collection = mongoDB[SCENE_INDEX]
 
-    documents = list(collection.find({"eval": EVAL_2_SCENES, "scene_num" : {"$exists" : True}, "scene_part_num": {"$exists": True}}).batch_size(1000))
+    documents = list(collection.find(
+        {
+            "eval": EVAL_2_SCENES,
+            "scene_num": {"$exists": True},
+            "scene_part_num": {"$exists": True}
+        }).batch_size(1000))
+
     print("Found " + str(len(documents)) + " results")
 
     for doc in documents:
-        
+
         test_num = int(doc["scene_num"])
         scene = int(doc["scene_part_num"])
 
-        result = collection.update_one({"_id": ObjectId(doc["_id"])}, [{"$set": {'scene_num': scene, 'test_num': test_num}}, {"$unset": ['scene_part_num']}], True)
+        collection.update_one(
+            {"_id": ObjectId(doc["_id"])}, [
+                {
+                    "$set": {
+                        'scene_num': scene,
+                        'test_num': test_num
+                    }
+                }, {
+                    "$unset": ['scene_part_num']
+                }
+            ], True)
+
 
 def update_scene_num_refs_scenes_eval_3():
     print("Begin Processing " + EVAL_3_SCENES)
     collection = mongoDB[SCENE_INDEX]
 
-    documents = list(collection.find({"eval": EVAL_3_SCENES, "sequenceNumber" : {"$exists" : True}, "sceneNumber": {"$exists": True}, "goal.sceneInfo.sequenceId": {"$exists": True}}).batch_size(1000))
+    documents = list(collection.find(
+        {
+            "eval": EVAL_3_SCENES,
+            "sequenceNumber": {"$exists": True},
+            "sceneNumber": {"$exists": True},
+            "goal.sceneInfo.sequenceId": {"$exists": True}
+        }).batch_size(1000))
+
     print("Found " + str(len(documents)) + " results")
 
     for doc in documents:
         test_num = doc["sequenceNumber"]
         scene = doc["sceneNumber"]
         hypercubeId = doc["goal"]["sceneInfo"]["sequenceId"]
-    
-        result = collection.update_one({"_id": ObjectId(doc["_id"])}, [{"$set": {'scene_num': scene, 'test_num': test_num, "goal.sceneInfo.hypercubeId": hypercubeId}}, {"$unset": ['sequenceNumber', 'sceneNumber', 'goal.sceneInfo.sequenceId']}], True)
+
+        collection.update_one(
+            {"_id": ObjectId(doc["_id"])},
+            [
+                {
+                    "$set": {
+                        'scene_num': scene,
+                        'test_num': test_num,
+                        "goal.sceneInfo.hypercubeId": hypercubeId
+                    }
+                },
+                {
+                    "$unset": [
+                        'sequenceNumber',
+                        'sceneNumber',
+                        'goal.sceneInfo.sequenceId'
+                    ]
+                }
+            ], True)
+
 
 def update_collection_keys():
     print("Begin Processing collection_keys...")
@@ -80,8 +138,14 @@ def update_collection_keys():
 
     for doc in documents:
         if('scene_part_num' in doc['keys'] and "Results" in doc['name']):
-            result = collection.update_one({"_id": ObjectId(doc["_id"])}, {"$push": {'keys': "test_num"}}, True)
-            result = collection.update_one({"_id": ObjectId(doc["_id"])}, {"$pull": {'keys': "scene_part_num"}}, True)
+            collection.update_one(
+                {"_id": ObjectId(doc["_id"])},
+                {"$push": {'keys': "test_num"}},
+                True)
+            collection.update_one(
+                {"_id": ObjectId(doc["_id"])},
+                {"$pull": {'keys': "scene_part_num"}},
+                True)
         else:
             keys_to_add = []
             keys_to_remove = []
@@ -92,13 +156,12 @@ def update_collection_keys():
             if "scene_part_num" in doc['keys']:
                 keys_to_remove.append("scene_part_num")
 
-
             # add/remove for eval 3+ scenes keys only
             if "3" in doc['name']:
                 # add
                 if "goal.sceneInfo.hypercubeId" not in doc['keys']:
                     keys_to_add.append("goal.sceneInfo.hypercubeId")
-                
+
                 # remove
                 if "goal.sceneInfo.sequenceId" in doc['keys']:
                     keys_to_remove.append("goal.sceneInfo.sequenceId")
@@ -107,8 +170,15 @@ def update_collection_keys():
                 if "sceneNumber" in doc['keys']:
                     keys_to_remove.append("sceneNumber")
 
-            result = collection.update_one({"_id": ObjectId(doc["_id"])}, {"$push": {'keys': { "$each": keys_to_add}}}, True)
-            result = collection.update_one({"_id": ObjectId(doc["_id"])}, {"$pull": {'keys': { "$in": keys_to_remove}}}, True)
+            collection.update_one(
+                {"_id": ObjectId(doc["_id"])},
+                {"$push": {'keys': {"$each": keys_to_add}}},
+                True)
+            collection.update_one(
+                {"_id": ObjectId(doc["_id"])},
+                {"$pull": {'keys': {"$in": keys_to_remove}}},
+                True)
+
 
 def update_mcs_history_keys():
     print("Begin Processing mcs_history_keys...")
@@ -119,8 +189,15 @@ def update_mcs_history_keys():
 
     for doc in documents:
         if "scene_part_num" in doc["keys"]:
-            result = collection.update_one({"_id": ObjectId(doc["_id"])}, {"$push": {'keys': "test_num"}}, True)
-            result = collection.update_one({"_id": ObjectId(doc["_id"])}, {"$pull": {'keys': "scene_part_num"}}, True)
+            collection.update_one(
+                {"_id": ObjectId(doc["_id"])},
+                {"$push": {'keys': "test_num"}},
+                True)
+            collection.update_one(
+                {"_id": ObjectId(doc["_id"])},
+                {"$pull": {'keys': "scene_part_num"}},
+                True)
+
 
 def update_mcs_scenes_keys():
     print("Begin Processing mcs_scenes_keys...")
@@ -149,14 +226,23 @@ def update_mcs_scenes_keys():
         if "sceneNumber" in doc["keys"]:
             keys_to_remove.append("sceneNumber")
 
-        result = collection.update_one({"_id": ObjectId(doc["_id"])}, {"$push": {'keys': { "$each": keys_to_add}}}, True)
-        result = collection.update_one({"_id": ObjectId(doc["_id"])}, {"$pull": {'keys': { "$in": keys_to_remove}}}, True)
-   
+        collection.update_one(
+            {"_id": ObjectId(doc["_id"])},
+            {"$push": {'keys': {"$each": keys_to_add}}},
+            True)
+        collection.update_one(
+            {"_id": ObjectId(doc["_id"])},
+            {"$pull": {'keys': {"$in": keys_to_remove}}},
+            True)
+
+
 def delete_old_saved_query():
     print("Deleting single saved query...")
     collection = mongoDB["savedQueries"]
 
-    results = collection.delete_one({"_id": ObjectId("60008951c9ef6d5e7a77eb65")})
+    collection.delete_one(
+        {"_id": ObjectId("60008951c9ef6d5e7a77eb65")})
+
 
 # one time run script (MCS-520)
 def main():
@@ -169,6 +255,7 @@ def main():
     update_mcs_history_keys()
     update_mcs_scenes_keys()
     delete_old_saved_query()
+
 
 if __name__ == "__main__":
     main()

@@ -13,6 +13,7 @@ s3 = boto3.resource('s3')
 HISTORY_MESSAGE = "history"
 SCENE_MESSAGE = "scene"
 
+
 def process_message(message, message_type):
     message_body = json.loads(message.body)
     for record in message_body["Records"]:
@@ -32,6 +33,7 @@ def process_message(message, message_type):
         # Delete File
         print(f"Deleting {basename}")
         os.remove(basename)
+
 
 def main():
     while True:

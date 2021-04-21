@@ -1,10 +1,3 @@
-import argparse
-import cmd
-import os
-import io
-import json
-
-from collections.abc import MutableMapping 
 from pymongo import MongoClient
 
 HISTORY_INDEX = "mcs_history"
@@ -14,19 +7,22 @@ SCENE_INDEX = "mcs_scenes"
 client = MongoClient('mongodb://mongomcs:mongomcspassword@localhost:27017/mcs')
 mongoDB = client['mcs']
 
+
 def recursive_find_keys(x, keys, append_string):
-    l = list(x.keys())
-    for item in l:
+    key_list = list(x.keys())
+    for item in key_list:
         if isinstance(x[item], dict):
             recursive_find_keys(x[item], keys, append_string + item + ".")
         elif isinstance(x[item], list):
             for arrayItem in x[item]:
                 if isinstance(arrayItem, dict):
-                    recursive_find_keys(arrayItem, keys, append_string + item + ".")
+                    recursive_find_keys(
+                        arrayItem, keys, append_string + item + ".")
                 elif append_string + item not in keys:
-                    keys.append(append_string + item)            
+                    keys.append(append_string + item)
         elif append_string + item not in keys:
             keys.append(append_string + item)
+
 
 def find_collection_keys(index: str, collection_name: str):
     collection = mongoDB[index]
@@ -44,8 +40,10 @@ def find_collection_keys(index: str, collection_name: str):
     keys_dict["keys"] = keys
 
     collection = mongoDB["collection_keys"]
-    result = collection.update_one({"name": collection_name}, {"$set": keys_dict}, True)
+    result = collection.update_one(
+        {"name": collection_name}, {"$set": keys_dict}, True)
     print(result)
+
 
 def main():
     print("Starting Key Processing")
@@ -55,6 +53,7 @@ def main():
     find_collection_keys(SCENE_INDEX, "Evaluation 2 Scenes")
     find_collection_keys(SCENE_INDEX, "Evaluation 3 Scenes")
     find_collection_keys(SCENE_INDEX, "Evaluation 3.5 Scenes")
+
 
 if __name__ == "__main__":
     main()
