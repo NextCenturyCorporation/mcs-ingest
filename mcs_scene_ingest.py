@@ -343,8 +343,13 @@ def build_history_item(
     if scene:
         # Add some basic scene information into history object to make
         #    UI load times faster then having to query scene every time
-        history_item["scene_num"] = scene["scene_num"]
-        history_item["test_num"] = scene["test_num"]
+        if scene_folder is None:
+            history_item["scene_num"] = scene["scene_num"]
+            history_item["test_num"] = scene["test_num"]
+        else:
+            history_item["scene_num"] = scene["sceneNumber"]
+            history_item["test_num"] = scene["hypercubeNumber"]
+
         history_item["scene_goal_id"] = scene["goal"]["sceneInfo"]["id"][0]
         history_item["test_type"] = scene["goal"]["sceneInfo"]["secondaryType"]
         history_item["category"] = scene["goal"]["sceneInfo"]["primaryType"]
