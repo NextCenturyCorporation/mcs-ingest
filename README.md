@@ -48,3 +48,9 @@ python mcs_scene_ingest.py --folder ../MCS/SCENE_HISTORY/  --eval_name eval-test
 
 # Unit tests
 To run the unit tests, run the command:  python3 -m unittest
+
+
+# Running deployment scripts
+* Update the db_version in deployment_script.py to new db version
+* In deployment_script.py call your module and function to update database
+* If the db version is not new, no script will be run
