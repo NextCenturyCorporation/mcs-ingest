@@ -76,7 +76,8 @@ def delete_keys_from_scene(scene, keys) -> dict:
 def ingest_to_mongo(index: str, ingest_files: dict):
     collection = mongoDB[index]
     result = collection.insert_many(ingest_files)
-    print("Inserted {0} out of {1}.  Result:".format(len(result.inserted_ids), len(ingest_files), result))
+    print("Inserted {0} out of {1}.  Result: {2}".format(
+        len(result.inserted_ids), len(ingest_files), result))
 
 
 def find_scene_files(folder: str) -> dict:
@@ -200,7 +201,8 @@ def build_new_step_obj(
     if("output" in step):
         output["return_status"] = step["output"]["return_status"]
         output["reward"] = step["output"]["reward"]
-        output["physics_frames_per_second"] = step["output"]["physics_frames_per_second"]
+        output["physics_frames_per_second"] = step[
+            "output"]["physics_frames_per_second"]
         interactive_reward = output["reward"]
         if(output["reward"] >= (0 - ((number_steps - 1) * 0.001) + 1)):
             interactive_goal_achieved = 1

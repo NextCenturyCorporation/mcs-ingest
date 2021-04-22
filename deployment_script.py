@@ -11,7 +11,8 @@ VERSION_COLLECTION = "mcs_version"
 # Make sure the first two numbers match the current MCS API Release
 db_version = "0.4.1"
 
-def check_version(): 
+
+def check_version():
     collection = mongoDB[VERSION_COLLECTION]
     version_obj = collection.find_one()
     # return true if it a newer db version
