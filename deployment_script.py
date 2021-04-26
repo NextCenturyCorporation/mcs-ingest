@@ -16,10 +16,7 @@ def check_version():
     collection = mongoDB[VERSION_COLLECTION]
     version_obj = collection.find_one()
     # return true if it is a newer db version
-    if db_version > version_obj['version']:
-        return True
-    else:
-        return False
+    return db_version > version_obj['version']
 
 
 def update_db_version():
@@ -33,7 +30,7 @@ def main():
     if(check_version()):
         print("New db version, execute scripts")
         # Place scripts here to run
-        drop_extra_keys_collection.drop_collections()
+        drop_extra_keys_collection.drop_collections(mongoDB)
 
         # Now update db version
         update_db_version()
