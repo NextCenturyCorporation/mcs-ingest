@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-import scripts.drop_extra_keys_collection as drop_extra_keys_collection
+from scripts._0_4_1_drop_extra_keys_collection import drop_collections
 
 # We might want to move mongo user/pass to new file
 client = MongoClient(
@@ -30,10 +30,12 @@ def main():
     if(check_version()):
         print("New db version, execute scripts")
         # Place scripts here to run
-        drop_extra_keys_collection.drop_collections(mongoDB)
+        drop_collections(mongoDB)
 
         # Now update db version
         update_db_version()
+    else:
+        print("Script does not need to run, already updated.")
 
 
 if __name__ == "__main__":
