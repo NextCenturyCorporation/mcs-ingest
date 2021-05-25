@@ -54,3 +54,7 @@ To run the unit tests, run the command:  python3 -m unittest
 * Update the db_version in deployment_script.py to new db version
 * In deployment_script.py call your module and function to update database
 * If the db version is not new, no script will be run
+
+## Acknowledgements
+
+This material is based upon work supported by the Defense Advanced Research Projects Agency (DARPA) and Naval Information Warfare Center, Pacific (NIWC Pacific) under Contract No. N6600119C4030. Any opinions, findings and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the DARPA or NIWC Pacific.
