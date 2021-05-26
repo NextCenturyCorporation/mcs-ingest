@@ -358,12 +358,10 @@ def build_history_item(
         history_item["test_type"] = scene["goal"]["sceneInfo"]["secondaryType"]
         history_item["category"] = scene["goal"]["sceneInfo"]["primaryType"]
 
-        # TODO: Make sure this was fixed so we no longer need to do
-        #   check, might need quaternary type
-        # MCS-578 https://nextcentury.atlassian.net/jira/software/projects/MCS/boards/94?selectedIssue=MCS-578&text=578 # noqa: E501
-        if scene["goal"]["sceneInfo"]["tertiaryType"] == "retrieval":
+        if scene["goal"]["sceneInfo"]["secondaryType"] == "retrieval":
             history_item["category_type"] = scene[
-                "goal"]["sceneInfo"]["name"][:-3]
+                "goal"]["sceneInfo"]["secondaryType"] + "_" + scene[
+                "goal"]["sceneInfo"]["tertiaryType"]
         else:
             history_item["category_type"] = scene[
                 "goal"]["sceneInfo"]["tertiaryType"]
