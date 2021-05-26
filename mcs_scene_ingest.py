@@ -36,6 +36,7 @@ TEAM_MAPPING_DICT = {
 # Convert Eval names used to 'pretty' names for UI
 EVAL_MAPPING_DICT = {
     "eval_3-5": "Evaluation 3.5 Results",
+    "eval_3-75": "Evaluation 3.75 Results",
     "eval_4": "Evaluation 4 Results",
     "eval_5": "Evaluation 5 Results",
     "eval_6": "Evaluation 6 Results",
