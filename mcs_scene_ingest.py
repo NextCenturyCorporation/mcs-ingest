@@ -33,8 +33,8 @@ TEAM_MAPPING_DICT = {
     "baseline": "TA2 Baseline"
 }
 
-# Convert Eval names used to 'pretty' names for UI
-EVAL_MAPPING_DICT = {
+# Convert Eval names used to 'pretty' history record names for UI
+EVAL_HIST_MAPPING_DICT = {
     "eval_3-5": "Evaluation 3.5 Results",
     "eval_3-75": "Evaluation 3.75 Results",
     "eval_4": "Evaluation 4 Results",
@@ -42,6 +42,17 @@ EVAL_MAPPING_DICT = {
     "eval_6": "Evaluation 6 Results",
     "eval_7": "Evaluation 7 Results",
     "eval_8": "Evaluation 8 Results",
+}
+
+# Convert Eval names used to 'pretty' scene record names for UI
+EVAL_SCENE_MAPPING_DICT = {
+    "eval_3-5": "Evaluation 3.5 Scenes",
+    "eval_3-75": "Evaluation 3.75 Scenes",
+    "eval_4": "Evaluation 4 Scenes",
+    "eval_5": "Evaluation 5 Scenes",
+    "eval_6": "Evaluation 6 Scenes",
+    "eval_7": "Evaluation 7 Scenes",
+    "eval_8": "Evaluation 8 Scenes",
 }
 
 # Weight from Design, some plausible scenes are worth more,
@@ -155,17 +166,24 @@ def ingest_scene_files(folder: str, eval_name: str) -> None:
     ingest_to_mongo(SCENE_INDEX, ingest_scenes)
 
 
-def determine_evaluation_name(eval_name: str, history_eval_name: str) -> str:
+def determine_evaluation_hist_name(eval_name: str, history_eval_name: str) -> str:
     eval_str = ""
     if eval_name is None:
-        if history_eval_name in EVAL_MAPPING_DICT:
-            eval_str = EVAL_MAPPING_DICT[history_eval_name]
+        if history_eval_name in EVAL_HIST_MAPPING_DICT:
+            eval_str = EVAL_HIST_MAPPING_DICT[history_eval_name]
         else:
             eval_str = history_eval_name
     else:
         eval_str = eval_name
     return eval_str
 
+def determine_evaluation_scene_name(history_eval_name: str) -> str:
+    eval_str = ""
+    if history_eval_name in EVAL_SCENE_MAPPING_DICT:
+        eval_str = EVAL_SCENE_MAPPING_DICT[history_eval_name]
+    else:
+        eval_str = history_eval_name
+    return eval_str
 
 def determine_team_mapping_name(info_team: str) -> str:
     name_str = ""
@@ -302,7 +320,7 @@ def build_history_item(
     history = load_json_file(folder, history_file)
 
     history_item = {}
-    history_item["eval"] = determine_evaluation_name(
+    history_item["eval"] = determine_evaluation_hist_name(
         eval_name,
         history["info"]["evaluation_name"]
     )
@@ -340,7 +358,10 @@ def build_history_item(
     scene = None
     if scene_folder is None:
         collection = mongoDB[SCENE_INDEX]
-        scene = collection.find_one({"name": history_item["name"]})
+        scene_rec_name = determine_evaluation_scene_name(
+            history["info"]["evaluation_name"]
+        )
+        scene = collection.find_one({"name": history_item["name"], "eval": scene_rec_name})
     else:
         scene = load_json_file(
             scene_folder, history_item["name"] + SCENE_DEBUG_EXTENSION)
