@@ -1,13 +1,3 @@
-from pymongo import MongoClient
-
-HISTORY_INDEX = "mcs_history"
-SCENE_INDEX = "mcs_scenes"
-
-# We might want to move mongo user/pass to new file
-client = MongoClient('mongodb://mongomcs:mongomcspassword@localhost:27017/mcs')
-mongoDB = client['mcs']
-
-
 def recursive_find_keys(x, keys, append_string):
     key_list = list(x.keys())
     for item in key_list:
@@ -24,7 +14,7 @@ def recursive_find_keys(x, keys, append_string):
             keys.append(append_string + item)
 
 
-def find_collection_keys(index: str, collection_name: str):
+def find_collection_keys(index: str, collection_name: str, mongoDB):
     collection = mongoDB[index]
 
     # Loop through documents to generate a keys collection to help
@@ -43,16 +33,3 @@ def find_collection_keys(index: str, collection_name: str):
     result = collection.update_one(
         {"name": collection_name}, {"$set": keys_dict}, True)
     print(result)
-
-
-def main():
-    print("Starting Key Processing")
-    # Example of calling find_collection_keys, we  changed this to
-    #   run automatically but could still be useful for future
-
-    # find_collection_keys(HISTORY_INDEX, "Evaluation 3.5 Results")
-    # find_collection_keys(SCENE_INDEX, "Evaluation 3.5 Scenes")
-
-
-if __name__ == "__main__":
-    main()

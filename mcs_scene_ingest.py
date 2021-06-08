@@ -158,7 +158,7 @@ def automated_scene_ingest_file(file_name: str, folder: str) -> None:
         {"evaluation": scene_item["evaluation"]}).count()
     if collection_count == 1:
         creat_keys_script.find_collection_keys(
-            SCENE_INDEX, scene_item["evaluation"])
+            SCENE_INDEX, scene_item["evaluation"], mongoDB)
 
 
 def ingest_scene_files(folder: str, eval_name: str) -> None:
@@ -436,7 +436,7 @@ def automated_history_ingest_file(history_file: str, folder: str) -> None:
         {"evaluation": history_item["eval"]}).count()
     if collection_count == 1:
         creat_keys_script.find_collection_keys(
-            HISTORY_INDEX, history_item["eval"])
+            HISTORY_INDEX, history_item["eval"], mongoDB)
 
 
 def ingest_history_files(
