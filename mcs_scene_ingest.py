@@ -3,6 +3,7 @@ import os
 import sys
 import argparse
 import io
+import scripts.create_keys_script as creat_keys_script
 
 from collections.abc import MutableMapping
 from pymongo import MongoClient
@@ -152,6 +153,13 @@ def automated_scene_ingest_file(file_name: str, folder: str) -> None:
         print(f"Inserting {scene_item['name']}")
         collection.insert_one(scene_item)
 
+    # Add Keys when a new evluation item is created
+    collection_count = collection.find(
+        {"evaluation": scene_item["evaluation"]}).count()
+    if collection_count == 1:
+        creat_keys_script.find_collection_keys(
+            SCENE_INDEX, scene_item["evaluation"])
+
 
 def ingest_scene_files(folder: str, eval_name: str) -> None:
     # Legacy way of adding scene files from a folder, leaving code
@@ -166,7 +174,8 @@ def ingest_scene_files(folder: str, eval_name: str) -> None:
     ingest_to_mongo(SCENE_INDEX, ingest_scenes)
 
 
-def determine_evaluation_hist_name(eval_name: str, history_eval_name: str) -> str:
+def determine_evaluation_hist_name(
+        eval_name: str, history_eval_name: str) -> str:
     eval_str = ""
     if eval_name is None:
         if history_eval_name in EVAL_HIST_MAPPING_DICT:
@@ -177,6 +186,7 @@ def determine_evaluation_hist_name(eval_name: str, history_eval_name: str) -> st
         eval_str = eval_name
     return eval_str
 
+
 def determine_evaluation_scene_name(history_eval_name: str) -> str:
     eval_str = ""
     if history_eval_name in EVAL_SCENE_MAPPING_DICT:
@@ -184,6 +194,7 @@ def determine_evaluation_scene_name(history_eval_name: str) -> str:
     else:
         eval_str = history_eval_name
     return eval_str
+
 
 def determine_team_mapping_name(info_team: str) -> str:
     name_str = ""
@@ -361,7 +372,8 @@ def build_history_item(
         scene_rec_name = determine_evaluation_scene_name(
             history["info"]["evaluation_name"]
         )
-        scene = collection.find_one({"name": history_item["name"], "eval": scene_rec_name})
+        scene = collection.find_one(
+            {"name": history_item["name"], "eval": scene_rec_name})
     else:
         scene = load_json_file(
             scene_folder, history_item["name"] + SCENE_DEBUG_EXTENSION)
@@ -418,6 +430,13 @@ def automated_history_ingest_file(history_file: str, folder: str) -> None:
             if history_item["fileTimestamp"] > item["fileTimestamp"]:
                 print(f"Updating {history_item['name']}")
                 collection.replace_one({"_id": item["_id"]}, history_item)
+
+    # Add Keys when a new evluation item is created
+    collection_count = collection.find(
+        {"evaluation": history_item["eval"]}).count()
+    if collection_count == 1:
+        creat_keys_script.find_collection_keys(
+            HISTORY_INDEX, history_item["eval"])
 
 
 def ingest_history_files(

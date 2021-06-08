@@ -47,12 +47,11 @@ def find_collection_keys(index: str, collection_name: str):
 
 def main():
     print("Starting Key Processing")
-    find_collection_keys(HISTORY_INDEX, "Evaluation 2 Results")
-    find_collection_keys(HISTORY_INDEX, "Evaluation 3 Results")
-    find_collection_keys(HISTORY_INDEX, "Evaluation 3.5 Results")
-    find_collection_keys(SCENE_INDEX, "Evaluation 2 Scenes")
-    find_collection_keys(SCENE_INDEX, "Evaluation 3 Scenes")
-    find_collection_keys(SCENE_INDEX, "Evaluation 3.5 Scenes")
+    # Example of calling find_collection_keys, we  changed this to
+    #   run automatically but could still be useful for future
+
+    # find_collection_keys(HISTORY_INDEX, "Evaluation 3.5 Results")
+    # find_collection_keys(SCENE_INDEX, "Evaluation 3.5 Scenes")
 
 
 if __name__ == "__main__":

@@ -49,14 +49,14 @@ class TestMcsSceneIngest(unittest.TestCase):
         self.assertEqual(scene.get("sequenceNumber"), None)
         self.assertEqual(scene.get("hypercubeNumber"), None)
 
-    def test_determine_evaluation_name(self):
-        eval_name = mcs_scene_ingest.determine_evaluation_name(
+    def test_ddetermine_evaluation_hist_name(self):
+        eval_name = mcs_scene_ingest.determine_evaluation_hist_name(
             "Eval3", "eval3.5")
         self.assertEqual(eval_name, "Eval3")
-        eval_name = mcs_scene_ingest.determine_evaluation_name(
+        eval_name = mcs_scene_ingest.determine_evaluation_hist_name(
             None, "eval3.5")
         self.assertEqual(eval_name, "eval3.5")
-        eval_name = mcs_scene_ingest.determine_evaluation_name(
+        eval_name = mcs_scene_ingest.determine_evaluation_hist_name(
             None, "eval_3-5")
         self.assertEqual(eval_name, "Evaluation 3.5 Results")
 
