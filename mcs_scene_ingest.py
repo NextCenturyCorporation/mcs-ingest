@@ -438,7 +438,7 @@ def automated_history_ingest_file(history_file: str, folder: str) -> None:
 
     # Add Keys when a new evluation item is created
     collection_count = collection.find(
-        {"evaluation": history_item["eval"]}).count()
+        {"eval": history_item["eval"]}).count()
     if collection_count == 1:
         creat_keys_script.find_collection_keys(
             HISTORY_INDEX, history_item["eval"], mongoDB)
