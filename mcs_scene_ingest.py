@@ -217,7 +217,10 @@ def build_new_step_obj(
     new_step["classification"] = step["classification"]
     new_step["confidence"] = step["confidence"]
     new_step["internal_state"] = step["internal_state"]
-    new_step["delta_time_millis"] = step["delta_time_millis"]
+
+    # Added if check because key error in 3.75 and earlier
+    if "delta_time_millis" in step:
+        new_step["delta_time_millis"] = step["delta_time_millis"]
 
     # If too many items in violations_xy_list, take the first 50
     if(step["violations_xy_list"] and isinstance(
