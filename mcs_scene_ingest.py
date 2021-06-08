@@ -218,7 +218,7 @@ def build_new_step_obj(
     new_step["confidence"] = step["confidence"]
     new_step["internal_state"] = step["internal_state"]
 
-    # Added if check because key error in 3.75 and earlier
+    # TODO: Added if check because key error in 3.75 and earlier
     if "delta_time_millis" in step:
         new_step["delta_time_millis"] = step["delta_time_millis"]
 
@@ -235,8 +235,10 @@ def build_new_step_obj(
     if("output" in step):
         output["return_status"] = step["output"]["return_status"]
         output["reward"] = step["output"]["reward"]
-        output["physics_frames_per_second"] = step[
-            "output"]["physics_frames_per_second"]
+        # TODO: Added if check because key error in 3.75 and earlier
+        if "physics_frames_per_second" in step["output"]:
+            output["physics_frames_per_second"] = step[
+                "output"]["physics_frames_per_second"]
         interactive_reward = output["reward"]
         if(output["reward"] >= (0 - ((number_steps - 1) * 0.001) + 1)):
             interactive_goal_achieved = 1
