@@ -475,7 +475,7 @@ def ingest_history_files(
     ingest_to_mongo(HISTORY_INDEX, ingest_history)
 
     create_collection_keys.find_collection_keys(
-            SCENE_INDEX, eval_name, mongoDB)
+            HISTORY_INDEX, eval_name, mongoDB)
 
 
 def main(argv) -> None:
