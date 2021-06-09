@@ -3,7 +3,7 @@ import os
 import sys
 import argparse
 import io
-import scripts.create_keys_script as creat_keys_script
+import create_collection_keys
 
 from collections.abc import MutableMapping
 from pymongo import MongoClient
@@ -157,7 +157,7 @@ def automated_scene_ingest_file(file_name: str, folder: str) -> None:
     collection_count = collection.find(
         {"evaluation": scene_item["evaluation"]}).count()
     if collection_count == 1:
-        creat_keys_script.find_collection_keys(
+        create_collection_keys.find_collection_keys(
             SCENE_INDEX, scene_item["evaluation"], mongoDB)
 
 
@@ -440,7 +440,7 @@ def automated_history_ingest_file(history_file: str, folder: str) -> None:
     collection_count = collection.find(
         {"eval": history_item["eval"]}).count()
     if collection_count == 1:
-        creat_keys_script.find_collection_keys(
+        create_collection_keys.find_collection_keys(
             HISTORY_INDEX, history_item["eval"], mongoDB)
 
 
