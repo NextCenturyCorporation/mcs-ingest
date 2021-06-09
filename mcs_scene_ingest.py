@@ -3,6 +3,7 @@ import os
 import sys
 import argparse
 import io
+import create_collection_keys
 
 from collections.abc import MutableMapping
 from pymongo import MongoClient
@@ -152,6 +153,13 @@ def automated_scene_ingest_file(file_name: str, folder: str) -> None:
         print(f"Inserting {scene_item['name']}")
         collection.insert_one(scene_item)
 
+    # Add Keys when a new evluation item is created
+    collection_count = collection.find(
+        {"evaluation": scene_item["evaluation"]}).count()
+    if collection_count == 1:
+        create_collection_keys.find_collection_keys(
+            SCENE_INDEX, scene_item["evaluation"], mongoDB)
+
 
 def ingest_scene_files(folder: str, eval_name: str) -> None:
     # Legacy way of adding scene files from a folder, leaving code
@@ -165,8 +173,12 @@ def ingest_scene_files(folder: str, eval_name: str) -> None:
 
     ingest_to_mongo(SCENE_INDEX, ingest_scenes)
 
+    create_collection_keys.find_collection_keys(
+            SCENE_INDEX, eval_name, mongoDB)
 
-def determine_evaluation_hist_name(eval_name: str, history_eval_name: str) -> str:
+
+def determine_evaluation_hist_name(
+        eval_name: str, history_eval_name: str) -> str:
     eval_str = ""
     if eval_name is None:
         if history_eval_name in EVAL_HIST_MAPPING_DICT:
@@ -177,6 +189,7 @@ def determine_evaluation_hist_name(eval_name: str, history_eval_name: str) -> st
         eval_str = eval_name
     return eval_str
 
+
 def determine_evaluation_scene_name(history_eval_name: str) -> str:
     eval_str = ""
     if history_eval_name in EVAL_SCENE_MAPPING_DICT:
@@ -184,6 +197,7 @@ def determine_evaluation_scene_name(history_eval_name: str) -> str:
     else:
         eval_str = history_eval_name
     return eval_str
+
 
 def determine_team_mapping_name(info_team: str) -> str:
     name_str = ""
@@ -206,7 +220,10 @@ def build_new_step_obj(
     new_step["classification"] = step["classification"]
     new_step["confidence"] = step["confidence"]
     new_step["internal_state"] = step["internal_state"]
-    new_step["delta_time_millis"] = step["delta_time_millis"]
+
+    # TODO: Added if check because key error in 3.75 and earlier
+    if "delta_time_millis" in step:
+        new_step["delta_time_millis"] = step["delta_time_millis"]
 
     # If too many items in violations_xy_list, take the first 50
     if(step["violations_xy_list"] and isinstance(
@@ -221,8 +238,10 @@ def build_new_step_obj(
     if("output" in step):
         output["return_status"] = step["output"]["return_status"]
         output["reward"] = step["output"]["reward"]
-        output["physics_frames_per_second"] = step[
-            "output"]["physics_frames_per_second"]
+        # TODO: Added if check because key error in 3.75 and earlier
+        if "physics_frames_per_second" in step["output"]:
+            output["physics_frames_per_second"] = step[
+                "output"]["physics_frames_per_second"]
         interactive_reward = output["reward"]
         if(output["reward"] >= (0 - ((number_steps - 1) * 0.001) + 1)):
             interactive_goal_achieved = 1
@@ -361,7 +380,8 @@ def build_history_item(
         scene_rec_name = determine_evaluation_scene_name(
             history["info"]["evaluation_name"]
         )
-        scene = collection.find_one({"name": history_item["name"], "eval": scene_rec_name})
+        scene = collection.find_one(
+            {"name": history_item["name"], "eval": scene_rec_name})
     else:
         scene = load_json_file(
             scene_folder, history_item["name"] + SCENE_DEBUG_EXTENSION)
@@ -419,6 +439,13 @@ def automated_history_ingest_file(history_file: str, folder: str) -> None:
                 print(f"Updating {history_item['name']}")
                 collection.replace_one({"_id": item["_id"]}, history_item)
 
+    # Add Keys when a new evluation item is created
+    collection_count = collection.find(
+        {"eval": history_item["eval"]}).count()
+    if collection_count == 1:
+        create_collection_keys.find_collection_keys(
+            HISTORY_INDEX, history_item["eval"], mongoDB)
+
 
 def ingest_history_files(
         folder: str,
@@ -446,6 +473,9 @@ def ingest_history_files(
             ingest_history[replacementIndex] = history_item
 
     ingest_to_mongo(HISTORY_INDEX, ingest_history)
+
+    create_collection_keys.find_collection_keys(
+            HISTORY_INDEX, eval_name, mongoDB)
 
 
 def main(argv) -> None:
