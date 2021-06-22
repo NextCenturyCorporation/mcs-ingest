@@ -11,16 +11,18 @@ class TestMcsSceneIngest(unittest.TestCase):
         scene_file = mcs_scene_ingest.load_json_file(
             "tests", TEST_SCENE_FILE_NAME)
         self.assertEqual(scene_file["name"], "juliett_0001_01")
-        self.assertEqual(scene_file["training"], False)
+        self.assertEqual(scene_file["debug"]["training"], False)
 
     def test_delete_keys_from_scene(self):
         test_scene = {
             "name": "test",
             "version": 2,
             "image": "image_to_delete",
-            "sequenceNumber": 1,
-            "hypercubeNumber": 5,
-            "sceneNumber": 100
+            "debug": {
+                "sequenceNumber": 1,
+                "hypercubeNumber": 5,
+                "sceneNumber": 100
+            }
         }
 
         scene_removed_keys = mcs_scene_ingest.delete_keys_from_scene(
@@ -28,9 +30,7 @@ class TestMcsSceneIngest(unittest.TestCase):
         self.assertEqual(scene_removed_keys["name"], "test")
         self.assertEqual(scene_removed_keys["version"], 2)
         self.assertEqual(scene_removed_keys.get("image"), None)
-        self.assertEqual(scene_removed_keys.get("sequenceNumber"), None)
-        self.assertEqual(scene_removed_keys.get("hypercubeNumber"), None)
-        self.assertEqual(scene_removed_keys.get("sceneNumber"), None)
+        self.assertEqual(scene_removed_keys.get("debug"), None)
 
     def test_find_scene_files(self):
         scene_files = mcs_scene_ingest.find_scene_files("tests")
@@ -46,8 +46,7 @@ class TestMcsSceneIngest(unittest.TestCase):
             TEST_SCENE_FILE_NAME, "tests", None)
         self.assertEqual(scene["eval"], "Evaluation 3.5 Scenes")
         self.assertEqual(scene["test_num"], 1)
-        self.assertEqual(scene.get("sequenceNumber"), None)
-        self.assertEqual(scene.get("hypercubeNumber"), None)
+        self.assertEqual(scene.get("debug"), None)
 
     def test_determine_evaluation_hist_name(self):
         eval_name = mcs_scene_ingest.determine_evaluation_hist_name(
