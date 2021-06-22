@@ -4,12 +4,6 @@
   "ceilingMaterial": "AI2-THOR/Materials/Ceramics/GREYGRANITE",
   "floorMaterial": "AI2-THOR/Materials/Wood/LightWoodCounters 1",
   "wallMaterial": "AI2-THOR/Materials/Walls/YellowDrywall",
-  "floorColors": [
-    "brown"
-  ],
-  "wallColors": [
-    "yellow"
-  ],
   "performerStart": {
     "position": {
       "x": 0,
@@ -24,34 +18,43 @@
     {
       "id": "e5f4d8ac-a80a-420d-b888-c3c18d47ddc5",
       "type": "letter_l_narrow",
-      "role": "target",
-      "info": ["medium","heavy","green","wood","letter l","medium heavy","medium wood","medium green","medium letter l","heavy wood","heavy green","heavy letter l","wood green","wood letter l","green letter l","medium heavy green wood letter l","target"],
       "mass": 4.5,
-      "positionY": 0.45,
       "salientMaterials": ["wood"],
-      "color": [
-        "green"
-      ],
-      "shape": [
-        "letter l"
-      ],
-      "size": "medium",
-      "dimensions": {
-        "x": 0.45,
-        "y": 0.9,
-        "z": 0.45
+      "debug": {
+          "role": "target",
+          "info": ["medium","heavy","green","wood","letter l","medium heavy","medium wood","medium green","medium letter l","heavy wood","heavy green","heavy letter l","wood green","wood letter l","green letter l","medium heavy green wood letter l","target"],
+          "positionY": 0.45,
+          "color": [
+            "green"
+          ],
+          "shape": [
+            "letter l"
+          ],
+          "size": "medium",
+          "dimensions": {
+            "x": 0.45,
+            "y": 0.9,
+            "z": 0.45
+          },
+          "untrainedCategory": false,
+          "untrainedColor": false,
+          "untrainedCombination": false,
+          "untrainedShape": false,
+          "untrainedSize": false,
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "materialCategory": [
+            "intuitive_physics_wood"
+          ],
+          "weight": "heavy",
+          "goalString": "medium heavy green wood letter l",
+          "enclosedAreas": [],
+          "isTarget": true
       },
-      "untrainedCategory": false,
-      "untrainedColor": false,
-      "untrainedCombination": false,
-      "untrainedShape": false,
-      "untrainedSize": false,
       "moveable": true,
-      "offset": {
-        "x": 0,
-        "y": 0,
-        "z": 0
-      },
       "shows": [
         {
           "position": {
@@ -94,13 +97,7 @@
           ]
         }
       ],
-      "materialCategory": [
-        "intuitive_physics_wood"
-      ],
       "materials": ["UnityAssetStore/Kindergarten_Interior/Models/Materials/color wood 3"],
-      "weight": "heavy",
-      "goalString": "medium heavy green wood letter l",
-      "enclosedAreas": [],
       "moves": [
         {
           "stepBegin": 2,
@@ -117,30 +114,31 @@
         {
           "stepBegin": 29
         }
-      ],
-      "isTarget": true
+      ]
     },
     {
       "id": "pole_b51f7908-9dc8-42a1-a6a9-c59bc41e35b9",
-      "role": "structural",
-      "color": [
-        "magenta",
-        "cyan"
-      ],
-      "info": [],
-      "shape": [
-        "pole"
-      ],
-      "size": "medium",
       "type": "cylinder",
       "kinematic": true,
       "structure": true,
       "mass": 50,
       "materials": ["Custom/Materials/Magenta"],
-      "dimensions": {
-        "x": 0.2,
-        "y": 10,
-        "z": 0.2
+      "debug": {
+          "role": "structural",
+          "color": [
+            "magenta",
+            "cyan"
+          ],
+          "info": [],
+          "shape": [
+            "pole"
+          ],
+          "size": "medium",
+          "dimensions": {
+            "x": 0.2,
+            "y": 10,
+            "z": 0.2
+          }
       },
       "shows": [
         {
@@ -190,34 +188,52 @@
     {
       "id": "a6a54a01-a148-49d4-91ab-508017c8b9b8",
       "type": "cube",
-      "role": "structural",
-      "info": ["medium","massive","red","rectangular prism","medium massive","medium red","medium rectangular prism","massive red","massive rectangular prism","red rectangular prism","medium massive red rectangular prism","structural"],
       "mass": 115,
-      "positionY": 0.7,
       "salientMaterials": [],
-      "color": [
-        "red"
-      ],
-      "shape": [
-        "rectangular prism"
-      ],
-      "size": "medium",
-      "dimensions": {
-        "x": 0.9,
-        "y": 1.4,
-        "z": 1.0
-      },
-      "untrainedCategory": false,
-      "untrainedColor": false,
-      "untrainedCombination": false,
-      "untrainedShape": false,
-      "untrainedSize": false,
       "kinematic": true,
       "structure": true,
-      "offset": {
-        "x": 0,
-        "y": 0,
-        "z": 0
+      "debug": {
+          "role": "structural",
+          "info": ["medium","massive","red","rectangular prism","medium massive","medium red","medium rectangular prism","massive red","massive rectangular prism","red rectangular prism","medium massive red rectangular prism","structural"],
+          "positionY": 0.7,
+          "color": [
+            "red"
+          ],
+          "shape": [
+            "rectangular prism"
+          ],
+          "size": "medium",
+          "dimensions": {
+            "x": 0.9,
+            "y": 1.4,
+            "z": 1.0
+          },
+          "untrainedCategory": false,
+          "untrainedColor": false,
+          "untrainedCombination": false,
+          "untrainedShape": false,
+          "untrainedSize": false,
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "materialCategory": [],
+          "weight": "massive",
+          "goalString": "medium massive red rectangular prism",
+          "enclosedAreas": [],
+          "isAgent": false,
+          "isConfusor": false,
+          "isContainer": false,
+          "isContext": false,
+          "isHome": false,
+          "isIntuitivePhysicsOccluder": false,
+          "isNonTarget": false,
+          "isObstacle": false,
+          "isOccluder": false,
+          "isStructural": true,
+          "isTarget": false,
+          "isWall": false
       },
       "shows": [
         {
@@ -239,55 +255,57 @@
           }
         }
       ],
-      "materialCategory": [],
-      "materials": ["AI2-THOR/Materials/Ceramics/RedBrick"],
-      "weight": "massive",
-      "goalString": "medium massive red rectangular prism",
-      "enclosedAreas": [],
-      "isAgent": false,
-      "isConfusor": false,
-      "isContainer": false,
-      "isContext": false,
-      "isHome": false,
-      "isIntuitivePhysicsOccluder": false,
-      "isNonTarget": false,
-      "isObstacle": false,
-      "isOccluder": false,
-      "isStructural": true,
-      "isTarget": false,
-      "isWall": false
+      "materials": ["AI2-THOR/Materials/Ceramics/RedBrick"]
     },
     {
       "id": "invisible_support",
       "type": "cube",
-      "role": "structural",
-      "info": ["medium","massive","red","rectangular prism","medium massive","medium red","medium rectangular prism","massive red","massive rectangular prism","red rectangular prism","medium massive red rectangular prism","structural"],
       "mass": 115,
-      "positionY": 0.7,
       "salientMaterials": [],
-      "color": [
-        "red"
-      ],
-      "shape": [
-        "rectangular prism"
-      ],
-      "size": "medium",
-      "dimensions": {
-        "x": 0.9,
-        "y": 1.0,
-        "z": 1.0
-      },
-      "untrainedCategory": false,
-      "untrainedColor": false,
-      "untrainedCombination": false,
-      "untrainedShape": false,
-      "untrainedSize": false,
       "kinematic": true,
       "structure": true,
-      "offset": {
-        "x": 0,
-        "y": 0,
-        "z": 0
+      "debug": {
+          "role": "structural",
+          "info": ["medium","massive","red","rectangular prism","medium massive","medium red","medium rectangular prism","massive red","massive rectangular prism","red rectangular prism","medium massive red rectangular prism","structural"],
+          "positionY": 0.7,
+          "color": [
+            "red"
+          ],
+          "shape": [
+            "rectangular prism"
+          ],
+          "size": "medium",
+          "dimensions": {
+            "x": 0.9,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "untrainedCategory": false,
+          "untrainedColor": false,
+          "untrainedCombination": false,
+          "untrainedShape": false,
+          "untrainedSize": false,
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "materialCategory": [],
+          "weight": "massive",
+          "goalString": "medium massive red rectangular prism",
+          "enclosedAreas": [],
+          "isAgent": false,
+          "isConfusor": false,
+          "isContainer": false,
+          "isContext": false,
+          "isHome": false,
+          "isIntuitivePhysicsOccluder": false,
+          "isNonTarget": false,
+          "isObstacle": false,
+          "isOccluder": false,
+          "isStructural": true,
+          "isTarget": false,
+          "isWall": false
       },
       "shows": [
         {
@@ -309,23 +327,7 @@
           }
         }
       ],
-      "materialCategory": [],
       "materials": ["AI2-THOR/Materials/Ceramics/RedBrick"],
-      "weight": "massive",
-      "goalString": "medium massive red rectangular prism",
-      "enclosedAreas": [],
-      "isAgent": false,
-      "isConfusor": false,
-      "isContainer": false,
-      "isContext": false,
-      "isHome": false,
-      "isIntuitivePhysicsOccluder": false,
-      "isNonTarget": false,
-      "isObstacle": false,
-      "isOccluder": false,
-      "isStructural": true,
-      "isTarget": false,
-      "isWall": false,
       "shrouds": [
         {
           "stepBegin": 0,
@@ -729,10 +731,18 @@
       ]
     }
   },
-  "evaluationOnly": true,
   "intuitivePhysics": true,
-  "hypercubeNumber": 1,
-  "sceneNumber": 1,
-  "evaluation": "Evaluation 3.5 Scenes",
-  "training": false
+  "debug": {
+      "floorColors": [
+        "brown"
+      ],
+      "wallColors": [
+        "yellow"
+      ],
+      "evaluationOnly": true,
+      "hypercubeNumber": 1,
+      "sceneNumber": 1,
+      "evaluation": "Evaluation 3.5 Scenes",
+      "training": false
+  }
 }
