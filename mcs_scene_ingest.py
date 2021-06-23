@@ -297,10 +297,11 @@ def process_score(
                 "goal"]["answer"]["choice"] or "expected" == scene[
                     "goal"]["answer"]["choice"]) else 0
         else:
+            # Eval 2 backwards compatiblity
             history_item["score"] = {}
             history_item["score"]["score"] = -1
             history_item["score"]["ground_truth"] = 1 if "plausible" == scene[
-                "goal"]["answer"]["choice"] else 0
+                "answer"]["choice"] else 0
 
     # Psychologists wanted to see a definitive answer of correctness
     if history_item["score"]["score"] == 1:
