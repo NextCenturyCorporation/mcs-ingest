@@ -18,9 +18,7 @@ mongoDB = client['mcs']
 #    that we want to just map the fields we want to the schema
 KEYS_TO_DELETE = [
     'image',
-    'sequenceNumber',
-    'hypercubeNumber',
-    'sceneNumber'
+    'debug'
 ]
 
 SCENE_INDEX = "mcs_scenes"
@@ -114,16 +112,16 @@ def build_scene_item(file_name: str, folder: str, eval_name: str) -> dict:
     scene = load_json_file(folder, file_name)
 
     if eval_name is None:
-        scene["eval"] = scene["evaluation"]
-        eval_name = scene["evaluation"]
+        scene["eval"] = scene["debug"]["evaluation"]
+        eval_name = scene["debug"]["evaluation"]
     else:
         scene["eval"] = eval_name
 
-    scene["scene_num"] = scene["sceneNumber"]
-    if "sequenceNumber" in scene:
-        scene["test_num"] = scene["sequenceNumber"]
+    scene["scene_num"] = scene["debug"]["sceneNumber"]
+    if "sequenceNumber" in scene["debug"]:
+        scene["test_num"] = scene["debug"]["sequenceNumber"]
     else:
-        scene["test_num"] = scene["hypercubeNumber"]
+        scene["test_num"] = scene["debug"]["hypercubeNumber"]
 
     if "sequenceId" in scene["goal"]["sceneInfo"]:
         scene["goal"]["sceneInfo"]["hypercubeId"] = scene["goal"][
@@ -143,7 +141,7 @@ def automated_scene_ingest_file(file_name: str, folder: str) -> None:
     check_exists = collection.find(
         {
             "name": scene_item["name"],
-            "evaluation": scene_item["evaluation"]
+            "evaluation": scene_item["debug"]["evaluation"]
         }
     )
 
@@ -299,6 +297,7 @@ def process_score(
                 "goal"]["answer"]["choice"] or "expected" == scene[
                     "goal"]["answer"]["choice"]) else 0
         else:
+            # Eval 2 backwards compatiblity
             history_item["score"] = {}
             history_item["score"]["score"] = -1
             history_item["score"]["ground_truth"] = 1 if "plausible" == scene[
@@ -393,8 +392,8 @@ def build_history_item(
             history_item["scene_num"] = scene["scene_num"]
             history_item["test_num"] = scene["test_num"]
         else:
-            history_item["scene_num"] = scene["sceneNumber"]
-            history_item["test_num"] = scene["hypercubeNumber"]
+            history_item["scene_num"] = scene["debug"]["sceneNumber"]
+            history_item["test_num"] = scene["debug"]["hypercubeNumber"]
 
         history_item["scene_goal_id"] = scene["goal"]["sceneInfo"]["id"][0]
         history_item["test_type"] = scene["goal"]["sceneInfo"]["secondaryType"]

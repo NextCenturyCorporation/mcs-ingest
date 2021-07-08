@@ -1,7 +1,20 @@
 # mcs-ingest
-Ingest data into Elasticsearch for MCS
 
-# Setup
+Ingest data into MongoDB for MCS
+
+# Mongo Setup
+
+## Standalone
+
+See the official MongoDB installation page here: https://docs.mongodb.com/manual/installation/
+
+Change each instantiation of the MongoClient in our Python code to: `MongoClient('mongodb://localhost:27017/mcs')`
+
+## With the MCS UI
+
+See the mcs-ui README here: https://github.com/NextCenturyCorporation/mcs-ui/blob/master/README.md
+
+# Python Setup
 
 ## Using python virtual environment:
 
