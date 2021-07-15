@@ -28,9 +28,11 @@ HISTORY_INDEX = "mcs_history"
 
 # Convert names used in config to 'pretty' names for UI
 TEAM_MAPPING_DICT = {
-    "mess": "MESS-UCBerkeley",
+    "mess": "MESS",
+    # Leaving the mit flag for backwards compatibility for now.
     "mit": "IBM-MIT-Harvard-Stanford",
-    "opics": "OPICS (OSU, UU, NYU)",
+    "cora": "CORA",
+    "opics": "OPICS",
     "baseline": "TA2 Baseline"
 }
 
@@ -204,7 +206,8 @@ def determine_team_mapping_name(info_team: str) -> str:
     if info_team in TEAM_MAPPING_DICT:
         name_str = TEAM_MAPPING_DICT[info_team]
     else:
-        name_str = info_team
+        # Add code to convert something like mess2 to MESS2
+        name_str = info_team.upper()
     return name_str
 
 
