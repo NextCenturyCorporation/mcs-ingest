@@ -61,7 +61,7 @@ class TestMcsSceneIngest(unittest.TestCase):
 
     def test_determine_team_mapping_name(self):
         team_name = mcs_scene_ingest.determine_team_mapping_name("ibm")
-        self.assertEqual(team_name, "ibm")
+        self.assertEqual(team_name, "IBM")
         team_name = mcs_scene_ingest.determine_team_mapping_name("mit")
         self.assertEqual(team_name, "IBM-MIT-Harvard-Stanford")
 
