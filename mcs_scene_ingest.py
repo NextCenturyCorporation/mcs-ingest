@@ -174,7 +174,7 @@ def ingest_scene_files(folder: str, eval_name: str) -> None:
     ingest_to_mongo(SCENE_INDEX, ingest_scenes)
 
     create_collection_keys.find_collection_keys(
-            SCENE_INDEX, eval_name, mongoDB)
+        SCENE_INDEX, eval_name, mongoDB)
 
 
 def determine_evaluation_hist_name(
@@ -477,7 +477,7 @@ def ingest_history_files(
     ingest_to_mongo(HISTORY_INDEX, ingest_history)
 
     create_collection_keys.find_collection_keys(
-            HISTORY_INDEX, eval_name, mongoDB)
+        HISTORY_INDEX, eval_name, mongoDB)
 
 
 def main(argv) -> None:
