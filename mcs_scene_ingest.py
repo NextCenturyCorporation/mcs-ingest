@@ -26,11 +26,9 @@ HISTORY_INDEX = "mcs_history"
 
 # Convert names used in config to 'pretty' names for UI
 TEAM_MAPPING_DICT = {
-    "mess": "MESS",
-    # Leaving the mit flag for backwards compatibility for now.
+    "mess": "MESS-UCBerkeley",
     "mit": "IBM-MIT-Harvard-Stanford",
-    "cora": "CORA",
-    "opics": "OPICS",
+    "opics": "OPICS (OSU, UU, NYU)",
     "baseline": "TA2 Baseline"
 }
 
@@ -174,7 +172,7 @@ def ingest_scene_files(folder: str, eval_name: str) -> None:
     ingest_to_mongo(SCENE_INDEX, ingest_scenes)
 
     create_collection_keys.find_collection_keys(
-        SCENE_INDEX, eval_name, mongoDB)
+            SCENE_INDEX, eval_name, mongoDB)
 
 
 def determine_evaluation_hist_name(
@@ -204,8 +202,7 @@ def determine_team_mapping_name(info_team: str) -> str:
     if info_team in TEAM_MAPPING_DICT:
         name_str = TEAM_MAPPING_DICT[info_team]
     else:
-        # Add code to convert something like mess2 to MESS2
-        name_str = info_team.upper()
+        name_str = info_team
     return name_str
 
 
@@ -477,7 +474,7 @@ def ingest_history_files(
     ingest_to_mongo(HISTORY_INDEX, ingest_history)
 
     create_collection_keys.find_collection_keys(
-        HISTORY_INDEX, eval_name, mongoDB)
+            HISTORY_INDEX, eval_name, mongoDB)
 
 
 def main(argv) -> None:
