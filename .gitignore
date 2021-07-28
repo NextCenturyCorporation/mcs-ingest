@@ -1,4 +1,16 @@
-__pycache__
+
 eval1/ground_truth.txt
 eval1/submission*
 .DS_Store
+
+# Compiled 
+**/__pycache__/
+
+# Debug and data output
+**/SCENE_HISTORY
+**/testdata
+
+# IDE and venv files
+**/.idea
+**/venv
+
