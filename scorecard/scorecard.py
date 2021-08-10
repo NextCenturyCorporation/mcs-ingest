@@ -34,6 +34,12 @@ class GridHistory:
                 return True
         return False
 
+    def any_visits(self):
+        size_of_stepnums = len(self.stepnums)
+        if size_of_stepnums == 0:
+            return False
+        return True
+
 class Scorecard:
     """
     Scorecard calculates and holds information on several measures of performance for an agent moving
@@ -69,25 +75,64 @@ class Scorecard:
         loc = single_step['output']['position']
         old_x, old_z = self.get_grid_by_location(loc['x'], loc['z'])
 
+        previous_revisit = False
+
         for single_step in steps_list:
             step_num+= 1
             loc = single_step['output']['position']
-            grid_x, grid_z = self.get_grid_by_location(loc['x'], loc['z'])
-            # print(f"Step value: {single_step['step']}  Location is {loc}.    Grid loc is {grid_x} {grid_z}")
+            direction = single_step['output']['rotation']
 
+            grid_x, grid_z = self.get_grid_by_location(loc['x'], loc['z'])
             grid_hist = self.grid[grid_x][grid_z]
-            grid_hist.add(step_num, single_step['output']['rotation'])
+            print(f"Step num {step_num}  Location is {loc}.  Grid loc is {grid_x} {grid_z}")
+
+            # ---------------------------------
+            # Determine if this is a revisit
+            # ---------------------------------
+            # If never been there, then not a revisit, and no longer in revisiting mode
+            if not grid_hist.any_visits():
+                print("never visited")
+                grid_hist.add(step_num, direction)
+                old_x, old_z = grid_x, grid_z
+                previous_revisit = False
+                continue
 
             # If we did not change grid location (for example, change tilt, rotate, etc), do not count
             if old_x == grid_x and old_z == grid_z:
+                print("didn't change location")
+                previous_revisit = False
+                old_x, old_z = grid_x, grid_z
+                grid_hist.add(step_num, direction)
                 continue
 
+            # See if ever been in this direction before
+            if not grid_hist.seen_before(step_num, direction):
+                print("visited but not this direction")
+                grid_hist.add(step_num, direction)
+                old_x, old_z = grid_x, grid_z
+                previous_revisit = False
+                continue
+
+            # If previous step was a revisit, don't mark this one, but still in revisiting mode
+            if previous_revisit:
+                print("visited and this direction, but in revisiting mode")
+                grid_hist.add(step_num, direction)
+                old_x, old_z = grid_x, grid_z
+                continue
+
+
+            # At this point, we just moved to a place, we have already been there, we are facing
+            # in the same direction as before, and
+            # previous_revisit==False (i.e. we are not in revisiting mode)
+            # So, we are revisiting
+            print("revisiting")
+            previous_revisit = True
             self.grid_counts[grid_x, grid_z] += 1
             old_x, old_z = grid_x, grid_z
 
         # Ignore all the grid cells with 1's or 0's, by subtracting 1 and making 0 the minimum.
-        self.grid_counts -= 1
-        self.grid_counts = np.clip(self.grid_counts, 0, None)
+        # self.grid_counts -= 1
+        # self.grid_counts = np.clip(self.grid_counts, 0, None)
         self.revisits = self.grid_counts.sum()
 
         self.print_grid()
