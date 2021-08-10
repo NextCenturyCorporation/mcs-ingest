@@ -20,19 +20,24 @@ The actions that are counted (as of Eval 4 plan):
 * Looking into the same container repeatedly
   * If the AI system attempts the same action from a new position, this will not be considered a repeated action
 
-Some of these are mathematically vague;  the space that the agent moves in is continous, 
+Some of these are mathematically vague;  for example, the space that the agent moves in is continous, 
 so 'revisit' needs to have a particular distance.  Below, we discuss the way to count them. 
 
 ## Revisiting parts of the Room
 
 Algorithm:
-* Divide room (10m x 10m) into a grid of X size. 
-* Count the number of times that the agent enters grid squares.
+* Divide room (10m x 10m) into a grid of X size.  Try 0.5 m
+* Count the number of times that the agent enters a 
+grid square while facing in the same direction as a 
+previous time they were in that grid square
+* If paths cross while facing in different directions, it does not count as a revist
+* If the actor rotates or does not move (PASS), it does not count
+  * Note that this means that if the actor spins in a circle and then passes over 
+    that location in any direction later, it will count as a revist
 * Note:  if agent goes from point A to point B twice, this can result in many overlaps.
-  * Perhaps they should count as one.  
-  * Possibly solve by only counting the first in a series of revisits.  
-  
-   
+  * They only count as one.  
+  * Implement this as only counting the first in a series of revisits.  
+     
 
 
 

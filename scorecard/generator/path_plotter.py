@@ -1,3 +1,9 @@
+#
+# path_plotter plots the path of an actor in the room, so we can visualize it
+#
+# It is based on machine_common_sense.plotter.py
+#
+
 import io
 import math
 
@@ -33,7 +39,7 @@ class Object(NamedTuple):
     bounds: list
 
 
-class LocalTopDownPlotter():
+class PathPlotter():
     ROBOT_PLOT_WIDTH = 0.02
     ROBOT_PLOT_LABEL = "robot"
     ROBOT_COLOR = 'xkcd:gray'
@@ -127,9 +133,9 @@ class LocalTopDownPlotter():
             heading_length=self.HEADING_LENGTH
         )
         heading = self.plt.Line2D((robot.x, robot.x + heading.x),
-                             (robot.z, robot.z + heading.z),
-                             color=self.ROBOT_COLOR,
-                             lw=1)
+                                  (robot.z, robot.z + heading.z),
+                                  color=self.ROBOT_COLOR,
+                                  lw=1)
         self.plt.gca().add_line(heading)
 
     def _draw_objects(self, objects: Dict,
@@ -162,11 +168,11 @@ class LocalTopDownPlotter():
     def _draw_object_bounds(self, obj: Object, points: List) -> None:
         """Draw the scene object"""
         poly = self.plt.Polygon(points,
-                           color=obj.color,
-                           fill=obj.color if obj.visible or
-                                             obj.held else '',
-                           ec=self.DEFAULT_COLOR,
-                           label=obj.uuid)
+                                color=obj.color,
+                                fill=obj.color if obj.visible or
+                                                  obj.held else '',
+                                ec=self.DEFAULT_COLOR,
+                                label=obj.uuid)
         self.plt.gca().add_patch(poly)
 
     def _calculate_heading(self, rotation_angle: float,

@@ -1,16 +1,38 @@
 import json
+import math
+from dataclasses import dataclass
 
 import numpy as np
-import pandas
-# from pandas import DataFrame
-
 # Assume that the entire room space goes from -5 to 5 in X and Z.  If this changes,
 # then will need to change this line or read in from scene json file.
+import pandas
+
 SPACE_SIZE = 5.
 
 # Grid Dimension determines how big our grid is for revisiting
 GRID_DIMENSION = 0.5
 
+# Direction limit:  Degrees difference that we allow before we count actors
+# as facing in the same direction
+DIRECTION_LIMIT = 21
+
+
+class GridHistory:
+    """A history of the times a grid has been visited"""
+    def __init__(self):
+        self.stepnums = []
+        self.directions = []
+
+    def add(self, stepnum: int, direction: int):
+        self.stepnums.append(stepnum)
+        self.directions.append(stepnum)
+
+    def seen_before(self, stepnum: int, direction: int):
+        for previous_direction in self.directions:
+            diff = abs(previous_direction - direction)
+            if diff < DIRECTION_LIMIT:
+                return True
+        return False
 
 class Scorecard:
     """
@@ -31,46 +53,47 @@ class Scorecard:
         self.grid_dimension = GRID_DIMENSION
         self.grid_size = (int)(2 * SPACE_SIZE / self.grid_dimension)
 
+        # Create the grid history and the counts
+        self.grid = [[GridHistory() for j in range(self.grid_size)] for i in range(self.grid_size)]
+        self.grid_counts = np.zeros([self.grid_size, self.grid_size])
+
         # Output values
         self.revisits = 0
 
     def calc_revisiting(self):
 
-        # Create the grid
-        grid = np.zeros([self.grid_size, self.grid_size])
-
         steps_list = self.history['steps']
 
+        step_num = 0
         single_step = steps_list[0]
         loc = single_step['output']['position']
         old_x, old_z = self.get_grid_by_location(loc['x'], loc['z'])
 
         for single_step in steps_list:
+            step_num+= 1
             loc = single_step['output']['position']
             grid_x, grid_z = self.get_grid_by_location(loc['x'], loc['z'])
             # print(f"Step value: {single_step['step']}  Location is {loc}.    Grid loc is {grid_x} {grid_z}")
+
+            grid_hist = self.grid[grid_x][grid_z]
+            grid_hist.add(step_num, single_step['output']['rotation'])
 
             # If we did not change grid location (for example, change tilt, rotate, etc), do not count
             if old_x == grid_x and old_z == grid_z:
                 continue
 
-            grid[grid_x, grid_z] += 1
+            self.grid_counts[grid_x, grid_z] += 1
             old_x, old_z = grid_x, grid_z
 
         # Ignore all the grid cells with 1's or 0's, by subtracting 1 and making 0 the minimum.
-        grid -= 1
-        grid = np.clip(grid, 0, None)
-        self.revisits = grid.sum()
+        self.grid_counts -= 1
+        self.grid_counts = np.clip(self.grid_counts, 0, None)
+        self.revisits = self.grid_counts.sum()
 
-        # Use a Pandas Dataframe to print it out
-        df = pandas.DataFrame(grid)
-        pandas.set_option("display.max_rows", None, "display.max_columns", None)
-        pandas.options.display.width = 0
-        print(df)
+        self.print_grid()
+        print(f"Total number of naive revisits: {self.revisits}")
 
-        print(f"Total number of revisits: {self.revisits}")
-
-        pass
+        return self.revisits
 
     def get_grid_by_location(self, x, z):
         """ Given an x,z location, determine the (int) values for the grid location"""
@@ -84,6 +107,13 @@ class Scorecard:
             print(f"Problem with y loc {z}.  got grid loc {grid_z}.  " +
                   "dim {self.grid_dimension} grid size {self.grid_size}")
         return (grid_x, grid_z)
+
+    def print_grid(self):
+        # Use a Pandas Dataframe to print it out
+        df = pandas.DataFrame(self.grid_counts)
+        pandas.set_option("display.max_rows", None, "display.max_columns", None)
+        pandas.options.display.width = 0
+        print(df)
 
     def calc_open_unopenable(self):
         pass
