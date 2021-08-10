@@ -80,13 +80,20 @@ class DataGenRunnerScript():
 
 
 def simple_loop_callback(step_metadata, runner_script):
-    '''  Do a square loop around the room.  Should not causes revisit'''
+    '''  Do a loop around the room, but not overlapping, so should not causes revisit'''
     actions = "WWWW L WWWW L WWW L WWW L WWWWWW"
+    return decode_movements(step_metadata.step_number, actions)
+
+
+def loop_callback_with_revisit(step_metadata, runner_script):
+    '''  Do a square loop around the room.  Should causes one revisit'''
+    actions = "WWWW L WWW L WWW L WWW L WWWWW"
     return decode_movements(step_metadata.step_number, actions)
 
 
 def main():
     DataGenRunnerScript('zero_1', simple_loop_callback).run_scene()
+    DataGenRunnerScript('one_1', loop_callback_with_revisit).run_scene()
 
 
 if __name__ == "__main__":
