@@ -91,9 +91,23 @@ def loop_callback_with_revisit(step_metadata, runner_script):
     return decode_movements(step_metadata.step_number, actions)
 
 
+def loop_callback_with_spin(step_metadata, runner_script):
+    '''  Go fwd, do a circle, do a loop around the room.  Should causes one revisit'''
+    actions = "WWW LLLL W L WW L W L WWW"
+    return decode_movements(step_metadata.step_number, actions)
+
+
+def come_from_behind(step_metadata, runner_script):
+    '''  Go behind a path and turn into it'''
+    actions = "WW L WWW R WW L W L WWW L W L W R W"
+    return decode_movements(step_metadata.step_number, actions)
+
+
 def main():
     DataGenRunnerScript('zero_1', simple_loop_callback).run_scene()
     DataGenRunnerScript('one_1', loop_callback_with_revisit).run_scene()
+    DataGenRunnerScript('one_2', loop_callback_with_spin).run_scene()
+    DataGenRunnerScript('one_3', come_from_behind).run_scene()
 
 
 if __name__ == "__main__":

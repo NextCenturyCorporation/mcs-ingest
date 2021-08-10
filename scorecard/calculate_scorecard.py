@@ -1,8 +1,8 @@
 #
-#  Driver program for calculating the scorecard
+# Driver program for calculating the scorecard.
 #
-# By default it calculates the scorecard for all the files in the passed
-# json file, containing ground truth.
+# By default it calculates the scorecard for all the ground truth in the passed
+# text file.
 #
 
 import argparse
@@ -12,10 +12,12 @@ from scorecard import Scorecard
 
 DATADIR = 'generator/SCENE_HISTORY'
 
-def process(basefilename: str, num_revisit: int, dir='') -> Scorecard:
-    scorecard = Scorecard(basefilename)
+
+def process(json_filepath: str, num_revisit: int, dir='') -> Scorecard:
+    """Process a particular json file, compare to ground truth"""
+    scorecard = Scorecard(json_filepath)
     num_revisit_calc = scorecard.calc_revisiting()
-    print(f"File: {basefilename}  ground_truth: {num_revisit}  Calculated: {num_revisit_calc}")
+    print(f"File: {json_filepath}  ground_truth: {num_revisit}  Calculated: {num_revisit_calc}")
     return scorecard
 
 
@@ -27,20 +29,31 @@ def find_fullpath(basefilename: str, dir: str) -> os.path:
 
 
 def process_all_ground_truth(ground_truth_file: str):
+
+    passed = 0
+    failed = 0
+
     with open(ground_truth_file) as f:
         lines = f.readlines()
         for line in lines:
             if line[0] == "#":
                 continue
-            vals = line.split(" ")
+            vals = line.split()
             basefilename = vals[0].strip()
-            num_revisit = int(vals[1].strip())
+            gt_revisits = int(vals[1].strip())
             full_path = find_fullpath(basefilename, DATADIR)
             if not full_path:
                 print(f"Unable to find {DATADIR} and {basefilename} found: {full_path}")
                 continue
             print(f"From {DATADIR} and {basefilename} found: {full_path}")
-            process(full_path, num_revisit)
+            scorecard = process(full_path, gt_revisits)
+            calc_revisit = scorecard.get_revisits()
+            if gt_revisits == calc_revisit:
+                passed += 1
+            else:
+                failed += 1
+
+    print(f"\nPassed: {passed}  Failed: {failed}")
 
 
 def parse_args():

@@ -1,11 +1,14 @@
+#
+# Calculate the Scorecard for a particular MCS output JSON file
+#
+#
 import json
-import math
-from dataclasses import dataclass
 
 import numpy as np
 # Assume that the entire room space goes from -5 to 5 in X and Z.  If this changes,
 # then will need to change this line or read in from scene json file.
 import pandas
+from utils import minAngDist
 
 SPACE_SIZE = 5.
 
@@ -14,22 +17,23 @@ GRID_DIMENSION = 0.5
 
 # Direction limit:  Degrees difference that we allow before we count actors
 # as facing in the same direction
-DIRECTION_LIMIT = 21
+DIRECTION_LIMIT = 11
 
 
 class GridHistory:
-    """A history of the times a grid has been visited"""
+    """A history of the times a grid square has been visited"""
+
     def __init__(self):
         self.stepnums = []
         self.directions = []
 
     def add(self, stepnum: int, direction: int):
         self.stepnums.append(stepnum)
-        self.directions.append(stepnum)
+        self.directions.append(direction)
 
     def seen_before(self, stepnum: int, direction: int):
         for previous_direction in self.directions:
-            diff = abs(previous_direction - direction)
+            diff = minAngDist(previous_direction, direction)
             if diff < DIRECTION_LIMIT:
                 return True
         return False
@@ -39,6 +43,7 @@ class GridHistory:
         if size_of_stepnums == 0:
             return False
         return True
+
 
 class Scorecard:
     """
@@ -50,8 +55,8 @@ class Scorecard:
     So we process (X,Z) locations.
     """
 
-    def __init__(self, history_file_name):
-        self.history_file_name = history_file_name
+    def __init__(self, json_filepath):
+        self.history_file_name = json_filepath
         with open(self.history_file_name) as history_file:
             self.history = json.load(history_file)
 
@@ -66,6 +71,9 @@ class Scorecard:
         # Output values
         self.revisits = 0
 
+    def get_revisits(self):
+        return self.revisits
+
     def calc_revisiting(self):
 
         steps_list = self.history['steps']
@@ -78,13 +86,14 @@ class Scorecard:
         previous_revisit = False
 
         for single_step in steps_list:
-            step_num+= 1
+
+            step_num += 1
             loc = single_step['output']['position']
             direction = single_step['output']['rotation']
 
             grid_x, grid_z = self.get_grid_by_location(loc['x'], loc['z'])
             grid_hist = self.grid[grid_x][grid_z]
-            print(f"Step num {step_num}  Location is {loc}.  Grid loc is {grid_x} {grid_z}")
+            print(f"Step num {step_num}  Location is {loc}.  Dir: {direction}  Grid loc is {grid_x} {grid_z}")
 
             # ---------------------------------
             # Determine if this is a revisit
@@ -100,7 +109,6 @@ class Scorecard:
             # If we did not change grid location (for example, change tilt, rotate, etc), do not count
             if old_x == grid_x and old_z == grid_z:
                 print("didn't change location")
-                previous_revisit = False
                 old_x, old_z = grid_x, grid_z
                 grid_hist.add(step_num, direction)
                 continue
@@ -120,7 +128,6 @@ class Scorecard:
                 old_x, old_z = grid_x, grid_z
                 continue
 
-
             # At this point, we just moved to a place, we have already been there, we are facing
             # in the same direction as before, and
             # previous_revisit==False (i.e. we are not in revisiting mode)
@@ -135,8 +142,9 @@ class Scorecard:
         # self.grid_counts = np.clip(self.grid_counts, 0, None)
         self.revisits = self.grid_counts.sum()
 
+        # Debug printing
         self.print_grid()
-        print(f"Total number of naive revisits: {self.revisits}")
+        print(f"Total number of revisits: {self.revisits}")
 
         return self.revisits
 
