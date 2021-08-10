@@ -63,7 +63,7 @@ class PathPlotter():
              goal_id: str = None
              ) -> PIL.Image.Image:
 
-        self._draw_objects(self._find_plottable_objects(scene_event), goal_id)
+        # self._draw_objects(self._find_plottable_objects(scene_event), goal_id)
         self._draw_robot(scene_event.metadata)
 
     def get_image(self):
@@ -78,13 +78,13 @@ class PathPlotter():
         Plottable objects include normal scene objects as well as
         occluder and wall structural objects.
         """
-        structural_objects_list = scene_event.metadata.structural_object_list
+        structural_objects = scene_event.metadata.get('structural_object_list', [])
         filtered_structural_objects = [
-            obj for obj in structural_objects_list
-            if not obj.uuid.startswith('ceiling') and not
-            obj.uuid.startswith('floor')
+            obj for obj in structural_objects
+            if not obj.get('objectId', '').startswith('ceiling') and not
+            obj.get('objectId', '').startswith('floor')
         ]
-        objects = scene_event.metadata.object_list
+        objects = scene_event.metadata.get('objects', [])
         return filtered_structural_objects + objects
 
     def _initialize_plot(self, step_number: int):
@@ -185,22 +185,18 @@ class PathPlotter():
         return XZHeading(vec_x, vec_z)
 
     def _create_robot(self, robot_metadata: Dict) -> Robot:
-        """Extract robot position and rotation information from the metadata"""
-        position = robot_metadata.position
+        '''Extract robot position and rotation information from the metadata'''
+        position = robot_metadata.get('position', None)
         if position is not None:
-            x = position.get('x')
-            y = position.get('y')
-            z = position.get('z')
+            x = position.get('x', None)
+            y = position.get('y', None)
+            z = position.get('z', None)
         else:
             x = 0.0
             y = 0.0
             z = 0.0
 
-        rotation_y = robot_metadata.rotation
-        # if rotation is not None:
-        #     rotation_y = rotation.get('y')
-        # else:
-        #     rotation_y = 0.0
+        rotation_y = robot_metadata.get('rotation', None)
 
         return Robot(x, y, z, rotation_y)
 

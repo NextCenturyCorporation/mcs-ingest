@@ -32,6 +32,7 @@ def process_all_ground_truth(ground_truth_file: str):
 
     passed = 0
     failed = 0
+    missing = 0
 
     with open(ground_truth_file) as f:
         lines = f.readlines()
@@ -44,6 +45,7 @@ def process_all_ground_truth(ground_truth_file: str):
             full_path = find_fullpath(basefilename, DATADIR)
             if not full_path:
                 print(f"Unable to find {DATADIR} and {basefilename} found: {full_path}")
+                missing += 1
                 continue
             print(f"From {DATADIR} and {basefilename} found: {full_path}")
             scorecard = process(full_path, gt_revisits)
@@ -53,7 +55,7 @@ def process_all_ground_truth(ground_truth_file: str):
             else:
                 failed += 1
 
-    print(f"\nPassed: {passed}  Failed: {failed}")
+    print(f"\nPassed: {passed}  Failed: {failed}  Missing: {missing}")
 
 
 def parse_args():

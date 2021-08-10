@@ -17,6 +17,8 @@ scene_filepath = "/home/clark/work/mcs/mcs-ingest/scorecard/testdata/india_0015_
 
 
 def decode_movements(step, code):
+    """Allow short-hand for movements.  W means forward 10 spaces, L and R, 90 degrees.
+     X means wait for input (for debugging)"""
     code = code.replace(" ", "")
     code = code.replace('W', "wwwwwwwwww")
     code = code.replace('L', "jjjjjjjjj")
@@ -64,11 +66,11 @@ class DataGenRunnerScript():
         step_metadata = self.controller.start_scene(scene_data)
         action, params = self.callback(step_metadata, self)
 
-        plotter.plot(FakeEvent(step_metadata), step_metadata.step_number)
+        plotter.plot(FakeEvent(step_metadata.__dict__), step_metadata.step_number)
 
         while action is not None:
             step_metadata = self.controller.step(action, **params)
-            plotter.plot(FakeEvent(step_metadata), step_metadata.step_number)
+            plotter.plot(FakeEvent(step_metadata.__dict__), step_metadata.step_number)
             if step_metadata is None:
                 break
             action, params = self.callback(step_metadata, self)
