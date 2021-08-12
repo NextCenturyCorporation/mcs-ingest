@@ -1,11 +1,10 @@
 #
 #  Generate data for revisiting scorecard
 #
-#  Usage:    python generate_revisit_data.py [--level1=True] unity_runtime scene.json
+#  Usage:    python scorecard_generate_revisit_data.py
 #
-# Look in machine_common_sense.Action for moves
-#    Movement: wasd, turns: jl, up/down: ik
-#    90 turn is L or R
+#    Normal movement: wasd,   turns: jl,   up/down: ik
+#    Group movement:  90 turn is L or R;  W is 10 steps fwd
 
 import machine_common_sense as mcs
 

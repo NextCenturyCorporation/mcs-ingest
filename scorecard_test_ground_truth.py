@@ -1,16 +1,16 @@
 #
-# Driver program for calculating the scorecard.
+# Driver program for testing the scorecard.
 #
 # By default it calculates the scorecard for all the ground truth in the passed
 # text file.
 #
 
 import argparse
-import os, sys
+import os
 
 from scorecard.scorecard import Scorecard
 
-DATADIR = 'generator/SCENE_HISTORY/'
+DATADIR = 'SCENE_HISTORY/'
 
 
 def process(json_filepath: str, num_revisit: int, dir='') -> Scorecard:
@@ -29,7 +29,6 @@ def find_fullpath(basefilename: str, dir: str) -> os.path:
 
 
 def process_all_ground_truth(ground_truth_file: str):
-
     passed = 0
     failed = 0
     missing = 0
@@ -60,7 +59,7 @@ def process_all_ground_truth(ground_truth_file: str):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('ground_truth_file', help="History JSON file, found in SCENE_HISTORY/")
+    parser.add_argument('--ground_truth_file', default='scorecard/ground_truth.txt')
     return parser.parse_args()
 
 
