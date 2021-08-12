@@ -6,11 +6,11 @@
 #
 
 import argparse
-import os
+import os, sys
 
-from scorecard import Scorecard
+from scorecard.scorecard import Scorecard
 
-DATADIR = 'generator/SCENE_HISTORY'
+DATADIR = 'generator/SCENE_HISTORY/'
 
 
 def process(json_filepath: str, num_revisit: int, dir='') -> Scorecard:

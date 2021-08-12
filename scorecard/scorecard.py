@@ -5,11 +5,12 @@
 import json
 
 import numpy as np
+import pandas
+
+from scorecard.utils import minAngDist
+
 # Assume that the entire room space goes from -5 to 5 in X and Z.  If this changes,
 # then will need to change this line or read in from scene json file.
-import pandas
-from utils import minAngDist
-
 SPACE_SIZE = 5.
 
 # Grid Dimension determines how big our grid is for revisiting
