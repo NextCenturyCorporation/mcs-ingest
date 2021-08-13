@@ -49,7 +49,8 @@ class PathPlotter():
     MAXIMUM_ROOM_DIMENSION = 5
     BORDER = 0.05
 
-    def __init__(self, team: str, scene_name: str, plot_width: int, plot_height: int):
+    def __init__(self, team: str, scene_name: str,
+                 plot_width: int, plot_height: int):
         self._team = team
         if '/' in scene_name:
             scene_name = scene_name.rsplit('/', 1)[1]
@@ -63,7 +64,8 @@ class PathPlotter():
              goal_id: str = None
              ) -> PIL.Image.Image:
 
-        # self._draw_objects(self._find_plottable_objects(scene_event), goal_id)
+        # self._draw_objects(self._find_plottable_objects(scene_event),
+        #                    goal_id)
         self._draw_robot(scene_event.metadata)
 
     def get_image(self):
@@ -78,7 +80,8 @@ class PathPlotter():
         Plottable objects include normal scene objects as well as
         occluder and wall structural objects.
         """
-        structural_objects = scene_event.metadata.get('structural_object_list', [])
+        structural_objects = scene_event.metadata.get('structural_object_list',
+                                                      [])
         filtered_structural_objects = [
             obj for obj in structural_objects
             if not obj.get('objectId', '').startswith('ceiling') and not
@@ -167,12 +170,12 @@ class PathPlotter():
 
     def _draw_object_bounds(self, obj: Object, points: List) -> None:
         """Draw the scene object"""
-        poly = self.plt.Polygon(points,
-                                color=obj.color,
-                                fill=obj.color if obj.visible or
-                                                  obj.held else '',
-                                ec=self.DEFAULT_COLOR,
-                                label=obj.uuid)
+        poly = self.plt.Polygon(
+            points,
+            color=obj.color,
+            fill=obj.color if obj.visible or obj.held else '',
+            ec=self.DEFAULT_COLOR,
+            label=obj.uuid)
         self.plt.gca().add_patch(poly)
 
     def _calculate_heading(self, rotation_angle: float,

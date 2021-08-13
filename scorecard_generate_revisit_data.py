@@ -10,14 +10,15 @@ import machine_common_sense as mcs
 
 from scorecard.generator.path_plotter import PathPlotter
 
-mcs_unity_filepath = "/home/clark/work/mcs/unity/4.1/MCS-AI2-THOR-Unity-App-v0.4.1.1.x86_64"
+mcs_unity_filepath = "/home/clark/work/mcs/unity/4.1/" + \
+                     "MCS-AI2-THOR-Unity-App-v0.4.1.1.x86_64"
 config_file = "mcs_config.ini"
 scene_filepath = "/home/clark/work/mcs/mcs-ingest/tests/india_0015_12.json"
 
 
 def decode_movements(step, code):
-    """Allow short-hand for movements.  W means forward 10 spaces, L and R, 90 degrees.
-     X means wait for input (for debugging)"""
+    """Allow short-hand for movements.  W means forward 10 spaces;
+    L and R, 90 degrees;  X means wait for input (for debugging)"""
     code = code.replace(" ", "")
     code = code.replace('W', "wwwwwwwwww")
     code = code.replace('L', "jjjjjjjjj")
@@ -33,15 +34,16 @@ def decode_movements(step, code):
     if key == 'l':
         return 'RotateRight', {}
     if key == 'X':
-        x = input("waiting")
+        _ = input("waiting")
         return 'Pass', None
     print("Unrecognized: " + key)
     return None, None
 
 
 class FakeEvent:
-    """the plotter wants an ai2thor.event which contains metadata, but we don't have one, so
-    create a FakeEvent object that contains metadata and pass that"""
+    """the plotter wants an ai2thor.event which contains metadata,
+    but we don't have one, so create a FakeEvent object that contains
+    metadata and pass that"""
 
     def __init__(self, metadata):
         self.metadata = metadata
@@ -50,7 +52,8 @@ class FakeEvent:
 class DataGenRunnerScript():
 
     def __init__(self, name, action_callback):
-        self.controller = mcs.create_controller(mcs_unity_filepath, config_file)
+        self.controller = mcs.create_controller(mcs_unity_filepath,
+                                                config_file)
 
         # self.controller._config.
         self.callback = action_callback
@@ -58,18 +61,21 @@ class DataGenRunnerScript():
 
     def run_scene(self):
 
-        plotter = PathPlotter(team="", scene_name=self.name, plot_width=600, plot_height=450)
+        plotter = PathPlotter(team="", scene_name=self.name,
+                              plot_width=600, plot_height=450)
 
         scene_data, status = mcs.load_scene_json_file(scene_filepath)
         scene_data['name'] = self.name
         step_metadata = self.controller.start_scene(scene_data)
         action, params = self.callback(step_metadata, self)
 
-        plotter.plot(FakeEvent(step_metadata.__dict__), step_metadata.step_number)
+        plotter.plot(FakeEvent(step_metadata.__dict__),
+                     step_metadata.step_number)
 
         while action is not None:
             step_metadata = self.controller.step(action, **params)
-            plotter.plot(FakeEvent(step_metadata.__dict__), step_metadata.step_number)
+            plotter.plot(FakeEvent(step_metadata.__dict__),
+                         step_metadata.step_number)
             if step_metadata is None:
                 break
             action, params = self.callback(step_metadata, self)
@@ -81,7 +87,7 @@ class DataGenRunnerScript():
 
 
 def simple_loop_callback(step_metadata, runner_script):
-    '''  Do a loop around the room, but not overlapping, so should not causes revisit'''
+    '''  Do a loop around the room, but not overlapping, so no revisit'''
     actions = "WWWW L WWWW L WWW L WWW L WWWWWW"
     return decode_movements(step_metadata.step_number, actions)
 
@@ -93,7 +99,7 @@ def loop_callback_with_revisit(step_metadata, runner_script):
 
 
 def loop_callback_with_spin(step_metadata, runner_script):
-    '''  Go fwd, do a circle, do a loop around the room.  Should causes one revisit'''
+    ''' Go fwd, do a circle, do a loop around the room.  Causes one revisit'''
     actions = "WWW LLLL W L WW L W L WWW"
     return decode_movements(step_metadata.step_number, actions)
 

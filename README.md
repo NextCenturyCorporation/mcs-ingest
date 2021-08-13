@@ -68,6 +68,21 @@ To run the unit tests, run the command:  python3 -m unittest
 * In deployment_script.py call your module and function to update database
 * If the db version is not new, no script will be run
 
+# Scorecard
+
+See README.md in scorecard/ directory for details.
+
+```scorecard_test_ground_truth.py``` shows how to run the scorecard code:  You create a 
+Scorecard object, passing in the json file with the MCS output, and then tell it 
+to score which area you want.  
+
+```
+scorecard = Scorecard(json_filepath)
+num_revisit_calc = scorecard.calc_revisiting()
+```
+
+
+
 ## Acknowledgements
 
 This material is based upon work supported by the Defense Advanced Research Projects Agency (DARPA) and Naval Information Warfare Center, Pacific (NIWC Pacific) under Contract No. N6600119C4030. Any opinions, findings and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the DARPA or NIWC Pacific.

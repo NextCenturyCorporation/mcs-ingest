@@ -10,22 +10,24 @@ import os
 
 from scorecard.scorecard import Scorecard
 
-DATADIR = 'SCENE_HISTORY/'
+DATADIR = ['SCENE_HISTORY/', 'tests/']
 
 
 def process(json_filepath: str, num_revisit: int, dir='') -> Scorecard:
     """Process a particular json file, compare to ground truth"""
     scorecard = Scorecard(json_filepath)
     num_revisit_calc = scorecard.calc_revisiting()
-    print(f"File: {json_filepath}  ground_truth: {num_revisit}  Calculated: {num_revisit_calc}")
+    print(f"File: {json_filepath}  ground_truth: {num_revisit}" +
+          f"  Calculated: {num_revisit_calc}")
     return scorecard
 
 
-def find_fullpath(basefilename: str, dir: str) -> os.path:
-    for file in os.listdir(dir):
-        if file.startswith(basefilename):
-            full_path = os.path.join(dir, file)
-            return full_path
+def find_fullpath(basefilename: str, dirs: []) -> os.path:
+    for dir in dirs:
+        for file in os.listdir(dir):
+            if file.startswith(basefilename):
+                full_path = os.path.join(dir, file)
+                return full_path
 
 
 def process_all_ground_truth(ground_truth_file: str):
@@ -43,7 +45,8 @@ def process_all_ground_truth(ground_truth_file: str):
             gt_revisits = int(vals[1].strip())
             full_path = find_fullpath(basefilename, DATADIR)
             if not full_path:
-                print(f"Unable to find {DATADIR} and {basefilename} found: {full_path}")
+                print(f"Unable to find {DATADIR} and " +
+                      f"{basefilename} found: {full_path}")
                 missing += 1
                 continue
             print(f"From {DATADIR} and {basefilename} found: {full_path}")
@@ -59,7 +62,8 @@ def process_all_ground_truth(ground_truth_file: str):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--ground_truth_file', default='scorecard/ground_truth.txt')
+    parser.add_argument('--ground_truth_file',
+                        default='scorecard/ground_truth.txt')
     return parser.parse_args()
 
 

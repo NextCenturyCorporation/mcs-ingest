@@ -4,9 +4,6 @@
 #
 import json
 import os
-from types import SimpleNamespace
-
-import machine_common_sense as mcs
 
 from scorecard.generator.path_plotter import PathPlotter
 
@@ -15,15 +12,17 @@ files = ['india_0003.json']
 
 
 class FakeEvent:
-    """the plotter wants an ai2thor.event which contains metadata, but we don't have one, so
-    create a FakeEvent object that contains metadata and pass that"""
+    """the plotter wants an ai2thor.event which contains metadata,
+    but we don't have one, so create a FakeEvent object that
+    contains metadata and pass that"""
 
     def __init__(self, metadata):
         self.metadata = metadata
 
 
 def run_scene(name: str, filepath: str):
-    plotter = PathPlotter(team="", scene_name=name, plot_width=600, plot_height=450)
+    plotter = PathPlotter(team="", scene_name=name,
+                          plot_width=600, plot_height=450)
 
     with open(filepath) as history_file:
         history = json.load(history_file)

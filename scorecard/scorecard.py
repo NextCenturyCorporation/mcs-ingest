@@ -9,7 +9,7 @@ import pandas
 
 from scorecard.utils import minAngDist
 
-# Assume that the entire room space goes from -5 to 5 in X and Z.  If this changes,
+# Assume that the entire room space goes from -5 to 5 in X and Z.  If not,
 # then will need to change this line or read in from scene json file.
 SPACE_SIZE = 5.
 
@@ -48,10 +48,10 @@ class GridHistory:
 
 class Scorecard:
     """
-    Scorecard calculates and holds information on several measures of performance for an agent moving
-    in the active tasks.
+    Scorecard calculates and holds information on several measures
+    of performance for an agent moving in the active tasks.
 
-    Reminder:   location in Unity is a left-handed, y-up axis orientation system.
+    Reminder: location in Unity is a left-handed, y-up axis orientation system.
     See:  https://docs.unity3d.com/Manual/class-Transform.html
     So we process (X,Z) locations.
     """
@@ -66,7 +66,8 @@ class Scorecard:
         self.grid_size = (int)(2 * SPACE_SIZE / self.grid_dimension)
 
         # Create the grid history and the counts
-        self.grid = [[GridHistory() for j in range(self.grid_size)] for i in range(self.grid_size)]
+        self.grid = [[GridHistory() for j in range(self.grid_size)]
+                     for i in range(self.grid_size)]
         self.grid_counts = np.zeros([self.grid_size, self.grid_size])
 
         # Output values
@@ -94,12 +95,14 @@ class Scorecard:
 
             grid_x, grid_z = self.get_grid_by_location(loc['x'], loc['z'])
             grid_hist = self.grid[grid_x][grid_z]
-            print(f"Step num {step_num}  Location is {loc}.  Dir: {direction}  Grid loc is {grid_x} {grid_z}")
+            print(f"Step num {step_num}  Location is {loc}.  Dir: " +
+                  "{direction}  Grid loc is {grid_x} {grid_z}")
 
             # ---------------------------------
             # Determine if this is a revisit
             # ---------------------------------
-            # If never been there, then not a revisit, and no longer in revisiting mode
+            # If never been there, then not a revisit, and no longer in
+            # revisiting mode
             if not grid_hist.any_visits():
                 print("never visited")
                 grid_hist.add(step_num, direction)
@@ -107,7 +110,8 @@ class Scorecard:
                 previous_revisit = False
                 continue
 
-            # If we did not change grid location (for example, change tilt, rotate, etc), do not count
+            # If we did not change grid location (for example, change tilt,
+            # rotate, etc), do not count
             if old_x == grid_x and old_z == grid_z:
                 print("didn't change location")
                 old_x, old_z = grid_x, grid_z
@@ -122,15 +126,16 @@ class Scorecard:
                 previous_revisit = False
                 continue
 
-            # If previous step was a revisit, don't mark this one, but still in revisiting mode
+            # If previous step was a revisit, don't mark this one, but
+            # still in revisiting mode
             if previous_revisit:
                 print("visited and this direction, but in revisiting mode")
                 grid_hist.add(step_num, direction)
                 old_x, old_z = grid_x, grid_z
                 continue
 
-            # At this point, we just moved to a place, we have already been there, we are facing
-            # in the same direction as before, and
+            # At this point, we just moved to a place, we have already been
+            # there, we are facing in the same direction as before, and
             # previous_revisit==False (i.e. we are not in revisiting mode)
             # So, we are revisiting
             print("revisiting")
@@ -138,9 +143,6 @@ class Scorecard:
             self.grid_counts[grid_x, grid_z] += 1
             old_x, old_z = grid_x, grid_z
 
-        # Ignore all the grid cells with 1's or 0's, by subtracting 1 and making 0 the minimum.
-        # self.grid_counts -= 1
-        # self.grid_counts = np.clip(self.grid_counts, 0, None)
         self.revisits = self.grid_counts.sum()
 
         # Debug printing
@@ -150,7 +152,7 @@ class Scorecard:
         return self.revisits
 
     def get_grid_by_location(self, x, z):
-        """ Given an x,z location, determine the (int) values for the grid location"""
+        """ Given float x,z, determine the int vals for the grid location"""
         grid_x = (int)((SPACE_SIZE + x) / self.grid_dimension)
         grid_z = (int)((SPACE_SIZE + z) / self.grid_dimension)
 
@@ -165,7 +167,8 @@ class Scorecard:
     def print_grid(self):
         # Use a Pandas Dataframe to print it out
         df = pandas.DataFrame(self.grid_counts)
-        pandas.set_option("display.max_rows", None, "display.max_columns", None)
+        pandas.set_option("display.max_rows", None,
+                          "display.max_columns", None)
         pandas.options.display.width = 0
         print(df)
 
