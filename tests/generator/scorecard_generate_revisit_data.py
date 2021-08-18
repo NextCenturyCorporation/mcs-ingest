@@ -1,19 +1,16 @@
 #
 #  Generate data for testing revisiting scorecard calculation
 #
-#  Usage:    python scorecard_generate_revisit_data.py
+#  Usage:    python scorecard_generate_revisit_data.py  mcs_unity_filepath  scene_filepath
 #
 #    Normal movement: wasd,   turns: jl,   up/down: ik
 #    Group movement:  90 turn is L or R;  W is 10 steps fwd
+import argparse
+import os
 
 import machine_common_sense as mcs
 
 from tests.generator.path_plotter import PathPlotter
-
-mcs_unity_filepath = "/home/clark/work/mcs/unity/4.1/" + \
-                     "MCS-AI2-THOR-Unity-App-v0.4.1.1.x86_64"
-config_file = "mcs_config.ini"
-scene_filepath = "../india_0015_12.json"
 
 
 def decode_movements(step, code):
@@ -42,20 +39,18 @@ def decode_movements(step, code):
 
 class DataGenRunnerScript():
 
-    def __init__(self, name, action_callback):
-        self.controller = mcs.create_controller(mcs_unity_filepath,
-                                                config_file)
-
-        # self.controller._config.
+    def __init__(self, mcs_unity_filepath, scene_filepath, name, action_callback):
+        self.controller = mcs.create_controller(mcs_unity_filepath)
         self.callback = action_callback
         self.name = name
+        self.scene_filepath = scene_filepath
 
     def run_scene(self):
 
         plotter = PathPlotter(team="", scene_name=self.name,
                               plot_width=600, plot_height=450)
 
-        scene_data, status = mcs.load_scene_json_file(scene_filepath)
+        scene_data, status = mcs.load_scene_json_file(self.scene_filepath)
         if not scene_data:
             print(f"Result of loading scene: {status}")
             return
@@ -102,12 +97,27 @@ def come_from_behind(step_metadata, runner_script):
     return decode_movements(step_metadata.step_number, actions)
 
 
-def main():
-    DataGenRunnerScript('zero_1', simple_loop_callback).run_scene()
-    DataGenRunnerScript('one_1', loop_callback_with_revisit).run_scene()
-    DataGenRunnerScript('one_2', loop_callback_with_spin).run_scene()
-    DataGenRunnerScript('one_3', come_from_behind).run_scene()
+def main(mcs_unity_filepath, scene_filepath):
+    DataGenRunnerScript(mcs_unity_filepath, scene_filepath, 'zero_1', simple_loop_callback).run_scene()
+    DataGenRunnerScript(mcs_unity_filepath, scene_filepath, 'one_1', loop_callback_with_revisit).run_scene()
+    DataGenRunnerScript(mcs_unity_filepath, scene_filepath, 'one_2', loop_callback_with_spin).run_scene()
+    DataGenRunnerScript(mcs_unity_filepath, scene_filepath, 'one_3', come_from_behind).run_scene()
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('mcs_unity_filepath')
+    parser.add_argument('scene_filepath')
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
-    main()
+    args = parse_args()
+    if not os.path.exists(args.mcs_unity_filepath):
+        print(f"File {args.mcs_unity_filepath} does not exist")
+        exit(1)
+    if not os.path.exists(args.scene_filepath):
+        print(f"File {args.scene_filepath} does not exist")
+        exit(1)
+
+    main(args.mcs_unity_filepath, args.scene_filepath)
