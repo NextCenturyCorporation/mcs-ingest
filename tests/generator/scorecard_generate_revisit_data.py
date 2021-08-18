@@ -1,19 +1,21 @@
 #
-#  Generate data for revisiting scorecard
+#  Generate data for testing revisiting scorecard calculation
 #
 #  Usage:    python scorecard_generate_revisit_data.py
 #
 #    Normal movement: wasd,   turns: jl,   up/down: ik
 #    Group movement:  90 turn is L or R;  W is 10 steps fwd
+import os
 
 import machine_common_sense as mcs
 
-from scorecard.generator.path_plotter import PathPlotter
+# from tests.generator import PathPlotter
+from tests.generator.path_plotter import PathPlotter
 
 mcs_unity_filepath = "/home/clark/work/mcs/unity/4.1/" + \
                      "MCS-AI2-THOR-Unity-App-v0.4.1.1.x86_64"
 config_file = "mcs_config.ini"
-scene_filepath = "/home/clark/work/mcs/mcs-ingest/tests/india_0015_12.json"
+scene_filepath = "../india_0015_12.json"
 
 
 def decode_movements(step, code):
@@ -65,6 +67,9 @@ class DataGenRunnerScript():
                               plot_width=600, plot_height=450)
 
         scene_data, status = mcs.load_scene_json_file(scene_filepath)
+        if not scene_data:
+            print(f"Result of loading scene: {status}")
+            return
         scene_data['name'] = self.name
         step_metadata = self.controller.start_scene(scene_data)
         action, params = self.callback(step_metadata, self)

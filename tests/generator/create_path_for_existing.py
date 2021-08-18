@@ -5,7 +5,7 @@
 import json
 import os
 
-from scorecard.generator.path_plotter import PathPlotter
+from tests.generator import PathPlotter
 
 dir = 'SCENE_HISTORY'
 files = ['india_0003.json']

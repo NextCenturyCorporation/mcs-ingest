@@ -10,7 +10,7 @@ import os
 
 from scorecard.scorecard import Scorecard
 
-DATADIR = ['SCENE_HISTORY/', 'tests/']
+DATADIR = ['generator/SCENE_HISTORY/', '../tests/']
 
 
 def process(json_filepath: str, num_revisit: int, dir='') -> Scorecard:
@@ -63,7 +63,7 @@ def process_all_ground_truth(ground_truth_file: str):
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--ground_truth_file',
-                        default='scorecard/ground_truth.txt')
+                        default='ground_truth.txt')
     return parser.parse_args()
 
 
