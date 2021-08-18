@@ -5,19 +5,10 @@
 import json
 import os
 
-from tests.generator import PathPlotter
+from tests.generator.path_plotter import PathPlotter
 
 dir = 'SCENE_HISTORY'
 files = ['india_0003.json']
-
-
-class FakeEvent:
-    """the plotter wants an ai2thor.event which contains metadata,
-    but we don't have one, so create a FakeEvent object that
-    contains metadata and pass that"""
-
-    def __init__(self, metadata):
-        self.metadata = metadata
 
 
 def run_scene(name: str, filepath: str):
@@ -32,7 +23,7 @@ def run_scene(name: str, filepath: str):
         for single_step in steps_list:
             step_metadata = single_step['output']
             step_num = step_metadata['step_number']
-            plotter.plot(FakeEvent(step_metadata), step_num)
+            plotter.plot(step_metadata, step_num)
 
         img = plotter.get_image()
         img.save(name + "_path.gif")

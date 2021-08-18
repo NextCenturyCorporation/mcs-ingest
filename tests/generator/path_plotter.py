@@ -1,14 +1,13 @@
 #
-# path_plotter plots the path of an actor in the room, so we can visualize it
-#
-# It is based on machine_common_sense.plotter.py
+# path_plotter plots the path of an actor in the room, so we can visualize it.  It produces
+# a single image showing the entire path (rather than a video based on multiple images,
+# one per step, as was done in machine_common_sense.plotter.py)
 #
 
 import io
 import math
 
 import PIL
-import ai2thor
 import matplotlib
 from matplotlib import pyplot
 
@@ -16,7 +15,6 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 from typing import Dict, NamedTuple, List
-from shapely import geometry
 
 
 class XZHeading(NamedTuple):
@@ -59,14 +57,12 @@ class PathPlotter():
         self._plot_height = plot_height
         self.plt = self._initialize_plot(step_number=0)
 
-    def plot(self, scene_event: ai2thor.server.Event,
+    def plot(self, metadata,
              step_number: int,
              goal_id: str = None
              ) -> PIL.Image.Image:
 
-        # self._draw_objects(self._find_plottable_objects(scene_event),
-        #                    goal_id)
-        self._draw_robot(scene_event.metadata)
+        self._draw_robot(metadata)
 
     def get_image(self):
         img = self._export_plot(self.plt)
@@ -74,30 +70,26 @@ class PathPlotter():
         return img
 
     def _find_plottable_objects(
-            self, scene_event: ai2thor.server.Event) -> List:
+            self, metadata) -> List:
         """Find plottable objects from the scene data.
 
         Plottable objects include normal scene objects as well as
         occluder and wall structural objects.
         """
-        structural_objects = scene_event.metadata.get('structural_object_list',
-                                                      [])
+        structural_objects = metadata.get('structural_object_list',
+                                          [])
         filtered_structural_objects = [
             obj for obj in structural_objects
             if not obj.get('objectId', '').startswith('ceiling') and not
             obj.get('objectId', '').startswith('floor')
         ]
-        objects = scene_event.metadata.get('objects', [])
+        objects = metadata.get('objects', [])
         return filtered_structural_objects + objects
 
     def _initialize_plot(self, step_number: int):
         """Create the plot"""
         plt.xlim(self.MINIMUM_ROOM_DIMENSION, self.MAXIMUM_ROOM_DIMENSION)
         plt.ylim(self.MINIMUM_ROOM_DIMENSION, self.MAXIMUM_ROOM_DIMENSION)
-        # plt.text(
-        #     self.MAXIMUM_ROOM_DIMENSION + self.BORDER,
-        #     self.MINIMUM_ROOM_DIMENSION + self.BORDER,
-        #     step_number)
         plt.title(f"{self._team} {self._scene_name}")
         return plt
 
@@ -141,43 +133,6 @@ class PathPlotter():
                                   lw=1)
         self.plt.gca().add_line(heading)
 
-    def _draw_objects(self, objects: Dict,
-                      goal_id: str = None) -> None:
-        """Plot the object bounds for each object in the scene"""
-        for o in objects:
-            obj = self._create_object(o)
-            if obj.bounds is not None:
-                obj_pts = [(pt['x'], pt['z']) for pt in obj.bounds]
-                polygon = geometry.MultiPoint(obj_pts).convex_hull
-                pts = polygon.exterior.coords
-                self._draw_object_bounds(obj, pts)
-                if goal_id is not None and o['objectId'] == goal_id:
-                    self._draw_goal(o['position'])
-
-    def _draw_goal(self, position: Object) -> None:
-        """Draw the goal object of the scene"""
-        self.plt.scatter(
-            position['x'],
-            position['z'],
-            c=self._convert_color("gold"),
-            s=300,
-            marker="*",
-            zorder=5,
-            alpha=.7,
-            edgecolors=self._convert_color("black"),
-            linewidths=.5
-        )
-
-    def _draw_object_bounds(self, obj: Object, points: List) -> None:
-        """Draw the scene object"""
-        poly = self.plt.Polygon(
-            points,
-            color=obj.color,
-            fill=obj.color if obj.visible or obj.held else '',
-            ec=self.DEFAULT_COLOR,
-            label=obj.uuid)
-        self.plt.gca().add_patch(poly)
-
     def _calculate_heading(self, rotation_angle: float,
                            heading_length: float) -> XZHeading:
         """Calculate XZ heading vector from the rotation angle"""
@@ -202,33 +157,6 @@ class PathPlotter():
         rotation_y = robot_metadata.get('rotation', None)
 
         return Robot(x, y, z, rotation_y)
-
-    def _create_object(self, object_metadata: Dict) -> Object:
-        """Create the scene object from its metadata"""
-
-        held = object_metadata.held
-        visible = object_metadata.visible
-        uuid = object_metadata.uuid
-
-        colors = object_metadata.texture_color_list
-        if len(colors):
-            color = self._convert_color(colors[0])
-        else:
-            color = self._convert_color('')
-
-        bounds = None  # object_metadata.objectBounds
-        if bounds is not None:
-            corners = bounds.objectBoundsCorners
-        else:
-            corners = None
-
-        return Object(
-            held=held,
-            visible=visible,
-            uuid=uuid,
-            color=color,
-            bounds=corners
-        )
 
     def _convert_color(self, color: str) -> str:
         """Convert color string to xkcd string"""

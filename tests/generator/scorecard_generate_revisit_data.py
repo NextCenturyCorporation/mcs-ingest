@@ -5,11 +5,9 @@
 #
 #    Normal movement: wasd,   turns: jl,   up/down: ik
 #    Group movement:  90 turn is L or R;  W is 10 steps fwd
-import os
 
 import machine_common_sense as mcs
 
-# from tests.generator import PathPlotter
 from tests.generator.path_plotter import PathPlotter
 
 mcs_unity_filepath = "/home/clark/work/mcs/unity/4.1/" + \
@@ -42,15 +40,6 @@ def decode_movements(step, code):
     return None, None
 
 
-class FakeEvent:
-    """the plotter wants an ai2thor.event which contains metadata,
-    but we don't have one, so create a FakeEvent object that contains
-    metadata and pass that"""
-
-    def __init__(self, metadata):
-        self.metadata = metadata
-
-
 class DataGenRunnerScript():
 
     def __init__(self, name, action_callback):
@@ -74,13 +63,11 @@ class DataGenRunnerScript():
         step_metadata = self.controller.start_scene(scene_data)
         action, params = self.callback(step_metadata, self)
 
-        plotter.plot(FakeEvent(step_metadata.__dict__),
-                     step_metadata.step_number)
+        plotter.plot(step_metadata.__dict__, step_metadata.step_number)
 
         while action is not None:
             step_metadata = self.controller.step(action, **params)
-            plotter.plot(FakeEvent(step_metadata.__dict__),
-                         step_metadata.step_number)
+            plotter.plot(step_metadata.__dict__, step_metadata.step_number)
             if step_metadata is None:
                 break
             action, params = self.callback(step_metadata, self)
