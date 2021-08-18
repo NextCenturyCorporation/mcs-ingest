@@ -14,7 +14,7 @@ DATADIR = ['generator/SCENE_HISTORY/', '../tests/']
 
 
 def process(scene_filepath: str, json_filepath: str,
-            num_revisit: int, dir='') -> Scorecard:
+            num_revisit: int) -> Scorecard:
     """Process a particular json file, compare to ground truth"""
     scorecard = Scorecard(scene_filepath, json_filepath)
     num_revisit_calc = scorecard.calc_revisiting()
