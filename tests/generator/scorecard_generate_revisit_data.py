@@ -6,6 +6,7 @@
 #    Normal movement: wasd,   turns: jl,   up/down: ik
 #    Group movement:  90 turn is L or R;  W is 10 steps fwd
 import argparse
+import json
 import os
 
 import machine_common_sense as mcs
@@ -47,30 +48,38 @@ class DataGenRunnerScript():
 
     def run_scene(self):
 
-        plotter = PathPlotter(team="", scene_name=self.name,
-                              plot_width=600, plot_height=450)
+        with open(self.scene_filepath) as scene_file:
+            scene = json.load(scene_file)
+            x_size = scene.get("roomDimensions").get("x")
+            y_size = scene.get("roomDimensions").get("y")
+            z_size = scene.get("roomDimensions").get("z")
 
-        scene_data, status = mcs.load_scene_json_file(self.scene_filepath)
-        if not scene_data:
-            print(f"Result of loading scene: {status}")
-            return
-        scene_data['name'] = self.name
-        step_metadata = self.controller.start_scene(scene_data)
-        action, params = self.callback(step_metadata, self)
+            plotter = PathPlotter(team="", scene_name=self.name,
+                                  plot_width=600, plot_height=450,
+                                  x_size=x_size, y_size=y_size,
+                                  z_size=z_size)
 
-        plotter.plot(step_metadata.__dict__, step_metadata.step_number)
-
-        while action is not None:
-            step_metadata = self.controller.step(action, **params)
-            plotter.plot(step_metadata.__dict__, step_metadata.step_number)
-            if step_metadata is None:
-                break
+            scene_data, status = mcs.load_scene_json_file(self.scene_filepath)
+            if not scene_data:
+                print(f"Result of loading scene: {status}")
+                return
+            scene_data['name'] = self.name
+            step_metadata = self.controller.start_scene(scene_data)
             action, params = self.callback(step_metadata, self)
 
-        img = plotter.get_image()
-        img.save(self.name + "_path.gif")
-        self.controller.end_scene("", 1)
-        return scene_data['name']
+            plotter.plot(step_metadata.__dict__, step_metadata.step_number)
+
+            while action is not None:
+                step_metadata = self.controller.step(action, **params)
+                plotter.plot(step_metadata.__dict__, step_metadata.step_number)
+                if step_metadata is None:
+                    break
+                action, params = self.callback(step_metadata, self)
+
+            img = plotter.get_image()
+            img.save(self.name + "_path.gif")
+            self.controller.end_scene("", 1)
+            return scene_data['name']
 
 
 def simple_loop_callback(step_metadata, runner_script):

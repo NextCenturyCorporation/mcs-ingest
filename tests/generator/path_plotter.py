@@ -43,18 +43,20 @@ class PathPlotter():
     ROBOT_COLOR = 'xkcd:gray'
     DEFAULT_COLOR = "xkcd:black"
     HEADING_LENGTH = 0.4
-    MINIMUM_ROOM_DIMENSION = -5
-    MAXIMUM_ROOM_DIMENSION = 5
     BORDER = 0.05
 
     def __init__(self, team: str, scene_name: str,
-                 plot_width: int, plot_height: int):
+                 plot_width: int, plot_height: int,
+                 x_size: int, y_size: int, z_size: int):
         self._team = team
         if '/' in scene_name:
             scene_name = scene_name.rsplit('/', 1)[1]
         self._scene_name = scene_name
         self._plot_width = plot_width
         self._plot_height = plot_height
+        self._x_size = x_size
+        self._y_size = y_size
+        self._z_size = z_size
         self.plt = self._initialize_plot(step_number=0)
 
     def plot(self, metadata,
@@ -88,8 +90,8 @@ class PathPlotter():
 
     def _initialize_plot(self, step_number: int):
         """Create the plot"""
-        plt.xlim(self.MINIMUM_ROOM_DIMENSION, self.MAXIMUM_ROOM_DIMENSION)
-        plt.ylim(self.MINIMUM_ROOM_DIMENSION, self.MAXIMUM_ROOM_DIMENSION)
+        plt.xlim(-self._x_size / 2, self._x_size / 2)
+        plt.ylim(-self._z_size / 2, self._z_size / 2)
         plt.title(f"{self._team} {self._scene_name}")
         return plt
 

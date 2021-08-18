@@ -4,6 +4,11 @@
   "ceilingMaterial": "AI2-THOR/Materials/Wood/LightWoodCounters3",
   "floorMaterial": "UnityAssetStore/Kindergarten_Interior/Models/Materials/color wood 1",
   "wallMaterial": "AI2-THOR/Materials/Wood/LightWoodCounters3",
+  "roomDimensions": {
+    "x": 10,
+    "y": 11,
+    "z": 12
+  },
   "performerStart": {
     "position": {
       "x": 3.31,
