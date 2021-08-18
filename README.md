@@ -72,16 +72,6 @@ To run the unit tests, run the command:  python3 -m unittest
 
 See README.md in scorecard/ directory for details.
 
-```scorecard_test_ground_truth.py``` shows how to run the scorecard code:  You create a 
-Scorecard object, passing in the json file with the MCS output, and then tell it 
-to score which area you want.  
-
-```
-scorecard = Scorecard(json_filepath)
-num_revisit_calc = scorecard.calc_revisiting()
-```
-
-
 
 ## Acknowledgements
 

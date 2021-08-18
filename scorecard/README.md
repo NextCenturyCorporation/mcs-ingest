@@ -39,6 +39,18 @@ previous time they were in that grid square
   * Implement this as only counting the first in a series of revisits.  
      
 
+## Running the Scorecard
+
+
+```tests/scorecard_test_ground_truth.py``` shows an example of how to run the 
+scorecard code:  You create a Scorecard object, passing in the scene json file 
+along with the json file with the MCS output, and then tell it to score which 
+area you want.  
+
+```
+scorecard = Scorecard(scene_json_filepath, ouput_json_filepath)
+num_revisit_calc = scorecard.calc_revisiting()
+```
 
 
 
