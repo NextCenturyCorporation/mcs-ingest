@@ -7,8 +7,6 @@ import json
 import numpy as np
 import pandas
 
-from scorecard.utils import minAngDist
-
 # Assume that the entire room space goes from -5 to 5 in X and Z.  If not,
 # then will need to change this line or read in from scene json file.
 SPACE_SIZE = 5.
@@ -19,6 +17,15 @@ GRID_DIMENSION = 0.5
 # Direction limit:  Degrees difference that we allow before we count actors
 # as facing in the same direction
 DIRECTION_LIMIT = 11
+
+
+def minAngDist(a, b):
+    """Calculate the difference between two angles in degrees, keeping
+    in mind that 0 and 360 are the same.  Also, keep value in range [0-180].
+    You cannot just do an abs(a-b).    """
+    normDeg = (a - b) % 360
+    minAng = min(360 - normDeg, normDeg)
+    return minAng
 
 
 class GridHistory:
