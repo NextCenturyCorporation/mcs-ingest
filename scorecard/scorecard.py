@@ -47,10 +47,8 @@ class GridHistory:
         return False
 
     def any_visits(self):
-        size_of_stepnums = len(self.stepnums)
-        if size_of_stepnums == 0:
-            return False
-        return True
+        """Has this grid cell ever been visited"""
+        return len(self.stepnums) > 0
 
 
 class Scorecard:
