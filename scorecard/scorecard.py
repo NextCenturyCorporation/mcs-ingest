@@ -7,10 +7,6 @@ import json
 import numpy as np
 import pandas
 
-# Assume that the entire room space goes from -5 to 5 in X and Z.  If not,
-# then will need to change this line or read in from scene json file.
-SPACE_SIZE = 5.
-
 # Grid Dimension determines how big our grid is for revisiting
 GRID_DIMENSION = 0.5
 
@@ -61,14 +57,20 @@ class Scorecard:
     So we process (X,Z) locations.
     """
 
-    def __init__(self, json_filepath):
+    def __init__(self, scene_filepath, json_filepath):
         self.history_file_name = json_filepath
         with open(self.history_file_name) as history_file:
             self.history = json.load(history_file)
 
+        with open(scene_filepath) as scene_file:
+            scene = json.load(scene_file)
+            x_size = scene.get("roomDimensions").get("x")
+            z_size = scene.get("roomDimensions").get("z")
+            self.space_size = 2 * max(x_size, z_size)
+
         # Size of the grid for calculating revisiting
         self.grid_dimension = GRID_DIMENSION
-        self.grid_size = (int)(2 * SPACE_SIZE / self.grid_dimension)
+        self.grid_size = (int)(2 * self.space_size / self.grid_dimension)
 
         # Create the grid history and the counts
         self.grid = [[GridHistory() for j in range(self.grid_size)]
@@ -158,8 +160,8 @@ class Scorecard:
 
     def get_grid_by_location(self, x, z):
         """ Given float x,z, determine the int vals for the grid location"""
-        grid_x = (int)((SPACE_SIZE + x) / self.grid_dimension)
-        grid_z = (int)((SPACE_SIZE + z) / self.grid_dimension)
+        grid_x = (int)((self.space_size + x) / self.grid_dimension)
+        grid_z = (int)((self.space_size + z) / self.grid_dimension)
 
         if grid_x < 0 or grid_x > self.grid_size - 1:
             print(f"Problem with x loc {x}.  got grid loc {grid_x}.  " +

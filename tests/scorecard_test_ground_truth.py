@@ -13,9 +13,10 @@ from scorecard.scorecard import Scorecard
 DATADIR = ['generator/SCENE_HISTORY/', '../tests/']
 
 
-def process(json_filepath: str, num_revisit: int, dir='') -> Scorecard:
+def process(scene_filepath: str, json_filepath: str,
+            num_revisit: int, dir='') -> Scorecard:
     """Process a particular json file, compare to ground truth"""
-    scorecard = Scorecard(json_filepath)
+    scorecard = Scorecard(scene_filepath, json_filepath)
     num_revisit_calc = scorecard.calc_revisiting()
     print(f"File: {json_filepath}  ground_truth: {num_revisit}" +
           f"  Calculated: {num_revisit_calc}")
@@ -41,16 +42,25 @@ def process_all_ground_truth(ground_truth_file: str):
             if line[0] == "#":
                 continue
             vals = line.split()
-            basefilename = vals[0].strip()
-            gt_revisits = int(vals[1].strip())
-            full_path = find_fullpath(basefilename, DATADIR)
-            if not full_path:
+            scenefile = vals[0].strip()
+            basefilename = vals[1].strip()
+            gt_revisits = int(vals[2].strip())
+
+            full_scene_path = find_fullpath(scenefile, DATADIR)
+            if not full_scene_path:
                 print(f"Unable to find {DATADIR} and " +
-                      f"{basefilename} found: {full_path}")
+                      f"{scenefile} found: {full_scene_path}")
                 missing += 1
                 continue
-            print(f"From {DATADIR} and {basefilename} found: {full_path}")
-            scorecard = process(full_path, gt_revisits)
+
+            full_json_path = find_fullpath(basefilename, DATADIR)
+            if not full_json_path:
+                print(f"Unable to find {DATADIR} and " +
+                      f"{basefilename} found: {full_json_path}")
+                missing += 1
+                continue
+            print(f"From {DATADIR} and {basefilename} found: {full_json_path}")
+            scorecard = process(full_scene_path, full_json_path, gt_revisits)
             calc_revisit = scorecard.get_revisits()
             if gt_revisits == calc_revisit:
                 passed += 1
