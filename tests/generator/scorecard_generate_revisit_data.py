@@ -42,6 +42,8 @@ class DataGenRunnerScript():
 
     def __init__(self, mcs_unity_filepath, scene_filepath, name, action_callback):
         self.controller = mcs.create_controller(mcs_unity_filepath)
+        if not self.controller:
+            raise Exception("Unable to create controller")
         self.callback = action_callback
         self.name = name
         self.scene_filepath = scene_filepath
