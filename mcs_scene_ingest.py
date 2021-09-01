@@ -303,7 +303,6 @@ def process_score(
         history_item["score"]["score"] = interactive_goal_achieved
         history_item["score"]["reward"] = interactive_reward
         history_item["score"]["ground_truth"] = 1
-        history_item["score"]["scorecard"] = calculate_scorecard(history_item, scene)
     else:
         if "score" in history_item:
             history_item["score"]["score"] = 1 if history_item["score"][
@@ -427,6 +426,7 @@ def build_history_item(
             scene,
             interactive_goal_achieved,
             interactive_reward)
+        history_item["score"]["scorecard"] = calculate_scorecard(history, scene)
 
     return history_item
 

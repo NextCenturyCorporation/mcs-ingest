@@ -1,0 +1,2039 @@
+{
+  "name": "occluders_0001_17",
+  "version": "2",
+  "ceilingMaterial": "UnityAssetStore/Kindergarten_Interior/Models/Materials/color wood 2",
+  "floorMaterial": "UnityAssetStore/Kindergarten_Interior/Models/Materials/color wood 2",
+  "wallMaterial": "UnityAssetStore/Kindergarten_Interior/Models/Materials/color wood 2",
+  "performerStart": {
+    "position": {
+      "x": -4.05,
+      "y": 0,
+      "z": -2.23
+    },
+    "rotation": {
+      "x": 0,
+      "y": 90,
+      "z": 0
+    }
+  },
+  "roomDimensions": {
+    "x": 10,
+    "y": 11,
+    "z": 12
+  },
+  "objects": [
+    {
+      "id": "99e8e36c-1025-46b6-97b3-a9a147e639dd",
+      "type": "soccer_ball",
+      "mass": 1.0,
+      "salientMaterials": ["rubber"],
+      "debug": {
+        "dimensions": {
+          "x": 0.22,
+          "y": 0.22,
+          "z": 0.22
+        },
+        "info": [
+          "tiny",
+          "light",
+          "black",
+          "white",
+          "rubber",
+          "ball",
+          "black white",
+          "tiny light",
+          "tiny rubber",
+          "tiny black white",
+          "tiny ball",
+          "light rubber",
+          "light black white",
+          "light ball",
+          "rubber black white",
+          "rubber ball",
+          "black white ball",
+          "tiny light black white rubber ball",
+          "target"
+        ],
+        "positionY": 0.11,
+        "role": "target",
+        "shape": [
+          "ball"
+        ],
+        "size": "tiny",
+        "untrainedCategory": false,
+        "untrainedColor": false,
+        "untrainedCombination": false,
+        "untrainedShape": false,
+        "untrainedSize": false,
+        "offset": {
+          "x": 0,
+          "y": 0.11,
+          "z": 0
+        },
+        "materialCategory": [],
+        "color": [
+          "black",
+          "white"
+        ],
+        "weight": "light",
+        "goalString": "tiny light black white rubber ball",
+        "salientMaterials": [
+          "rubber"
+        ],
+        "enclosedAreas": [],
+        "isAgent": false,
+        "isConfusor": false,
+        "isContainer": false,
+        "isContext": false,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isStructural": false,
+        "isTarget": true,
+        "isWall": false
+      },
+      "moveable": true,
+      "pickupable": true,
+      "shows": [
+        {
+          "position": {
+            "x": 0.7600000000000002,
+            "y": 0.11,
+            "z": 2.566774446177986
+          },
+          "rotation": {
+            "x": 0,
+            "y": 270,
+            "z": 0
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 1,
+            "y": 1,
+            "z": 1
+          },
+          "boundingBox": [
+            {
+              "x": 0.6500000000000002,
+              "y": 0,
+              "z": 2.6767744461779857
+            },
+            {
+              "x": 0.8700000000000002,
+              "y": 0,
+              "z": 2.6767744461779857
+            },
+            {
+              "x": 0.8700000000000002,
+              "y": 0,
+              "z": 2.456774446177986
+            },
+            {
+              "x": 0.6500000000000002,
+              "y": 0,
+              "z": 2.456774446177986
+            }
+          ]
+        }
+      ],
+      "materials": []
+    },
+    {
+      "id": "59d38ab2-c3db-4dd1-a5d4-5c04564a62bd",
+      "type": "duck_on_wheels",
+      "mass": 4.0,
+      "salientMaterials": ["wood"],
+      "debug": {
+        "dimensions": {
+          "x": 0.42,
+          "y": 0.34,
+          "z": 0.13
+        },
+        "info": [
+          "small",
+          "light",
+          "brown",
+          "wood",
+          "duck",
+          "small light",
+          "small wood",
+          "small brown",
+          "small duck",
+          "light wood",
+          "light brown",
+          "light duck",
+          "wood brown",
+          "wood duck",
+          "brown duck",
+          "small light brown wood duck",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context"
+        ],
+        "positionY": 0.01,
+        "role": "context",
+        "shape": [
+          "duck"
+        ],
+        "size": "small",
+        "untrainedCategory": false,
+        "untrainedColor": false,
+        "untrainedCombination": false,
+        "untrainedShape": false,
+        "untrainedSize": false,
+        "offset": {
+          "x": 0,
+          "y": 0.17,
+          "z": 0
+        },
+        "materialCategory": [
+          "wood"
+        ],
+        "color": [
+          "brown"
+        ],
+        "weight": "light",
+        "goalString": "small light brown wood duck",
+        "salientMaterials": [
+          "wood"
+        ],
+        "enclosedAreas": [],
+        "isAgent": false,
+        "isConfusor": false,
+        "isContainer": false,
+        "isContext": true,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isStructural": false,
+        "isTarget": false,
+        "isWall": false
+      },
+      "moveable": true,
+      "pickupable": true,
+      "shows": [
+        {
+          "rotation": {
+            "x": 0,
+            "y": 270,
+            "z": 0
+          },
+          "position": {
+            "x": 4.17,
+            "y": 0.01,
+            "z": -0.82
+          },
+          "boundingBox": [
+            {
+              "x": 4.1049999999999995,
+              "y": 0,
+              "z": -0.61
+            },
+            {
+              "x": 4.235,
+              "y": 0,
+              "z": -0.61
+            },
+            {
+              "x": 4.235,
+              "y": 0,
+              "z": -1.03
+            },
+            {
+              "x": 4.1049999999999995,
+              "y": 0,
+              "z": -1.03
+            }
+          ],
+          "stepBegin": 0,
+          "scale": {
+            "x": 2,
+            "y": 2,
+            "z": 2
+          }
+        }
+      ],
+      "materials": ["AI2-THOR/Materials/Wood/WoodGrain_Tan"]
+    },
+    {
+      "id": "2ae6ee37-7ffb-4fa1-a189-b041f9600396",
+      "type": "bowl_4",
+      "mass": 0.5,
+      "salientMaterials": ["plastic"],
+      "debug": {
+        "dimensions": {
+          "x": 0.209,
+          "y": 0.059,
+          "z": 0.206
+        },
+        "info": [
+          "tiny",
+          "light",
+          "green",
+          "plastic",
+          "bowl",
+          "tiny light",
+          "tiny plastic",
+          "tiny green",
+          "tiny bowl",
+          "light plastic",
+          "light green",
+          "light bowl",
+          "plastic green",
+          "plastic bowl",
+          "green bowl",
+          "tiny light green plastic bowl",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context"
+        ],
+        "positionY": 0.005,
+        "role": "context",
+        "shape": [
+          "bowl"
+        ],
+        "size": "tiny",
+        "untrainedCategory": false,
+        "untrainedColor": false,
+        "untrainedCombination": false,
+        "untrainedShape": false,
+        "untrainedSize": false,
+        "offset": {
+          "x": 0,
+          "y": 0.027,
+          "z": 0
+        },
+        "materialCategory": [
+          "plastic"
+        ],
+        "color": [
+          "green"
+        ],
+        "weight": "light",
+        "goalString": "tiny light green plastic bowl",
+        "salientMaterials": [
+          "plastic"
+        ],
+        "enclosedAreas": [],
+        "isAgent": false,
+        "isConfusor": false,
+        "isContainer": false,
+        "isContext": true,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isStructural": false,
+        "isTarget": false,
+        "isWall": false
+      },
+      "moveable": true,
+      "pickupable": true,
+      "receptacle": true,
+      "shows": [
+        {
+          "rotation": {
+            "x": 0,
+            "y": 270,
+            "z": 0
+          },
+          "position": {
+            "x": 3.78,
+            "y": 0.005,
+            "z": 4.43
+          },
+          "boundingBox": [
+            {
+              "x": 3.6769999999999996,
+              "y": 0,
+              "z": 4.5344999999999995
+            },
+            {
+              "x": 3.883,
+              "y": 0,
+              "z": 4.5344999999999995
+            },
+            {
+              "x": 3.883,
+              "y": 0,
+              "z": 4.3255
+            },
+            {
+              "x": 3.6769999999999996,
+              "y": 0,
+              "z": 4.3255
+            }
+          ],
+          "stepBegin": 0,
+          "scale": {
+            "x": 1,
+            "y": 1,
+            "z": 1
+          }
+        }
+      ],
+      "materials": ["UnityAssetStore/Kindergarten_Interior/Models/Materials/color 3"]
+    },
+    {
+      "id": "b7ac54b5-7c24-43df-ae1e-9279ba4cc18f",
+      "type": "car_1",
+      "mass": 0.75,
+      "salientMaterials": ["wood"],
+      "debug": {
+        "dimensions": {
+          "x": 0.056249999999999994,
+          "y": 0.04875,
+          "z": 0.10500000000000001
+        },
+        "info": [
+          "tiny",
+          "light",
+          "brown",
+          "wood",
+          "car",
+          "tiny light",
+          "tiny wood",
+          "tiny brown",
+          "tiny car",
+          "light wood",
+          "light brown",
+          "light car",
+          "wood brown",
+          "wood car",
+          "brown car",
+          "tiny light brown wood car",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context"
+        ],
+        "positionY": 0.00375,
+        "role": "context",
+        "shape": [
+          "car"
+        ],
+        "size": "tiny",
+        "untrainedCategory": false,
+        "untrainedColor": false,
+        "untrainedCombination": false,
+        "untrainedShape": false,
+        "untrainedSize": false,
+        "offset": {
+          "x": 0.0,
+          "y": 0.024375,
+          "z": 0.0
+        },
+        "materialCategory": [
+          "block_blank"
+        ],
+        "color": [
+          "brown"
+        ],
+        "weight": "light",
+        "goalString": "tiny light brown wood car",
+        "salientMaterials": [
+          "wood"
+        ],
+        "enclosedAreas": [],
+        "isAgent": false,
+        "isConfusor": false,
+        "isContainer": false,
+        "isContext": true,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isStructural": false,
+        "isTarget": false,
+        "isWall": false
+      },
+      "moveable": true,
+      "pickupable": true,
+      "shows": [
+        {
+          "rotation": {
+            "x": 0,
+            "y": 270,
+            "z": 0
+          },
+          "position": {
+            "x": -3.28,
+            "y": 0.00375,
+            "z": 1.1
+          },
+          "boundingBox": [
+            {
+              "x": -3.3325,
+              "y": 0,
+              "z": 1.128125
+            },
+            {
+              "x": -3.2274999999999996,
+              "y": 0,
+              "z": 1.128125
+            },
+            {
+              "x": -3.2274999999999996,
+              "y": 0,
+              "z": 1.0718750000000001
+            },
+            {
+              "x": -3.3325,
+              "y": 0,
+              "z": 1.0718750000000001
+            }
+          ],
+          "stepBegin": 0,
+          "scale": {
+            "x": 0.75,
+            "y": 0.75,
+            "z": 0.75
+          }
+        }
+      ],
+      "materials": ["UnityAssetStore/Wooden_Toys_Bundle/ToyBlocks/meshes/Materials/wood_1x1"]
+    },
+    {
+      "id": "5acdbfc1-a64a-41fd-bb27-5e537f1e184b",
+      "type": "duck_on_wheels",
+      "mass": 4.0,
+      "salientMaterials": ["wood"],
+      "debug": {
+        "dimensions": {
+          "x": 0.42,
+          "y": 0.34,
+          "z": 0.13
+        },
+        "info": [
+          "small",
+          "light",
+          "brown",
+          "wood",
+          "duck",
+          "small light",
+          "small wood",
+          "small brown",
+          "small duck",
+          "light wood",
+          "light brown",
+          "light duck",
+          "wood brown",
+          "wood duck",
+          "brown duck",
+          "small light brown wood duck",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context"
+        ],
+        "positionY": 0.01,
+        "role": "context",
+        "shape": [
+          "duck"
+        ],
+        "size": "small",
+        "untrainedCategory": false,
+        "untrainedColor": false,
+        "untrainedCombination": false,
+        "untrainedShape": false,
+        "untrainedSize": false,
+        "offset": {
+          "x": 0,
+          "y": 0.17,
+          "z": 0
+        },
+        "materialCategory": [
+          "wood"
+        ],
+        "color": [
+          "brown"
+        ],
+        "weight": "light",
+        "goalString": "small light brown wood duck",
+        "salientMaterials": [
+          "wood"
+        ],
+        "enclosedAreas": [],
+        "isAgent": false,
+        "isConfusor": false,
+        "isContainer": false,
+        "isContext": true,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isStructural": false,
+        "isTarget": false,
+        "isWall": false
+      },
+      "moveable": true,
+      "pickupable": true,
+      "shows": [
+        {
+          "rotation": {
+            "x": 0,
+            "y": 270,
+            "z": 0
+          },
+          "position": {
+            "x": 3.84,
+            "y": 0.01,
+            "z": -3.63
+          },
+          "boundingBox": [
+            {
+              "x": 3.775,
+              "y": 0,
+              "z": -3.42
+            },
+            {
+              "x": 3.905,
+              "y": 0,
+              "z": -3.42
+            },
+            {
+              "x": 3.905,
+              "y": 0,
+              "z": -3.84
+            },
+            {
+              "x": 3.775,
+              "y": 0,
+              "z": -3.84
+            }
+          ],
+          "stepBegin": 0,
+          "scale": {
+            "x": 2,
+            "y": 2,
+            "z": 2
+          }
+        }
+      ],
+      "materials": ["AI2-THOR/Materials/Wood/WornWood"]
+    },
+    {
+      "id": "c1163a40-923a-4486-a9f5-9aed4a87c850",
+      "type": "duck_on_wheels",
+      "mass": 2.0,
+      "salientMaterials": ["wood"],
+      "debug": {
+        "dimensions": {
+          "x": 0.21,
+          "y": 0.17,
+          "z": 0.065
+        },
+        "info": [
+          "tiny",
+          "light",
+          "blue",
+          "wood",
+          "duck",
+          "tiny light",
+          "tiny wood",
+          "tiny blue",
+          "tiny duck",
+          "light wood",
+          "light blue",
+          "light duck",
+          "wood blue",
+          "wood duck",
+          "blue duck",
+          "tiny light blue wood duck",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context"
+        ],
+        "positionY": 0.005,
+        "role": "context",
+        "shape": [
+          "duck"
+        ],
+        "size": "tiny",
+        "untrainedCategory": false,
+        "untrainedColor": false,
+        "untrainedCombination": false,
+        "untrainedShape": false,
+        "untrainedSize": false,
+        "offset": {
+          "x": 0,
+          "y": 0.085,
+          "z": 0
+        },
+        "materialCategory": [
+          "block_blank"
+        ],
+        "color": [
+          "blue"
+        ],
+        "weight": "light",
+        "goalString": "tiny light blue wood duck",
+        "salientMaterials": [
+          "wood"
+        ],
+        "enclosedAreas": [],
+        "isAgent": false,
+        "isConfusor": false,
+        "isContainer": false,
+        "isContext": true,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isStructural": false,
+        "isTarget": false,
+        "isWall": false
+      },
+      "moveable": true,
+      "pickupable": true,
+      "shows": [
+        {
+          "rotation": {
+            "x": 0,
+            "y": 270,
+            "z": 0
+          },
+          "position": {
+            "x": 4.58,
+            "y": 0.005,
+            "z": -0.28
+          },
+          "boundingBox": [
+            {
+              "x": 4.5475,
+              "y": 0,
+              "z": -0.17500000000000004
+            },
+            {
+              "x": 4.6125,
+              "y": 0,
+              "z": -0.17500000000000004
+            },
+            {
+              "x": 4.6125,
+              "y": 0,
+              "z": -0.385
+            },
+            {
+              "x": 4.5475,
+              "y": 0,
+              "z": -0.385
+            }
+          ],
+          "stepBegin": 0,
+          "scale": {
+            "x": 1,
+            "y": 1,
+            "z": 1
+          }
+        }
+      ],
+      "materials": ["UnityAssetStore/Wooden_Toys_Bundle/ToyBlocks/meshes/Materials/blue_1x1"]
+    },
+    {
+      "id": "4326f057-eab2-4019-a263-b49a49103e32",
+      "type": "block_blank_wood_cube",
+      "mass": 0.666,
+      "salientMaterials": ["wood"],
+      "debug": {
+        "dimensions": {
+          "x": 0.1,
+          "y": 0.1,
+          "z": 0.1
+        },
+        "info": [
+          "tiny",
+          "light",
+          "red",
+          "wood",
+          "blank block",
+          "cube",
+          "blank block cube",
+          "tiny light",
+          "tiny wood",
+          "tiny red",
+          "tiny blank block cube",
+          "light wood",
+          "light red",
+          "light blank block cube",
+          "wood red",
+          "wood blank block cube",
+          "red blank block cube",
+          "tiny light red wood blank block cube",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context"
+        ],
+        "positionY": 0,
+        "role": "context",
+        "shape": [
+          "blank block",
+          "cube"
+        ],
+        "size": "tiny",
+        "untrainedCategory": false,
+        "untrainedColor": false,
+        "untrainedCombination": false,
+        "untrainedShape": false,
+        "untrainedSize": false,
+        "offset": {
+          "x": 0,
+          "y": 0.05,
+          "z": 0
+        },
+        "materialCategory": [
+          "block_blank"
+        ],
+        "color": [
+          "red"
+        ],
+        "weight": "light",
+        "goalString": "tiny light red wood blank block cube",
+        "salientMaterials": [
+          "wood"
+        ],
+        "enclosedAreas": [],
+        "isAgent": false,
+        "isConfusor": false,
+        "isContainer": false,
+        "isContext": true,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isStructural": false,
+        "isTarget": false,
+        "isWall": false
+      },
+      "moveable": true,
+      "pickupable": true,
+      "shows": [
+        {
+          "rotation": {
+            "x": 0,
+            "y": 270,
+            "z": 0
+          },
+          "position": {
+            "x": -2.82,
+            "y": 0,
+            "z": 4.44
+          },
+          "boundingBox": [
+            {
+              "x": -2.8699999999999997,
+              "y": 0,
+              "z": 4.49
+            },
+            {
+              "x": -2.77,
+              "y": 0,
+              "z": 4.49
+            },
+            {
+              "x": -2.77,
+              "y": 0,
+              "z": 4.390000000000001
+            },
+            {
+              "x": -2.8699999999999997,
+              "y": 0,
+              "z": 4.390000000000001
+            }
+          ],
+          "stepBegin": 0,
+          "scale": {
+            "x": 1,
+            "y": 1,
+            "z": 1
+          }
+        }
+      ],
+      "materials": ["UnityAssetStore/Wooden_Toys_Bundle/ToyBlocks/meshes/Materials/red_1x1"]
+    },
+    {
+      "id": "fff8bb19-350c-47e9-8080-aeb61060351b",
+      "type": "racecar_red",
+      "mass": 3.0,
+      "salientMaterials": ["wood"],
+      "debug": {
+        "dimensions": {
+          "x": 0.21000000000000002,
+          "y": 0.18,
+          "z": 0.44999999999999996
+        },
+        "info": [
+          "small",
+          "light",
+          "brown",
+          "wood",
+          "car",
+          "small light",
+          "small wood",
+          "small brown",
+          "small car",
+          "light wood",
+          "light brown",
+          "light car",
+          "wood brown",
+          "wood car",
+          "brown car",
+          "small light brown wood car",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context"
+        ],
+        "positionY": 0.015,
+        "role": "context",
+        "shape": [
+          "car"
+        ],
+        "size": "small",
+        "untrainedCategory": false,
+        "untrainedColor": false,
+        "untrainedCombination": false,
+        "untrainedShape": false,
+        "untrainedSize": false,
+        "offset": {
+          "x": 0,
+          "y": 0.09,
+          "z": 0
+        },
+        "materialCategory": [
+          "wood"
+        ],
+        "color": [
+          "brown"
+        ],
+        "weight": "light",
+        "goalString": "small light brown wood car",
+        "salientMaterials": [
+          "wood"
+        ],
+        "enclosedAreas": [],
+        "isAgent": false,
+        "isConfusor": false,
+        "isContainer": false,
+        "isContext": true,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isStructural": false,
+        "isTarget": false,
+        "isWall": false
+      },
+      "moveable": true,
+      "pickupable": true,
+      "shows": [
+        {
+          "rotation": {
+            "x": 0,
+            "y": 270,
+            "z": 0
+          },
+          "position": {
+            "x": 3.9,
+            "y": 0.015,
+            "z": 1.87
+          },
+          "boundingBox": [
+            {
+              "x": 3.675,
+              "y": 0,
+              "z": 1.975
+            },
+            {
+              "x": 4.125,
+              "y": 0,
+              "z": 1.975
+            },
+            {
+              "x": 4.125,
+              "y": 0,
+              "z": 1.7650000000000001
+            },
+            {
+              "x": 3.675,
+              "y": 0,
+              "z": 1.7650000000000001
+            }
+          ],
+          "stepBegin": 0,
+          "scale": {
+            "x": 3,
+            "y": 3,
+            "z": 3
+          }
+        }
+      ],
+      "materials": ["AI2-THOR/Materials/Wood/TexturesCom_WoodFine0050_1_seamless_S"]
+    },
+    {
+      "id": "b06aa52b-57b7-4210-8f53-672ed7ae9687",
+      "type": "chair_2",
+      "mass": 5.3334,
+      "salientMaterials": ["wood"],
+      "debug": {
+        "dimensions": {
+          "x": 0.22499999999999998,
+          "y": 0.375,
+          "z": 0.22499999999999998
+        },
+        "info": [
+          "small",
+          "light",
+          "brown",
+          "wood",
+          "stool",
+          "small light",
+          "small wood",
+          "small brown",
+          "small stool",
+          "light wood",
+          "light brown",
+          "light stool",
+          "wood brown",
+          "wood stool",
+          "brown stool",
+          "small light brown wood stool",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context"
+        ],
+        "positionY": 0.0,
+        "role": "context",
+        "shape": [
+          "stool"
+        ],
+        "size": "small",
+        "untrainedCategory": false,
+        "untrainedColor": false,
+        "untrainedCombination": false,
+        "untrainedShape": false,
+        "untrainedSize": false,
+        "offset": {
+          "x": 0.0,
+          "y": 0.1875,
+          "z": 0.0
+        },
+        "materialCategory": [
+          "wood"
+        ],
+        "color": [
+          "brown"
+        ],
+        "weight": "light",
+        "goalString": "small light brown wood stool",
+        "salientMaterials": [
+          "wood"
+        ],
+        "enclosedAreas": [],
+        "isAgent": false,
+        "isConfusor": false,
+        "isContainer": false,
+        "isContext": true,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isStructural": false,
+        "isTarget": false,
+        "isWall": false
+      },
+      "pickupable": true,
+      "receptacle": true,
+      "shows": [
+        {
+          "rotation": {
+            "x": 0,
+            "y": 270,
+            "z": 0
+          },
+          "position": {
+            "x": 1.86,
+            "y": 0.0,
+            "z": 1.02
+          },
+          "boundingBox": [
+            {
+              "x": 1.7475,
+              "y": 0,
+              "z": 1.1325
+            },
+            {
+              "x": 1.9725000000000001,
+              "y": 0,
+              "z": 1.1325
+            },
+            {
+              "x": 1.9725000000000001,
+              "y": 0,
+              "z": 0.9075
+            },
+            {
+              "x": 1.7475,
+              "y": 0,
+              "z": 0.9075
+            }
+          ],
+          "stepBegin": 0,
+          "scale": {
+            "x": 0.75,
+            "y": 0.5,
+            "z": 0.75
+          }
+        }
+      ],
+      "materials": ["AI2-THOR/Materials/Wood/WoodFloorsCross"]
+    },
+    {
+      "id": "ab00da6f-1ff0-4a51-8321-a46dc1f5ee81",
+      "type": "bowl_6",
+      "mass": 1.0,
+      "salientMaterials": ["wood"],
+      "debug": {
+        "dimensions": {
+          "x": 0.198,
+          "y": 0.109,
+          "z": 0.201
+        },
+        "info": [
+          "tiny",
+          "light",
+          "yellow",
+          "wood",
+          "bowl",
+          "tiny light",
+          "tiny wood",
+          "tiny yellow",
+          "tiny bowl",
+          "light wood",
+          "light yellow",
+          "light bowl",
+          "wood yellow",
+          "wood bowl",
+          "yellow bowl",
+          "tiny light yellow wood bowl",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context",
+          "context"
+        ],
+        "positionY": 0.005,
+        "role": "context",
+        "shape": [
+          "bowl"
+        ],
+        "size": "tiny",
+        "untrainedCategory": false,
+        "untrainedColor": false,
+        "untrainedCombination": false,
+        "untrainedShape": false,
+        "untrainedSize": false,
+        "offset": {
+          "x": 0,
+          "y": 0.052,
+          "z": 0
+        },
+        "materialCategory": [
+          "wood"
+        ],
+        "color": [
+          "yellow"
+        ],
+        "weight": "light",
+        "goalString": "tiny light yellow wood bowl",
+        "salientMaterials": [
+          "wood"
+        ],
+        "enclosedAreas": [],
+        "isAgent": false,
+        "isConfusor": false,
+        "isContainer": false,
+        "isContext": true,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isStructural": false,
+        "isTarget": false,
+        "isWall": false
+      },
+      "moveable": true,
+      "pickupable": true,
+      "receptacle": true,
+      "shows": [
+        {
+          "rotation": {
+            "x": 0,
+            "y": 270,
+            "z": 0
+          },
+          "position": {
+            "x": -3.89,
+            "y": 0.005,
+            "z": 3.79
+          },
+          "boundingBox": [
+            {
+              "x": -3.9905,
+              "y": 0,
+              "z": 3.8890000000000002
+            },
+            {
+              "x": -3.7895000000000003,
+              "y": 0,
+              "z": 3.8890000000000002
+            },
+            {
+              "x": -3.7895000000000003,
+              "y": 0,
+              "z": 3.691
+            },
+            {
+              "x": -3.9905,
+              "y": 0,
+              "z": 3.691
+            }
+          ],
+          "stepBegin": 0,
+          "scale": {
+            "x": 1,
+            "y": 1,
+            "z": 1
+          }
+        }
+      ],
+      "materials": ["UnityAssetStore/Kindergarten_Interior/Models/Materials/color wood 4"]
+    }
+
+  ],
+  "goal": {
+    "category": "retrieval",
+    "domainsInfo": {
+      "objects": [
+        "objects have depth and move in 3D space",
+        "objects change motion on contact and do not pass through one another"
+      ],
+      "places": [
+        "keep track of location",
+        "ability to learn the layout of their environment"
+      ],
+      "agents": [],
+      "all": [
+        "objects have depth and move in 3D space",
+        "objects change motion on contact and do not pass through one another",
+        "keep track of location",
+        "ability to learn the layout of their environment"
+      ]
+    },
+    "sceneInfo": {
+      "primaryType": "interactive",
+      "secondaryType": "retrieval",
+      "tertiaryType": "occluder",
+      "quaternaryType": "action full",
+      "ambiguous": null,
+      "corner": null,
+      "direction": null,
+      "fallDown": null,
+      "moveAcross": null,
+      "sceneSetup": null,
+      "wall": null,
+      "count": {
+        "all": 11,
+        "agent": 0,
+        "confusor": 0,
+        "container": 0,
+        "context": 9,
+        "home": 0,
+        "key": 0,
+        "intuitive_physics_occluder": 0,
+        "non_target": 0,
+        "obstacle": 0,
+        "occluder": 1,
+        "structural": 0,
+        "target": 1,
+        "wall": 0
+      },
+      "present": {
+        "agent": false,
+        "confusor": false,
+        "container": false,
+        "context": true,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": true,
+        "structural": false,
+        "target": true,
+        "wall": false
+      },
+      "trained": {
+        "any": true,
+        "agent": false,
+        "confusor": false,
+        "container": false,
+        "context": true,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": true,
+        "structural": false,
+        "target": true,
+        "wall": false
+      },
+      "trainedCategory": {
+        "any": true,
+        "agent": false,
+        "confusor": false,
+        "container": false,
+        "context": true,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": true,
+        "structural": false,
+        "target": true,
+        "wall": false
+      },
+      "trainedColor": {
+        "any": true,
+        "agent": false,
+        "confusor": false,
+        "container": false,
+        "context": true,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": true,
+        "structural": false,
+        "target": true,
+        "wall": false
+      },
+      "trainedCombination": {
+        "any": true,
+        "agent": false,
+        "confusor": false,
+        "container": false,
+        "context": true,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": true,
+        "structural": false,
+        "target": true,
+        "wall": false
+      },
+      "trainedShape": {
+        "any": true,
+        "agent": false,
+        "confusor": false,
+        "container": false,
+        "context": true,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": true,
+        "structural": false,
+        "target": true,
+        "wall": false
+      },
+      "trainedSize": {
+        "any": true,
+        "agent": false,
+        "confusor": false,
+        "container": false,
+        "context": true,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": true,
+        "structural": false,
+        "target": true,
+        "wall": false
+      },
+      "untrained": {
+        "any": false,
+        "agent": false,
+        "confusor": false,
+        "container": false,
+        "context": false,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": false,
+        "structural": false,
+        "target": false,
+        "wall": false
+      },
+      "untrainedCategory": {
+        "any": false,
+        "agent": false,
+        "confusor": false,
+        "container": false,
+        "context": false,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": false,
+        "structural": false,
+        "target": false,
+        "wall": false
+      },
+      "untrainedColor": {
+        "any": false,
+        "agent": false,
+        "confusor": false,
+        "container": false,
+        "context": false,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": false,
+        "structural": false,
+        "target": false,
+        "wall": false
+      },
+      "untrainedCombination": {
+        "any": false,
+        "agent": false,
+        "confusor": false,
+        "container": false,
+        "context": false,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": false,
+        "structural": false,
+        "target": false,
+        "wall": false
+      },
+      "untrainedShape": {
+        "any": false,
+        "agent": false,
+        "confusor": false,
+        "container": false,
+        "context": false,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": false,
+        "structural": false,
+        "target": false,
+        "wall": false
+      },
+      "untrainedSize": {
+        "any": false,
+        "agent": false,
+        "confusor": false,
+        "container": false,
+        "context": false,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": false,
+        "structural": false,
+        "target": false,
+        "wall": false
+      },
+      "contained": {
+        "any": false,
+        "agent": false,
+        "confusor": false,
+        "container": false,
+        "context": false,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": false,
+        "structural": false,
+        "target": false,
+        "wall": false
+      },
+      "uncontained": {
+        "any": false,
+        "agent": false,
+        "confusor": false,
+        "container": false,
+        "context": true,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": true,
+        "structural": false,
+        "target": true,
+        "wall": false
+      },
+      "all": [
+        "interactive",
+        "retrieval",
+        "occluder",
+        "action full",
+        "context 9",
+        "occluder 1",
+        "target 1",
+        "context present",
+        "occluder present",
+        "target present",
+        "context trained",
+        "occluder trained",
+        "target trained",
+        "context trained category",
+        "occluder trained category",
+        "target trained category",
+        "context trained color",
+        "occluder trained color",
+        "target trained color",
+        "context trained combination",
+        "occluder trained combination",
+        "target trained combination",
+        "context trained shape",
+        "occluder trained shape",
+        "target trained shape",
+        "context trained size",
+        "occluder trained size",
+        "target trained size",
+        "context uncontained",
+        "occluder uncontained",
+        "target uncontained",
+        "retrieval_occluder_I1",
+        "I1"
+      ],
+      "id": [
+        "I1"
+      ],
+      "slices": [
+        "occluders 1",
+        "occluders trained yes",
+        "target behind yes",
+        "target hidden yes"
+      ],
+      "occluders": 1,
+      "occludersTrained": "yes",
+      "targetBehind": "yes",
+      "targetHidden": "yes",
+      "name": "retrieval_occluder_I1",
+      "hypercubeId": "retrieval_occluder_I1_AC45A834-4655-41B1-A0E7-649C4A6B6FA2"
+    },
+    "objectsInfo": {
+      "all": [
+        "duck",
+        "wood",
+        "plastic black grey",
+        "tiny plastic",
+        "light wood",
+        "car",
+        "light red",
+        "blue duck",
+        "tiny light yellow wood bowl",
+        "wood blank block cube",
+        "light ball",
+        "red blank block cube",
+        "medium massive",
+        "plastic television",
+        "medium",
+        "brown stool",
+        "tiny yellow",
+        "small light brown wood stool",
+        "green bowl",
+        "plastic bowl",
+        "black white",
+        "tiny rubber",
+        "massive",
+        "small duck",
+        "massive plastic",
+        "brown duck",
+        "yellow bowl",
+        "brown car",
+        "medium plastic",
+        "light black white",
+        "uncontained",
+        "wood red",
+        "small stool",
+        "trained combination",
+        "light brown",
+        "yellow",
+        "small",
+        "massive television",
+        "rubber",
+        "small light brown wood duck",
+        "plastic",
+        "light bowl",
+        "tiny brown",
+        "occluder",
+        "brown",
+        "tiny light brown wood car",
+        "rubber ball",
+        "tiny car",
+        "tiny",
+        "blank block",
+        "tiny bowl",
+        "medium massive black grey plastic television",
+        "light blank block cube",
+        "tiny wood",
+        "tiny blue",
+        "target",
+        "light yellow",
+        "tiny light blue wood duck",
+        "wood stool",
+        "light",
+        "black white ball",
+        "blue",
+        "rubber black white",
+        "tiny light black white rubber ball",
+        "medium black grey",
+        "tiny light",
+        "massive black grey",
+        "light car",
+        "light duck",
+        "bowl",
+        "tiny red",
+        "cube",
+        "tiny blank block cube",
+        "wood bowl",
+        "white",
+        "television",
+        "tiny light red wood blank block cube",
+        "wood duck",
+        "wood yellow",
+        "wood brown",
+        "small light",
+        "black grey television",
+        "light rubber",
+        "black grey",
+        "red",
+        "green",
+        "trained size",
+        "trained category",
+        "light green",
+        "light blue",
+        "trained shape",
+        "light plastic",
+        "tiny black white",
+        "tiny ball",
+        "small wood",
+        "blank block cube",
+        "stool",
+        "tiny green",
+        "small car",
+        "context",
+        "plastic green",
+        "tiny duck",
+        "wood blue",
+        "trained color",
+        "ball",
+        "small brown",
+        "light stool",
+        "black",
+        "medium television",
+        "small light brown wood car",
+        "tiny light green plastic bowl",
+        "grey",
+        "wood car"
+      ],
+      "agent": [],
+      "confusor": [],
+      "container": [],
+      "context": [
+        "duck",
+        "wood",
+        "tiny plastic",
+        "light wood",
+        "car",
+        "light red",
+        "blue duck",
+        "tiny light yellow wood bowl",
+        "wood blank block cube",
+        "red blank block cube",
+        "brown stool",
+        "tiny yellow",
+        "small light brown wood stool",
+        "green bowl",
+        "plastic bowl",
+        "small duck",
+        "brown duck",
+        "brown car",
+        "yellow bowl",
+        "uncontained",
+        "wood red",
+        "small stool",
+        "trained combination",
+        "light brown",
+        "yellow",
+        "small",
+        "small light brown wood duck",
+        "plastic",
+        "light bowl",
+        "tiny brown",
+        "brown",
+        "tiny light brown wood car",
+        "tiny car",
+        "tiny",
+        "blank block",
+        "tiny bowl",
+        "light blank block cube",
+        "tiny wood",
+        "tiny blue",
+        "light yellow",
+        "tiny light blue wood duck",
+        "wood stool",
+        "light",
+        "blue",
+        "tiny light",
+        "light car",
+        "light duck",
+        "bowl",
+        "tiny red",
+        "cube",
+        "tiny blank block cube",
+        "wood bowl",
+        "tiny light red wood blank block cube",
+        "wood duck",
+        "wood yellow",
+        "wood brown",
+        "small light",
+        "red",
+        "green",
+        "trained size",
+        "trained category",
+        "light green",
+        "light blue",
+        "trained shape",
+        "light plastic",
+        "small wood",
+        "blank block cube",
+        "stool",
+        "tiny green",
+        "small car",
+        "plastic green",
+        "tiny duck",
+        "wood blue",
+        "trained color",
+        "small brown",
+        "light stool",
+        "small light brown wood car",
+        "tiny light green plastic bowl",
+        "wood car"
+      ],
+      "home": [],
+      "key": [],
+      "intuitive_physics_occluder": [],
+      "non_target": [],
+      "obstacle": [],
+      "occluder": [
+        "black grey",
+        "plastic black grey",
+        "trained size",
+        "trained category",
+        "medium black grey",
+        "trained shape",
+        "massive black grey",
+        "trained combination",
+        "massive television",
+        "plastic",
+        "medium massive",
+        "plastic television",
+        "medium",
+        "trained color",
+        "television",
+        "massive",
+        "massive plastic",
+        "medium massive black grey plastic television",
+        "black",
+        "medium television",
+        "grey",
+        "black grey television",
+        "medium plastic",
+        "uncontained"
+      ],
+      "structural": [],
+      "target": [
+        "light",
+        "light rubber",
+        "trained size",
+        "black white ball",
+        "trained category",
+        "rubber black white",
+        "tiny light black white rubber ball",
+        "trained shape",
+        "tiny light",
+        "trained combination",
+        "tiny black white",
+        "light ball",
+        "rubber",
+        "tiny ball",
+        "white",
+        "rubber ball",
+        "tiny",
+        "black white",
+        "trained color",
+        "ball",
+        "tiny rubber",
+        "black",
+        "light black white",
+        "uncontained"
+      ],
+      "wall": []
+    },
+    "metadata": {
+      "target": {
+        "id": "99e8e36c-1025-46b6-97b3-a9a147e639dd",
+        "info": ["tiny","light","black","white","rubber","ball","black white","tiny light","tiny rubber","tiny black white","tiny ball","light rubber","light black white","light ball","rubber black white","rubber ball","black white ball","tiny light black white rubber ball","target"]
+      }
+    },
+    "description": "Find and pick up the tiny light black white rubber ball.",
+    "last_step": 2500
+  },
+  "debug": {
+    "floorColors": [
+      "red"
+    ],
+    "wallColors": [
+      "red"
+    ],
+    "evaluationOnly": false,
+    "hypercubeNumber": 1,
+    "sceneNumber": 17,
+    "evaluation": null,
+    "training": false
+  }
+}

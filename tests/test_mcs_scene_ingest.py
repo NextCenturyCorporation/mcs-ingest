@@ -3,8 +3,9 @@ import mcs_scene_ingest
 
 TEST_SCENE_FILE_NAME = "test_juliett_0001_01_debug.json"
 TEST_HISTORY_FILE_NAME = "test_eval_3-5_level2_baseline_juliett_0001_01.json"
+TEST_INTERACTIVE_SCENE_FILE_NAME = "occluders_0001_17_I1_debug.json"
+TEST_INTERACTIVE_HISTORY_FILE_NAME = "generator/SCENE_HISTORY/occluders_0001_17_baseline.json"
 TEST_FOLDER = "tests"
-TEST_FOLDER = "/home/clark/work/mcs/mcs-ingest/tests"
 
 class TestMcsSceneIngest(unittest.TestCase):
 
@@ -69,6 +70,13 @@ class TestMcsSceneIngest(unittest.TestCase):
     def test_build_history_item(self):
         history_item = mcs_scene_ingest.build_history_item(
             TEST_HISTORY_FILE_NAME, TEST_FOLDER, "eval_4", "cora", TEST_FOLDER, ".json")
+        print(f"{history_item}")
+
+    def test_build_interactive_history_item(self):
+        '''Generates history item for an interactive, which follows
+        a different code path (and includes scorecard)'''
+        history_item = mcs_scene_ingest.build_history_item(
+            TEST_INTERACTIVE_HISTORY_FILE_NAME, TEST_FOLDER, "eval_4", "cora", TEST_FOLDER, ".json")
         print(f"{history_item}")
 
 if __name__ == '__main__':
