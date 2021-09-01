@@ -286,8 +286,8 @@ def add_weighted_cube_scoring(history_item: dict, scene: dict) -> tuple:
 
 def calculate_scorecard(history_item: dict, scene: dict) -> dict:
     scorecard = Scorecard(history_item, scene)
-
-
+    scorecard_vals = scorecard.score_all()
+    return scorecard_vals
 
 def process_score(
         history_item: dict,

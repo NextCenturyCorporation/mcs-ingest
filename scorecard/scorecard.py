@@ -2,7 +2,6 @@
 # Calculate the Scorecard for a particular MCS output JSON file
 #
 #
-import json
 
 import numpy as np
 import pandas
@@ -77,6 +76,29 @@ class Scorecard:
 
         # Output values
         self.revisits = 0
+        self.repeat_failed = 0
+        self.attempt_impossible = 0
+        self.open_unopenable = 0
+        self.multiple_container_look = 0
+        self.not_moving_toward_object = 0
+
+    def score_all(self) -> dict:
+        self.calc_repeat_failed()
+        self.calc_attempt_impossible()
+        self.calc_open_unopenable()
+        self.calc_multiple_container_look()
+        self.calc_not_moving_toward_object()
+        self.calc_revisiting()
+
+        scorecard_vals = {}
+        scorecard_vals["repeat_failed"] = self.repeat_failed
+        scorecard_vals["attempt_impossible"] = self.attempt_impossible
+        scorecard_vals["open_unopenable"] = self.open_unopenable
+        scorecard_vals["multiple_container_look"] = self.multiple_container_look
+        scorecard_vals["not_moving_toward_object"] = self.not_moving_toward_object
+        scorecard_vals["revisits"] = self.revisits
+
+        return scorecard_vals
 
     def get_revisits(self):
         return self.revisits
@@ -183,7 +205,7 @@ class Scorecard:
     def calc_repeat_failed(self):
         pass
 
-    def calc_impossible(self):
+    def calc_attempt_impossible(self):
         pass
 
     def calc_not_moving_toward_object(self):

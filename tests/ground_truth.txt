@@ -1,6 +1,6 @@
-# Basename of the file,  number of revisits
-india_0015_12.json zero_1 0
-india_0015_12.json one_1  1
-india_0015_12.json one_2  1
-india_0015_12.json one_3  1
-india_0015_12.json india_0003 1
+# Scene file          Basename of the file         Number of revisits
+india_0003_17.json    zero_1                       0
+india_0003_17.json    one_1                        1
+india_0003_17.json    one_2                        1
+india_0003_17.json    one_3                        1
+india_0003_17.json    india_0003_baseline_level1   1
