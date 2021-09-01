@@ -36,12 +36,12 @@ class TestMcsSceneIngest(unittest.TestCase):
 
     def test_find_scene_files(self):
         scene_files = mcs_scene_ingest.find_scene_files(TEST_FOLDER)
-        self.assertEqual(len(scene_files), 1)
-        self.assertEqual(scene_files[0], TEST_SCENE_FILE_NAME)
+        self.assertEqual(len(scene_files), 4)
+        self.assertTrue(TEST_SCENE_FILE_NAME in scene_files)
 
     def test_find_history_files(self):
         history_files = mcs_scene_ingest.find_history_files(TEST_FOLDER, "json")
-        self.assertEqual(len(history_files), 2)
+        self.assertEqual(len(history_files), 5)
 
     def test_build_scene_item(self):
         scene = mcs_scene_ingest.build_scene_item(
