@@ -1,7 +1,8 @@
 #
-# path_plotter plots the path of an actor in the room, so we can visualize it.  It produces
-# a single image showing the entire path (rather than a video based on multiple images,
-# one per step, as was done in machine_common_sense.plotter.py)
+# path_plotter plots the path of an actor in the room, so we can visualize it.
+# It produces a single image showing the entire path (rather than a video
+# based on multiple images, one per step, as was done in
+# machine_common_sense.plotter.py)
 #
 
 import io

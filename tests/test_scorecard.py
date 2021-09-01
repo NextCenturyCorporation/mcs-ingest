@@ -1,11 +1,13 @@
 import unittest
+
 import mcs_scene_ingest
 from scorecard.scorecard import Scorecard
 
 TEST_SCENE_FILE_NAME = "occluders_0001_17_I1_debug.json"
-TEST_HISTORY_FILE_NAME = "generator/SCENE_HISTORY/india_0003_baseline_level1.json"
+TEST_HISTORY_FILE_NAME = "generator/SCENE_HISTORY/" + \
+                         "india_0003_baseline_level1.json"
 TEST_FOLDER = "tests"
-TEST_FOLDER = "/home/clark/work/mcs/mcs-ingest/tests"
+
 
 class TestMcsScorecard(unittest.TestCase):
 

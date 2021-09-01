@@ -94,8 +94,10 @@ class Scorecard:
         scorecard_vals["repeat_failed"] = self.repeat_failed
         scorecard_vals["attempt_impossible"] = self.attempt_impossible
         scorecard_vals["open_unopenable"] = self.open_unopenable
-        scorecard_vals["multiple_container_look"] = self.multiple_container_look
-        scorecard_vals["not_moving_toward_object"] = self.not_moving_toward_object
+        scorecard_vals["multiple_container_look"] = \
+            self.multiple_container_look
+        scorecard_vals["not_moving_toward_object"] = \
+            self.not_moving_toward_object
         scorecard_vals["revisits"] = self.revisits
 
         return scorecard_vals

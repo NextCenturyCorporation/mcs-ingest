@@ -67,7 +67,6 @@ def process_all_ground_truth(ground_truth_file: str):
                       f"{basefilename} found: {history_filepath}")
                 missing += 1
                 continue
-            print(f"From {DATADIR} and {basefilename} found: {history_filepath}")
             scorecard = process(history_filepath, scene_filepath, gt_revisits)
             calc_revisit = scorecard.get_revisits()
             if gt_revisits == calc_revisit:
