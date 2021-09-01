@@ -6,6 +6,7 @@
 #
 
 import argparse
+import json
 import os
 
 from scorecard.scorecard import Scorecard
@@ -13,12 +14,19 @@ from scorecard.scorecard import Scorecard
 DATADIR = ['generator/SCENE_HISTORY/', '../tests/']
 
 
-def process(scene_filepath: str, json_filepath: str,
+def process(history_filepath: str, scene_filepath: str,
             num_revisit: int) -> Scorecard:
-    """Process a particular json file, compare to ground truth"""
-    scorecard = Scorecard(scene_filepath, json_filepath)
+    """Process a particular json file, compare to ground truth (num_revisit)"""
+
+    with open(history_filepath) as history_file:
+        history = json.load(history_file)
+
+    with open(scene_filepath) as scene_file:
+        scene = json.load(scene_file)
+
+    scorecard = Scorecard(history, scene)
     num_revisit_calc = scorecard.calc_revisiting()
-    print(f"File: {json_filepath}  ground_truth: {num_revisit}" +
+    print(f"File: {history_filepath}  ground_truth: {num_revisit}" +
           f"  Calculated: {num_revisit_calc}")
     return scorecard
 
@@ -46,21 +54,21 @@ def process_all_ground_truth(ground_truth_file: str):
             basefilename = vals[1].strip()
             gt_revisits = int(vals[2].strip())
 
-            full_scene_path = find_fullpath(scenefile, DATADIR)
-            if not full_scene_path:
+            scene_filepath = find_fullpath(scenefile, DATADIR)
+            if not scene_filepath:
                 print(f"Unable to find {DATADIR} and " +
-                      f"{scenefile} found: {full_scene_path}")
+                      f"{scenefile} found: {scene_filepath}")
                 missing += 1
                 continue
 
-            full_json_path = find_fullpath(basefilename, DATADIR)
-            if not full_json_path:
+            history_filepath = find_fullpath(basefilename, DATADIR)
+            if not history_filepath:
                 print(f"Unable to find {DATADIR} and " +
-                      f"{basefilename} found: {full_json_path}")
+                      f"{basefilename} found: {history_filepath}")
                 missing += 1
                 continue
-            print(f"From {DATADIR} and {basefilename} found: {full_json_path}")
-            scorecard = process(full_scene_path, full_json_path, gt_revisits)
+            print(f"From {DATADIR} and {basefilename} found: {history_filepath}")
+            scorecard = process(history_filepath, scene_filepath, gt_revisits)
             calc_revisit = scorecard.get_revisits()
             if gt_revisits == calc_revisit:
                 passed += 1

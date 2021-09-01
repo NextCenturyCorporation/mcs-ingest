@@ -57,16 +57,14 @@ class Scorecard:
     So we process (X,Z) locations.
     """
 
-    def __init__(self, scene_filepath, json_filepath):
-        self.history_file_name = json_filepath
-        with open(self.history_file_name) as history_file:
-            self.history = json.load(history_file)
+    def __init__(self, history: dict, scene: dict):
 
-        with open(scene_filepath) as scene_file:
-            scene = json.load(scene_file)
-            x_size = scene.get("roomDimensions").get("x")
-            z_size = scene.get("roomDimensions").get("z")
-            self.space_size = 2 * max(x_size, z_size)
+        self.history = history
+        self.scene = scene
+
+        x_size = scene.get("roomDimensions").get("x")
+        z_size = scene.get("roomDimensions").get("z")
+        self.space_size = 2 * max(x_size, z_size)
 
         # Size of the grid for calculating revisiting
         self.grid_dimension = GRID_DIMENSION
@@ -102,8 +100,8 @@ class Scorecard:
 
             grid_x, grid_z = self.get_grid_by_location(loc['x'], loc['z'])
             grid_hist = self.grid[grid_x][grid_z]
-            print(f"Step num {step_num}  Location is {loc}.  Dir: " +
-                  "{direction}  Grid loc is {grid_x} {grid_z}")
+            # print(f"Step num {step_num}  Location is {loc}.  Dir: " +
+            #       "{direction}  Grid loc is {grid_x} {grid_z}")
 
             # ---------------------------------
             # Determine if this is a revisit
@@ -111,7 +109,7 @@ class Scorecard:
             # If never been there, then not a revisit, and no longer in
             # revisiting mode
             if not grid_hist.any_visits():
-                print("never visited")
+                # print("never visited")
                 grid_hist.add(step_num, direction)
                 old_x, old_z = grid_x, grid_z
                 previous_revisit = False
@@ -120,14 +118,14 @@ class Scorecard:
             # If we did not change grid location (for example, change tilt,
             # rotate, etc), do not count
             if old_x == grid_x and old_z == grid_z:
-                print("didn't change location")
+                # print("didn't change location")
                 old_x, old_z = grid_x, grid_z
                 grid_hist.add(step_num, direction)
                 continue
 
             # See if ever been in this direction before
             if not grid_hist.seen_before(step_num, direction):
-                print("visited but not this direction")
+                # print("visited but not this direction")
                 grid_hist.add(step_num, direction)
                 old_x, old_z = grid_x, grid_z
                 previous_revisit = False
@@ -136,7 +134,7 @@ class Scorecard:
             # If previous step was a revisit, don't mark this one, but
             # still in revisiting mode
             if previous_revisit:
-                print("visited and this direction, but in revisiting mode")
+                # print("visited and this direction, but in revisiting mode")
                 grid_hist.add(step_num, direction)
                 old_x, old_z = grid_x, grid_z
                 continue
@@ -145,7 +143,7 @@ class Scorecard:
             # there, we are facing in the same direction as before, and
             # previous_revisit==False (i.e. we are not in revisiting mode)
             # So, we are revisiting
-            print("revisiting")
+            # print("revisiting")
             previous_revisit = True
             self.grid_counts[grid_x, grid_z] += 1
             old_x, old_z = grid_x, grid_z
@@ -153,7 +151,7 @@ class Scorecard:
         self.revisits = self.grid_counts.sum()
 
         # Debug printing
-        self.print_grid()
+        # self.print_grid()
         print(f"Total number of revisits: {self.revisits}")
 
         return self.revisits
