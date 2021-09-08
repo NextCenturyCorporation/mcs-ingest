@@ -1,15 +1,20 @@
 import unittest
+
 import mcs_scene_ingest
 
 TEST_SCENE_FILE_NAME = "test_juliett_0001_01_debug.json"
 TEST_HISTORY_FILE_NAME = "test_eval_3-5_level2_baseline_juliett_0001_01.json"
+TEST_INTERACTIVE_SCENE_FILE_NAME = "occluders_0001_17_I1_debug.json"
+TEST_INTERACTIVE_HISTORY_FILE_NAME = "generator/SCENE_HISTORY/" + \
+                                     "occluders_0001_17_baseline.json"
+TEST_FOLDER = "tests"
 
 
 class TestMcsSceneIngest(unittest.TestCase):
 
     def test_load_json_file(self):
         scene_file = mcs_scene_ingest.load_json_file(
-            "tests", TEST_SCENE_FILE_NAME)
+            TEST_FOLDER, TEST_SCENE_FILE_NAME)
         self.assertEqual(scene_file["name"], "juliett_0001_01")
         self.assertEqual(scene_file["debug"]["training"], False)
 
@@ -33,17 +38,18 @@ class TestMcsSceneIngest(unittest.TestCase):
         self.assertEqual(scene_removed_keys.get("debug"), None)
 
     def test_find_scene_files(self):
-        scene_files = mcs_scene_ingest.find_scene_files("tests")
-        self.assertEqual(len(scene_files), 1)
-        self.assertEqual(scene_files[0], TEST_SCENE_FILE_NAME)
+        scene_files = mcs_scene_ingest.find_scene_files(TEST_FOLDER)
+        self.assertEqual(len(scene_files), 4)
+        self.assertTrue(TEST_SCENE_FILE_NAME in scene_files)
 
     def test_find_history_files(self):
-        history_files = mcs_scene_ingest.find_history_files("tests", "json")
-        self.assertEqual(len(history_files), 2)
+        history_files = mcs_scene_ingest.find_history_files(
+            TEST_FOLDER, "json")
+        self.assertEqual(len(history_files), 5)
 
     def test_build_scene_item(self):
         scene = mcs_scene_ingest.build_scene_item(
-            TEST_SCENE_FILE_NAME, "tests", None)
+            TEST_SCENE_FILE_NAME, TEST_FOLDER, None)
         self.assertEqual(scene["eval"], "Evaluation 3.5 Scenes")
         self.assertEqual(scene["test_num"], 1)
         self.assertEqual(scene.get("debug"), None)
@@ -64,6 +70,20 @@ class TestMcsSceneIngest(unittest.TestCase):
         self.assertEqual(team_name, "IBM")
         team_name = mcs_scene_ingest.determine_team_mapping_name("mit")
         self.assertEqual(team_name, "IBM-MIT-Harvard-Stanford")
+
+    def test_build_history_item(self):
+        history_item = mcs_scene_ingest.build_history_item(
+            TEST_HISTORY_FILE_NAME, TEST_FOLDER, "eval_4",
+            "cora", TEST_FOLDER, ".json")
+        print(f"{history_item}")
+
+    def test_build_interactive_history_item(self):
+        '''Generates history item for an interactive, which follows
+        a different code path (and includes scorecard)'''
+        history_item = mcs_scene_ingest.build_history_item(
+            TEST_INTERACTIVE_HISTORY_FILE_NAME, TEST_FOLDER,
+            "eval_4", "cora", TEST_FOLDER, ".json")
+        print(f"{history_item}")
 
 
 if __name__ == '__main__':
