@@ -1,14 +1,16 @@
+import argparse
+import io
 import json
 import os
 import sys
-import argparse
-import io
-import create_collection_keys
-
 from collections.abc import MutableMapping
+
 from pymongo import MongoClient
 
+import create_collection_keys
 # We might want to move mongo user/pass to new file
+from scorecard.scorecard import Scorecard
+
 client = MongoClient(
     'mongodb://mongomcs:mongomcspassword@localhost:27017/mcs')
 mongoDB = client['mcs']
@@ -66,6 +68,8 @@ SCENE_DEBUG_EXTENSION = "_debug.json"
 
 
 def load_json_file(folder: str, file_name: str) -> dict:
+    """Read in a json file and decode into a dict.  Can
+    be used for history, scene, or other json files."""
     with io.open(
             os.path.join(
                 folder, file_name),
@@ -75,6 +79,8 @@ def load_json_file(folder: str, file_name: str) -> dict:
 
 
 def delete_keys_from_scene(scene, keys) -> dict:
+    """Remove keys from a scene object (represented as dict).
+    Useful for making the scene smaller (no images) and cleanup"""
     new_scene = {}
     for key, value in scene.items():
         if key not in set(keys):
@@ -227,16 +233,16 @@ def build_new_step_obj(
         new_step["delta_time_millis"] = step["delta_time_millis"]
 
     # If too many items in violations_xy_list, take the first 50
-    if(step["violations_xy_list"] and isinstance(
-        step["violations_xy_list"], list) and len(
-            step["violations_xy_list"]) > MAX_XY_VIOLATIONS):
-        new_step["violations_xy_list"] = step[
-            "violations_xy_list"][:MAX_XY_VIOLATIONS]
+    if (step["violations_xy_list"] and isinstance(
+            step["violations_xy_list"], list) and
+            len(step["violations_xy_list"]) > MAX_XY_VIOLATIONS):
+        new_step["violations_xy_list"] = \
+            step["violations_xy_list"][:MAX_XY_VIOLATIONS]
     else:
         new_step["violations_xy_list"] = step["violations_xy_list"]
 
     output = {}
-    if("output" in step):
+    if ("output" in step):
         output["return_status"] = step["output"]["return_status"]
         output["reward"] = step["output"]["reward"]
         # TODO: Added if check because key error in 3.75 and earlier
@@ -244,7 +250,7 @@ def build_new_step_obj(
             output["physics_frames_per_second"] = step[
                 "output"]["physics_frames_per_second"]
         interactive_reward = output["reward"]
-        if(output["reward"] >= (0 - ((number_steps - 1) * 0.001) + 1)):
+        if (output["reward"] >= (0 - ((number_steps - 1) * 0.001) + 1)):
             interactive_goal_achieved = 1
     new_step["output"] = output
 
@@ -256,8 +262,8 @@ def add_weighted_cube_scoring(history_item: dict, scene: dict) -> tuple:
     if "goal" in scene:
         if "sceneInfo" in scene["goal"]:
             if scene["goal"]["sceneInfo"]["tertiaryType"] == "shape constancy":
-                if history_item[
-                        "scene_goal_id"] in SHAPE_CONSTANCY_DUPLICATE_CUBE:
+                if history_item["scene_goal_id"] in \
+                        SHAPE_CONSTANCY_DUPLICATE_CUBE:
                     weighted_score = history_item["score"]["score"] * 2
                     weighted_score_worth = 2
                     weighted_confidence = float(
@@ -278,13 +284,19 @@ def add_weighted_cube_scoring(history_item: dict, scene: dict) -> tuple:
     return (weighted_score, weighted_score_worth, weighted_confidence)
 
 
+def calc_scorecard(history_item: dict, scene: dict) -> dict:
+    scorecard = Scorecard(history_item, scene)
+    scorecard_vals = scorecard.score_all()
+    return scorecard_vals
+
+
 def process_score(
         history_item: dict,
         scene: dict,
         interactive_goal_achieved: int,
         interactive_reward: int) -> dict:
     # Removed Adjusted Confidence, should be OBE
-    if(history_item["category"] == "interactive"):
+    if (history_item["category"] == "interactive"):
         if "score" not in history_item:
             history_item["score"] = {}
             history_item["score"]["classification"] = "end"
@@ -294,11 +306,12 @@ def process_score(
         history_item["score"]["ground_truth"] = 1
     else:
         if "score" in history_item:
-            history_item["score"]["score"] = 1 if history_item["score"][
-                "classification"] == scene["goal"]["answer"]["choice"] else 0
-            history_item["score"]["ground_truth"] = 1 if ("plausible" == scene[
-                "goal"]["answer"]["choice"] or "expected" == scene[
-                    "goal"]["answer"]["choice"]) else 0
+            history_item["score"]["score"] = 1 if \
+                history_item["score"]["classification"] == \
+                scene["goal"]["answer"]["choice"] else 0
+            history_item["score"]["ground_truth"] = 1 if \
+                ("plausible" == scene["goal"]["answer"]["choice"] or
+                 "expected" == scene["goal"]["answer"]["choice"]) else 0
         else:
             # Eval 2 backwards compatiblity
             history_item["score"] = {}
@@ -336,8 +349,8 @@ def build_history_item(
         scene_folder: str,
         extension: str) -> dict:
     print("Ingest history file: {}".format(history_file))
+
     # Create History Object and add basic information
-    history = {}
     history = load_json_file(folder, history_file)
 
     history_item = {}
@@ -403,9 +416,9 @@ def build_history_item(
         history_item["category"] = scene["goal"]["sceneInfo"]["primaryType"]
 
         if scene["goal"]["sceneInfo"]["secondaryType"] == "retrieval":
-            history_item["category_type"] = scene[
-                "goal"]["sceneInfo"]["secondaryType"] + "_" + scene[
-                "goal"]["sceneInfo"]["tertiaryType"]
+            history_item["category_type"] = \
+                scene["goal"]["sceneInfo"]["secondaryType"] + \
+                "_" + scene["goal"]["sceneInfo"]["tertiaryType"]
         else:
             history_item["category_type"] = scene[
                 "goal"]["sceneInfo"]["tertiaryType"]
@@ -415,8 +428,9 @@ def build_history_item(
             scene,
             interactive_goal_achieved,
             interactive_reward)
+        history_item["score"]["scorecard"] = calc_scorecard(history, scene)
 
-    return history_item
+        return history_item
 
 
 def automated_history_ingest_file(history_file: str, folder: str) -> None:
@@ -464,10 +478,9 @@ def ingest_history_files(
 
         replacementIndex = -1
         for index, item in enumerate(ingest_history):
-            if item["fullFilename"] == history_item[
-                    "fullFilename"] and history_item[
-                    "fileTimestamp"] > item["fileTimestamp"]:
-                replacementIndex = index
+            if item["fullFilename"] == history_item["fullFilename"]:
+                if history_item["fileTimestamp"] > item["fileTimestamp"]:
+                    replacementIndex = index
 
         if replacementIndex == -1:
             ingest_history.append(history_item)
