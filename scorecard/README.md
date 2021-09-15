@@ -41,7 +41,9 @@ previous time they were in that grid square
 ## Attempting to Open an UnOpenable object
 
 This counts the number of times that the agent tried to open something 
-and failed.  This includes 
+and failed.  This includes NOT_RECEPTACLE, OUT_OF_REACH, and NOT_OPENABLE.
+Notably, this does _not_ include IS_OPENED_COMPLETELY which is what 
+is returned if you try to open an already-opened object.
 
 ## Running the Scorecard
 
