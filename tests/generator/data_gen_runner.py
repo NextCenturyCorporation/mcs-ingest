@@ -1,32 +1,70 @@
+#
+# Class that runs a scripted movement around the room
+#
+
 import json
 
 import machine_common_sense as mcs
+from machine_common_sense import Action
 
 from tests.generator.path_plotter import PathPlotter
 
 
-def decode_movements(step, code):
-    """Allow short-hand for movements.  W means forward 10 spaces;
-    L and R, 90 degrees;  X means wait for input (for debugging)"""
-    code = code.replace(" ", "")
-    code = code.replace('W', "wwwwwwwwww")
-    code = code.replace('L', "jjjjjjjjj")
-    code = code.replace('R', "lllllllll")
+def key_to_movement(key):
+    """Convert a character key to an instruction that the controller
+    understands.  See Action to see the keys.  """
+    for action in Action:
+        if key == action._key:
+            val = action._value_
+            print(f"Val {val}")
 
-    if step >= len(code):
-        return None, None
-    key = code[step]
-    if key == 'w':
-        return 'MoveAhead', {}
-    if key == 'j':
-        return 'RotateLeft', {}
-    if key == 'l':
-        return 'RotateRight', {}
+            if val == 'OpenObject' or val == 'CloseObject' or val == 'PickupObject':
+                return val, {'objectImageCoordsX': 320., 'objectImageCoordsY': 240.}
+            return val, {}
+
     if key == 'X':
         _ = input("waiting")
-        return 'Pass', None
+        return 'Pass', {}
+
     print("Unrecognized: " + key)
-    return None, None
+    return 'Pass', {}
+
+
+def replace_short_hand(code):
+    """Allow short-hand for movements.  W means forward 10 spaces;
+    L and R, 90 degrees;  X means wait for input (for debugging)"""
+    newcode = code.replace(" ", "")
+    newcode = newcode.replace('W', "wwwwwwwwww")
+    newcode = newcode.replace('L', "jjjjjjjjj")
+    newcode = newcode.replace('R', "lllllllll")
+    return newcode
+
+
+def interactive_callback(step_metadata, runner_script):
+    '''  Rather than using a string to represent movemennts, get interactive input'''
+    step = step_metadata.step_number
+    part1 = "wwwwwjjjWlllWWwwss kkkkk 3 "
+    # success -- right, fwd, diagonal left, fwd, diag right, fwd, try to open small box
+    part2 = "iiiii R W jjj wwww lll WW kkkk s 3 "
+    # NOT_RECEPTACLE --
+    part3 = "iiii L wwwww 3"
+    # NOT_OPENABLE
+    part4 = "kkkllll W lll wwww kk 3"
+    newcode = replace_short_hand(part1 + part2 + part3+part4)
+    if step < len(newcode):
+        return key_to_movement(newcode[step])
+
+    x = input()
+    return key_to_movement(x)
+
+
+def decode_movements(step, code):
+    newcode = replace_short_hand(code)
+
+    if step >= len(newcode):
+        return None, None
+    key = newcode[step]
+    return key_to_movement(key)
 
 
 class DataGenRunnerScript():
@@ -64,6 +102,7 @@ class DataGenRunnerScript():
 
             while action is not None:
                 step_metadata = self.controller.step(action, **params)
+                # print(f"{step_metadata.return_status}")
                 plotter.plot(step_metadata.__dict__, step_metadata.step_number)
                 if step_metadata is None:
                     break

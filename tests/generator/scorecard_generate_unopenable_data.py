@@ -1,7 +1,7 @@
 #
 #  Generate data for testing unopenable scorecard calculation
 #
-#  Usage:    python scorecard_generate_revisit_data.py  mcs_unity_filepath  scene_filepath
+#  Usage:    python scorecard_generate_unopenable.py  mcs_unity_filepath  scene_filepath
 #
 #    (For scene_file, use tests/golf_0018_15_debug.json)
 #
@@ -15,7 +15,14 @@ from tests.generator.data_gen_runner import decode_movements, DataGenRunnerScrip
 
 def simple_loop_callback(step_metadata, runner_script):
     '''  Do a loop around the room, but not overlapping, so no revisit'''
-    actions = "WWWW L WWWW L WWW L WWW L WWWWWW"
+
+    # success -- Move fwd, diagonal left, fws, diagonal right, up to box and open
+    part1 = "wwwwwjjjWlllWWwwss kkkkk 3 "
+    # success -- right, fwd, diagonal left, fwd, diag right, fwd, try to open small box
+    part2 = "iiiii R W jjj wwww lll WW kkkk 3 "
+    # unopenable --
+    part3 = "iiii L wwwww 3"
+    actions = part1 + part2 + part3
     return decode_movements(step_metadata.step_number, actions)
 
 
