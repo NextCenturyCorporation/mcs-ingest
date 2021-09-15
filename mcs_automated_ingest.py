@@ -1,5 +1,6 @@
 import boto3
 import json
+import logging
 import os
 import mcs_scene_ingest
 
@@ -21,7 +22,7 @@ def process_message(message, message_type):
         bucket = s3.Bucket(record["s3"]["bucket"]["name"])
         history_file = record["s3"]["object"]["key"]
         basename = os.path.basename(history_file)
-        print(f"Downloading {basename}")
+        logging.info(f"Downloading {basename}")
         bucket.download_file(history_file, basename)
 
         # Ingest File
@@ -31,7 +32,7 @@ def process_message(message, message_type):
             mcs_scene_ingest.automated_scene_ingest_file(basename, "")
 
         # Delete File
-        print(f"Deleting {basename}")
+        logging.info(f"Deleting {basename}")
         os.remove(basename)
 
 
@@ -51,4 +52,5 @@ def main():
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     main()

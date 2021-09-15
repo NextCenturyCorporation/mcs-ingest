@@ -1,3 +1,5 @@
+import logging
+
 def recursive_find_keys(x, keys, append_string):
     key_list = list(x.keys())
     for item in key_list:
@@ -20,7 +22,7 @@ def find_collection_keys(index: str, collection_name: str, mongoDB):
     # Loop through documents to generate a keys collection to help
     #   speed in loading keys in UI
     keys = []
-    print(collection_name)
+    logging.info(collection_name)
     documents = collection.find({"eval": collection_name})
     for doc in documents:
         recursive_find_keys(doc, keys, "")
@@ -32,4 +34,4 @@ def find_collection_keys(index: str, collection_name: str, mongoDB):
     collection = mongoDB["collection_keys"]
     result = collection.update_one(
         {"name": collection_name}, {"$set": keys_dict}, True)
-    print(result)
+    logging.info(result)

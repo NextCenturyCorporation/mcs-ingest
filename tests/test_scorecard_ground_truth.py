@@ -7,12 +7,12 @@
 
 import argparse
 import json
+import logging
 import os
 
 from scorecard.scorecard import Scorecard
 
 DATADIR = ['generator/SCENE_HISTORY/', '../tests/']
-
 
 
 def get_scorecard(
@@ -36,9 +36,9 @@ def compare_with_ground_truth(
     num_revisit_calc = scorecard.get_revisits()
     num_unopenable_calc = scorecard.get_unopenable()
 
-    print(f" gt_revisit: {gt_revisit}  calc_revisit: {num_revisit_calc}" +
-                 f" gt_unopenable: {gt_unopenable}  " +
-                 "calc_unopenable: {num_unopenable_calc}")
+    logging.info(f" gt_revisit: {gt_revisit}  calc_revisit: {num_revisit_calc}" +
+          f" gt_unopenable: {gt_unopenable}  " +
+          "calc_unopenable: {num_unopenable_calc}")
 
     passed = 0
     failed = 0
@@ -83,14 +83,14 @@ def process_all_ground_truth(ground_truth_file: str):
 
             scene_filepath = find_fullpath(scenefile, DATADIR)
             if not scene_filepath:
-                print(f"Unable to find {DATADIR} and " +
+                logging.warning(f"Unable to find {DATADIR} and " +
                       f"{scenefile} found: {scene_filepath}")
                 missing += 1
                 continue
 
             history_filepath = find_fullpath(basefilename, DATADIR)
             if not history_filepath:
-                print(f"Unable to find {DATADIR} and " +
+                logging.warning(f"Unable to find {DATADIR} and " +
                       f"{basefilename} found: {history_filepath}")
                 missing += 1
                 continue
@@ -104,7 +104,7 @@ def process_all_ground_truth(ground_truth_file: str):
             passed += history_pass
             failed += history_fail
 
-    print(f"\nPassed: {passed}  Failed: {failed}  Missing: {missing}")
+    logging.info(f"\nPassed: {passed}  Failed: {failed}  Missing: {missing}")
 
 
 def parse_args():
@@ -115,10 +115,13 @@ def parse_args():
 
 
 if __name__ == "__main__":
+
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
     args = parse_args()
 
     if not os.path.exists(args.ground_truth_file):
-        print(f"File {args.ground_truth_file} does not exist")
+        logging.warning(f"File {args.ground_truth_file} does not exist")
         exit(1)
 
     process_all_ground_truth(args.ground_truth_file)

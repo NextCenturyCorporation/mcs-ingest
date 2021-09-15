@@ -1,3 +1,4 @@
+import logging
 from pymongo import MongoClient
 from scripts._0_4_3_add_admin_users import add_admins
 
@@ -28,15 +29,16 @@ def update_db_version():
 
 def main():
     if(check_version()):
-        print("New db version, execute scripts")
+        logging.info("New db version, execute scripts")
         # Place scripts here to run
         add_admins(mongoDB)
 
         # Now update db version
         update_db_version()
     else:
-        print("Script does not need to run, already updated.")
+        logging.info("Script does not need to run, already updated.")
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     main()

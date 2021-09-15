@@ -1,3 +1,4 @@
+import logging
 import unittest
 
 import mcs_scene_ingest
@@ -75,7 +76,7 @@ class TestMcsSceneIngest(unittest.TestCase):
         history_item = mcs_scene_ingest.build_history_item(
             TEST_HISTORY_FILE_NAME, TEST_FOLDER, "eval_4",
             "cora", TEST_FOLDER, ".json")
-        print(f"{history_item}")
+        logging.info(f"{history_item}")
 
     def test_build_interactive_history_item(self):
         '''Generates history item for an interactive, which follows
@@ -83,8 +84,10 @@ class TestMcsSceneIngest(unittest.TestCase):
         history_item = mcs_scene_ingest.build_history_item(
             TEST_INTERACTIVE_HISTORY_FILE_NAME, TEST_FOLDER,
             "eval_4", "cora", TEST_FOLDER, ".json")
-        print(f"{history_item}")
+        logging.info(f"{history_item}")
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
     unittest.main()

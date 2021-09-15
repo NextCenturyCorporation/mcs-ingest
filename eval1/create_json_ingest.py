@@ -21,6 +21,7 @@ index that can be read by Neon.
 
 """
 import json
+import logging
 import math
 import random
 import zipfile
@@ -149,7 +150,7 @@ class JsonImportCreator:
         self.ground_truth = self.get_ground_truth()
 
         for file in self.submission_files:
-            print("Submission file: {}".format(file))
+            logging.info("Submission file: {}".format(file))
             self.process_submission(file)
 
     def process_submission(self, filename):
@@ -162,14 +163,14 @@ class JsonImportCreator:
         location_frame = location_info["frame"]
         location_x = location_info["x"]
         location_y = location_info["y"]
-        # print("voe signal {}".format(voe_signal_dict))
+        # logging.info("voe signal {}".format(voe_signal_dict))
 
         bulk_data = []
 
         for block in answer:
             for test in answer[block]:
                 for scene in answer[block][test]:
-                    # print("block {} test {} scene {}: score {}".
+                    # logging.info("block {} test {} scene {}: score {}".
                     #   format(block, test, scene, answer[block][test][scene]))
 
                     # Get the data
@@ -216,7 +217,7 @@ class JsonImportCreator:
 
         collection = self.mongoDB[config['index_name']]
         result = collection.insert_many(bulk_data)
-        # print("Result: {}".format(res))
+        # logging.info("Result: {}".format(res))
 
     def get_metadata(self):
         with open(self.metadata_filename) as metadata_file:
@@ -227,7 +228,7 @@ class JsonImportCreator:
     def get_ground_truth(self):
         with open(self.ground_truth_filename) as ground_truth_file:
             return self.parse_answer_file(ground_truth_file)
-        print("Unable to get file {}".format(self.ground_truth_filename))
+        logging.info("Unable to get file {}".format(self.ground_truth_filename))
 
     def get_answer(self, filename):
         """ Pull the answer.txt file out of a zipfile and return parsed object"""
@@ -236,7 +237,7 @@ class JsonImportCreator:
             if self.answer_filename in content:
                 with my_zip.open(self.answer_filename) as answer_file:
                     return self.parse_answer_file(answer_file)
-        print("Unable to get file {}".format(self.answer_filename))
+        logging.warning("Unable to get file {}".format(self.answer_filename))
 
     def parse_answer_file(self, file):
         """ Parse an answer.txt or ground_truth.txt file, looks like:
@@ -261,7 +262,7 @@ class JsonImportCreator:
             block = str(key[0])
             test = str(key[1])
             scene = str(key[2])
-            # print("{} {} {} {}".format(block, test, scene, split_line[1]))
+            # logging.info("{} {} {} {}".format(block, test, scene, split_line[1]))
             answer[block][test][scene] = float(split_line[1])
         return answer
 
@@ -271,7 +272,7 @@ class JsonImportCreator:
             if self.location_filename in content:
                 with my_zip.open(self.location_filename) as location_file:
                     return self.parse_location_file(location_file)
-        print("Unable to get location file {}".format(self.location_filename))
+        logging.warning("Unable to get location file {}".format(self.location_filename))
 
     def parse_location_file(self, file):
         # Location info is frame, x, y
@@ -351,5 +352,7 @@ class JsonImportCreator:
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
     handler = JsonImportCreator()
     handler.process()

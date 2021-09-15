@@ -1,3 +1,4 @@
+import logging
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
@@ -42,7 +43,7 @@ def scene_plausibility(answer, confidence):
 
 
 def process_pairing_scoring(performer: str, agent_task: str):
-    print("Begin Processing " + performer + ", " + agent_task)
+    logging.info("Begin Processing " + performer + ", " + agent_task)
     collection = mongoDB[HISTORY_INDEX]
 
     documents = list(collection.find(
@@ -61,7 +62,7 @@ def process_pairing_scoring(performer: str, agent_task: str):
                 pair_doc["score"]["classification"],
                 pair_doc["score"]["confidence"])
         else:
-            print("not found: " + doc["name"])
+            logging.warning("not found: " + doc["name"])
         doc["score"]["adjusted_confidence"] = scene_plausibility(
             doc["score"]["classification"], doc["score"]["confidence"])
 
