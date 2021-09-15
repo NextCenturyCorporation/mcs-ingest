@@ -15,7 +15,6 @@ from tests.generator.data_gen_runner import DataGenRunnerScript, interactive_cal
 
 
 def main(mcs_unity_filepath, scene_filepath):
-
     for action in Action:
         print(f"{action._key} -- {action._value_}")
 

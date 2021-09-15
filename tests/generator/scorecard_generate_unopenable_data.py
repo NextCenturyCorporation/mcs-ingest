@@ -29,7 +29,7 @@ def open_objects_callback(step_metadata, runner_script):
 
 
 def main(mcs_unity_filepath, scene_filepath):
-    DataGenRunnerScript(mcs_unity_filepath, scene_filepath, 'three_1', open_objects_callback).run_scene()
+    DataGenRunnerScript(mcs_unity_filepath, scene_filepath, 'unopenable_two', open_objects_callback).run_scene()
 
 
 def parse_args():

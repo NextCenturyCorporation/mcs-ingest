@@ -39,14 +39,21 @@ def come_from_behind(step_metadata, runner_script):
 
 
 def main(mcs_unity_filepath, scene_filepath):
+    ''' Call the script several times, passing in a different set of
+    movements.  Naming scheme:
+                      revisit_one_1
+                          |    |  +-- example number
+                          |    +----- how many revisits
+                          +---------- this is a revisit example
+    '''
     DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
-                        'zero_1', simple_loop_callback).run_scene()
+                        'revisit_zero_1', simple_loop_callback).run_scene()
     DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
-                        'one_1', loop_callback_with_revisit).run_scene()
+                        'revisit_one_1', loop_callback_with_revisit).run_scene()
     DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
-                        'one_2', loop_callback_with_spin).run_scene()
+                        'revisit_one_2', loop_callback_with_spin).run_scene()
     DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
-                        'one_3', come_from_behind).run_scene()
+                        'revisit_one_3', come_from_behind).run_scene()
 
 
 def parse_args():

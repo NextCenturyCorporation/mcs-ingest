@@ -38,6 +38,10 @@ previous time they were in that grid square
   * They only count as one.  
   * Implement this as only counting the first in a series of revisits.  
      
+## Attempting to Open an UnOpenable object
+
+This counts the number of times that the agent tried to open something 
+and failed.  This includes 
 
 ## Running the Scorecard
 
