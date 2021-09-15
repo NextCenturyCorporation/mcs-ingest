@@ -10,24 +10,26 @@
 import argparse
 import os
 
-from tests.generator.data_gen_runner import decode_movements, DataGenRunnerScript
+from tests.generator.data_gen_runner import DataGenRunnerScript, decode_movements
 
 
-def simple_loop_callback(step_metadata, runner_script):
-    '''  Do a loop around the room, but not overlapping, so no revisit'''
+def open_objects_callback(step_metadata, runner_script):
+    '''  Generate output that has 2 successful opens, 1 NOT_RECEPTACLE, 1 NOT_OPENABLE'''
 
-    # success -- Move fwd, diagonal left, fws, diagonal right, up to box and open
+    step = step_metadata.step_number
     part1 = "wwwwwjjjWlllWWwwss kkkkk 3 "
     # success -- right, fwd, diagonal left, fwd, diag right, fwd, try to open small box
-    part2 = "iiiii R W jjj wwww lll WW kkkk 3 "
-    # unopenable --
+    part2 = "iiiii R W jjj wwww lll WW kkkk s 3 "
+    # NOT_RECEPTACLE --
     part3 = "iiii L wwwww 3"
-    actions = part1 + part2 + part3
-    return decode_movements(step_metadata.step_number, actions)
+    # NOT_OPENABLE
+    part4 = "kkkllll W lll wwww kk 3"
+    code = part1 + part2 + part3 + part4
+    return decode_movements(step, code)
 
 
 def main(mcs_unity_filepath, scene_filepath):
-    DataGenRunnerScript(mcs_unity_filepath, scene_filepath, 'three_1', simple_loop_callback).run_scene()
+    DataGenRunnerScript(mcs_unity_filepath, scene_filepath, 'three_1', open_objects_callback).run_scene()
 
 
 def parse_args():

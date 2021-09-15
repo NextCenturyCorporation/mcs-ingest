@@ -42,18 +42,6 @@ def replace_short_hand(code):
 
 def interactive_callback(step_metadata, runner_script):
     '''  Rather than using a string to represent movemennts, get interactive input'''
-    step = step_metadata.step_number
-    part1 = "wwwwwjjjWlllWWwwss kkkkk 3 "
-    # success -- right, fwd, diagonal left, fwd, diag right, fwd, try to open small box
-    part2 = "iiiii R W jjj wwww lll WW kkkk s 3 "
-    # NOT_RECEPTACLE --
-    part3 = "iiii L wwwww 3"
-    # NOT_OPENABLE
-    part4 = "kkkllll W lll wwww kk 3"
-    newcode = replace_short_hand(part1 + part2 + part3+part4)
-    if step < len(newcode):
-        return key_to_movement(newcode[step])
-
     x = input()
     return key_to_movement(x)
 
@@ -102,7 +90,7 @@ class DataGenRunnerScript():
 
             while action is not None:
                 step_metadata = self.controller.step(action, **params)
-                # print(f"{step_metadata.return_status}")
+                print(f"{step_metadata.return_status}")
                 plotter.plot(step_metadata.__dict__, step_metadata.step_number)
                 if step_metadata is None:
                     break
