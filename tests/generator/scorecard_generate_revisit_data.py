@@ -11,31 +11,31 @@
 import argparse
 import os
 
-from tests.generator.data_gen_runner import decode_movements, DataGenRunnerScript
+from tests.generator.data_gen_runner import decode_moves, DataGenRunnerScript
 
 
 def simple_loop_callback(step_metadata, runner_script):
     '''  Do a loop around the room, but not overlapping, so no revisit'''
     actions = "WWWW L WWWW L WWW L WWW L WWWWWW"
-    return decode_movements(step_metadata.step_number, actions)
+    return decode_moves(step_metadata.step_number, actions)
 
 
 def loop_callback_with_revisit(step_metadata, runner_script):
     '''  Do a square loop around the room.  Should causes one revisit'''
     actions = "WWWW L WWW L WWW L WWW L WWWWW"
-    return decode_movements(step_metadata.step_number, actions)
+    return decode_moves(step_metadata.step_number, actions)
 
 
 def loop_callback_with_spin(step_metadata, runner_script):
     ''' Go fwd, do a circle, do a loop around the room.  Causes one revisit'''
     actions = "WWW LLLL W L WW L W L WWW"
-    return decode_movements(step_metadata.step_number, actions)
+    return decode_moves(step_metadata.step_number, actions)
 
 
 def come_from_behind(step_metadata, runner_script):
     '''  Go behind a path and turn into it'''
     actions = "WW L WWW R WW L W L WWW L W L W R W"
-    return decode_movements(step_metadata.step_number, actions)
+    return decode_moves(step_metadata.step_number, actions)
 
 
 def main(mcs_unity_filepath, scene_filepath):
@@ -47,13 +47,17 @@ def main(mcs_unity_filepath, scene_filepath):
                           +---------- this is a revisit example
     '''
     DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
-                        'revisit_zero_1', simple_loop_callback).run_scene()
+                        'revisit_zero_1',
+                        simple_loop_callback).run_scene()
     DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
-                        'revisit_one_1', loop_callback_with_revisit).run_scene()
+                        'revisit_one_1',
+                        loop_callback_with_revisit).run_scene()
     DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
-                        'revisit_one_2', loop_callback_with_spin).run_scene()
+                        'revisit_one_2',
+                        loop_callback_with_spin).run_scene()
     DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
-                        'revisit_one_3', come_from_behind).run_scene()
+                        'revisit_one_3',
+                        come_from_behind).run_scene()
 
 
 def parse_args():

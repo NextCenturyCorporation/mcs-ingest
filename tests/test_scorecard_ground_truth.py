@@ -14,7 +14,6 @@ from scorecard.scorecard import Scorecard
 DATADIR = ['generator/SCENE_HISTORY/', '../tests/']
 
 
-
 def get_scorecard(
         history_filepath: str, scene_filepath: str) -> Scorecard:
     """Process a particular json file,"""
@@ -37,8 +36,8 @@ def compare_with_ground_truth(
     num_unopenable_calc = scorecard.get_unopenable()
 
     print(f" gt_revisit: {gt_revisit}  calc_revisit: {num_revisit_calc}" +
-                 f" gt_unopenable: {gt_unopenable}  " +
-                 "calc_unopenable: {num_unopenable_calc}")
+          f" gt_unopenable: {gt_unopenable}  " +
+          f" calc_unopenable: {num_unopenable_calc}")
 
     passed = 0
     failed = 0

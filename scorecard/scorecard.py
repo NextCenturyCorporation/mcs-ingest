@@ -215,8 +215,8 @@ class Scorecard:
             action = single_step['action']
             return_status = single_step['output']['return_status']
             if action == 'MCSOpenObject':
-                # NOTE:  NOT_RECEPTACLE is not listed as a possible return value
-                # but sometimes gets return anyway
+                # NOTE:  NOT_RECEPTACLE is not listed as a possible return
+                # value but sometimes gets return anyway
                 if return_status == "SUCCESSFUL" \
                         or return_status == "IS_OPENED_COMPLETELY":
                     pass

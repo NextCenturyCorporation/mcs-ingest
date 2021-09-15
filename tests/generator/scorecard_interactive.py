@@ -11,7 +11,7 @@ import os
 
 from machine_common_sense import Action
 
-from tests.generator.data_gen_runner import DataGenRunnerScript, interactive_callback
+from tests.generator.data_gen_runner import DataGenRunnerScript, interactive_cb
 
 
 def main(mcs_unity_filepath, scene_filepath):
@@ -19,7 +19,7 @@ def main(mcs_unity_filepath, scene_filepath):
         print(f"{action._key} -- {action._value_}")
 
     DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
-                        'interactive', interactive_callback).run_scene()
+                        'interactive', interactive_cb).run_scene()
 
 
 def parse_args():
