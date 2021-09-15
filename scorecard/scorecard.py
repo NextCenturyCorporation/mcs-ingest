@@ -3,6 +3,7 @@
 #
 #
 import logging
+
 import numpy as np
 import pandas
 
@@ -128,7 +129,7 @@ class Scorecard:
             grid_x, grid_z = self.get_grid_by_location(loc['x'], loc['z'])
             grid_hist = self.grid[grid_x][grid_z]
             logging.debug(f"Step num {step_num}  Location is {loc}.  Dir: " +
-                  "{direction}  Grid loc is {grid_x} {grid_z}")
+                          "{direction}  Grid loc is {grid_x} {grid_z}")
 
             # ---------------------------------
             # Determine if this is a revisit
@@ -161,7 +162,7 @@ class Scorecard:
             # If previous step was a revisit, don't mark this one, but
             # still in revisiting mode
             if previous_revisit:
-                logging.debug("visited and this direction, but in revisiting mode")
+                logging.debug("visited / this direction, but in revisit mode")
                 grid_hist.add(step_num, direction)
                 old_x, old_z = grid_x, grid_z
                 continue
@@ -189,11 +190,13 @@ class Scorecard:
         grid_z = (int)((self.space_size + z) / self.grid_dimension)
 
         if grid_x < 0 or grid_x > self.grid_size - 1:
-            logging.warning(f"Problem with x loc {x}.  got grid loc {grid_x}.  " +
-                  "dim {self.grid_dimension} grid size {self.grid_size}")
+            logging.warning(
+                f"Problem with x loc {x}.  got grid loc {grid_x}.  " +
+                "dim {self.grid_dimension} grid size {self.grid_size}")
         if grid_z < 0 or grid_z > self.grid_size - 1:
-            logging.warning(f"Problem with y loc {z}.  got grid loc {grid_z}.  " +
-                  "dim {self.grid_dimension} grid size {self.grid_size}")
+            logging.warning(
+                f"Problem with y loc {z}.  got grid loc {grid_z}.  " +
+                "dim {self.grid_dimension} grid size {self.grid_size}")
         return (grid_x, grid_z)
 
     def print_grid(self):
@@ -215,8 +218,8 @@ class Scorecard:
             action = single_step['action']
             return_status = single_step['output']['return_status']
             if action == 'MCSOpenObject':
-                # NOTE:  NOT_RECEPTACLE is not listed as a possible return value
-                # but sometimes gets return anyway
+                # NOTE:  NOT_RECEPTACLE is not listed as a possible return
+                # value but sometimes gets return anyway
                 if return_status == "SUCCESSFUL" \
                         or return_status == "IS_OPENED_COMPLETELY":
                     pass

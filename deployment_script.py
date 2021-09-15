@@ -1,5 +1,7 @@
 import logging
+
 from pymongo import MongoClient
+
 from scripts._0_4_3_add_admin_users import add_admins
 
 # We might want to move mongo user/pass to new file
@@ -28,7 +30,7 @@ def update_db_version():
 
 
 def main():
-    if(check_version()):
+    if (check_version()):
         logging.info("New db version, execute scripts")
         # Place scripts here to run
         add_admins(mongoDB)
@@ -40,5 +42,7 @@ def main():
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     main()

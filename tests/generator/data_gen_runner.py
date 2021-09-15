@@ -19,8 +19,13 @@ def key_to_movement(key):
             val = action._value_
             logging.debug(f"action {val}")
 
-            if val == 'OpenObject' or val == 'CloseObject' or val == 'PickupObject':
-                return val, {'objectImageCoordsX': 320., 'objectImageCoordsY': 240.}
+            if val == 'OpenObject' or \
+                    val == 'CloseObject' or \
+                    val == 'PickupObject':
+                return val, {
+                    'objectImageCoordsX': 320.,
+                    'objectImageCoordsY': 240.
+                }
             return val, {}
 
     if key == 'X':
@@ -41,13 +46,14 @@ def replace_short_hand(code):
     return newcode
 
 
-def interactive_callback(step_metadata, runner_script):
-    '''  Rather than using a string to represent movemennts, get interactive input'''
+def interactive_cb(step_metadata, runner_script):
+    '''  Rather than using a string to represent
+    movemennts, get interactive input'''
     x = input()
     return key_to_movement(x)
 
 
-def decode_movements(step, code):
+def decode_moves(step, code):
     newcode = replace_short_hand(code)
 
     if step >= len(newcode):
@@ -58,7 +64,8 @@ def decode_movements(step, code):
 
 class DataGenRunnerScript():
 
-    def __init__(self, mcs_unity_filepath, scene_filepath, name, action_callback):
+    def __init__(self, mcs_unity_filepath,
+                 scene_filepath, name, action_callback):
         self.controller = mcs.create_controller(mcs_unity_filepath)
         if not self.controller:
             raise Exception("Unable to create controller")
@@ -91,7 +98,8 @@ class DataGenRunnerScript():
 
             while action is not None:
                 step_metadata = self.controller.step(action, **params)
-                logging.debug(f"return status of action: {step_metadata.return_status}")
+                logging.debug("return status of action:" +
+                              f"{step_metadata.return_status}")
                 plotter.plot(step_metadata.__dict__, step_metadata.step_number)
                 if step_metadata is None:
                     break

@@ -36,9 +36,10 @@ def compare_with_ground_truth(
     num_revisit_calc = scorecard.get_revisits()
     num_unopenable_calc = scorecard.get_unopenable()
 
-    logging.info(f" gt_revisit: {gt_revisit}  calc_revisit: {num_revisit_calc}" +
-          f" gt_unopenable: {gt_unopenable}  " +
-          "calc_unopenable: {num_unopenable_calc}")
+    logging.info(f" gt_revisit: {gt_revisit} " +
+                 f" calc_revisit: {num_revisit_calc}" +
+                 f" gt_unopenable: {gt_unopenable}  " +
+                 f"calc_unopenable: {num_unopenable_calc}")
 
     passed = 0
     failed = 0
@@ -84,14 +85,14 @@ def process_all_ground_truth(ground_truth_file: str):
             scene_filepath = find_fullpath(scenefile, DATADIR)
             if not scene_filepath:
                 logging.warning(f"Unable to find {DATADIR} and " +
-                      f"{scenefile} found: {scene_filepath}")
+                                f"{scenefile} found: {scene_filepath}")
                 missing += 1
                 continue
 
             history_filepath = find_fullpath(basefilename, DATADIR)
             if not history_filepath:
                 logging.warning(f"Unable to find {DATADIR} and " +
-                      f"{basefilename} found: {history_filepath}")
+                                f"{basefilename} found: {history_filepath}")
                 missing += 1
                 continue
 
@@ -116,7 +117,9 @@ def parse_args():
 
 if __name__ == "__main__":
 
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
     args = parse_args()
 

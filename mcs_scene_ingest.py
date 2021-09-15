@@ -1,10 +1,10 @@
 import argparse
 import io
 import json
+import logging
 import os
 import sys
 from collections.abc import MutableMapping
-import logging
 
 from pymongo import MongoClient
 
@@ -541,5 +541,7 @@ def main(argv) -> None:
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     main(sys.argv)

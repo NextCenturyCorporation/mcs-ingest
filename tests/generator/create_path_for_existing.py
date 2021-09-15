@@ -52,7 +52,9 @@ def parse_args():
 
 if __name__ == "__main__":
 
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
     args = parse_args()
     if not os.path.exists(args.scene_file_path):
