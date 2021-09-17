@@ -11,10 +11,6 @@ import create_collection_keys
 # We might want to move mongo user/pass to new file
 from scorecard.scorecard import Scorecard
 
-client = MongoClient(
-    'mongodb://mongomcs:mongomcspassword@localhost:27017/mcs')
-mongoDB = client['mcs']
-
 # Currently just removing image mag from scene files, might
 #    wish to move more keys, or remove so much from the schema
 #    that we want to just map the fields we want to the schema
@@ -92,7 +88,8 @@ def delete_keys_from_scene(scene, keys) -> dict:
     return new_scene
 
 
-def ingest_to_mongo(index: str, ingest_files: dict):
+def ingest_to_mongo(index: str, ingest_files: dict, client: MongoClient):
+    mongoDB = client['mcs']
     collection = mongoDB[index]
     result = collection.insert_many(ingest_files)
     print("Inserted {0} out of {1}.  Result: {2}".format(
@@ -141,9 +138,16 @@ def build_scene_item(file_name: str, folder: str, eval_name: str) -> dict:
     return scene
 
 
-def automated_scene_ingest_file(file_name: str, folder: str) -> None:
+def automated_scene_ingest_file(
+        file_name: str,
+        folder: str,
+        db_string: str) -> None:
     # Called from mcs_automated_ingest when a new message in pulled
     #    from the AWS Queue, singular scene file
+    client = MongoClient(
+        'mongodb://mongomcs:mongomcspassword@localhost:27017/' + db_string)
+    mongoDB = client[db_string]
+
     scene_item = build_scene_item(file_name, folder, None)
     collection = mongoDB[SCENE_INDEX]
     check_exists = collection.find(
@@ -177,7 +181,11 @@ def ingest_scene_files(folder: str, eval_name: str) -> None:
         scene = build_scene_item(file, folder, eval_name)
         ingest_scenes.append(scene)
 
-    ingest_to_mongo(SCENE_INDEX, ingest_scenes)
+    client = MongoClient(
+        'mongodb://mongomcs:mongomcspassword@localhost:27017/mcs')
+    mongoDB = client['mcs']
+
+    ingest_to_mongo(SCENE_INDEX, ingest_scenes, client)
 
     create_collection_keys.find_collection_keys(
         SCENE_INDEX, eval_name, mongoDB)
@@ -347,8 +355,11 @@ def build_history_item(
         eval_name: str,
         performer: str,
         scene_folder: str,
-        extension: str) -> dict:
+        extension: str,
+        client: MongoClient,
+        db_string: str) -> dict:
     print("Ingest history file: {}".format(history_file))
+    mongoDB = client[db_string]
 
     # Create History Object and add basic information
     history = load_json_file(folder, history_file)
@@ -433,9 +444,16 @@ def build_history_item(
         return history_item
 
 
-def automated_history_ingest_file(history_file: str, folder: str) -> None:
+def automated_history_ingest_file(
+        history_file: str,
+        folder: str,
+        db_string: str) -> None:
+    client = MongoClient(
+        'mongodb://mongomcs:mongomcspassword@localhost:27017/' + db_string)
+    mongoDB = client[db_string]
+
     history_item = build_history_item(
-        history_file, folder, None, None, None, "json")
+        history_file, folder, None, None, None, "json", client, db_string)
     collection = mongoDB[HISTORY_INDEX]
     check_exists = collection.find(
         {
@@ -469,12 +487,24 @@ def ingest_history_files(
         performer: str,
         scene_folder: str,
         extension: str) -> None:
+
+    client = MongoClient(
+        'mongodb://mongomcs:mongomcspassword@localhost:27017/mcs')
+    mongoDB = client['mcs']
+
     history_files = find_history_files(folder, extension)
     ingest_history = []
 
     for file in history_files:
         history_item = build_history_item(
-            file, folder, eval_name, performer, scene_folder, extension)
+            file,
+            folder,
+            eval_name,
+            performer,
+            scene_folder,
+            extension,
+            client,
+            'mcs')
 
         replacementIndex = -1
         for index, item in enumerate(ingest_history):
@@ -487,7 +517,7 @@ def ingest_history_files(
         else:
             ingest_history[replacementIndex] = history_item
 
-    ingest_to_mongo(HISTORY_INDEX, ingest_history)
+    ingest_to_mongo(HISTORY_INDEX, ingest_history, client)
 
     create_collection_keys.find_collection_keys(
         HISTORY_INDEX, eval_name, mongoDB)
