@@ -215,11 +215,9 @@ class Scorecard:
             action = single_step['action']
             return_status = single_step['output']['return_status']
             if action == 'MCSOpenObject':
-                if return_status == "SUCCESSFUL" \
-                        or return_status == "IS_OPENED_COMPLETELY" \
-                        or return_status == 'OUT_OF_REACH':
-                    pass
-                else:
+                if return_status not in ["SUCCESSFUL",
+                                         "IS_OPENED_COMPLETELY",
+                                         'OUT_OF_REACH']:
                     num_unopenable += 1
 
         return num_unopenable
