@@ -153,7 +153,7 @@ def automated_scene_ingest_file(
     check_exists = collection.find(
         {
             "name": scene_item["name"],
-            "evaluation": scene_item["debug"]["evaluation"]
+            "evaluation": scene_item["eval"]
         }
     )
 
@@ -165,10 +165,10 @@ def automated_scene_ingest_file(
 
     # Add Keys when a new evluation item is created
     collection_count = collection.find(
-        {"evaluation": scene_item["evaluation"]}).count()
+        {"evaluation": scene_item["eval"]}).count()
     if collection_count == 1:
         create_collection_keys.find_collection_keys(
-            SCENE_INDEX, scene_item["evaluation"], mongoDB)
+            SCENE_INDEX, scene_item["eval"], mongoDB)
 
 
 def ingest_scene_files(folder: str, eval_name: str) -> None:
