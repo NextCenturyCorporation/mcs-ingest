@@ -1,26 +1,22 @@
+import argparse
+import io
 import json
 import os
 import sys
-import argparse
-import io
-import create_collection_keys
-
 from collections.abc import MutableMapping
+
 from pymongo import MongoClient
 
+import create_collection_keys
 # We might want to move mongo user/pass to new file
-client = MongoClient(
-    'mongodb://mongomcs:mongomcspassword@localhost:27017/mcs')
-mongoDB = client['mcs']
+from scorecard.scorecard import Scorecard
 
 # Currently just removing image mag from scene files, might
 #    wish to move more keys, or remove so much from the schema
 #    that we want to just map the fields we want to the schema
 KEYS_TO_DELETE = [
     'image',
-    'sequenceNumber',
-    'hypercubeNumber',
-    'sceneNumber'
+    'debug'
 ]
 
 SCENE_INDEX = "mcs_scenes"
@@ -68,6 +64,8 @@ SCENE_DEBUG_EXTENSION = "_debug.json"
 
 
 def load_json_file(folder: str, file_name: str) -> dict:
+    """Read in a json file and decode into a dict.  Can
+    be used for history, scene, or other json files."""
     with io.open(
             os.path.join(
                 folder, file_name),
@@ -77,6 +75,8 @@ def load_json_file(folder: str, file_name: str) -> dict:
 
 
 def delete_keys_from_scene(scene, keys) -> dict:
+    """Remove keys from a scene object (represented as dict).
+    Useful for making the scene smaller (no images) and cleanup"""
     new_scene = {}
     for key, value in scene.items():
         if key not in set(keys):
@@ -88,7 +88,8 @@ def delete_keys_from_scene(scene, keys) -> dict:
     return new_scene
 
 
-def ingest_to_mongo(index: str, ingest_files: dict):
+def ingest_to_mongo(index: str, ingest_files: dict, client: MongoClient):
+    mongoDB = client['mcs']
     collection = mongoDB[index]
     result = collection.insert_many(ingest_files)
     print("Inserted {0} out of {1}.  Result: {2}".format(
@@ -116,16 +117,16 @@ def build_scene_item(file_name: str, folder: str, eval_name: str) -> dict:
     scene = load_json_file(folder, file_name)
 
     if eval_name is None:
-        scene["eval"] = scene["evaluation"]
-        eval_name = scene["evaluation"]
+        scene["eval"] = scene["debug"]["evaluation"]
+        eval_name = scene["debug"]["evaluation"]
     else:
         scene["eval"] = eval_name
 
-    scene["scene_num"] = scene["sceneNumber"]
-    if "sequenceNumber" in scene:
-        scene["test_num"] = scene["sequenceNumber"]
+    scene["scene_num"] = scene["debug"]["sceneNumber"]
+    if "sequenceNumber" in scene["debug"]:
+        scene["test_num"] = scene["debug"]["sequenceNumber"]
     else:
-        scene["test_num"] = scene["hypercubeNumber"]
+        scene["test_num"] = scene["debug"]["hypercubeNumber"]
 
     if "sequenceId" in scene["goal"]["sceneInfo"]:
         scene["goal"]["sceneInfo"]["hypercubeId"] = scene["goal"][
@@ -137,15 +138,22 @@ def build_scene_item(file_name: str, folder: str, eval_name: str) -> dict:
     return scene
 
 
-def automated_scene_ingest_file(file_name: str, folder: str) -> None:
+def automated_scene_ingest_file(
+        file_name: str,
+        folder: str,
+        db_string: str) -> None:
     # Called from mcs_automated_ingest when a new message in pulled
     #    from the AWS Queue, singular scene file
+    client = MongoClient(
+        'mongodb://mongomcs:mongomcspassword@localhost:27017/' + db_string)
+    mongoDB = client[db_string]
+
     scene_item = build_scene_item(file_name, folder, None)
     collection = mongoDB[SCENE_INDEX]
     check_exists = collection.find(
         {
             "name": scene_item["name"],
-            "evaluation": scene_item["evaluation"]
+            "evaluation": scene_item["eval"]
         }
     )
 
@@ -157,10 +165,10 @@ def automated_scene_ingest_file(file_name: str, folder: str) -> None:
 
     # Add Keys when a new evluation item is created
     collection_count = collection.find(
-        {"evaluation": scene_item["evaluation"]}).count()
+        {"evaluation": scene_item["eval"]}).count()
     if collection_count == 1:
         create_collection_keys.find_collection_keys(
-            SCENE_INDEX, scene_item["evaluation"], mongoDB)
+            SCENE_INDEX, scene_item["eval"], mongoDB)
 
 
 def ingest_scene_files(folder: str, eval_name: str) -> None:
@@ -173,7 +181,11 @@ def ingest_scene_files(folder: str, eval_name: str) -> None:
         scene = build_scene_item(file, folder, eval_name)
         ingest_scenes.append(scene)
 
-    ingest_to_mongo(SCENE_INDEX, ingest_scenes)
+    client = MongoClient(
+        'mongodb://mongomcs:mongomcspassword@localhost:27017/mcs')
+    mongoDB = client['mcs']
+
+    ingest_to_mongo(SCENE_INDEX, ingest_scenes, client)
 
     create_collection_keys.find_collection_keys(
         SCENE_INDEX, eval_name, mongoDB)
@@ -229,16 +241,16 @@ def build_new_step_obj(
         new_step["delta_time_millis"] = step["delta_time_millis"]
 
     # If too many items in violations_xy_list, take the first 50
-    if(step["violations_xy_list"] and isinstance(
-        step["violations_xy_list"], list) and len(
-            step["violations_xy_list"]) > MAX_XY_VIOLATIONS):
-        new_step["violations_xy_list"] = step[
-            "violations_xy_list"][:MAX_XY_VIOLATIONS]
+    if (step["violations_xy_list"] and isinstance(
+            step["violations_xy_list"], list) and
+            len(step["violations_xy_list"]) > MAX_XY_VIOLATIONS):
+        new_step["violations_xy_list"] = \
+            step["violations_xy_list"][:MAX_XY_VIOLATIONS]
     else:
         new_step["violations_xy_list"] = step["violations_xy_list"]
 
     output = {}
-    if("output" in step):
+    if ("output" in step):
         output["return_status"] = step["output"]["return_status"]
         output["reward"] = step["output"]["reward"]
         # TODO: Added if check because key error in 3.75 and earlier
@@ -246,7 +258,7 @@ def build_new_step_obj(
             output["physics_frames_per_second"] = step[
                 "output"]["physics_frames_per_second"]
         interactive_reward = output["reward"]
-        if(output["reward"] >= (0 - ((number_steps - 1) * 0.001) + 1)):
+        if (output["reward"] >= (0 - ((number_steps - 1) * 0.001) + 1)):
             interactive_goal_achieved = 1
     new_step["output"] = output
 
@@ -258,8 +270,8 @@ def add_weighted_cube_scoring(history_item: dict, scene: dict) -> tuple:
     if "goal" in scene:
         if "sceneInfo" in scene["goal"]:
             if scene["goal"]["sceneInfo"]["tertiaryType"] == "shape constancy":
-                if history_item[
-                        "scene_goal_id"] in SHAPE_CONSTANCY_DUPLICATE_CUBE:
+                if history_item["scene_goal_id"] in \
+                        SHAPE_CONSTANCY_DUPLICATE_CUBE:
                     weighted_score = history_item["score"]["score"] * 2
                     weighted_score_worth = 2
                     weighted_confidence = float(
@@ -280,13 +292,19 @@ def add_weighted_cube_scoring(history_item: dict, scene: dict) -> tuple:
     return (weighted_score, weighted_score_worth, weighted_confidence)
 
 
+def calc_scorecard(history_item: dict, scene: dict) -> dict:
+    scorecard = Scorecard(history_item, scene)
+    scorecard_vals = scorecard.score_all()
+    return scorecard_vals
+
+
 def process_score(
         history_item: dict,
         scene: dict,
         interactive_goal_achieved: int,
         interactive_reward: int) -> dict:
     # Removed Adjusted Confidence, should be OBE
-    if(history_item["category"] == "interactive"):
+    if (history_item["category"] == "interactive"):
         if "score" not in history_item:
             history_item["score"] = {}
             history_item["score"]["classification"] = "end"
@@ -296,12 +314,14 @@ def process_score(
         history_item["score"]["ground_truth"] = 1
     else:
         if "score" in history_item:
-            history_item["score"]["score"] = 1 if history_item["score"][
-                "classification"] == scene["goal"]["answer"]["choice"] else 0
-            history_item["score"]["ground_truth"] = 1 if ("plausible" == scene[
-                "goal"]["answer"]["choice"] or "expected" == scene[
-                    "goal"]["answer"]["choice"]) else 0
+            history_item["score"]["score"] = 1 if \
+                history_item["score"]["classification"] == \
+                scene["goal"]["answer"]["choice"] else 0
+            history_item["score"]["ground_truth"] = 1 if \
+                ("plausible" == scene["goal"]["answer"]["choice"] or
+                 "expected" == scene["goal"]["answer"]["choice"]) else 0
         else:
+            # Eval 2 backwards compatiblity
             history_item["score"] = {}
             history_item["score"]["score"] = -1
             history_item["score"]["ground_truth"] = 1 if "plausible" == scene[
@@ -335,10 +355,13 @@ def build_history_item(
         eval_name: str,
         performer: str,
         scene_folder: str,
-        extension: str) -> dict:
+        extension: str,
+        client: MongoClient,
+        db_string: str) -> dict:
     print("Ingest history file: {}".format(history_file))
+    mongoDB = client[db_string]
+
     # Create History Object and add basic information
-    history = {}
     history = load_json_file(folder, history_file)
 
     history_item = {}
@@ -396,17 +419,17 @@ def build_history_item(
             history_item["scene_num"] = scene["scene_num"]
             history_item["test_num"] = scene["test_num"]
         else:
-            history_item["scene_num"] = scene["sceneNumber"]
-            history_item["test_num"] = scene["hypercubeNumber"]
+            history_item["scene_num"] = scene["debug"]["sceneNumber"]
+            history_item["test_num"] = scene["debug"]["hypercubeNumber"]
 
         history_item["scene_goal_id"] = scene["goal"]["sceneInfo"]["id"][0]
         history_item["test_type"] = scene["goal"]["sceneInfo"]["secondaryType"]
         history_item["category"] = scene["goal"]["sceneInfo"]["primaryType"]
 
         if scene["goal"]["sceneInfo"]["secondaryType"] == "retrieval":
-            history_item["category_type"] = scene[
-                "goal"]["sceneInfo"]["secondaryType"] + "_" + scene[
-                "goal"]["sceneInfo"]["tertiaryType"]
+            history_item["category_type"] = \
+                scene["goal"]["sceneInfo"]["secondaryType"] + \
+                "_" + scene["goal"]["sceneInfo"]["tertiaryType"]
         else:
             history_item["category_type"] = scene[
                 "goal"]["sceneInfo"]["tertiaryType"]
@@ -416,13 +439,21 @@ def build_history_item(
             scene,
             interactive_goal_achieved,
             interactive_reward)
+        history_item["score"]["scorecard"] = calc_scorecard(history, scene)
 
-    return history_item
+        return history_item
 
 
-def automated_history_ingest_file(history_file: str, folder: str) -> None:
+def automated_history_ingest_file(
+        history_file: str,
+        folder: str,
+        db_string: str) -> None:
+    client = MongoClient(
+        'mongodb://mongomcs:mongomcspassword@localhost:27017/' + db_string)
+    mongoDB = client[db_string]
+
     history_item = build_history_item(
-        history_file, folder, None, None, None, "json")
+        history_file, folder, None, None, None, "json", client, db_string)
     collection = mongoDB[HISTORY_INDEX]
     check_exists = collection.find(
         {
@@ -456,26 +487,37 @@ def ingest_history_files(
         performer: str,
         scene_folder: str,
         extension: str) -> None:
+
+    client = MongoClient(
+        'mongodb://mongomcs:mongomcspassword@localhost:27017/mcs')
+    mongoDB = client['mcs']
+
     history_files = find_history_files(folder, extension)
     ingest_history = []
 
     for file in history_files:
         history_item = build_history_item(
-            file, folder, eval_name, performer, scene_folder, extension)
+            file,
+            folder,
+            eval_name,
+            performer,
+            scene_folder,
+            extension,
+            client,
+            'mcs')
 
         replacementIndex = -1
         for index, item in enumerate(ingest_history):
-            if item["fullFilename"] == history_item[
-                    "fullFilename"] and history_item[
-                    "fileTimestamp"] > item["fileTimestamp"]:
-                replacementIndex = index
+            if item["fullFilename"] == history_item["fullFilename"]:
+                if history_item["fileTimestamp"] > item["fileTimestamp"]:
+                    replacementIndex = index
 
         if replacementIndex == -1:
             ingest_history.append(history_item)
         else:
             ingest_history[replacementIndex] = history_item
 
-    ingest_to_mongo(HISTORY_INDEX, ingest_history)
+    ingest_to_mongo(HISTORY_INDEX, ingest_history, client)
 
     create_collection_keys.find_collection_keys(
         HISTORY_INDEX, eval_name, mongoDB)

@@ -1,0 +1,219 @@
+{
+  "name": "india_0003_17",
+  "version": "2",
+  "ceilingMaterial": "AI2-THOR/Materials/Walls/WallDrywallGrey",
+  "floorMaterial": "AI2-THOR/Materials/Fabrics/CarpetWhite 3",
+  "wallMaterial": "AI2-THOR/Materials/Walls/WallDrywallGrey",
+  "performerStart": {
+    "position": {
+      "x": 2.73,
+      "y": 0,
+      "z": 2.87
+    },
+    "rotation": {
+      "x": 0,
+      "y": 270,
+      "z": 0
+    }
+  },
+  "roomDimensions": {
+    "x": 10,
+    "y": 11,
+    "z": 12
+  },
+  "objects": [
+    {
+      "id": "5bfc4321-61c3-40e1-ac2d-a36c8ef11107",
+      "type": "trophy",
+      "mass": 1,
+      "salientMaterials": ["metal"],
+      "moveable": true,
+      "pickupable": true,
+      "shows": [
+        {
+          "position": {
+            "x": -2.903296643395682,
+            "y": 0.005,
+            "z": 2.87
+          },
+          "rotation": {
+            "x": 0,
+            "y": 270,
+            "z": 0
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 1,
+            "y": 1,
+            "z": 1
+          }
+        }
+      ],
+      "materials": []
+    },
+    {
+      "id": "5a38f9b7-551f-417e-aa24-280d73eaec14",
+      "type": "ball",
+      "mass": 1.0,
+      "salientMaterials": ["wood"],
+      "moveable": true,
+      "pickupable": true,
+      "shows": [
+        {
+          "rotation": {
+            "x": 0,
+            "y": 270,
+            "z": 0
+          },
+          "position": {
+            "x": 4.03,
+            "y": 0.05,
+            "z": 2.0
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 0.1,
+            "y": 0.1,
+            "z": 0.1
+          }
+        }
+      ],
+      "materials": ["UnityAssetStore/Wooden_Toys_Bundle/ToyBlocks/meshes/Materials/green_1x1"]
+    },
+    {
+      "id": "25fbd48a-4ef1-470a-a073-2877103c2c22",
+      "type": "cup_3",
+      "mass": 0.5,
+      "salientMaterials": ["plastic"],
+      "moveable": true,
+      "pickupable": true,
+      "stackTarget": true,
+      "shows": [
+        {
+          "rotation": {
+            "x": 0,
+            "y": 270,
+            "z": 0
+          },
+          "position": {
+            "x": -0.53,
+            "y": 0.01,
+            "z": 1.0
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 1,
+            "y": 1,
+            "z": 1
+          }
+        }
+      ],
+      "materials": ["UnityAssetStore/Kindergarten_Interior/Models/Materials/color 2"]
+    },
+    {
+      "id": "e0fb1d65-422c-4072-b783-d8af8d402110",
+      "type": "sofa_chair_1",
+      "mass": 3,
+      "salientMaterials": ["fabric"],
+      "moveable": true,
+      "receptacle": true,
+      "stackTarget": true,
+      "occluder": true,
+      "shows": [
+        {
+          "position": {
+            "x": -2.528501643395682,
+            "y": 0,
+            "z": 2.87
+          },
+          "rotation": {
+            "x": 0,
+            "y": 270.0,
+            "z": 0
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 0.333,
+            "y": 0.333,
+            "z": 0.333
+          }
+        }
+      ],
+      "materials": ["AI2-THOR/Materials/Fabrics/SofaChair1_Black"]
+    },
+    {
+      "id": "121ac268-84e7-4932-b425-b6bfce4501ea",
+      "type": "table_5",
+      "mass": 12,
+      "salientMaterials": ["wood"],
+      "receptacle": true,
+      "stackTarget": true,
+      "occluder": true,
+      "shows": [
+        {
+          "position": {
+            "x": -3.32,
+            "y": 0,
+            "z": -0.33
+          },
+          "rotation": {
+            "x": 0,
+            "y": 270,
+            "z": 0
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 1,
+            "y": 0.5,
+            "z": 0.667
+          }
+        }
+      ],
+      "materials": ["UnityAssetStore/Kindergarten_Interior/Models/Materials/color wood 1","AI2-THOR/Materials/Wood/LightWoodCounters3"]
+    },
+    {
+      "id": "8290c252-0fa4-407a-992f-b0bc903c9c70",
+      "type": "table_5",
+      "mass": 20,
+      "salientMaterials": ["wood"],
+      "receptacle": true,
+      "occluder": true,
+      "shows": [
+        {
+          "position": {
+            "x": -3.57,
+            "y": 0,
+            "z": -1.56
+          },
+          "rotation": {
+            "x": 0,
+            "y": 270,
+            "z": 0
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 1,
+            "y": 1,
+            "z": 0.667
+          }
+        }
+      ],
+      "materials": ["AI2-THOR/Materials/Wood/LightWoodCounters4","UnityAssetStore/Baby_Room/Models/Materials/wood 1"]
+    }
+  ],
+  "goal": {
+    "category": "retrieval",
+    "metadata": {
+      "target": {
+        "id": "5bfc4321-61c3-40e1-ac2d-a36c8ef11107"
+      }
+    },
+    "description": "Find and pick up the small light grey metal trophy.",
+    "last_step": 10000
+  },
+  "evaluationOnly": false,
+  "sequenceNumber": 3,
+  "sceneNumber": 17,
+  "evaluation": null,
+      "training": false
+}

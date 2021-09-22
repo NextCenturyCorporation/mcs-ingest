@@ -1,7 +1,20 @@
 # mcs-ingest
-Ingest data into Elasticsearch for MCS
 
-# Setup
+Ingest data into MongoDB for MCS
+
+# Mongo Setup
+
+## Standalone
+
+See the official MongoDB installation page here: https://docs.mongodb.com/manual/installation/
+
+Change each instantiation of the MongoClient in our Python code to: `MongoClient('mongodb://localhost:27017/mcs')`
+
+## With the MCS UI
+
+See the mcs-ui README here: https://github.com/NextCenturyCorporation/mcs-ui/blob/master/README.md
+
+# Python Setup
 
 ## Using python virtual environment:
 
@@ -54,6 +67,11 @@ To run the unit tests, run the command:  python3 -m unittest
 * Update the db_version in deployment_script.py to new db version
 * In deployment_script.py call your module and function to update database
 * If the db version is not new, no script will be run
+
+# Scorecard
+
+See README.md in scorecard/ directory for details.
+
 
 ## Acknowledgements
 

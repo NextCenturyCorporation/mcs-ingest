@@ -1,0 +1,404 @@
+{
+  "name": "golf_0018_15",
+  "version": "2",
+  "ceilingMaterial": "AI2-THOR/Materials/Metals/Metal",
+  "floorMaterial": "UnityAssetStore/Kindergarten_Interior/Models/Materials/color wood 4",
+  "wallMaterial": "AI2-THOR/Materials/Metals/Metal",
+  "performerStart": {
+    "position": {
+      "x": 0.14,
+      "y": 0,
+      "z": 3.77
+    },
+    "rotation": {
+      "x": 0,
+      "y": 180,
+      "z": 0
+    }
+  },
+  "roomDimensions": {
+    "x": 10,
+    "y": 11,
+    "z": 12
+  },
+  "objects": [
+    {
+      "id": "e6034223-0a07-4ca7-a12e-ef59b93a369b",
+      "type": "trophy",
+      "mass": 1,
+      "salientMaterials": ["metal"],
+      "moveable": true,
+      "pickupable": true,
+      "shows": [
+        {
+          "position": {
+            "x": 0,
+            "y": 0.107,
+            "z": -0.15
+          },
+          "rotation": {
+            "x": 90.0,
+            "y": 0,
+            "z": 0.0
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 1,
+            "y": 1,
+            "z": 1
+          }
+        }
+      ],
+      "materials": [],
+      "locationParent": "3c24d34d-9bb4-4ab6-ad48-94cef4f4cc99"
+    },
+    {
+      "id": "3c24d34d-9bb4-4ab6-ad48-94cef4f4cc99",
+      "type": "case_3",
+      "mass": 4.5,
+      "salientMaterials": ["plastic"],
+      "receptacle": true,
+      "openable": true,
+      "occluder": true,
+      "shows": [
+        {
+          "position": {
+            "x": -3.22,
+            "y": 0,
+            "z": 3.65
+          },
+          "rotation": {
+            "x": 0,
+            "y": 180,
+            "z": 0
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 1.6,
+            "y": 1.6,
+            "z": 1.6
+          }
+        }
+      ],
+      "materials": ["UnityAssetStore/Kindergarten_Interior/Models/Materials/color 2"],
+      "canContainTarget": true
+    },
+    {
+      "id": "17d57efb-da6f-4335-b93d-f894541a563f",
+      "type": "chest_8",
+      "mass": 4,
+      "salientMaterials": ["plastic"],
+      "receptacle": true,
+      "openable": true,
+      "occluder": true,
+      "shows": [
+        {
+          "position": {
+            "x": -3.34,
+            "y": 0,
+            "z": -4.13
+          },
+          "rotation": {
+            "x": 0,
+            "y": 180,
+            "z": 0
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 1.2,
+            "y": 1.2,
+            "z": 1.2
+          }
+        }
+      ],
+      "materials": ["UnityAssetStore/Kindergarten_Interior/Models/Materials/color 2"],
+      "canContainTarget": true
+    },
+    {
+      "id": "17223b97-35c2-441a-858e-c9cb16bc8ee4",
+      "type": "chest_3",
+      "mass": 9.0,
+      "salientMaterials": ["wood"],
+      "receptacle": true,
+      "openable": true,
+      "occluder": true,
+      "shows": [
+        {
+          "position": {
+            "x": -3.04,
+            "y": 0,
+            "z": 0.66
+          },
+          "rotation": {
+            "x": 0,
+            "y": 180,
+            "z": 0
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 1.45,
+            "y": 1.45,
+            "z": 1.45
+          }
+        }
+      ],
+      "materials": ["AI2-THOR/Materials/Wood/BedroomFloor1"],
+      "canContainTarget": true
+    },
+    {
+      "id": "0cd627b2-0ff0-4791-af42-90330acd30ba",
+      "type": "case_3",
+      "mass": 7.5,
+      "salientMaterials": ["metal"],
+      "receptacle": true,
+      "openable": true,
+      "occluder": true,
+      "shows": [
+        {
+          "position": {
+            "x": -1.69,
+            "y": 0,
+            "z": -2.36
+          },
+          "rotation": {
+            "x": 0,
+            "y": 180,
+            "z": 0
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 0.4,
+            "y": 0.4,
+            "z": 0.4
+          }
+        }
+      ],
+      "materials": ["AI2-THOR/Materials/Metals/HammeredMetal_AlbedoTransparency 1"],
+      "canContainTarget": false
+    },
+    {
+      "id": "d06bc6e8-3ab2-4956-8dee-c46e4357c73b",
+      "type": "chest_8",
+      "mass": 7.0,
+      "salientMaterials": ["wood"],
+      "receptacle": true,
+      "openable": true,
+      "occluder": true,
+      "shows": [
+        {
+          "position": {
+            "x": 0.68,
+            "y": 0,
+            "z": 0.18
+          },
+          "rotation": {
+            "x": 0,
+            "y": 180,
+            "z": 0
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 0.8,
+            "y": 0.8,
+            "z": 0.8
+          }
+        }
+      ],
+      "materials": ["AI2-THOR/Materials/Wood/DarkWoodSmooth2"],
+      "canContainTarget": false
+    },
+    {
+      "id": "8af787ed-9d7d-42ad-b15c-2057f56a6eae",
+      "type": "racecar_red",
+      "mass": 4,
+      "salientMaterials": ["wood"],
+      "moveable": true,
+      "pickupable": true,
+      "shows": [
+        {
+          "rotation": {
+            "x": 0,
+            "y": 180,
+            "z": 0
+          },
+          "position": {
+            "x": 1.9,
+            "y": 0.01,
+            "z": 2.65
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 3,
+            "y": 3,
+            "z": 3
+          }
+        }
+      ],
+      "materials": ["UnityAssetStore/Kindergarten_Interior/Models/Materials/color wood 2"]
+    },
+    {
+      "id": "501de5ae-4bde-4de9-a79f-cc5b6fa63de9",
+      "type": "block_blue_letter_c",
+      "mass": 0.66,
+      "salientMaterials": ["wood"],
+      "moveable": true,
+      "pickupable": true,
+      "stackTarget": true,
+      "occluder": true,
+      "shows": [
+        {
+          "rotation": {
+            "x": 0,
+            "y": 180,
+            "z": 0
+          },
+          "position": {
+            "x": -3.84,
+            "y": 0,
+            "z": -0.93
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 1,
+            "y": 1,
+            "z": 1
+          }
+        }
+      ],
+      "materials": ["UnityAssetStore/KD_AlphabetBlocks/Assets/Textures/Blue/TOYBlocks_AlphabetBlock_B_Blue_1K/ToyBlockBlueB"]
+    },
+    {
+      "id": "0a423726-d884-4ba2-ab7f-d2e9d3ba56b3",
+      "type": "car_1",
+      "mass": 4,
+      "salientMaterials": ["wood"],
+      "moveable": true,
+      "pickupable": true,
+      "shows": [
+        {
+          "rotation": {
+            "x": 0,
+            "y": 180,
+            "z": 0
+          },
+          "position": {
+            "x": 0.73,
+            "y": 0.01,
+            "z": 3.53
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 3,
+            "y": 3,
+            "z": 3
+          }
+        }
+      ],
+      "materials": ["UnityAssetStore/Wooden_Toys_Bundle/ToyBlocks/meshes/Materials/green_1x1"]
+    },
+    {
+      "id": "c53b13a8-e9dd-40cb-a0a1-91ee13a5f266",
+      "type": "ball",
+      "mass": 0.375,
+      "salientMaterials": ["metal"],
+      "moveable": true,
+      "pickupable": true,
+      "shows": [
+        {
+          "rotation": {
+            "x": 0,
+            "y": 180,
+            "z": 0
+          },
+          "position": {
+            "x": -2.55,
+            "y": 0.0125,
+            "z": -4.21
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 0.025,
+            "y": 0.025,
+            "z": 0.025
+          }
+        }
+      ],
+      "materials": ["UnityAssetStore/Baby_Room/Models/Materials/cabinet metal"]
+    },
+    {
+      "id": "7048349b-0d8e-4068-8fa6-43ddafd54caa",
+      "type": "ball",
+      "mass": 2,
+      "salientMaterials": ["rubber"],
+      "moveable": true,
+      "pickupable": true,
+      "shows": [
+        {
+          "rotation": {
+            "x": 0,
+            "y": 180,
+            "z": 0
+          },
+          "position": {
+            "x": -1.38,
+            "y": 0.125,
+            "z": 3.87
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 0.25,
+            "y": 0.25,
+            "z": 0.25
+          }
+        }
+      ],
+      "materials": ["AI2-THOR/Materials/Plastics/LightBlueRubber"]
+    },
+    {
+      "id": "b0fd4d48-91a4-482a-aed8-107729071615",
+      "type": "block_yellow_number_1",
+      "mass": 0.66,
+      "salientMaterials": ["wood"],
+      "moveable": true,
+      "pickupable": true,
+      "stackTarget": true,
+      "occluder": true,
+      "shows": [
+        {
+          "rotation": {
+            "x": 0,
+            "y": 180,
+            "z": 0
+          },
+          "position": {
+            "x": -3.23,
+            "y": 0,
+            "z": -1.71
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 1,
+            "y": 1,
+            "z": 1
+          }
+        }
+      ],
+      "materials": ["UnityAssetStore/KD_NumberBlocks/Assets/Textures/Yellow/TOYBlocks_NumberBlock_3_Yellow_1K/NumberBlockYellow_3"]
+    }
+  ],
+  "goal": {
+    "category": "retrieval",
+    "metadata": {
+      "target": {
+        "id": "e6034223-0a07-4ca7-a12e-ef59b93a369b"
+      }
+    },
+    "description": "Find and pick up the small light grey metal trophy.",
+    "last_step": 10000
+  },
+  "evaluationOnly": true,
+  "sequenceNumber": 18,
+  "sceneNumber": 15,
+  "evaluation": null,
+  "training": false
+}

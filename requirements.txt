@@ -1,2 +1,6 @@
+git+git://github.com/NextCenturyCorporation/MCS@master#egg=machine_common_sense
 pymongo==3.11.3
 flake8==3.8.4
+numpy==1.19.4
+pandas==1.2.3
+pytest
