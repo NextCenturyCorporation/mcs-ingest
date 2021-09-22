@@ -1,6 +1,7 @@
-# Scene file                       Basename of history file     Number of revisits
-occluders_0001_17_I1_debug.json    zero_1                       0
-occluders_0001_17_I1_debug.json    one_1                        1
-occluders_0001_17_I1_debug.json    one_2                        1
-occluders_0001_17_I1_debug.json    one_3                        1
-india_0003_17_debug.json           india_0003_baseline_level1   1
+# Scene file                       Basename of history file     Number of revisits   Number of Unopenable
+occluders_0001_17_I1_debug.json    revisit_zero_1                  0                    0
+occluders_0001_17_I1_debug.json    revisit_one_1                   1                    0
+occluders_0001_17_I1_debug.json    revisit_one_2                   1                    0
+occluders_0001_17_I1_debug.json    revisit_one_3                   1                    0
+india_0003_17_debug.json           india_0003_baseline_level1      1                    0
+golf_0018_15_debug.json            unopenable_two                  0                    2

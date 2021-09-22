@@ -105,6 +105,9 @@ class Scorecard:
     def get_revisits(self):
         return self.revisits
 
+    def get_unopenable(self):
+        return self.open_unopenable
+
     def calc_revisiting(self):
 
         steps_list = self.history['steps']
@@ -202,7 +205,22 @@ class Scorecard:
         print(df)
 
     def calc_open_unopenable(self):
-        pass
+        ''' Determine the number of times that the agent tried to
+        open an unopenable object.  '''
+        steps_list = self.history['steps']
+
+        num_unopenable = 0
+
+        for step_num, single_step in enumerate(steps_list):
+            action = single_step['action']
+            return_status = single_step['output']['return_status']
+            if action == 'MCSOpenObject':
+                if return_status not in ["SUCCESSFUL",
+                                         "IS_OPENED_COMPLETELY",
+                                         'OUT_OF_REACH']:
+                    num_unopenable += 1
+
+        return num_unopenable
 
     def calc_repeat_failed(self):
         pass
