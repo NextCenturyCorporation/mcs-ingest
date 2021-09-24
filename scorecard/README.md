@@ -9,6 +9,8 @@ The actions that are counted (as of Eval 4 plan):
 * Revisiting parts of the room that have not changed
 * Attempting to open an un-openable object.  
   * We will begin counting from the first attempt
+* Looking into the same container repeatedly
+  * If the AI system attempts the same action from a new position, this will not be considered a repeated action
 * Repeating a failed action.   
   * We will begin counting from the second attempt, since it cannot be a “failed” action until after the AI has received 
   feedback from the first attempt. If the AI system attempts the same action from a new position, this will not be considered a repeated action. 
@@ -17,8 +19,6 @@ The actions that are counted (as of Eval 4 plan):
   * Impossible actions will be counted from the first attempt.  
 * Target object in the field of view (not occluded) but agent does not move toward it
   * After a certain number of frames, not moving toward a visible target object will be counted
-* Looking into the same container repeatedly
-  * If the AI system attempts the same action from a new position, this will not be considered a repeated action
 
 Some of these are mathematically vague;  for example, the space that the agent moves in is continous, 
 so 'revisit' needs to have a particular distance.  Below, we discuss the way to count them. 
@@ -49,6 +49,11 @@ is returned if you try to open an already-opened object and OUT_OF_REACH
 which is returned when you try to open an openable object but it is 
 too far away.  Everything else causes the count of unopenable objects to 
 increase.
+
+## Looking into the Same Container Repeatedly
+
+If the agent looks in the same container repeatedly, count it (after the 
+first look).   
 
 ## Running the Scorecard
 
