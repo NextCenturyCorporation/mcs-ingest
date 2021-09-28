@@ -223,7 +223,7 @@ class Scorecard:
                                          'OUT_OF_REACH']:
                     num_unopenable += 1
                 else:
-                    logging.warning("Cannot understand " + return_status)
+                    logging.warning(f"Cannot understand {return_status}")
 
         return num_unopenable
 

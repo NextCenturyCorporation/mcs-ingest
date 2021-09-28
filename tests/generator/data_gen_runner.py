@@ -32,7 +32,7 @@ def key_to_movement(key):
         _ = input("waiting")
         return 'Pass', {}
 
-    logging.warning("Unrecognized: " + key)
+    logging.warning(f"Unrecognized: {key}")
     return 'Pass', {}
 
 

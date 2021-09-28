@@ -1,5 +1,3 @@
-import logging
-
 admin_user_names = [
     "rartiss",
     "bpippin",
@@ -16,4 +14,4 @@ def add_admins(mongoDB):
         set_value = {"$set": {'admin': True}}
         collection.update_one(search_value, set_value)
 
-    logging.info("Admin users were successfully added!")
+    print("Admin users were successfully added!")
