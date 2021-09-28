@@ -1,13 +1,10 @@
-import logging
-
 admin_user_names = [
-    "rartiss",
-    "bpippin",
-    "mtschellenberg",
-    "kdrumm",
+    "rartiss", 
+    "bpippin", 
+    "mtschellenberg", 
+    "kdrumm", 
     "dwetherby"
 ]
-
 
 def add_admins(mongoDB):
     collection = mongoDB["users"]
@@ -16,4 +13,4 @@ def add_admins(mongoDB):
         set_value = {"$set": {'admin': True}}
         collection.update_one(search_value, set_value)
 
-    logging.info("Admin users were successfully added!")
+    print("Admin users were successfully added!")
