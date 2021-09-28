@@ -23,10 +23,10 @@ Create some submissions, which includes:
 
 Pass in an integer that determines the number of submissions to create, default to 1.
 """
-import argparse
-import json
-import logging
 import random
+import argparse
+import os
+import json
 import shutil
 import tempfile
 from pathlib import Path
@@ -45,7 +45,7 @@ class SubmissionCreator:
         base_dir = Path(tempfile.mkdtemp())
         dir_path = Path(base_dir / sub_name)
         if not dir_path.exists():
-            logging.info("Creating directory " + str(dir_path))
+            print("Creating directory " + str(dir_path))
             dir_path.mkdir()
 
         # Create descriptive json file.  In this case all the submissions are by the same TA1 performer.
@@ -96,14 +96,13 @@ class SubmissionCreator:
             for test in range(0, 1080):
                 for scene in range(0, 4):
 
-                    voe_filename = "voe_O" + str(block + 1) + "_" + str(test + 1).zfill(4) + "_" + str(
-                        scene + 1) + ".txt"
+                    voe_filename = "voe_O" + str(block + 1) + "_" + str(test + 1).zfill(4) + "_" + str(scene + 1) + ".txt"
                     final_answer = answer_json[str(block + 1)][str(test + 1)][str(scene + 1)]
                     voe_file = path / voe_filename
                     with voe_file.open('w') as outfile:
                         for frame_num in range(0, 20):
                             outfile.write("{} 1.0000\n".format(frame_num + 1))
-                            logging.info("{} {}".format(frame_num + 1, 1.0))
+                            print("{} {}".format(frame_num+1, 1.0))
 
                         frame_val = 1.0
                         index_of_final = random.randint(20, 100)
@@ -112,11 +111,11 @@ class SubmissionCreator:
                             if frame_val < final_answer:
                                 frame_val = final_answer
                             outfile.write("{} {:04f}\n".format(frame_num + 1, frame_val))
-                            logging.info("{} {}".format(frame_num + 1, frame_val))
+                            print("{} {}".format(frame_num+1, frame_val))
 
                         for frame_num in range(index_of_final, 100):
                             outfile.write("{} {:04f}\n".format(frame_num + 1, final_answer))
-                            logging.info("{} {}".format(frame_num + 1, final_answer))
+                            print("{} {}".format(frame_num+1, final_answer))
 
     def create_location_information(self, path, answer_json):
         location_filename = "location.txt"
@@ -136,13 +135,12 @@ class SubmissionCreator:
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     random.seed(9435212)
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--num", default="1", help="Number of submissions to create")
     opt = parser.parse_args()
     num_submissions = int(opt.num)
-    logging.info("Creating {} submissions".format(num_submissions))
+    print("Creating {} submissions".format(num_submissions))
 
     handler = SubmissionCreator(num_submissions)

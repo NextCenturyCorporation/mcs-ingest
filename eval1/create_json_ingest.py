@@ -21,18 +21,20 @@ index that can be read by Neon.
 
 """
 import json
-import logging
 import math
 import random
 import zipfile
 from pathlib import Path
 import os
 import io
+from elasticsearch import Elasticsearch
 from collections import defaultdict
 
 from pymongo import MongoClient
 
 config = {
+    'elastic_host': 'localhost',
+    'elastic_port': 9200,
     'index_name': 'msc_eval',
     'index_type': 'eval1'
 }
@@ -150,7 +152,7 @@ class JsonImportCreator:
         self.ground_truth = self.get_ground_truth()
 
         for file in self.submission_files:
-            logging.info("Submission file: {}".format(file))
+            print("Submission file: {}".format(file))
             self.process_submission(file)
 
     def process_submission(self, filename):
@@ -163,15 +165,25 @@ class JsonImportCreator:
         location_frame = location_info["frame"]
         location_x = location_info["x"]
         location_y = location_info["y"]
-        # logging.info("voe signal {}".format(voe_signal_dict))
+        # print("voe signal {}".format(voe_signal_dict))
 
         bulk_data = []
 
         for block in answer:
             for test in answer[block]:
                 for scene in answer[block][test]:
-                    # logging.info("block {} test {} scene {}: score {}".
+                    # print("block {} test {} scene {}: score {}".
                     #   format(block, test, scene, answer[block][test][scene]))
+
+                    # Get the dictionary entry
+                    op_dict = {
+                        "index": {
+                            "_index": config['index_name'],
+                            "_type": config['index_type'],
+                            "_id": self.object_id
+                        }
+                    }
+                    bulk_data.append(op_dict)
 
                     # Get the data
                     data_dict = {}
@@ -215,9 +227,11 @@ class JsonImportCreator:
 
                     self.object_id = self.object_id + 1
 
+        #res = self.es.bulk(index=config['index_name'], body=bulk_data, refresh=True, request_timeout=30)
+
         collection = self.mongoDB[config['index_name']]
         result = collection.insert_many(bulk_data)
-        # logging.info("Result: {}".format(res))
+        # print("Result: {}".format(res))
 
     def get_metadata(self):
         with open(self.metadata_filename) as metadata_file:
@@ -228,7 +242,7 @@ class JsonImportCreator:
     def get_ground_truth(self):
         with open(self.ground_truth_filename) as ground_truth_file:
             return self.parse_answer_file(ground_truth_file)
-        logging.info("Unable to get file {}".format(self.ground_truth_filename))
+        print("Unable to get file {}".format(self.ground_truth_filename))
 
     def get_answer(self, filename):
         """ Pull the answer.txt file out of a zipfile and return parsed object"""
@@ -237,7 +251,7 @@ class JsonImportCreator:
             if self.answer_filename in content:
                 with my_zip.open(self.answer_filename) as answer_file:
                     return self.parse_answer_file(answer_file)
-        logging.warning("Unable to get file {}".format(self.answer_filename))
+        print("Unable to get file {}".format(self.answer_filename))
 
     def parse_answer_file(self, file):
         """ Parse an answer.txt or ground_truth.txt file, looks like:
@@ -262,7 +276,7 @@ class JsonImportCreator:
             block = str(key[0])
             test = str(key[1])
             scene = str(key[2])
-            # logging.info("{} {} {} {}".format(block, test, scene, split_line[1]))
+            # print("{} {} {} {}".format(block, test, scene, split_line[1]))
             answer[block][test][scene] = float(split_line[1])
         return answer
 
@@ -272,7 +286,7 @@ class JsonImportCreator:
             if self.location_filename in content:
                 with my_zip.open(self.location_filename) as location_file:
                     return self.parse_location_file(location_file)
-        logging.warning("Unable to get location file {}".format(self.location_filename))
+        print("Unable to get location file {}".format(self.location_filename))
 
     def parse_location_file(self, file):
         # Location info is frame, x, y
@@ -340,6 +354,10 @@ class JsonImportCreator:
 
         return voe_signal_dict, voe_signal_list
 
+    def check(self):
+        # sanity check
+        res = self.es.search(index=config['index_name'], size=2, body={"query": {"match_all": {}}})
+        # print("Query response: '{}'".format(res))
 
     def nested_dict(self, n, type):
         """ Create a multi dimensional dictionary of dimension n.
@@ -352,7 +370,6 @@ class JsonImportCreator:
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
     handler = JsonImportCreator()
     handler.process()
+    #handler.check()

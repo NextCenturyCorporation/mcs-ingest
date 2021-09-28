@@ -4,7 +4,6 @@
 
 import argparse
 import collections
-import logging
 import os
 import zipfile
 
@@ -94,8 +93,8 @@ def test_score():
     ref_scene1 =  { '1': 1., '2': 1., '3': 0., '4': 0. }
     sub_scene = {"1": sub_scene1}
     ref_scene = {"1": ref_scene1}
-    logging.info("Result:  {}".format(_score_absolute(sub_scene, ref_scene)))
-    logging.info("Result:  {}".format(_score_relative(sub_scene, ref_scene)))
+    print("Result:  {}".format(_score_absolute(sub_scene, ref_scene)))
+    print("Result:  {}".format(_score_relative(sub_scene, ref_scene)))
 
 
 def score_per_block(submitted, reference):
@@ -253,6 +252,5 @@ def main():
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     # main_mcs()
     test_score()
