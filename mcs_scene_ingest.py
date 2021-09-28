@@ -93,8 +93,8 @@ def ingest_to_mongo(index: str, ingest_files: dict, client: MongoClient):
     mongoDB = client['mcs']
     collection = mongoDB[index]
     result = collection.insert_many(ingest_files)
-    logging.info("Inserted {0} out of {1}.  Result: {2}".format(
-        len(result.inserted_ids), len(ingest_files), result))
+    logging.info(f"Inserted {len(result.inserted_ids)} out of {len(ingest_files)}. " +
+                 " Result: {result}")
 
 
 def find_scene_files(folder: str) -> dict:
@@ -114,7 +114,7 @@ def find_history_files(folder: str, extension: str) -> dict:
 
 
 def build_scene_item(file_name: str, folder: str, eval_name: str) -> dict:
-    logging.info("Ingest scene file: {}".format(file_name))
+    logging.info(f"Ingest scene file: {file_name}")
     scene = load_json_file(folder, file_name)
 
     if eval_name is None:
@@ -359,7 +359,7 @@ def build_history_item(
         extension: str,
         client: MongoClient,
         db_string: str) -> dict:
-    logging.info("Ingest history file: {}".format(history_file))
+    logging.info(f"Ingest history file: {history_file}")
     mongoDB = client[db_string]
 
     # Create History Object and add basic information
@@ -488,7 +488,6 @@ def ingest_history_files(
         performer: str,
         scene_folder: str,
         extension: str) -> None:
-
     client = MongoClient(
         'mongodb://mongomcs:mongomcspassword@localhost:27017/mcs')
     mongoDB = client['mcs']
