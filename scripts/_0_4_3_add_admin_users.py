@@ -1,10 +1,11 @@
 admin_user_names = [
-    "rartiss", 
-    "bpippin", 
-    "mtschellenberg", 
-    "kdrumm", 
+    "rartiss",
+    "bpippin",
+    "mtschelleberg",
+    "kdrumm",
     "dwetherby"
 ]
+
 
 def add_admins(mongoDB):
     collection = mongoDB["users"]
