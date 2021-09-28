@@ -1,7 +1,7 @@
 admin_user_names = [
     "rartiss",
     "bpippin",
-    "mtschelleberg",
+    "mtschellenberg",
     "kdrumm",
     "dwetherby"
 ]
