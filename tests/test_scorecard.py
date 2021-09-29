@@ -1,3 +1,4 @@
+import logging
 import unittest
 
 import mcs_scene_ingest
@@ -20,8 +21,12 @@ class TestMcsScorecard(unittest.TestCase):
         scorecard_vals = scorecard.score_all()
         self.assertEqual(scorecard_vals["repeat_failed"], 0)
         self.assertEqual(scorecard_vals["revisits"], 1)
-        print(f"{scorecard_vals}")
+        logging.info(f"{scorecard_vals}")
 
 
 if __name__ == '__main__':
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
     unittest.main()

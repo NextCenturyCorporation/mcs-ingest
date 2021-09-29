@@ -2,6 +2,7 @@
 # Calculate the Scorecard for a particular MCS output JSON file
 #
 #
+import logging
 
 import numpy as np
 import pandas
@@ -127,8 +128,8 @@ class Scorecard:
 
             grid_x, grid_z = self.get_grid_by_location(loc['x'], loc['z'])
             grid_hist = self.grid[grid_x][grid_z]
-            # print(f"Step num {step_num}  Location is {loc}.  Dir: " +
-            #       "{direction}  Grid loc is {grid_x} {grid_z}")
+            logging.debug(f"Step num {step_num}  Location is {loc}.  Dir: " +
+                          "{direction}  Grid loc is {grid_x} {grid_z}")
 
             # ---------------------------------
             # Determine if this is a revisit
@@ -136,7 +137,7 @@ class Scorecard:
             # If never been there, then not a revisit, and no longer in
             # revisiting mode
             if not grid_hist.any_visits():
-                # print("never visited")
+                logging.debug("never visited")
                 grid_hist.add(step_num, direction)
                 old_x, old_z = grid_x, grid_z
                 previous_revisit = False
@@ -145,14 +146,14 @@ class Scorecard:
             # If we did not change grid location (for example, change tilt,
             # rotate, etc), do not count
             if old_x == grid_x and old_z == grid_z:
-                # print("didn't change location")
+                logging.debug("didn't change location")
                 old_x, old_z = grid_x, grid_z
                 grid_hist.add(step_num, direction)
                 continue
 
             # See if ever been in this direction before
             if not grid_hist.seen_before(step_num, direction):
-                # print("visited but not this direction")
+                logging.debug("visited but not this direction")
                 grid_hist.add(step_num, direction)
                 old_x, old_z = grid_x, grid_z
                 previous_revisit = False
@@ -161,7 +162,7 @@ class Scorecard:
             # If previous step was a revisit, don't mark this one, but
             # still in revisiting mode
             if previous_revisit:
-                # print("visited and this direction, but in revisiting mode")
+                logging.debug("visited / this direction, but in revisit mode")
                 grid_hist.add(step_num, direction)
                 old_x, old_z = grid_x, grid_z
                 continue
@@ -170,7 +171,7 @@ class Scorecard:
             # there, we are facing in the same direction as before, and
             # previous_revisit==False (i.e. we are not in revisiting mode)
             # So, we are revisiting
-            # print("revisiting")
+            logging.debug("revisiting")
             previous_revisit = True
             self.grid_counts[grid_x, grid_z] += 1
             old_x, old_z = grid_x, grid_z
@@ -178,8 +179,8 @@ class Scorecard:
         self.revisits = self.grid_counts.sum()
 
         # Debug printing
-        # self.print_grid()
-        print(f"Total number of revisits: {self.revisits}")
+        # self.logging.debug_grid()
+        logging.debug(f"Total number of revisits: {self.revisits}")
 
         return self.revisits
 
@@ -189,11 +190,13 @@ class Scorecard:
         grid_z = (int)((self.space_size + z) / self.grid_dimension)
 
         if grid_x < 0 or grid_x > self.grid_size - 1:
-            print(f"Problem with x loc {x}.  got grid loc {grid_x}.  " +
-                  "dim {self.grid_dimension} grid size {self.grid_size}")
+            logging.warning(
+                f"Problem with x loc {x}.  got grid loc {grid_x}.  " +
+                "dim {self.grid_dimension} grid size {self.grid_size}")
         if grid_z < 0 or grid_z > self.grid_size - 1:
-            print(f"Problem with y loc {z}.  got grid loc {grid_z}.  " +
-                  "dim {self.grid_dimension} grid size {self.grid_size}")
+            logging.warning(
+                f"Problem with y loc {z}.  got grid loc {grid_z}.  " +
+                "dim {self.grid_dimension} grid size {self.grid_size}")
         return (grid_x, grid_z)
 
     def print_grid(self):
@@ -202,7 +205,7 @@ class Scorecard:
         pandas.set_option("display.max_rows", None,
                           "display.max_columns", None)
         pandas.options.display.width = 0
-        print(df)
+        logging.debug(df)
 
     def calc_open_unopenable(self):
         ''' Determine the number of times that the agent tried to
@@ -219,6 +222,8 @@ class Scorecard:
                                          "IS_OPENED_COMPLETELY",
                                          'OUT_OF_REACH']:
                     num_unopenable += 1
+                else:
+                    logging.warning(f"Cannot understand {return_status}")
 
         return num_unopenable
 

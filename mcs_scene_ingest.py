@@ -1,6 +1,7 @@
 import argparse
 import io
 import json
+import logging
 import os
 import sys
 from collections.abc import MutableMapping
@@ -92,8 +93,8 @@ def ingest_to_mongo(index: str, ingest_files: dict, client: MongoClient):
     mongoDB = client['mcs']
     collection = mongoDB[index]
     result = collection.insert_many(ingest_files)
-    print("Inserted {0} out of {1}.  Result: {2}".format(
-        len(result.inserted_ids), len(ingest_files), result))
+    logging.info(f"Inserted {len(result.inserted_ids)} out of " +
+                 f"{len(ingest_files)}. Result: {result}")
 
 
 def find_scene_files(folder: str) -> dict:
@@ -113,7 +114,7 @@ def find_history_files(folder: str, extension: str) -> dict:
 
 
 def build_scene_item(file_name: str, folder: str, eval_name: str) -> dict:
-    print("Ingest scene file: {}".format(file_name))
+    logging.info(f"Ingest scene file: {file_name}")
     scene = load_json_file(folder, file_name)
 
     if eval_name is None:
@@ -160,7 +161,7 @@ def automated_scene_ingest_file(
     # Do not insert a scene if we already have it in the database
     #     for this particular evaluation
     if check_exists.count() == 0:
-        print(f"Inserting {scene_item['name']}")
+        logging.info(f"Inserting {scene_item['name']}")
         collection.insert_one(scene_item)
 
     # Add Keys when a new evluation item is created
@@ -358,7 +359,7 @@ def build_history_item(
         extension: str,
         client: MongoClient,
         db_string: str) -> dict:
-    print("Ingest history file: {}".format(history_file))
+    logging.info(f"Ingest history file: {history_file}")
     mongoDB = client[db_string]
 
     # Create History Object and add basic information
@@ -465,12 +466,12 @@ def automated_history_ingest_file(
     )
 
     if check_exists.count() == 0:
-        print(f"Inserting {history_item['name']}")
+        logging.info(f"Inserting {history_item['name']}")
         collection.insert_one(history_item)
     else:
         for item in check_exists:
             if history_item["fileTimestamp"] > item["fileTimestamp"]:
-                print(f"Updating {history_item['name']}")
+                logging.info(f"Updating {history_item['name']}")
                 collection.replace_one({"_id": item["_id"]}, history_item)
 
     # Add Keys when a new evluation item is created
@@ -487,7 +488,6 @@ def ingest_history_files(
         performer: str,
         scene_folder: str,
         extension: str) -> None:
-
     client = MongoClient(
         'mongodb://mongomcs:mongomcspassword@localhost:27017/mcs')
     mongoDB = client['mcs']
@@ -570,4 +570,7 @@ def main(argv) -> None:
 
 
 if __name__ == '__main__':
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     main(sys.argv)

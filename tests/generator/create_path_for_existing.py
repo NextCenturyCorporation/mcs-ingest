@@ -5,6 +5,7 @@
 #    create_path_for_existing.py  scene_file  output_json_file
 import argparse
 import json
+import logging
 import os
 
 from tests.generator.path_plotter import PathPlotter
@@ -50,12 +51,17 @@ def parse_args():
 
 
 if __name__ == "__main__":
+
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
     args = parse_args()
     if not os.path.exists(args.scene_file_path):
-        print(f"File {args.scene_file_path} does not exist")
+        logging.warning(f"File {args.scene_file_path} does not exist")
         exit(1)
     if not os.path.exists(args.output_json_file):
-        print(f"File {args.output_json_file} does not exist")
+        logging.warning(f"File {args.output_json_file} does not exist")
         exit(1)
 
     make_plots_for_files(args.scene_file_path, args.output_json_file)
