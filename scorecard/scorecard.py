@@ -3,6 +3,8 @@
 #
 #
 import logging
+import math
+from operator import itemgetter
 
 import numpy as np
 import pandas
@@ -22,6 +24,34 @@ def minAngDist(a, b):
     normDeg = (a - b) % 360
     minAng = min(360 - normDeg, normDeg)
     return minAng
+
+
+def calc_viewpoint(step_metadata):
+    # Get location, remember coordinate system is left-handed, y-up
+    x, y, z = itemgetter('x', 'y', 'z')(step_metadata.position)
+    rot = step_metadata.rotation
+    tilt = step_metadata.head_tilt
+    return get_lookpoint(x, y, z, rot, tilt)
+
+
+def get_lookpoint(x, y, z, rot, tilt):
+    # Given a location of agent, determine where they are looking.  Make sure that tilt
+    # is within a good range; if agent is not looking down, return current loc
+    if tilt > 90 or tilt <= 0:
+        logging.warning(f"Not computing dist, tilt is {tilt}")
+        return x, z
+
+    # Distance on ground from current location is fn of height (y) and tilt angle
+    dist = y * math.tan(math.pi * (90 - tilt) / 180.)
+
+    # Distance in x,z depends on rotation and total distance on ground
+    dx = dist * math.cos(math.pi * (90 - rot) / 180.)
+    dz = dist * math.sin(math.pi * (90 - rot) / 180.)
+
+    logging.debug(f"xyz ({x:0.3f} {y:0.3f} {z:0.3f}) tilt {tilt:0.3f} rot {rot:0.3f}")
+    logging.debug(f"dist is {dist:0.3f}.  dx,dz {dx:0.3f} {dz:0.3f}")
+    logging.debug(f"looking point: {(x + dx):0.3f}  {(z + dz):0.3f}")
+    return (x + dx), (z + dz)
 
 
 class GridHistory:
@@ -227,6 +257,32 @@ class Scorecard:
 
         return num_unopenable
 
+    def calc_multiple_container_look(self):
+        ''' Determine the number of times that the agent reopened a
+        container'''
+        steps_list = self.history['steps']
+
+        # Object to keep track of the times that the agent has looked
+        # in a container.
+        container_looks = []
+        for step_num, single_step in enumerate(steps_list):
+            action = single_step['action']
+            return_status = single_step['output']['return_status']
+
+            # Determine if agent is opening a container
+            if action == 'MCSOpenObject':
+                if return_status not in ["SUCCESSFUL",
+                                         "IS_OPENED_COMPLETELY",
+                                         'OUT_OF_REACH']:
+                    spot_x, spot_y = calc_viewpoint(single_step)
+
+                    # determine if this container has been looked at before
+                    for container_look in container_looks:
+                        container_x = container_look['look_x']
+                        container_y = container_look['look_y']
+
+                        # Find distance between
+
     def calc_repeat_failed(self):
         pass
 
@@ -234,9 +290,6 @@ class Scorecard:
         pass
 
     def calc_not_moving_toward_object(self):
-        pass
-
-    def calc_multiple_container_look(self):
         pass
 
     def set_revisit_grid_size(self, grid_size):

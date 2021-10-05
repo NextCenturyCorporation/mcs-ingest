@@ -23,22 +23,22 @@ The actions that are counted (as of Eval 4 plan):
 Some of these are mathematically vague;  for example, the space that the agent moves in is continous, 
 so 'revisit' needs to have a particular distance.  Below, we discuss the way to count them. 
 
-## Revisiting parts of the Room
+#### Revisiting parts of the Room
 
 Algorithm:
 * Divide room (10m x 10m) into a grid of X size.  Try 0.5 m
 * Count the number of times that the agent enters a 
-grid square while facing in the same direction as a 
+grid square while facing in the same direction (within 10 degrees) as a 
 previous time they were in that grid square
 * If paths cross while facing in different directions, it does not count as a revist
 * If the actor rotates or does not move (PASS), it does not count
   * Note that this means that if the actor spins in a circle and then passes over 
     that location in any direction later, it will count as a revist
-* Note:  if agent goes from point A to point B twice, this can result in many overlaps.
+* Note:  if agent travels from point A to point B twice, this can result in many overlaps.
   * They only count as one.  
   * Implement this as only counting the first in a series of revisits.  
      
-## Attempting to Open an UnOpenable object
+#### Attempting to Open an UnOpenable object
 
 This counts the number of times that the agent tried to open something 
 and failed because it was something they were not supposed to be 
@@ -50,10 +50,27 @@ which is returned when you try to open an openable object but it is
 too far away.  Everything else causes the count of unopenable objects to 
 increase.
 
-## Looking into the Same Container Repeatedly
+#### Looking into the Same Container Repeatedly
 
 If the agent looks in the same container repeatedly, count it (after the 
-first look).   
+first look).  Algorithm:
+* If the agent goes up to a container and OPENs it, that counts as the 
+first time
+* If the agent goes to the open container and looks down 
+into the container, that counts as a second time
+  * Looking down requires tilt >= 30 and the gaze point to be 
+  within 1 of the container
+* If the agent closes the container and then re-opens, it still counts
+* Moving around / tilting while looking in the container only counts as a 
+single look.  This is implemented by ignoring the next 10 movements (not
+including PASS).
+* Passing the container without looking into it does not count
+
+Note:   The orientation of the container is not being taken into account.  That is,
+if the container was opened but the hinge of the lid was facing the agent so 
+they could not see into it, then it still counts as the first time.  Going around
+the container so that they can actually look into it counts as a second look.  
+It is recognized that this is a limitation of the algorithm. 
 
 ## Running the Scorecard
 
