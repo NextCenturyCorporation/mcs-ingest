@@ -28,9 +28,9 @@ def minAngDist(a, b):
 
 def calc_viewpoint(step_metadata):
     # Get location, remember coordinate system is left-handed, y-up
-    x, y, z = itemgetter('x', 'y', 'z')(step_metadata.position)
-    rot = step_metadata.rotation
-    tilt = step_metadata.head_tilt
+    x, y, z = itemgetter('x', 'y', 'z')(step_metadata['output']['position'])
+    rot = step_metadata['output']['rotation']
+    tilt = step_metadata['output']['head_tilt']
     return get_lookpoint(x, y, z, rot, tilt)
 
 
@@ -138,6 +138,10 @@ class Scorecard:
 
     def get_unopenable(self):
         return self.open_unopenable
+
+    def get_relook(self):
+        pass
+
 
     def calc_revisiting(self):
 
@@ -248,12 +252,13 @@ class Scorecard:
             action = single_step['action']
             return_status = single_step['output']['return_status']
             if action == 'MCSOpenObject':
-                if return_status not in ["SUCCESSFUL",
+                if return_status in ["SUCCESSFUL",
                                          "IS_OPENED_COMPLETELY",
                                          'OUT_OF_REACH']:
-                    num_unopenable += 1
+                    logging.debug(f"Successful opening of container {return_status}")
                 else:
-                    logging.warning(f"Cannot understand {return_status}")
+                    logging.debug(f"Unsuccessful opening of container {return_status}")
+                    num_unopenable += 1
 
         return num_unopenable
 

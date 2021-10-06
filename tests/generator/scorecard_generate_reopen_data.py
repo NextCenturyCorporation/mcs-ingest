@@ -12,35 +12,41 @@ import argparse
 import logging
 import os
 
-from tests.generator.data_gen_runner import DataGenRunnerScript, decode_moves, interactive_cb, replace_short_hand
+from tests.generator.data_gen_runner import DataGenRunnerScript, decode_moves, replace_short_hand
 
 
-def reopen_objects_callback(step_metadata, runner_script):
-    ''' Generate output that opens but then opens from another side,
-    which does not count as a re-open event'''
-
+def reopen_objects_callback_zero_1(step_metadata, runner_script):
     step = step_metadata.step_number
-    # This opens, but is on back side
-    part1 = "wwwwwjjjWlllWWwwss kkkkk 3"
+    # Open on the side
+    part1 = "WWW  wwwww L kkkkk 3"
 
-    # Now go around to the other side, and look again
-    part2 = "iiiii R wwwwww L wwwwww L wwwwww kkkkk 3 "
+    # Now go around but do not look inside
+    part2 = "R wwwwww L W L Wwww L W  L W"
     code = part1 + part2
 
     moves = replace_short_hand(code)
-    #
-    # if step >= len(moves):
-    #     return interactive_cb(step_metadata, runner_script)
-    #
-    # # logging.warning(f"key:   {key}")
-    # # x = input()
+    return decode_moves(step, moves)
 
+
+def reopen_objects_callback_one_1(step_metadata, runner_script):
+    step = step_metadata.step_number
+    # Open on the side
+    part1 = "WWW  wwwww L kkkkk 3"
+
+    # Now go around and look from other side
+    part2 = "R Wwwwwww L W L Wwwwww L RR W"
+    code = part1 + part2
+
+    moves = replace_short_hand(code)
     return decode_moves(step, moves)
 
 
 def main(mcs_unity_filepath, scene_filepath):
     DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
-                        'reopenable_zero', reopen_objects_callback).run_scene()
+                        'reopen_zero_1', reopen_objects_callback_zero_1).run_scene()
+
+    DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
+                        'reopen_one_1', reopen_objects_callback_one_1).run_scene()
 
 
 def parse_args():
