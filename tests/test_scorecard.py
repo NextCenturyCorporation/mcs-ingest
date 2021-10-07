@@ -11,7 +11,6 @@ TEST_HISTORY_FILE_NAME = "generator/SCENE_HISTORY/" + \
 TEST_SCENE_CONTAINER = "golf_0018_15_debug.json"
 
 TEST_FOLDER = "tests"
-TEST_FOLDER = "/home/clark/work/mcs/mcs-ingest/tests"
 
 
 class TestMcsScorecard(unittest.TestCase):
