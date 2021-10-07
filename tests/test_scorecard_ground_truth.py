@@ -44,15 +44,11 @@ def compare_with_ground_truth(
     ''' compare to ground truth (num_revisit)'''
     num_revisit_calc = scorecard.get_revisits()
     num_unopenable_calc = scorecard.get_unopenable()
-    num_relook_calc = scorecard.get_relook()
+    num_relook_calc = scorecard.get_relooks()
 
-    logging.info(f" gt_revisit: {gt_revisit} " +
-                 f" calc_revisit: {num_revisit_calc}" +
-                 f" gt_unopenable: {gt_unopenable}  " +
-                 f"calc_unopenable: {num_unopenable_calc}"
-                 f" gt_relook: {gt_relook}  " +
-                 f"num_relook_calc: {num_relook_calc}"
-                 )
+    logging.info(f"     revisit: {gt_revisit} {num_revisit_calc}" +
+                 f" unopenable: {gt_unopenable} {num_unopenable_calc}"
+                 f" relook: {gt_relook}  {num_relook_calc}")
 
     passed = 0
     failed = 0
@@ -67,7 +63,7 @@ def compare_with_ground_truth(
     else:
         failed += 1
 
-    if gt_relook == scorecard.get_relook():
+    if gt_relook == scorecard.get_relooks():
         passed += 1
     else:
         failed += 1
@@ -94,15 +90,16 @@ def process_line(line: str):
         return 0, 0, 1
 
     history_filepath = find_fullpath(basefilename, DATADIR)
+    logging.info(f"Reporting on {history_filepath}")
     if not history_filepath:
         logging.warning(f"Unable to find {DATADIR} and " +
                         f"{basefilename} found: {history_filepath}")
         return 0, 0, 1
 
     scorecard = get_scorecard(history_filepath, scene_filepath)
-
     p, f = compare_with_ground_truth(
         scorecard, gt_revisits, gt_unopenable, gt_relook)
+    logging.info(f"     results  pass: {p}   fail: {f}")
     return p, f, 0
 
 

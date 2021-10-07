@@ -16,6 +16,14 @@ GRID_DIMENSION = 0.5
 # as facing in the same direction
 DIRECTION_LIMIT = 11
 
+# Minimum timesteps between looking in a container and looking again before
+# we count again
+time_between_relooks = 10
+
+# Min distance between 'look' locations such that we count them as looking
+# in the same container
+dist_between_relooks = 1
+
 
 def minAngDist(a, b):
     """Calculate the difference between two angles in degrees, keeping
@@ -26,17 +34,10 @@ def minAngDist(a, b):
     return minAng
 
 
-def calc_viewpoint(step_metadata):
-    # Get location, remember coordinate system is left-handed, y-up
-    x, y, z = itemgetter('x', 'y', 'z')(step_metadata['output']['position'])
-    rot = step_metadata['output']['rotation']
-    tilt = step_metadata['output']['head_tilt']
-    return get_lookpoint(x, y, z, rot, tilt)
-
-
 def get_lookpoint(x, y, z, rot, tilt):
     # Given a location of agent, determine where they are looking.  Make sure that tilt
-    # is within a good range; if agent is not looking down, return current loc
+    # is within a good range; if agent is not looking down, return current loc.
+    # Reminder:  Unity is left-handed, y-up, so floor is (X,Z) plane
     if tilt > 90 or tilt <= 0:
         logging.warning(f"Not computing dist, tilt is {tilt}")
         return x, z
@@ -52,6 +53,32 @@ def get_lookpoint(x, y, z, rot, tilt):
     logging.debug(f"dist is {dist:0.3f}.  dx,dz {dx:0.3f} {dz:0.3f}")
     logging.debug(f"looking point: {(x + dx):0.3f}  {(z + dz):0.3f}")
     return (x + dx), (z + dz)
+
+
+def calc_viewpoint(step_metadata):
+    # Get location, remember coordinate system is left-handed, y-up
+    x, y, z = itemgetter('x', 'y', 'z')(step_metadata['output']['position'])
+    rot = step_metadata['output']['rotation']
+    tilt = step_metadata['output']['head_tilt']
+    return get_lookpoint(x, y, z, rot, tilt)
+
+
+def find_closest_container(x, z, scene):
+    dists = []
+    locs = []
+    for room_object in scene['objects']:
+        # Not all objects have openable, so make sure it is a key
+        if not 'openable' in room_object or not room_object['openable']:
+            continue
+
+        type = room_object['type']
+        cx = room_object['shows'][0]['position']['x']
+        cz = room_object['shows'][0]['position']['z']
+        dist = math.sqrt((x - cx) * (x - cx) + (z - cz) * (z - cz))
+        dists.append(dist)
+        locs.append({'type': type, 'x': cx, 'z': cz})
+
+    return locs[dists.index(min(dists))]
 
 
 class GridHistory:
@@ -110,14 +137,14 @@ class Scorecard:
         self.repeat_failed = 0
         self.attempt_impossible = 0
         self.open_unopenable = 0
-        self.multiple_container_look = 0
+        self.relooks = 0
         self.not_moving_toward_object = 0
 
     def score_all(self) -> dict:
         self.calc_repeat_failed()
         self.calc_attempt_impossible()
         self.calc_open_unopenable()
-        self.calc_multiple_container_look()
+        self.calc_relook()
         self.calc_not_moving_toward_object()
         self.calc_revisiting()
 
@@ -125,8 +152,7 @@ class Scorecard:
         scorecard_vals["repeat_failed"] = self.repeat_failed
         scorecard_vals["attempt_impossible"] = self.attempt_impossible
         scorecard_vals["open_unopenable"] = self.open_unopenable
-        scorecard_vals["multiple_container_look"] = \
-            self.multiple_container_look
+        scorecard_vals["multiple_container_look"] = self.relooks
         scorecard_vals["not_moving_toward_object"] = \
             self.not_moving_toward_object
         scorecard_vals["revisits"] = self.revisits
@@ -139,9 +165,8 @@ class Scorecard:
     def get_unopenable(self):
         return self.open_unopenable
 
-    def get_relook(self):
-        pass
-
+    def get_relooks(self):
+        return self.relooks
 
     def calc_revisiting(self):
 
@@ -213,7 +238,7 @@ class Scorecard:
         self.revisits = self.grid_counts.sum()
 
         # Debug printing
-        # self.logging.debug_grid()
+        # logging.debug_grid()
         logging.debug(f"Total number of revisits: {self.revisits}")
 
         return self.revisits
@@ -246,47 +271,76 @@ class Scorecard:
         open an unopenable object.  '''
         steps_list = self.history['steps']
 
-        num_unopenable = 0
+        self.open_unopenable = 0
 
         for step_num, single_step in enumerate(steps_list):
             action = single_step['action']
             return_status = single_step['output']['return_status']
             if action == 'MCSOpenObject':
                 if return_status in ["SUCCESSFUL",
-                                         "IS_OPENED_COMPLETELY",
-                                         'OUT_OF_REACH']:
+                                     "IS_OPENED_COMPLETELY",
+                                     'OUT_OF_REACH']:
                     logging.debug(f"Successful opening of container {return_status}")
                 else:
                     logging.debug(f"Unsuccessful opening of container {return_status}")
-                    num_unopenable += 1
+                    self.open_unopenable += 1
 
-        return num_unopenable
+        return self.open_unopenable
 
-    def calc_multiple_container_look(self):
-        ''' Determine the number of times that the agent reopened a
-        container'''
-        steps_list = self.history['steps']
+    def calc_relook(self):
+        ''' Determine the number of times that the agent relooked into a
+        container.  See readme for algorithm.'''
 
-        # Object to keep track of the times that the agent has looked
+        # Objects to keep track of times that the agent has looked
         # in a container.
-        container_looks = []
+        looked_at_containers = []
+        last_look_time = -10
+        self.relooks = 0
+
+        steps_list = self.history['steps']
         for step_num, single_step in enumerate(steps_list):
+
+            # If we had a relook recently, ignore
+            if abs(step_num - last_look_time) < time_between_relooks:
+                continue
+
+            # If not looking down, then it doesn't count
+            if single_step['output']['head_tilt'] < 30:
+                continue
+
             action = single_step['action']
             return_status = single_step['output']['return_status']
+            x, z = calc_viewpoint(single_step)
 
-            # Determine if agent is opening a container
             if action == 'MCSOpenObject':
-                if return_status not in ["SUCCESSFUL",
-                                         "IS_OPENED_COMPLETELY",
-                                         'OUT_OF_REACH']:
-                    spot_x, spot_y = calc_viewpoint(single_step)
+                container = find_closest_container(x, z, self.scene)
 
-                    # determine if this container has been looked at before
-                    for container_look in container_looks:
-                        container_x = container_look['look_x']
-                        container_y = container_look['look_y']
+                # Most return_status should be treated like open did not happen
+                # happened, but what if too far away or obstructed?
+                if return_status == "SUCCESSFUL":
+                    # Since agent just opened it, not be on the list
+                    looked_at_containers.append(container)
+                    continue
 
-                        # Find distance between
+                elif return_status == "IS_OPENED_COMPLETELY":
+                    # Since agent already looked at it, must be a relook
+                    last_look_time = step_num
+                    self.relooks += 1
+                    continue
+
+            # determine if this container has been looked at before
+            for container_look in looked_at_containers:
+                cx = container_look['x']
+                cz = container_look['z']
+
+                # Find distance between
+                dist = math.sqrt((x - cx) * (x - cx) + (z - cz) * (z - cz))
+                if dist < dist_between_relooks:
+                    last_look_time = step_num
+                    self.relooks += 1
+                    continue
+
+        return self.relooks
 
     def calc_repeat_failed(self):
         pass

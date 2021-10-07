@@ -2,16 +2,37 @@ import logging
 import unittest
 
 import mcs_scene_ingest
-from scorecard.scorecard import Scorecard
+from scorecard.scorecard import Scorecard, find_closest_container
 from scorecard.scorecard import get_lookpoint
 
 TEST_SCENE_FILE_NAME = "occluders_0001_17_I1_debug.json"
 TEST_HISTORY_FILE_NAME = "generator/SCENE_HISTORY/" + \
                          "india_0003_baseline_level1.json"
-TEST_FOLDER = "tests"
+TEST_SCENE_CONTAINER = "golf_0018_15_debug.json"
 
+TEST_FOLDER = "tests"
+TEST_FOLDER = "/home/clark/work/mcs/mcs-ingest/tests"
 
 class TestMcsScorecard(unittest.TestCase):
+
+    def test_find_closest_container(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_CONTAINER)
+
+        # Make sure it finds chest_3 at chest_3 location
+        x =-3.04
+        z = 0.66
+        container = find_closest_container(x,z, scene_file)
+        self.assertEqual(container['type'], 'chest_3')
+        logging.info(f"Closest:  {container}")
+
+        # Give location between chest_3 and case_3, slightly closer to case_3
+        x = -3.13
+        z = 2.25
+        container = find_closest_container(x,z, scene_file)
+        self.assertEqual(container['type'], 'case_3')
+        logging.info(f"Closest:  {container}")
+
 
     def test_load_json_file(self):
         scene_file = mcs_scene_ingest.load_json_file(
