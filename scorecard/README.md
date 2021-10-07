@@ -10,7 +10,6 @@ The actions that are counted (as of Eval 4 plan):
 * Attempting to open an un-openable object.  
   * We will begin counting from the first attempt
 * Looking into the same container repeatedly
-  * If the AI system attempts the same action from a new position, this will not be considered a repeated action
 * Repeating a failed action.   
   * We will begin counting from the second attempt, since it cannot be a “failed” action until after the AI has received 
   feedback from the first attempt. If the AI system attempts the same action from a new position, this will not be considered a repeated action. 
@@ -59,11 +58,11 @@ first time
 * If the agent goes to the open container and looks down 
 into the container, that counts as a second time
   * Looking down requires tilt >= 30 and the gaze point to be 
-  within 1 of the container
+  within 0.4 of the container
 * If the agent closes the container and then re-opens, it still counts
 * Moving around / tilting while looking in the container only counts as a 
-single look.  This is implemented by ignoring the next 10 movements (not
-including PASS).
+single look.  This is implemented by ignoring the next 10 movements and setting
+a flag that they are still looking
 * Passing the container without looking into it does not count
 
 Note:   The orientation of the container is not being taken into account.  That is,

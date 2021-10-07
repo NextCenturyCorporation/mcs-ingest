@@ -61,7 +61,7 @@ if __name__ == "__main__":
     args = parse_args()
 
     logging.basicConfig(
-        level=logging.DEBUG,
+        level=logging.INFO,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
     if not os.path.exists(args.mcs_unity_filepath):
