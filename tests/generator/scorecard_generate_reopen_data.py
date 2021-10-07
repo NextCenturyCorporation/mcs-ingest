@@ -12,10 +12,11 @@ import argparse
 import logging
 import os
 
-from tests.generator.data_gen_runner import DataGenRunnerScript, decode_moves, replace_short_hand
+from tests.generator.data_gen_runner import DataGenRunnerScript, \
+    decode_moves, replace_short_hand
 
 
-def reopen_objects_callback_zero_1(step_metadata, runner_script):
+def reopen_objects_zero_1(step_metadata, runner_script):
     step = step_metadata.step_number
     # Open on the side
     part1 = "WWW  wwwww L kkkkk 3"
@@ -28,7 +29,7 @@ def reopen_objects_callback_zero_1(step_metadata, runner_script):
     return decode_moves(step, moves)
 
 
-def reopen_objects_callback_one_1(step_metadata, runner_script):
+def reopen_objects_one_1(step_metadata, runner_script):
     step = step_metadata.step_number
     # Open on the side
     part1 = "WWW  wwwww L kkkkk 3"
@@ -43,10 +44,10 @@ def reopen_objects_callback_one_1(step_metadata, runner_script):
 
 def main(mcs_unity_filepath, scene_filepath):
     DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
-                        'reopen_zero_1', reopen_objects_callback_zero_1).run_scene()
+                        'reopen_zero_1', reopen_objects_zero_1).run_scene()
 
     DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
-                        'reopen_one_1', reopen_objects_callback_one_1).run_scene()
+                        'reopen_one_1', reopen_objects_one_1).run_scene()
 
 
 def parse_args():

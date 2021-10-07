@@ -10,8 +10,6 @@ import math
 
 import PIL
 import matplotlib
-from matplotlib import pyplot
-
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 

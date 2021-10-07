@@ -13,6 +13,7 @@ TEST_SCENE_CONTAINER = "golf_0018_15_debug.json"
 TEST_FOLDER = "tests"
 TEST_FOLDER = "/home/clark/work/mcs/mcs-ingest/tests"
 
+
 class TestMcsScorecard(unittest.TestCase):
 
     def test_find_closest_container(self):
@@ -20,19 +21,18 @@ class TestMcsScorecard(unittest.TestCase):
             TEST_FOLDER, TEST_SCENE_CONTAINER)
 
         # Make sure it finds chest_3 at chest_3 location
-        x =-3.04
+        x = -3.04
         z = 0.66
-        container = find_closest_container(x,z, scene_file)
+        container = find_closest_container(x, z, scene_file)
         self.assertEqual(container['type'], 'chest_3')
         logging.info(f"Closest:  {container}")
 
         # Give location between chest_3 and case_3, slightly closer to case_3
         x = -3.13
         z = 2.25
-        container = find_closest_container(x,z, scene_file)
+        container = find_closest_container(x, z, scene_file)
         self.assertEqual(container['type'], 'case_3')
         logging.info(f"Closest:  {container}")
-
 
     def test_load_json_file(self):
         scene_file = mcs_scene_ingest.load_json_file(
@@ -59,7 +59,7 @@ class TestMcsScorecard(unittest.TestCase):
         np.testing.assert_almost_equal(x, 0.)
         np.testing.assert_almost_equal(z, 1.)
 
-        # Looking back to right, down 30 so dist is sqrt(2)/2, but z is negative
+        # Looking back to right, down 30 so dist is sqrt(2)/2, w/ z neg
         x, z = get_lookpoint(0., 1., 0., 135., 45.)
         sqrt2over2 = math.sqrt(2) / 2.
         np.testing.assert_almost_equal(x, sqrt2over2)
@@ -74,6 +74,7 @@ class TestMcsScorecard(unittest.TestCase):
         x, z = get_lookpoint(-3., 1., -3., 350., 18.)
         np.testing.assert_almost_equal(x, -3.5344, decimal=4)
         np.testing.assert_almost_equal(z, 0.03093, decimal=4)
+
 
 if __name__ == '__main__':
     logging.basicConfig(

@@ -35,21 +35,23 @@ def minAngDist(a, b):
 
 
 def get_lookpoint(x, y, z, rot, tilt):
-    # Given a location of agent, determine where they are looking.  Make sure that tilt
-    # is within a good range; if agent is not looking down, return current loc.
+    # Given a location of agent, determine where they are looking.
+    # Make sure that tilt is within a good range; if agent is not
+    # looking down, return current loc.
     # Reminder:  Unity is left-handed, y-up, so floor is (X,Z) plane
     if tilt > 90 or tilt <= 0:
         logging.warning(f"Not computing dist, tilt is {tilt}")
         return x, z
 
-    # Distance on ground from current location is fn of height (y) and tilt angle
+    # Ground dist from current location is fn of height (y) and tilt angle
     dist = y * math.tan(math.pi * (90 - tilt) / 180.)
 
     # Distance in x,z depends on rotation and total distance on ground
     dx = dist * math.cos(math.pi * (90 - rot) / 180.)
     dz = dist * math.sin(math.pi * (90 - rot) / 180.)
 
-    logging.debug(f"xyz ({x:0.3f} {y:0.3f} {z:0.3f}) tilt {tilt:0.3f} rot {rot:0.3f}")
+    logging.debug(f"xyz ({x:0.3f} {y:0.3f} {z:0.3f})" +
+                  f" tilt {tilt:0.3f} rot {rot:0.3f}")
     logging.debug(f"dist is {dist:0.3f}.  dx,dz {dx:0.3f} {dz:0.3f}")
     logging.debug(f"looking point: {(x + dx):0.3f}  {(z + dz):0.3f}")
     return (x + dx), (z + dz)
@@ -68,7 +70,7 @@ def find_closest_container(x, z, scene):
     locs = []
     for room_object in scene['objects']:
         # Not all objects have openable, so make sure it is a key
-        if not 'openable' in room_object or not room_object['openable']:
+        if 'openable' not in room_object or not room_object['openable']:
             continue
 
         type = room_object['type']
@@ -280,9 +282,9 @@ class Scorecard:
                 if return_status in ["SUCCESSFUL",
                                      "IS_OPENED_COMPLETELY",
                                      'OUT_OF_REACH']:
-                    logging.debug(f"Successful opening of container {return_status}")
+                    logging.debug("Successful opening of container")
                 else:
-                    logging.debug(f"Unsuccessful opening of container {return_status}")
+                    logging.debug("Unsuccessful opening of container")
                     self.open_unopenable += 1
 
         return self.open_unopenable
@@ -308,7 +310,7 @@ class Scorecard:
 
             # If not looking down, then it doesn't count
             tilt = single_step['output']['head_tilt']
-            if tilt< 30:
+            if tilt < 30:
                 logging.debug(f"Skip since head tilt to low {tilt}")
                 continue
 
@@ -317,13 +319,13 @@ class Scorecard:
             x, z = calc_viewpoint(single_step)
 
             if action == 'MCSOpenObject':
-                logging.debug(f"tried to open container")
+                logging.debug("tried to open container")
                 container = find_closest_container(x, z, self.scene)
 
                 # Most return_status should be treated like open did not happen
                 # happened, but what if too far away or obstructed?
                 if return_status == "SUCCESSFUL":
-                    logging.debug(f" successful ")
+                    logging.debug(" successful ")
                     # Since agent just opened it, not be on the list
                     looked_at_containers.append(container)
                     last_look_time = step_num
@@ -331,7 +333,7 @@ class Scorecard:
                     continue
 
                 elif return_status == "IS_OPENED_COMPLETELY":
-                    logging.debug(f" already open ")
+                    logging.debug(" already open ")
                     # Since agent already looked at it, must be a relook
                     last_look_time = step_num
                     self.relooks += 1
@@ -348,9 +350,10 @@ class Scorecard:
 
                 # Find distance between
                 dist = math.sqrt((x - cx) * (x - cx) + (z - cz) * (z - cz))
-                logging.debug(f" looking at {x} {z}  closest: {cx} {cz}    dist {dist}   still looking {still_looking}")
+                logging.debug(f" looking at {x} {z}  closest: {cx} {cz} " +
+                              f"   dist {dist}  still looking {still_looking}")
                 if dist < DIST_BETWEEN_RELOOKS and not still_looking:
-                    logging.debug(f"******************** increasing by 1 ")
+                    logging.debug("increasing by 1 ")
                     last_look_time = step_num
                     self.relooks += 1
                     continue
