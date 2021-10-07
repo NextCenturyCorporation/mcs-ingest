@@ -18,11 +18,11 @@ DIRECTION_LIMIT = 11
 
 # Minimum timesteps between looking in a container and looking again before
 # we count again
-time_between_relooks = 10
+TIME_BETWEEN_RELOOKS = 10
 
 # Min distance between 'look' locations such that we count them as looking
 # in the same container
-dist_between_relooks = 1
+DIST_BETWEEN_RELOOKS = 0.4
 
 
 def minAngDist(a, b):
@@ -235,7 +235,7 @@ class Scorecard:
             self.grid_counts[grid_x, grid_z] += 1
             old_x, old_z = grid_x, grid_z
 
-        self.revisits = self.grid_counts.sum()
+        self.revisits = int(self.grid_counts.sum())
 
         # Debug printing
         # logging.debug_grid()
@@ -295,17 +295,21 @@ class Scorecard:
         # in a container.
         looked_at_containers = []
         last_look_time = -10
+        still_looking = False
         self.relooks = 0
 
         steps_list = self.history['steps']
         for step_num, single_step in enumerate(steps_list):
 
             # If we had a relook recently, ignore
-            if abs(step_num - last_look_time) < time_between_relooks:
+            if abs(step_num - last_look_time) < TIME_BETWEEN_RELOOKS:
+                logging.debug(f"Skip since too close to last look {step_num}")
                 continue
 
             # If not looking down, then it doesn't count
-            if single_step['output']['head_tilt'] < 30:
+            tilt = single_step['output']['head_tilt']
+            if tilt< 30:
+                logging.debug(f"Skip since head tilt to low {tilt}")
                 continue
 
             action = single_step['action']
@@ -313,20 +317,29 @@ class Scorecard:
             x, z = calc_viewpoint(single_step)
 
             if action == 'MCSOpenObject':
+                logging.debug(f"tried to open container")
                 container = find_closest_container(x, z, self.scene)
 
                 # Most return_status should be treated like open did not happen
                 # happened, but what if too far away or obstructed?
                 if return_status == "SUCCESSFUL":
+                    logging.debug(f" successful ")
                     # Since agent just opened it, not be on the list
                     looked_at_containers.append(container)
+                    last_look_time = step_num
+                    still_looking = True
                     continue
 
                 elif return_status == "IS_OPENED_COMPLETELY":
+                    logging.debug(f" already open ")
                     # Since agent already looked at it, must be a relook
                     last_look_time = step_num
                     self.relooks += 1
+                    still_looking = True
                     continue
+
+                else:
+                    logging.debug(f" something else {return_status} ")
 
             # determine if this container has been looked at before
             for container_look in looked_at_containers:
@@ -335,10 +348,14 @@ class Scorecard:
 
                 # Find distance between
                 dist = math.sqrt((x - cx) * (x - cx) + (z - cz) * (z - cz))
-                if dist < dist_between_relooks:
+                logging.debug(f" looking at {x} {z}  closest: {cx} {cz}    dist {dist}   still looking {still_looking}")
+                if dist < DIST_BETWEEN_RELOOKS and not still_looking:
+                    logging.debug(f"******************** increasing by 1 ")
                     last_look_time = step_num
                     self.relooks += 1
                     continue
+                if dist > DIST_BETWEEN_RELOOKS:
+                    still_looking = False
 
         return self.relooks
 

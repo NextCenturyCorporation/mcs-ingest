@@ -47,8 +47,8 @@ def compare_with_ground_truth(
     num_relook_calc = scorecard.get_relooks()
 
     logging.info(f"     revisit: {gt_revisit} {num_revisit_calc}" +
-                 f" unopenable: {gt_unopenable} {num_unopenable_calc}"
-                 f" relook: {gt_relook}  {num_relook_calc}")
+                 f"   unopenable: {gt_unopenable} {num_unopenable_calc}"
+                 f"   relook: {gt_relook}  {num_relook_calc}")
 
     passed = 0
     failed = 0
