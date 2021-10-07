@@ -3,6 +3,8 @@ import unittest
 
 import mcs_scene_ingest
 
+from pymongo import MongoClient
+
 TEST_SCENE_FILE_NAME = "test_juliett_0001_01_debug.json"
 TEST_HISTORY_FILE_NAME = "test_eval_3-5_level2_baseline_juliett_0001_01.json"
 TEST_INTERACTIVE_SCENE_FILE_NAME = "occluders_0001_17_I1_debug.json"
@@ -40,13 +42,13 @@ class TestMcsSceneIngest(unittest.TestCase):
 
     def test_find_scene_files(self):
         scene_files = mcs_scene_ingest.find_scene_files(TEST_FOLDER)
-        self.assertEqual(len(scene_files), 4)
+        self.assertEqual(len(scene_files), 5)
         self.assertTrue(TEST_SCENE_FILE_NAME in scene_files)
 
     def test_find_history_files(self):
         history_files = mcs_scene_ingest.find_history_files(
             TEST_FOLDER, "json")
-        self.assertEqual(len(history_files), 5)
+        self.assertEqual(len(history_files), 6)
 
     def test_build_scene_item(self):
         scene = mcs_scene_ingest.build_scene_item(
@@ -73,17 +75,21 @@ class TestMcsSceneIngest(unittest.TestCase):
         self.assertEqual(team_name, "IBM-MIT-Harvard-Stanford")
 
     def test_build_history_item(self):
+        client = MongoClient(
+            'mongodb://mongomcs:mongomcspassword@localhost:27017/mcs')
         history_item = mcs_scene_ingest.build_history_item(
             TEST_HISTORY_FILE_NAME, TEST_FOLDER, "eval_4",
-            "cora", TEST_FOLDER, ".json")
+            "cora", TEST_FOLDER, ".json", client, "mcs")
         logging.info(f"{history_item}")
 
     def test_build_interactive_history_item(self):
         '''Generates history item for an interactive, which follows
         a different code path (and includes scorecard)'''
+        client = MongoClient(
+            'mongodb://mongomcs:mongomcspassword@localhost:27017/mcs')
         history_item = mcs_scene_ingest.build_history_item(
             TEST_INTERACTIVE_HISTORY_FILE_NAME, TEST_FOLDER,
-            "eval_4", "cora", TEST_FOLDER, ".json")
+            "eval_4", "cora", TEST_FOLDER, ".json", client, "mcs")
         logging.info(f"{history_item}")
 
 

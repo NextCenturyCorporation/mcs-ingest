@@ -94,7 +94,7 @@ def ingest_to_mongo(index: str, ingest_files: dict, client: MongoClient):
     collection = mongoDB[index]
     result = collection.insert_many(ingest_files)
     logging.info(f"Inserted {len(result.inserted_ids)} out of " +
-                 f" {len(ingest_files)}. Result: {result}")
+                 f"{len(ingest_files)}. Result: {result}")
 
 
 def find_scene_files(folder: str) -> dict:
