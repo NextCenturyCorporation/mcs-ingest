@@ -12,7 +12,7 @@ import os
 
 from scorecard.scorecard import Scorecard
 
-DATADIR = ['generator/SCENE_HISTORY/', '../tests/']
+DATADIR = ['tests/generator/SCENE_HISTORY/', 'tests/']
 
 
 def get_scorecard(
@@ -123,7 +123,7 @@ def process_all_ground_truth(ground_truth_file: str):
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--ground_truth_file',
-                        default='ground_truth.txt')
+                        default='tests/ground_truth.txt')
     return parser.parse_args()
 
 
