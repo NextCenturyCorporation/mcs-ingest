@@ -18,11 +18,15 @@ DIRECTION_LIMIT = 11
 
 # Minimum timesteps between looking in a container and looking again before
 # we count again
-TIME_BETWEEN_RELOOKS = 10
+STEPS_BETWEEN_RELOOKS = 10
 
 # Min distance between 'look' locations such that we count them as looking
 # in the same container
 DIST_BETWEEN_RELOOKS = 0.4
+
+# Min angle of tilt looking down that counts as an agent looking into a
+# container
+MIN_TILT_LOOK_DOWN = 30
 
 
 def minAngDist(a, b):
@@ -44,11 +48,11 @@ def get_lookpoint(x, y, z, rot, tilt):
         return x, z
 
     # Ground dist from current location is fn of height (y) and tilt angle
-    dist = y * math.tan(math.pi * (90 - tilt) / 180.)
+    dist = y * math.tan(math.radians(90 - tilt))
 
     # Distance in x,z depends on rotation and total distance on ground
-    dx = dist * math.cos(math.pi * (90 - rot) / 180.)
-    dz = dist * math.sin(math.pi * (90 - rot) / 180.)
+    dx = dist * math.cos(math.radians(90 - rot))
+    dz = dist * math.sin(math.radians(90 - rot))
 
     logging.debug(f"xyz ({x:0.3f} {y:0.3f} {z:0.3f})" +
                   f" tilt {tilt:0.3f} rot {rot:0.3f}")
@@ -76,7 +80,7 @@ def find_closest_container(x, z, scene):
         type = room_object['type']
         cx = room_object['shows'][0]['position']['x']
         cz = room_object['shows'][0]['position']['z']
-        dist = math.sqrt((x - cx) * (x - cx) + (z - cz) * (z - cz))
+        dist = math.dist((x, z), (cx, cz))
         dists.append(dist)
         locs.append({'type': type, 'x': cx, 'z': cz})
 
@@ -304,13 +308,13 @@ class Scorecard:
         for step_num, single_step in enumerate(steps_list):
 
             # If we had a relook recently, ignore
-            if abs(step_num - last_look_time) < TIME_BETWEEN_RELOOKS:
+            if abs(step_num - last_look_time) < STEPS_BETWEEN_RELOOKS:
                 logging.debug(f"Skip since too close to last look {step_num}")
                 continue
 
             # If not looking down, then it doesn't count
             tilt = single_step['output']['head_tilt']
-            if tilt < 30:
+            if tilt < MIN_TILT_LOOK_DOWN:
                 logging.debug(f"Skip since head tilt to low {tilt}")
                 continue
 
@@ -349,7 +353,7 @@ class Scorecard:
                 cz = container_look['z']
 
                 # Find distance between
-                dist = math.sqrt((x - cx) * (x - cx) + (z - cz) * (z - cz))
+                dist = math.dist((x, z), (cx, cz))
                 logging.debug(f" looking at {x} {z}  closest: {cx} {cz} " +
                               f"   dist {dist}  still looking {still_looking}")
                 if dist < DIST_BETWEEN_RELOOKS and not still_looking:

@@ -110,7 +110,7 @@ have been modified from the original used in the evaluation in 2 ways:
 1. Objects have been moved and the starting point for the agent has sometimes been 
 moved. 
  
-### Revisit Geneartor ### 
+### Revisit Generator ### 
 
 To use the revisit generator:  
 
