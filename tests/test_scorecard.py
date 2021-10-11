@@ -6,7 +6,7 @@ from scorecard.scorecard import Scorecard, find_closest_container
 from scorecard.scorecard import get_lookpoint
 
 TEST_SCENE_FILE_NAME = "occluders_0001_17_I1_debug.json"
-TEST_HISTORY_FILE_NAME = "generator/SCENE_HISTORY/" + \
+TEST_HISTORY_FILE_NAME = "test_data_generator/SCENE_HISTORY/" + \
                          "india_0003_baseline_level1.json"
 TEST_SCENE_CONTAINER = "golf_0018_15_debug.json"
 

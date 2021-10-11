@@ -12,7 +12,10 @@ import argparse
 import logging
 import os
 
-from tests.generator.data_gen_runner import DataGenRunnerScript, decode_moves
+from test_data_generator.data_gen_runner import (
+    DataGenRunnerScript,
+    decode_moves
+)
 
 
 def open_objects_callback(step_metadata, runner_script):

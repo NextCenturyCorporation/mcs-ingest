@@ -12,7 +12,7 @@ import argparse
 import logging
 import os
 
-from tests.generator.data_gen_runner import DataGenRunnerScript, \
+from test_data_generator.data_gen_runner import DataGenRunnerScript, \
     decode_moves, replace_short_hand
 
 
