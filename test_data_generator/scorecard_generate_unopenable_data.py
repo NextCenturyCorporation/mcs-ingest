@@ -25,12 +25,13 @@ def open_objects_callback(step_metadata, runner_script):
     step = step_metadata.step_number
     part1 = "wwwwwjjjWlllWWwwss kkkkk 3 "
     # success -- right, fwd, diagonal left, fwd, diag right, fwd, open
-    part2 = "iiiii R W jjj wwww lll WW kkkk s 3 "
+    part2 = "iiiii R W jjj wwww lll Wwww kkkk 3 "
     # NOT_RECEPTACLE --
     part3 = "iiii L wwwww 3"
     # NOT_OPENABLE
     part4 = "kkkllll W lll wwww kk 3"
     code = part1 + part2 + part3 + part4
+
     return decode_moves(step, code)
 
 
