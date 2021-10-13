@@ -6,14 +6,35 @@ from scorecard.scorecard import Scorecard, find_closest_container
 from scorecard.scorecard import get_lookpoint
 
 TEST_SCENE_FILE_NAME = "occluders_0001_17_I1_debug.json"
-TEST_HISTORY_FILE_NAME = "test_data_generator/SCENE_HISTORY/" + \
-                         "india_0003_baseline_level1.json"
+TEST_HISTORY_FILE_NAME = "india_0003_baseline_level1.json"
 TEST_SCENE_CONTAINER = "golf_0018_15_debug.json"
 
 TEST_FOLDER = "tests"
 
 
 class TestMcsScorecard(unittest.TestCase):
+
+    def test_get_grid_by_location(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_FILE_NAME)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_FILE_NAME)
+        scorecard = Scorecard(history_file, scene_file)
+
+        gx, gz = scorecard.get_grid_by_location(0, 0)
+
+        x1 = -2.006410598754883
+        z1 = 0.6039760112762451
+        gx1, gz1 = scorecard.get_grid_by_location(x1, z1)
+        # print(f"Grid location 1:  {gx} {gz}")
+
+        x2 = -2.4064102172851562
+        z2 = 0.6039760112762451
+        gx2, gz2 = scorecard.get_grid_by_location(x2, z2)
+        self.assertEqual(gx1, gx2, 'Grid values are different ' +
+                         f'for {x1} {x2}: {gx1} {gx2}')
+        self.assertEqual(gz1, gz2, 'Grid values are different ' +
+                         f'for {z1} {z2}: {gz1} {gz2}')
 
     def test_find_closest_container(self):
         scene_file = mcs_scene_ingest.load_json_file(

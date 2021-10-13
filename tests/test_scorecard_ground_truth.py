@@ -31,11 +31,21 @@ def get_scorecard(
     return scorecard
 
 
-def find_fullpath(basefilename: str, dir_name: str) -> os.path:
+def find_fullpath_latest(basefilename: str, dir_name: str) -> os.path:
+    '''Look in the passed directory for files with the appropriate
+    basename.  Example: If passed 'reopen_one_1', it will return
+    "reopen_one_1-20211013-093519.json" if it finds it.  If there
+    are multiple files that match, it will return
+    the most recent one.'''
+    matching_files = []
     for file in os.listdir(dir_name):
         if file.startswith(basefilename):
             full_path = os.path.join(dir_name, file)
-            return full_path
+            matching_files.append(full_path)
+    matching_files.sort(key=lambda x: os.path.getmtime(x))
+    if len(matching_files) > 0:
+        return matching_files.pop()
+    return None
 
 
 def compare_with_ground_truth(
@@ -83,13 +93,13 @@ def process_line(line: str):
     gt_unopenable = int(vals[3].strip())
     gt_relook = int(vals[4].strip())
 
-    scene_filepath = find_fullpath(scenefile, SCENE_DIR)
+    scene_filepath = find_fullpath_latest(scenefile, SCENE_DIR)
     if not scene_filepath:
         logging.warning(f"Unable to find {SCENE_DIR} and " +
                         f"{scenefile} found: {scene_filepath}")
         return 0, 0, 1
 
-    history_filepath = find_fullpath(basefilename, HISTORY_DIR)
+    history_filepath = find_fullpath_latest(basefilename, HISTORY_DIR)
     logging.info(f"Reporting on {history_filepath}")
     if not history_filepath:
         logging.warning(f"Unable to find {HISTORY_DIR} and " +
