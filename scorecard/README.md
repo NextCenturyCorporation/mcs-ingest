@@ -1,83 +1,83 @@
 
 # Scorecard
 
-Given an output json from a run, create a 'scorecard' which evaluates the motion of the 
+Given an output json from a run, create a 'scorecard' which evaluates the motion of the
 agent in several dimensions.
 
 The actions that are counted (as of Eval 4 plan):
 
 * Revisiting parts of the room that have not changed
-* Attempting to open an un-openable object.  
+* Attempting to open an un-openable object.
   * We will begin counting from the first attempt
 * Looking into the same container repeatedly
-* Repeating a failed action.   
-  * We will begin counting from the second attempt, since it cannot be a “failed” action until after the AI has received 
-  feedback from the first attempt. If the AI system attempts the same action from a new position, this will not be considered a repeated action. 
-* Attempting physically impossible actions.  
+* Repeating a failed action.
+  * We will begin counting from the second attempt, since it cannot be a “failed” action until after the AI has received
+  feedback from the first attempt. If the AI system attempts the same action from a new position, this will not be considered a repeated action.
+* Attempting physically impossible actions.
   * e.g., trying to pick up a sofa or another similarly large item; trying to interact with the floor or wall
-  * Impossible actions will be counted from the first attempt.  
+  * Impossible actions will be counted from the first attempt.
 * Target object in the field of view (not occluded) but agent does not move toward it
   * After a certain number of frames, not moving toward a visible target object will be counted
 
-Some of these are mathematically vague;  for example, the space that the agent moves in is continous, 
-so 'revisit' needs to have a particular distance.  Below, we discuss the way to count them. 
+Some of these are mathematically vague;  for example, the space that the agent moves in is continous,
+so 'revisit' needs to have a particular distance.  Below, we discuss the way to count them.
 
 #### Revisiting parts of the Room
 
 Algorithm:
 * Divide room (10m x 10m) into a grid of X size.  Try 0.5 m
-* Count the number of times that the agent enters a 
-grid square while facing in the same direction (within 10 degrees) as a 
+* Count the number of times that the agent enters a
+grid square while facing in the same direction (within 10 degrees) as a
 previous time they were in that grid square
 * If paths cross while facing in different directions, it does not count as a revist
 * If the actor rotates or does not move (PASS), it does not count
-  * Note that this means that if the actor spins in a circle and then passes over 
+  * Note that this means that if the actor spins in a circle and then passes over
     that location in any direction later, it will count as a revist
 * Note:  if agent travels from point A to point B twice, this can result in many overlaps.
-  * They only count as one.  
-  * Implement this as only counting the first in a series of revisits.  
-     
+  * They only count as one.
+  * Implement this as only counting the first in a series of revisits.
+
 #### Attempting to Open an UnOpenable object
 
-This counts the number of times that the agent tried to open something 
-and failed because it was something they were not supposed to be 
-openning.  
+This counts the number of times that the agent tried to open something
+and failed because it was something they were not supposed to be
+openning.
 
-Notably, this does _not_ include IS_OPENED_COMPLETELY which is what 
-is returned if you try to open an already-opened object and OUT_OF_REACH 
-which is returned when you try to open an openable object but it is 
-too far away.  Everything else causes the count of unopenable objects to 
+Notably, this does _not_ include IS_OPENED_COMPLETELY which is what
+is returned if you try to open an already-opened object and OUT_OF_REACH
+which is returned when you try to open an openable object but it is
+too far away.  Everything else causes the count of unopenable objects to
 increase.
 
 #### Looking into the Same Container Repeatedly
 
-If the agent looks in the same container repeatedly, count it (after the 
+If the agent looks in the same container repeatedly, count it (after the
 first look).  Algorithm:
-* If the agent goes up to a container and OPENs it, that counts as the 
+* If the agent goes up to a container and OPENs it, that counts as the
 first time
-* If the agent goes to the open container and looks down 
+* If the agent goes to the open container and looks down
 into the container, that counts as a second time
-  * Looking down requires tilt >= 30 and the gaze point to be 
+  * Looking down requires tilt >= 30 and the gaze point to be
   within 0.4 of the container
 * If the agent closes the container and then re-opens, it still counts
-* Moving around / tilting while looking in the container only counts as a 
+* Moving around / tilting while looking in the container only counts as a
 single look.  This is implemented by ignoring the next 10 movements and setting
 a flag that they are still looking
 * Passing the container without looking into it does not count
 
 Note:   The orientation of the container is not being taken into account.  That is,
-if the container was opened but the hinge of the lid was facing the agent so 
+if the container was opened but the hinge of the lid was facing the agent so
 they could not see into it, then it still counts as the first time.  Going around
-the container so that they can actually look into it counts as a second look.  
-It is recognized that this is a limitation of the algorithm. 
+the container so that they can actually look into it counts as a second look.
+It is recognized that this is a limitation of the algorithm.
 
 ## Running the Scorecard
 
 
-```tests/scorecard_test_ground_truth.py``` shows an example of how to run the 
-scorecard code:  You create a Scorecard object, passing in the scene json file 
-along with the json file with the MCS output, and then tell it to score which 
-area you want.  
+```tests/scorecard_test_ground_truth.py``` shows an example of how to run the
+scorecard code:  You create a Scorecard object, passing in the scene json file
+along with the json file with the MCS output, and then tell it to score which
+area you want.
 
 ```
 scorecard = Scorecard(scene_json_filepath, ouput_json_filepath)
@@ -90,47 +90,52 @@ num_revisit_calc = scorecard.calc_revisiting()
 
 The scorecard has normal unit tests in ```tests/test_scorecard.py```.
 
-The scorecard also has an integration test```test/test_scorecard_ground_truth.py```.   That 
+The scorecard also has an integration test```test/test_scorecard_ground_truth.py```.   That
 code uses data generated by a series of generators, one per type of actions counted
-above.  
+above.
 
 The outputs of the generators will be a series of history files in
-```tests/generator/SCENE_HISTORY```.  Those are then read in by the integration 
-test and the output compared  with the values in 
+```test_data_generator/SCENE_HISTORY```.  Those are then read in by the integration
+test and the output compared  with the values in
 ```tests/scorecard_ground_truth.txt```.  Running the integration test:
 
 ```
-% python tests/test_scorecard_ground_truth.py
+% PYTHONPATH='.' python tests/test_scorecard_ground_truth.py
 ```
 
-Note that the generators use scene files, since the generator is running the 
+Note that the generators use scene files, since the generator is running the
 MCS software and needs a scene relevant for the scorecard test.  The scene files
 have been modified from the original used in the evaluation in 2 ways:
 1. The roomDimensions object has been added. For testing, they are 10,11,12; they were 10,10,10
-1. Objects have been moved and the starting point for the agent has sometimes been 
-moved. 
- 
-### Revisit Generator ### 
+1. Objects have been moved and the starting point for the agent has sometimes been
+moved.
 
-To use the revisit generator:  
+### Reopen Generator ###
+
+To use the revisit generator:
 
 ```
-% python tests/generator/scorecard_generate_revisit_data.py [MCS_unity] [scene_file]
+% PYTHONPATH='.' python test_data_generator/scorecard_generate_reopen_data.py [MCS_unity] [scene_file]
 ```
 
-The scene_file to use should be tests/india_0003_17.json.  
+Use `tests/golf_0018_15_debug.json`
 
-### Opening UnOpenable Objects 
+### Revisit Generator ###
+
+To use the revisit generator:
+
+```
+% PYTHONPATH='.' python test_data_generator/scorecard_generate_revisit_data.py [MCS_unity] [scene_file]
+```
+
+The scene_file to use should be `tests/india_0003_17.json`.
+
+### Opening UnOpenable Objects
 
 To use the unopenable generator:
 ```
-% python tests/generator/scorecard_generate_unopenable_data.py [MCS_unity] [scene_file]
+% PYTHONPATH='.' python test_data_generator/scorecard_generate_unopenable_data.py [MCS_unity] [scene_file]
 ```
 
-The scene_file to use should be tests/golf_0018_15_debug.json which has 
-both openable and unopenable objects. 
-
-
-
-
-
+The scene_file to use should be `tests/golf_0018_15_debug.json` which has
+both openable and unopenable objects.
