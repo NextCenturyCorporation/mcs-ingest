@@ -12,7 +12,8 @@ import os
 
 from scorecard.scorecard import Scorecard
 
-DATADIR = ['generator/SCENE_HISTORY/', '../tests/']
+HISTORY_DIR = './SCENE_HISTORY/'
+SCENE_DIR = './tests/'
 
 
 def get_scorecard(
@@ -30,12 +31,11 @@ def get_scorecard(
     return scorecard
 
 
-def find_fullpath(basefilename: str, dirs: []) -> os.path:
-    for dir in dirs:
-        for file in os.listdir(dir):
-            if file.startswith(basefilename):
-                full_path = os.path.join(dir, file)
-                return full_path
+def find_fullpath(basefilename: str, dir_name: str) -> os.path:
+    for file in os.listdir(dir_name):
+        if file.startswith(basefilename):
+            full_path = os.path.join(dir_name, file)
+            return full_path
 
 
 def compare_with_ground_truth(
@@ -83,16 +83,16 @@ def process_line(line: str):
     gt_unopenable = int(vals[3].strip())
     gt_relook = int(vals[4].strip())
 
-    scene_filepath = find_fullpath(scenefile, DATADIR)
+    scene_filepath = find_fullpath(scenefile, SCENE_DIR)
     if not scene_filepath:
-        logging.warning(f"Unable to find {DATADIR} and " +
+        logging.warning(f"Unable to find {SCENE_DIR} and " +
                         f"{scenefile} found: {scene_filepath}")
         return 0, 0, 1
 
-    history_filepath = find_fullpath(basefilename, DATADIR)
+    history_filepath = find_fullpath(basefilename, HISTORY_DIR)
     logging.info(f"Reporting on {history_filepath}")
     if not history_filepath:
-        logging.warning(f"Unable to find {DATADIR} and " +
+        logging.warning(f"Unable to find {HISTORY_DIR} and " +
                         f"{basefilename} found: {history_filepath}")
         return 0, 0, 1
 
@@ -123,7 +123,7 @@ def process_all_ground_truth(ground_truth_file: str):
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--ground_truth_file',
-                        default='ground_truth.txt')
+                        default='tests/ground_truth.txt')
     return parser.parse_args()
 
 

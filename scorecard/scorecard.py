@@ -194,7 +194,7 @@ class Scorecard:
             grid_x, grid_z = self.get_grid_by_location(loc['x'], loc['z'])
             grid_hist = self.grid[grid_x][grid_z]
             logging.debug(f"Step num {step_num}  Location is {loc}.  Dir: " +
-                          "{direction}  Grid loc is {grid_x} {grid_z}")
+                          f"{direction}  Grid loc is {grid_x} {grid_z}")
 
             # ---------------------------------
             # Determine if this is a revisit

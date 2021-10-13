@@ -8,7 +8,7 @@ import json
 import logging
 import os
 
-from tests.generator.path_plotter import PathPlotter
+from test_data_generator.path_plotter import PathPlotter
 
 
 def run_scene(output_json_file: str,
