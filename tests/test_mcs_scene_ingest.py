@@ -8,8 +8,7 @@ from pymongo import MongoClient
 TEST_SCENE_FILE_NAME = "test_juliett_0001_01_debug.json"
 TEST_HISTORY_FILE_NAME = "test_eval_3-5_level2_baseline_juliett_0001_01.json"
 TEST_INTERACTIVE_SCENE_FILE_NAME = "occluders_0001_17_I1_debug.json"
-TEST_INTERACTIVE_HISTORY_FILE_NAME = "generator/SCENE_HISTORY/" + \
-                                     "occluders_0001_17_baseline.json"
+TEST_INTERACTIVE_HISTORY_FILE_NAME = "occluders_0001_17_baseline.json"
 TEST_FOLDER = "tests"
 
 
@@ -44,11 +43,6 @@ class TestMcsSceneIngest(unittest.TestCase):
         scene_files = mcs_scene_ingest.find_scene_files(TEST_FOLDER)
         self.assertEqual(len(scene_files), 5)
         self.assertTrue(TEST_SCENE_FILE_NAME in scene_files)
-
-    def test_find_history_files(self):
-        history_files = mcs_scene_ingest.find_history_files(
-            TEST_FOLDER, "json")
-        self.assertEqual(len(history_files), 6)
 
     def test_build_scene_item(self):
         scene = mcs_scene_ingest.build_scene_item(

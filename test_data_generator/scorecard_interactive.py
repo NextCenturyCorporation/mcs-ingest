@@ -12,7 +12,10 @@ import os
 
 from machine_common_sense import Action
 
-from tests.generator.data_gen_runner import DataGenRunnerScript, interactive_cb
+from test_data_generator.data_gen_runner import (
+    DataGenRunnerScript,
+    interactive_cb
+)
 
 
 def main(mcs_unity_filepath, scene_filepath):

@@ -8,7 +8,7 @@ import logging
 import machine_common_sense as mcs
 from machine_common_sense import Action
 
-from tests.generator.path_plotter import PathPlotter
+from test_data_generator.path_plotter import PathPlotter
 
 
 def key_to_movement(key):
@@ -66,7 +66,10 @@ class DataGenRunnerScript():
 
     def __init__(self, mcs_unity_filepath,
                  scene_filepath, name, action_callback):
-        self.controller = mcs.create_controller(mcs_unity_filepath)
+        self.controller = mcs.create_controller(
+            config_file_or_dict={'metadata': 'oracle'},
+            unity_app_file_path=mcs_unity_filepath
+        )
         if not self.controller:
             raise Exception("Unable to create controller")
         self.callback = action_callback
@@ -98,6 +101,7 @@ class DataGenRunnerScript():
 
             while action is not None:
                 step_metadata = self.controller.step(action, **params)
+
                 logging.debug("return status of action:" +
                               f"{step_metadata.return_status}")
                 plotter.plot(step_metadata.__dict__, step_metadata.step_number)
