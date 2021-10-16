@@ -53,15 +53,15 @@ def main(mcs_unity_filepath, scene_filepath):
     DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
                         'revisit_zero_1',
                         simple_loop_callback).run_scene()
-    DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
-                        'revisit_one_1',
-                        loop_callback_with_revisit).run_scene()
-    DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
-                        'revisit_one_2',
-                        loop_callback_with_spin).run_scene()
-    DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
-                        'revisit_one_3',
-                        come_from_behind).run_scene()
+    # DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
+    #                     'revisit_one_1',
+    #                     loop_callback_with_revisit).run_scene()
+    # DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
+    #                     'revisit_one_2',
+    #                     loop_callback_with_spin).run_scene()
+    # DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
+    #                     'revisit_one_3',
+    #                     come_from_behind).run_scene()
 
 
 def parse_args():

@@ -366,14 +366,21 @@ class Scorecard:
 
         return self.relooks
 
+
+    def calc_not_moving_toward_object(self):
+        """Calculate number of times that the agent did not move toward the target"""
+
+
+        steps_list = self.history['steps']
+        for step_num, single_step in enumerate(steps_list):
+
+
     def calc_repeat_failed(self):
         pass
 
     def calc_attempt_impossible(self):
         pass
 
-    def calc_not_moving_toward_object(self):
-        pass
 
     def set_revisit_grid_size(self, grid_size):
         self.grid_size = grid_size

@@ -10,17 +10,19 @@ The actions that are counted (as of Eval 4 plan):
 * Attempting to open an un-openable object.
   * We will begin counting from the first attempt
 * Looking into the same container repeatedly
+* Target object in the field of view but agent does not move toward it
+  * After a certain number of frames, not moving toward a visible target object will be counted
 * Repeating a failed action.
   * We will begin counting from the second attempt, since it cannot be a “failed” action until after the AI has received
   feedback from the first attempt. If the AI system attempts the same action from a new position, this will not be considered a repeated action.
 * Attempting physically impossible actions.
   * e.g., trying to pick up a sofa or another similarly large item; trying to interact with the floor or wall
   * Impossible actions will be counted from the first attempt.
-* Target object in the field of view (not occluded) but agent does not move toward it
-  * After a certain number of frames, not moving toward a visible target object will be counted
 
 Some of these are mathematically vague;  for example, the space that the agent moves in is continous,
 so 'revisit' needs to have a particular distance.  Below, we discuss the way to count them.
+
+# Algorithms
 
 #### Revisiting parts of the Room
 
@@ -71,13 +73,41 @@ they could not see into it, then it still counts as the first time.  Going aroun
 the container so that they can actually look into it counts as a second look.
 It is recognized that this is a limitation of the algorithm.
 
+#### Target object in the field of view but agent does not move toward it
+
+If the agent can see the target object, it should move toward it.  This is slightly
+more complicated than that because there might be objects in the way or the target may not 
+be very visible (a single pixel on the edge of the field of view). 
+
+Algorithm:
+  * The target needs to be visible for a number of frames in a row (4) before it counts 
+  as being sufficiently visible that the agent should have seen it.  A timer is then
+  started and the distance to the target is saved   
+  * After 20 steps, the agent should have had time to go around whatever is in the way
+  and moved closer to the target.  
+  * If it doesn't move towards the target, then we increment by one.
+  * After a number of moves (50) that the agent did not move toward the target,
+  we reset, so that the next time the target is visible it can be counted 
+  again.
+  
+
+####
+
 ## Running the Scorecard
 
 
-```tests/scorecard_test_ground_truth.py``` shows an example of how to run the
+The file ```tests/scorecard_test_ground_truth.py``` shows an example of how to run the
 scorecard code:  You create a Scorecard object, passing in the scene json file
-along with the json file with the MCS output, and then tell it to score which
-area you want.
+along with the json file with the MCS history output, and then tell it to score all
+the parts of the scorecard: 
+
+```
+scorecard = Scorecard(scene_json_filepath, ouput_json_filepath)
+scorecard_dict = scorecard.score_all()
+```
+
+For testing and experimentation, you can tell it calculate the 
+score for particular parts of the scorecard: 
 
 ```
 scorecard = Scorecard(scene_json_filepath, ouput_json_filepath)
