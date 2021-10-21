@@ -1,6 +1,9 @@
-import boto3
 import json
+import logging
 import os
+
+import boto3
+
 import mcs_scene_ingest
 
 # Create SQS client
@@ -25,7 +28,7 @@ def process_message(message, message_type, db_string):
         bucket = s3.Bucket(record["s3"]["bucket"]["name"])
         history_file = record["s3"]["object"]["key"]
         basename = os.path.basename(history_file)
-        print(f"Downloading {basename}")
+        logging.info(f"Downloading {basename}")
         bucket.download_file(history_file, basename)
 
         # Ingest File
@@ -37,7 +40,7 @@ def process_message(message, message_type, db_string):
                 basename, "", db_string)
 
         # Delete File
-        print(f"Deleting {basename}")
+        logging.info(f"Deleting {basename}")
         os.remove(basename)
 
 
@@ -69,4 +72,7 @@ def main():
 
 
 if __name__ == '__main__':
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     main()

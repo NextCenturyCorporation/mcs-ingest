@@ -3,11 +3,12 @@
 #
 
 import json
+import logging
 
 import machine_common_sense as mcs
 from machine_common_sense import Action
 
-from tests.generator.path_plotter import PathPlotter
+from test_data_generator.path_plotter import PathPlotter
 
 
 def key_to_movement(key):
@@ -16,7 +17,7 @@ def key_to_movement(key):
     for action in Action:
         if key == action._key:
             val = action._value_
-            print(f"Val {val}")
+            logging.debug(f"action {val}")
 
             if val == 'OpenObject' or \
                     val == 'CloseObject' or \
@@ -31,7 +32,7 @@ def key_to_movement(key):
         _ = input("waiting")
         return 'Pass', {}
 
-    print("Unrecognized: " + key)
+    logging.warning(f"Unrecognized: {key}")
     return 'Pass', {}
 
 
@@ -65,7 +66,10 @@ class DataGenRunnerScript():
 
     def __init__(self, mcs_unity_filepath,
                  scene_filepath, name, action_callback):
-        self.controller = mcs.create_controller(mcs_unity_filepath)
+        self.controller = mcs.create_controller(
+            config_file_or_dict={'metadata': 'oracle'},
+            unity_app_file_path=mcs_unity_filepath
+        )
         if not self.controller:
             raise Exception("Unable to create controller")
         self.callback = action_callback
@@ -87,7 +91,7 @@ class DataGenRunnerScript():
 
             scene_data, status = mcs.load_scene_json_file(self.scene_filepath)
             if not scene_data:
-                print(f"Result of loading scene: {status}")
+                logging.warning(f"Result of loading scene: {status}")
                 return
             scene_data['name'] = self.name
             step_metadata = self.controller.start_scene(scene_data)
@@ -97,7 +101,9 @@ class DataGenRunnerScript():
 
             while action is not None:
                 step_metadata = self.controller.step(action, **params)
-                print(f"{step_metadata.return_status}")
+
+                logging.debug("return status of action:" +
+                              f"{step_metadata.return_status}")
                 plotter.plot(step_metadata.__dict__, step_metadata.step_number)
                 if step_metadata is None:
                     break

@@ -2,6 +2,9 @@
 # Calculate the Scorecard for a particular MCS output JSON file
 #
 #
+import logging
+import math
+from operator import itemgetter
 
 import numpy as np
 import pandas
@@ -13,6 +16,18 @@ GRID_DIMENSION = 0.5
 # as facing in the same direction
 DIRECTION_LIMIT = 11
 
+# Minimum timesteps between looking in a container and looking again before
+# we count again
+STEPS_BETWEEN_RELOOKS = 10
+
+# Min distance between 'look' locations such that we count them as looking
+# in the same container
+DIST_BETWEEN_RELOOKS = 0.4
+
+# Min angle of tilt looking down that counts as an agent looking into a
+# container
+MIN_TILT_LOOK_DOWN = 30
+
 
 def minAngDist(a, b):
     """Calculate the difference between two angles in degrees, keeping
@@ -21,6 +36,55 @@ def minAngDist(a, b):
     normDeg = (a - b) % 360
     minAng = min(360 - normDeg, normDeg)
     return minAng
+
+
+def get_lookpoint(x, y, z, rot, tilt):
+    # Given a location of agent, determine where they are looking.
+    # Make sure that tilt is within a good range; if agent is not
+    # looking down, return current loc.
+    # Reminder:  Unity is left-handed, y-up, so floor is (X,Z) plane
+    if tilt > 90 or tilt <= 0:
+        logging.warning(f"Not computing dist, tilt is {tilt}")
+        return x, z
+
+    # Ground dist from current location is fn of height (y) and tilt angle
+    dist = y * math.tan(math.radians(90 - tilt))
+
+    # Distance in x,z depends on rotation and total distance on ground
+    dx = dist * math.cos(math.radians(90 - rot))
+    dz = dist * math.sin(math.radians(90 - rot))
+
+    logging.debug(f"xyz ({x:0.3f} {y:0.3f} {z:0.3f})" +
+                  f" tilt {tilt:0.3f} rot {rot:0.3f}")
+    logging.debug(f"dist is {dist:0.3f}.  dx,dz {dx:0.3f} {dz:0.3f}")
+    logging.debug(f"looking point: {(x + dx):0.3f}  {(z + dz):0.3f}")
+    return (x + dx), (z + dz)
+
+
+def calc_viewpoint(step_metadata):
+    # Get location, remember coordinate system is left-handed, y-up
+    x, y, z = itemgetter('x', 'y', 'z')(step_metadata['output']['position'])
+    rot = step_metadata['output']['rotation']
+    tilt = step_metadata['output']['head_tilt']
+    return get_lookpoint(x, y, z, rot, tilt)
+
+
+def find_closest_container(x, z, scene):
+    dists = []
+    locs = []
+    for room_object in scene['objects']:
+        # Not all objects have openable, so make sure it is a key
+        if 'openable' not in room_object or not room_object['openable']:
+            continue
+
+        type = room_object['type']
+        cx = room_object['shows'][0]['position']['x']
+        cz = room_object['shows'][0]['position']['z']
+        dist = math.dist((x, z), (cx, cz))
+        dists.append(dist)
+        locs.append({'type': type, 'x': cx, 'z': cz})
+
+    return locs[dists.index(min(dists))]
 
 
 class GridHistory:
@@ -79,14 +143,14 @@ class Scorecard:
         self.repeat_failed = 0
         self.attempt_impossible = 0
         self.open_unopenable = 0
-        self.multiple_container_look = 0
+        self.relooks = 0
         self.not_moving_toward_object = 0
 
     def score_all(self) -> dict:
         self.calc_repeat_failed()
         self.calc_attempt_impossible()
         self.calc_open_unopenable()
-        self.calc_multiple_container_look()
+        self.calc_relook()
         self.calc_not_moving_toward_object()
         self.calc_revisiting()
 
@@ -94,8 +158,7 @@ class Scorecard:
         scorecard_vals["repeat_failed"] = self.repeat_failed
         scorecard_vals["attempt_impossible"] = self.attempt_impossible
         scorecard_vals["open_unopenable"] = self.open_unopenable
-        scorecard_vals["multiple_container_look"] = \
-            self.multiple_container_look
+        scorecard_vals["multiple_container_look"] = self.relooks
         scorecard_vals["not_moving_toward_object"] = \
             self.not_moving_toward_object
         scorecard_vals["revisits"] = self.revisits
@@ -107,6 +170,9 @@ class Scorecard:
 
     def get_unopenable(self):
         return self.open_unopenable
+
+    def get_relooks(self):
+        return self.relooks
 
     def calc_revisiting(self):
 
@@ -127,8 +193,8 @@ class Scorecard:
 
             grid_x, grid_z = self.get_grid_by_location(loc['x'], loc['z'])
             grid_hist = self.grid[grid_x][grid_z]
-            # print(f"Step num {step_num}  Location is {loc}.  Dir: " +
-            #       "{direction}  Grid loc is {grid_x} {grid_z}")
+            logging.debug(f"Step num {step_num}  Location is {loc}.  Dir: " +
+                          f"{direction}  Grid loc is {grid_x} {grid_z}")
 
             # ---------------------------------
             # Determine if this is a revisit
@@ -136,7 +202,7 @@ class Scorecard:
             # If never been there, then not a revisit, and no longer in
             # revisiting mode
             if not grid_hist.any_visits():
-                # print("never visited")
+                logging.debug("never visited")
                 grid_hist.add(step_num, direction)
                 old_x, old_z = grid_x, grid_z
                 previous_revisit = False
@@ -145,14 +211,14 @@ class Scorecard:
             # If we did not change grid location (for example, change tilt,
             # rotate, etc), do not count
             if old_x == grid_x and old_z == grid_z:
-                # print("didn't change location")
+                logging.debug("didn't change location")
                 old_x, old_z = grid_x, grid_z
                 grid_hist.add(step_num, direction)
                 continue
 
             # See if ever been in this direction before
             if not grid_hist.seen_before(step_num, direction):
-                # print("visited but not this direction")
+                logging.debug("visited but not this direction")
                 grid_hist.add(step_num, direction)
                 old_x, old_z = grid_x, grid_z
                 previous_revisit = False
@@ -161,7 +227,7 @@ class Scorecard:
             # If previous step was a revisit, don't mark this one, but
             # still in revisiting mode
             if previous_revisit:
-                # print("visited and this direction, but in revisiting mode")
+                logging.debug("visited / this direction, but in revisit mode")
                 grid_hist.add(step_num, direction)
                 old_x, old_z = grid_x, grid_z
                 continue
@@ -170,16 +236,16 @@ class Scorecard:
             # there, we are facing in the same direction as before, and
             # previous_revisit==False (i.e. we are not in revisiting mode)
             # So, we are revisiting
-            # print("revisiting")
+            logging.debug("revisiting")
             previous_revisit = True
             self.grid_counts[grid_x, grid_z] += 1
             old_x, old_z = grid_x, grid_z
 
-        self.revisits = self.grid_counts.sum()
+        self.revisits = int(self.grid_counts.sum())
 
         # Debug printing
-        # self.print_grid()
-        print(f"Total number of revisits: {self.revisits}")
+        # logging.debug_grid()
+        logging.debug(f"Total number of revisits: {self.revisits}")
 
         return self.revisits
 
@@ -189,11 +255,13 @@ class Scorecard:
         grid_z = (int)((self.space_size + z) / self.grid_dimension)
 
         if grid_x < 0 or grid_x > self.grid_size - 1:
-            print(f"Problem with x loc {x}.  got grid loc {grid_x}.  " +
-                  "dim {self.grid_dimension} grid size {self.grid_size}")
+            logging.warning(
+                f"Problem with x loc {x}.  got grid loc {grid_x}.  " +
+                "dim {self.grid_dimension} grid size {self.grid_size}")
         if grid_z < 0 or grid_z > self.grid_size - 1:
-            print(f"Problem with y loc {z}.  got grid loc {grid_z}.  " +
-                  "dim {self.grid_dimension} grid size {self.grid_size}")
+            logging.warning(
+                f"Problem with y loc {z}.  got grid loc {grid_z}.  " +
+                "dim {self.grid_dimension} grid size {self.grid_size}")
         return (grid_x, grid_z)
 
     def print_grid(self):
@@ -202,25 +270,101 @@ class Scorecard:
         pandas.set_option("display.max_rows", None,
                           "display.max_columns", None)
         pandas.options.display.width = 0
-        print(df)
+        logging.debug(df)
 
     def calc_open_unopenable(self):
         ''' Determine the number of times that the agent tried to
         open an unopenable object.  '''
         steps_list = self.history['steps']
 
-        num_unopenable = 0
+        self.open_unopenable = 0
 
         for step_num, single_step in enumerate(steps_list):
             action = single_step['action']
             return_status = single_step['output']['return_status']
             if action == 'MCSOpenObject':
-                if return_status not in ["SUCCESSFUL",
-                                         "IS_OPENED_COMPLETELY",
-                                         'OUT_OF_REACH']:
-                    num_unopenable += 1
+                if return_status in ["SUCCESSFUL",
+                                     "IS_OPENED_COMPLETELY",
+                                     'OUT_OF_REACH']:
+                    logging.debug("Successful opening of container")
+                else:
+                    logging.debug("Unsuccessful opening of container")
+                    self.open_unopenable += 1
 
-        return num_unopenable
+        return self.open_unopenable
+
+    def calc_relook(self):
+        ''' Determine the number of times that the agent relooked into a
+        container.  See readme for algorithm.'''
+
+        # Objects to keep track of times that the agent has looked
+        # in a container.
+        looked_at_containers = []
+        last_look_time = -10
+        still_looking = False
+        self.relooks = 0
+
+        steps_list = self.history['steps']
+        for step_num, single_step in enumerate(steps_list):
+
+            # If we had a relook recently, ignore
+            if abs(step_num - last_look_time) < STEPS_BETWEEN_RELOOKS:
+                logging.debug(f"Skip since too close to last look {step_num}")
+                continue
+
+            # If not looking down, then it doesn't count
+            tilt = single_step['output']['head_tilt']
+            if tilt < MIN_TILT_LOOK_DOWN:
+                logging.debug(f"Skip since head tilt to low {tilt}")
+                continue
+
+            action = single_step['action']
+            return_status = single_step['output']['return_status']
+            x, z = calc_viewpoint(single_step)
+
+            if action == 'MCSOpenObject':
+                logging.debug("tried to open container")
+                container = find_closest_container(x, z, self.scene)
+
+                # Most return_status should be treated like open did not happen
+                # happened, but what if too far away or obstructed?
+                if return_status == "SUCCESSFUL":
+                    logging.debug(" successful ")
+                    # Since agent just opened it, not be on the list
+                    looked_at_containers.append(container)
+                    last_look_time = step_num
+                    still_looking = True
+                    continue
+
+                elif return_status == "IS_OPENED_COMPLETELY":
+                    logging.debug(" already open ")
+                    # Since agent already looked at it, must be a relook
+                    last_look_time = step_num
+                    self.relooks += 1
+                    still_looking = True
+                    continue
+
+                else:
+                    logging.debug(f" something else {return_status} ")
+
+            # determine if this container has been looked at before
+            for container_look in looked_at_containers:
+                cx = container_look['x']
+                cz = container_look['z']
+
+                # Find distance between
+                dist = math.dist((x, z), (cx, cz))
+                logging.debug(f" looking at {x} {z}  closest: {cx} {cz} " +
+                              f"   dist {dist}  still looking {still_looking}")
+                if dist < DIST_BETWEEN_RELOOKS and not still_looking:
+                    logging.debug("increasing by 1 ")
+                    last_look_time = step_num
+                    self.relooks += 1
+                    continue
+                if dist > DIST_BETWEEN_RELOOKS:
+                    still_looking = False
+
+        return self.relooks
 
     def calc_repeat_failed(self):
         pass
@@ -229,9 +373,6 @@ class Scorecard:
         pass
 
     def calc_not_moving_toward_object(self):
-        pass
-
-    def calc_multiple_container_look(self):
         pass
 
     def set_revisit_grid_size(self, grid_size):
