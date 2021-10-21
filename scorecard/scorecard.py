@@ -87,6 +87,23 @@ def find_closest_container(x, z, scene):
     return locs[dists.index(min(dists))]
 
 
+def find_target_location(scene):
+    '''Get the x,z of the target, if any.  If it exists, return
+    True and the location;  otherwise, return False'''
+    try:
+        target_id = scene["goal"]["metadata"]["target"]["id"]
+        for possible_target in scene["objects"]:
+            test_id = possible_target["id"]
+            if test_id == target_id:
+                x, y, z = itemgetter('x', 'y', 'z')(possible_target['shows'][0]['position'])
+                return target_id, x, z
+        logging.warning(f"Target is supposed to be {target_id} but not found!")
+    except Exception as e:
+        logging.debug(f"No target in scene {scene['name']}")
+
+    return None, 0, 0
+
+
 class GridHistory:
     """A history of the times a grid square has been visited"""
 
@@ -366,21 +383,36 @@ class Scorecard:
 
         return self.relooks
 
-
     def calc_not_moving_toward_object(self):
         """Calculate number of times that the agent did not move toward the target"""
 
+        """The target needs to be visible for a number of frames in a row (4) before it counts as being 
+         sufficiently visible that the agent should have seen it. A timer is then started and the distance
+         to the target is saved.  After 20 steps, the agent should have had time to go around whatever 
+         is in the way and moved closer to the target. 
+         If it doesn't move towards the target, then we increment by one.
+         After a number of moves (50) that the agent did not move toward the target, 
+         we reset, so that the next time the target is visible it can be counted again."""
 
+        target_x, target_y, target_z = get_target_location(self.scene)
+
+        step_first_seen = -1
+        first_seen_dist = -1
         steps_list = self.history['steps']
         for step_num, single_step in enumerate(steps_list):
+            visible = single_step['target_visible']
+            if step_first_seen == -1 and visible:
+                logging.warning(f"-------------------------- First visible {step_num} --------------------")
+                step_first_seen = step_num
+                x, y, z = itemgetter('x', 'y', 'z')(single_step['output']['position'])
 
+                first_seen_dist = 1
 
     def calc_repeat_failed(self):
         pass
 
     def calc_attempt_impossible(self):
         pass
-
 
     def set_revisit_grid_size(self, grid_size):
         self.grid_size = grid_size
