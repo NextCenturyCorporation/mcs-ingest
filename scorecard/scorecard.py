@@ -28,6 +28,9 @@ DIST_BETWEEN_RELOOKS = 0.4
 # container
 MIN_TILT_LOOK_DOWN = 30
 
+SEEN_COUNT_MIN = 4
+STEPS_NOT_MOVED_TOWARD_LIMIT = 20
+
 
 def minAngDist(a, b):
     """Calculate the difference between two angles in degrees, keeping
@@ -391,22 +394,65 @@ class Scorecard:
          to the target is saved.  After 20 steps, the agent should have had time to go around whatever 
          is in the way and moved closer to the target. 
          If it doesn't move towards the target, then we increment by one.
-         After a number of moves (50) that the agent did not move toward the target, 
-         we reset, so that the next time the target is visible it can be counted again."""
+        """
 
-        target_x, target_y, target_z = get_target_location(self.scene)
+        target_id, target_x, target_z = find_target_location(self.scene)
+        if target_id is None:
+            self.not_moving_toward_object = 0
+            return self.not_moving_toward_object
 
-        step_first_seen = -1
-        first_seen_dist = -1
+        self.not_moving_toward_object += 1
+
+        seen_count = -1
+        steps_not_moving_towards = 0
+        min_dist = float('inf')
+
         steps_list = self.history['steps']
         for step_num, single_step in enumerate(steps_list):
-            visible = single_step['target_visible']
-            if step_first_seen == -1 and visible:
-                logging.warning(f"-------------------------- First visible {step_num} --------------------")
-                step_first_seen = step_num
-                x, y, z = itemgetter('x', 'y', 'z')(single_step['output']['position'])
 
-                first_seen_dist = 1
+            visible = single_step['target_visible']
+
+            # If this is the first time that we have seen the target, start the seen counter
+            if seen_count == -1 and visible:
+                logging.warning(f"--------------------- First visible {step_num} --------------------")
+                seen_count = 1
+                steps_not_moving_towards = 0
+                continue
+
+            # If the counter is less than the minimum needed and still visible, increase the count.
+            # If not visible, then reset
+            if seen_count < SEEN_COUNT_MIN:
+                if visible:
+                    x, y, z = itemgetter('x', 'y', 'z')(single_step['output']['position'])
+                    min_dist = math.dist((x, z), (target_x, target_z))
+                    seen_count += 1
+                    steps_not_moving_towards = 0
+                    logging.warning(f"-------- visible again {step_num} count: {seen_count}-----------")
+                else:
+                    seen_count = -1
+                    min_dist = -1
+                    logging.warning(f"-------- lost at {step_num} reset -----------")
+                continue
+
+            # At this point, the target has been seen enough times that we should be moving
+            # towards it.  Over time we should get closer and closer
+            x, y, z = itemgetter('x', 'y', 'z')(single_step['output']['position'])
+            current_dist = math.dist((x, z), (target_x, target_z))
+            if current_dist < min_dist:
+                min_dist = current_dist
+                steps_not_moving_towards = 0
+                continue
+
+            # We did not move closer, so increment the counter that keeps track of
+            # number of steps
+            steps_not_moving_towards += 1
+
+            # If we have gone enough moves and haven't gotten closer, then
+            # increment overall counter and reset
+            if steps_not_moving_towards > STEPS_NOT_MOVED_TOWARD_LIMIT:
+                self.not_moving_toward_object += 1
+                seen_count = -1
+                steps_not_moving_towards = 0
 
     def calc_repeat_failed(self):
         pass
