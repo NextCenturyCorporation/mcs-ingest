@@ -1,12 +1,12 @@
 from pymongo import MongoClient
-from scripts._0_4_7_update_history_indexes import create_new_cat_eval2_and_indexes
+from scripts._0_4_6_2_update_history_indexes import create_new_cat_eval2_and_indexes
 
 # We might want to move mongo user/pass to new file
 VERSION_COLLECTION = "mcs_version"
 
 # Change this version if running a new deploy script
 # Make sure the first two numbers match the current MCS API Release
-db_version = "0.4.7"
+db_version = "0.4.6.2"
 
 
 def check_version(mongoDB):
