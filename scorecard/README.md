@@ -83,12 +83,18 @@ Algorithm:
   * The target needs to be visible for a number of frames in a row (4) before it counts 
   as being sufficiently visible that the agent should have seen it.  A timer is then
   started and the distance to the target is saved   
-  * After 20 steps, the agent should have had time to go around whatever is in the way
+  * After 38 steps, the agent should have had time to go around whatever is in the way
   and moved closer to the target.  
-  * If it doesn't move towards the target, then we increment by one.
-  * After a number of moves (50) that the agent did not move toward the target,
-  we reset, so that the next time the target is visible it can be counted 
-  again.
+  * If it doesn't move towards the target, then we increment by one and reset
+  * If it does move towards the target, it needs to continue moving towards 
+  the target (within the next 38 steps)
+  
+The number 38 is to give the agent sufficient time to go around an obstacle.  It 
+takes 9 steps to turn to the left or right, maybe 10 steps to the side 
+(during which distance will increase), 9 steps to turn back towards the target, 
+and then some number of steps to make up for the fact that the agent was 
+moving away while going around the obstacle (10).  Based on some testing, 38 is about 
+right.  
   
 
 ####
