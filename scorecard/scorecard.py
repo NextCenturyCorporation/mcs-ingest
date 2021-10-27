@@ -171,8 +171,8 @@ class Scorecard:
         self.calc_attempt_impossible()
         self.calc_open_unopenable()
         self.calc_relook()
-        self.calc_not_moving_toward_object()
         self.calc_revisiting()
+        self.calc_not_moving_toward_object()
 
         scorecard_vals = {}
         scorecard_vals["repeat_failed"] = self.repeat_failed
@@ -193,6 +193,9 @@ class Scorecard:
 
     def get_relooks(self):
         return self.relooks
+
+    def get_not_moving_towards(self):
+        return self.not_moving_toward_object
 
     def calc_revisiting(self):
 
@@ -395,13 +398,12 @@ class Scorecard:
          is in the way and moved closer to the target. 
          If it doesn't move towards the target, then we increment by one.
         """
+        self.not_moving_toward_object = 0
 
         target_id, target_x, target_z = find_target_location(self.scene)
+        logging.debug(f"Target location:  {target_x}  {target_z}")
         if target_id is None:
-            self.not_moving_toward_object = 0
             return self.not_moving_toward_object
-
-        self.not_moving_toward_object += 1
 
         seen_count = -1
         steps_not_moving_towards = 0
@@ -411,10 +413,14 @@ class Scorecard:
         for step_num, single_step in enumerate(steps_list):
 
             visible = single_step['target_visible']
+            x, y, z = itemgetter('x', 'y', 'z')(single_step['output']['position'])
+            current_dist = math.dist((x, z), (target_x, target_z))
+            logging.debug(f"xyz:   {x} {y} {z}")
+
 
             # If this is the first time that we have seen the target, start the seen counter
             if seen_count == -1 and visible:
-                logging.warning(f"--------------------- First visible {step_num} --------------------")
+                logging.debug(f"-- First visible {step_num} --")
                 seen_count = 1
                 steps_not_moving_towards = 0
                 continue
@@ -423,34 +429,34 @@ class Scorecard:
             # If not visible, then reset
             if seen_count < SEEN_COUNT_MIN:
                 if visible:
-                    x, y, z = itemgetter('x', 'y', 'z')(single_step['output']['position'])
-                    min_dist = math.dist((x, z), (target_x, target_z))
+                    min_dist = current_dist
                     seen_count += 1
                     steps_not_moving_towards = 0
-                    logging.warning(f"-------- visible again {step_num} count: {seen_count}-----------")
+                    logging.debug(f"-- visible again {step_num} count: {seen_count}  dist: {min_dist} --")
                 else:
                     seen_count = -1
                     min_dist = -1
-                    logging.warning(f"-------- lost at {step_num} reset -----------")
+                    logging.debug(f"-- not seen at {step_num} reset --")
                 continue
 
             # At this point, the target has been seen enough times that we should be moving
             # towards it.  Over time we should get closer and closer
-            x, y, z = itemgetter('x', 'y', 'z')(single_step['output']['position'])
-            current_dist = math.dist((x, z), (target_x, target_z))
             if current_dist < min_dist:
                 min_dist = current_dist
                 steps_not_moving_towards = 0
+                logging.debug(f"-- moved towards at {step_num} current_dist: {current_dist} --")
                 continue
 
             # We did not move closer, so increment the counter that keeps track of
             # number of steps
             steps_not_moving_towards += 1
+            logging.debug(f"-- did not move towards {step_num} current_dist: {current_dist}  count: {steps_not_moving_towards} --")
 
             # If we have gone enough moves and haven't gotten closer, then
             # increment overall counter and reset
             if steps_not_moving_towards > STEPS_NOT_MOVED_TOWARD_LIMIT:
                 self.not_moving_toward_object += 1
+                logging.debug(f"-- exceeded limit {steps_not_moving_towards} count: {self.not_moving_toward_object } --")
                 seen_count = -1
                 steps_not_moving_towards = 0
 

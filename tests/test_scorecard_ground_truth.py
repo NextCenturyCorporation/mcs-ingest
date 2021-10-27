@@ -50,15 +50,18 @@ def find_fullpath_latest(basefilename: str, dir_name: str) -> os.path:
 
 def compare_with_ground_truth(
         scorecard: Scorecard, gt_revisit: int,
-        gt_unopenable: int, gt_relook: int):
+        gt_unopenable: int, gt_relook: int,
+        gt_not_moving_towards: int):
     ''' compare to ground truth (num_revisit)'''
     num_revisit_calc = scorecard.get_revisits()
     num_unopenable_calc = scorecard.get_unopenable()
     num_relook_calc = scorecard.get_relooks()
+    num_not_moving_towards = scorecard.get_not_moving_towards()
 
     logging.info(f"     revisit: {gt_revisit} {num_revisit_calc}" +
                  f"   unopenable: {gt_unopenable} {num_unopenable_calc}"
-                 f"   relook: {gt_relook}  {num_relook_calc}")
+                 f"   relook: {gt_relook}  {num_relook_calc}"
+                 f"  nottoward: {gt_not_moving_towards} {num_not_moving_towards}")
 
     passed = 0
     failed = 0
@@ -78,6 +81,11 @@ def compare_with_ground_truth(
     else:
         failed += 1
 
+    if gt_not_moving_towards == scorecard.get_not_moving_towards():
+        passed += 1
+    else:
+        failed += 1
+
     return passed, failed
 
 
@@ -92,6 +100,7 @@ def process_line(line: str):
     gt_revisits = int(vals[2].strip())
     gt_unopenable = int(vals[3].strip())
     gt_relook = int(vals[4].strip())
+    gt_not_moving_towards = int(vals[5].strip())
 
     scene_filepath = find_fullpath_latest(scenefile, SCENE_DIR)
     if not scene_filepath:
@@ -100,15 +109,15 @@ def process_line(line: str):
         return 0, 0, 1
 
     history_filepath = find_fullpath_latest(basefilename, HISTORY_DIR)
-    logging.info(f"Reporting on {history_filepath}")
     if not history_filepath:
         logging.warning(f"Unable to find {HISTORY_DIR} and " +
-                        f"{basefilename} found: {history_filepath}")
+                        f"{basefilename}")
         return 0, 0, 1
+    logging.info(f"Reporting on {history_filepath}")
 
     scorecard = get_scorecard(history_filepath, scene_filepath)
     p, f = compare_with_ground_truth(
-        scorecard, gt_revisits, gt_unopenable, gt_relook)
+        scorecard, gt_revisits, gt_unopenable, gt_relook, gt_not_moving_towards)
     logging.info(f"     results  pass: {p}   fail: {f}")
     return p, f, 0
 

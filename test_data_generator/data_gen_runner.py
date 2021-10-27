@@ -48,7 +48,7 @@ def replace_short_hand(code):
 
 def interactive_cb(step_metadata, runner_script):
     '''  Rather than using a string to represent
-    movemennts, get interactive input'''
+    movements, get interactive input'''
     x = input()
     return key_to_movement(x)
 
@@ -68,6 +68,8 @@ class DataGenRunnerScript():
                  scene_filepath, name, action_callback):
         self.controller = mcs.create_controller(
             config_file_or_dict={'metadata': 'oracle'},
+            # DEBUGGING:  Uncommenting this produces directories and videos
+            # config_file_or_dict={'metadata': 'oracle', 'video_enabled': 'true'},
             unity_app_file_path=mcs_unity_filepath
         )
         if not self.controller:
