@@ -69,7 +69,8 @@ class DataGenRunnerScript():
         self.controller = mcs.create_controller(
             config_file_or_dict={'metadata': 'oracle'},
             # DEBUGGING:  Uncommenting this produces directories and videos
-            # config_file_or_dict={'metadata': 'oracle', 'video_enabled': 'true'},
+            # config_file_or_dict={'metadata': 'oracle',
+            # 'video_enabled': 'true'},
             unity_app_file_path=mcs_unity_filepath
         )
         if not self.controller:

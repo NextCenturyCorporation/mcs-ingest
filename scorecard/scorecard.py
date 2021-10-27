@@ -98,10 +98,11 @@ def find_target_location(scene):
         for possible_target in scene["objects"]:
             test_id = possible_target["id"]
             if test_id == target_id:
-                x, y, z = itemgetter('x', 'y', 'z')(possible_target['shows'][0]['position'])
+                pos = possible_target['shows'][0]['position']
+                x, y, z = itemgetter('x', 'y', 'z')(pos)
                 return target_id, x, z
         logging.warning(f"Target is supposed to be {target_id} but not found!")
-    except Exception as e:
+    except Exception:
         logging.debug(f"No target in scene {scene['name']}")
 
     return None, 0, 0
@@ -390,14 +391,9 @@ class Scorecard:
         return self.relooks
 
     def calc_not_moving_toward_object(self):
-        """Calculate number of times that the agent did not move toward the target"""
+        """Calculate number of times that the agent
+        did not move toward the target"""
 
-        """The target needs to be visible for a number of frames in a row (4) before it counts as being 
-         sufficiently visible that the agent should have seen it. A timer is then started and the distance
-         to the target is saved.  After 20 steps, the agent should have had time to go around whatever 
-         is in the way and moved closer to the target. 
-         If it doesn't move towards the target, then we increment by one.
-        """
         self.not_moving_toward_object = 0
 
         target_id, target_x, target_z = find_target_location(self.scene)
@@ -413,50 +409,56 @@ class Scorecard:
         for step_num, single_step in enumerate(steps_list):
 
             visible = single_step['target_visible']
-            x, y, z = itemgetter('x', 'y', 'z')(single_step['output']['position'])
+            pos = single_step['output']['position']
+            x, y, z = itemgetter('x', 'y', 'z')(pos)
             current_dist = math.dist((x, z), (target_x, target_z))
             logging.debug(f"xyz:   {x} {y} {z}")
 
-
-            # If this is the first time that we have seen the target, start the seen counter
+            # If first time that we have seen the target, start counter
             if seen_count == -1 and visible:
                 logging.debug(f"-- First visible {step_num} --")
                 seen_count = 1
                 steps_not_moving_towards = 0
                 continue
 
-            # If the counter is less than the minimum needed and still visible, increase the count.
-            # If not visible, then reset
+            # If the counter is less than the minimum needed and still visible,
+            # increase the count.   If not visible, reset counting
             if seen_count < SEEN_COUNT_MIN:
                 if visible:
                     min_dist = current_dist
                     seen_count += 1
                     steps_not_moving_towards = 0
-                    logging.debug(f"-- visible again {step_num} count: {seen_count}  dist: {min_dist} --")
+                    logging.debug(f"-- visible again {step_num} " +
+                                  f"count: {seen_count}  " +
+                                  f"dist: {min_dist} --")
                 else:
                     seen_count = -1
                     min_dist = -1
                     logging.debug(f"-- not seen at {step_num} reset --")
                 continue
 
-            # At this point, the target has been seen enough times that we should be moving
-            # towards it.  Over time we should get closer and closer
+            # At this point, target has been seen enough times that we should
+            # be moving towards it.  Over time we should get closer and closer
             if current_dist < min_dist:
                 min_dist = current_dist
                 steps_not_moving_towards = 0
-                logging.debug(f"-- moved towards at {step_num} current_dist: {current_dist} --")
+                logging.debug(f"-- moved towards at {step_num} " +
+                              f"current_dist: {current_dist} --")
                 continue
 
-            # We did not move closer, so increment the counter that keeps track of
-            # number of steps
+            # We did not move closer, so increment the counter that keeps
+            # track of number of steps
             steps_not_moving_towards += 1
-            logging.debug(f"-- did not move towards {step_num} current_dist: {current_dist}  count: {steps_not_moving_towards} --")
+            logging.debug(f"-- did not move towards {step_num} " +
+                          f"current_dist: {current_dist}  " +
+                          f"count: {steps_not_moving_towards} --")
 
             # If we have gone enough moves and haven't gotten closer, then
             # increment overall counter and reset
             if steps_not_moving_towards > STEPS_NOT_MOVED_TOWARD_LIMIT:
                 self.not_moving_toward_object += 1
-                logging.debug(f"-- exceeded limit {steps_not_moving_towards} count: {self.not_moving_toward_object } --")
+                logging.debug(f"-- hit limit {steps_not_moving_towards} " +
+                              f"count: {self.not_moving_toward_object} --")
                 seen_count = -1
                 steps_not_moving_towards = 0
 

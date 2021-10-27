@@ -4,7 +4,9 @@ import unittest
 import numpy as np
 
 import mcs_scene_ingest
-from scorecard.scorecard import Scorecard, find_closest_container, find_target_location
+from scorecard.scorecard import Scorecard
+from scorecard.scorecard import find_closest_container
+from scorecard.scorecard import find_target_location
 from scorecard.scorecard import get_lookpoint
 
 TEST_SCENE_FILE_NAME = "occluders_0001_17_I1_debug.json"
@@ -107,7 +109,8 @@ class TestMcsScorecard(unittest.TestCase):
         scene_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, TEST_SCENE_NO_TARGET)
         target_id, x, z = find_target_location(scene_file)
-        self.assertFalse(target_id, f"Target should not exist, but it does {x} {z}")
+        self.assertFalse(target_id, "Target should not exist, " +
+                         f"but it does {x} {z}")
 
     def test_find_target_location_with_target(self):
         '''Test trying to find a target, when there is not one'''

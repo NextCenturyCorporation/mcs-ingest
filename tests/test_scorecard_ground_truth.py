@@ -56,12 +56,12 @@ def compare_with_ground_truth(
     num_revisit_calc = scorecard.get_revisits()
     num_unopenable_calc = scorecard.get_unopenable()
     num_relook_calc = scorecard.get_relooks()
-    num_not_moving_towards = scorecard.get_not_moving_towards()
+    num_not_moving_twd = scorecard.get_not_moving_towards()
 
     logging.info(f"     revisit: {gt_revisit} {num_revisit_calc}" +
                  f"   unopenable: {gt_unopenable} {num_unopenable_calc}"
                  f"   relook: {gt_relook}  {num_relook_calc}"
-                 f"  nottoward: {gt_not_moving_towards} {num_not_moving_towards}")
+                 f"  nottoward: {gt_not_moving_towards} {num_not_moving_twd}")
 
     passed = 0
     failed = 0
@@ -117,7 +117,8 @@ def process_line(line: str):
 
     scorecard = get_scorecard(history_filepath, scene_filepath)
     p, f = compare_with_ground_truth(
-        scorecard, gt_revisits, gt_unopenable, gt_relook, gt_not_moving_towards)
+        scorecard, gt_revisits, gt_unopenable,
+        gt_relook, gt_not_moving_towards)
     logging.info(f"     results  pass: {p}   fail: {f}")
     return p, f, 0
 
