@@ -16,7 +16,7 @@ def add_has_novelty_field(mongoDB):
     history_files = history_collection.find({"eval": "Evaluation 3 Results"})
 
     for history in history_files:
-        scene = scenes_collection.find_one({"name": history["name"]})
+        scene = scenes_collection.find_one({"name": history["name"], "eval": "Evaluation 3 Scenes"})
         history["hasNovelty"] = scene["goal"]["sceneInfo"]["untrained"]["any"]
         history_collection.replace_one({"_id": history["_id"]}, history)
 
