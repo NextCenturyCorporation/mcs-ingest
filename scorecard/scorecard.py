@@ -28,8 +28,16 @@ DIST_BETWEEN_RELOOKS = 0.4
 # container
 MIN_TILT_LOOK_DOWN = 30
 
+# Min number of times in a row that the target has to be visible for us
+# to count it as seen by the agent, because the target can be 'visible'
+# but only in the corner for a single frame.
 SEEN_COUNT_MIN = 4
-STEPS_NOT_MOVED_TOWARD_LIMIT = 20
+
+# How many steps required before the agent has to have moved toward the
+# target.  Why 38?  If there is an object between the agent and the target
+# this gives it time to turn (9 steps), move (about 10 steps), turn (9),
+# and move towards it (10).  That's 38 steps.
+STEPS_NOT_MOVED_TOWARD_LIMIT = 38
 
 
 def minAngDist(a, b):
