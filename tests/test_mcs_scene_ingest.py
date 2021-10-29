@@ -86,7 +86,7 @@ class TestMcsSceneIngest(unittest.TestCase):
             "eval_4", "cora", TEST_FOLDER, ".json", client, "mcs")
         logging.info(f"{history_item}")
 
-    def test_reorientation_incorrect_corners(self):
+    def test_reorientation_calculate_corners(self):
         test_scene = {
             "goal": {
                 "sceneInfo": {
@@ -96,22 +96,28 @@ class TestMcsSceneIngest(unittest.TestCase):
             }
         }
 
-        incorrect_corners = (
-            mcs_scene_ingest.reorientation_incorrect_corners(test_scene))
+        (incorrect_corners, correct_corners) = (
+            mcs_scene_ingest.reorientation_calculate_corners(test_scene))
         self.assertEqual(len(incorrect_corners), 3)
+        self.assertEqual(len(correct_corners), 1)
         self.assertTrue(
             mcs_scene_ingest.FRONT_RIGHT_CORNER not in incorrect_corners)
+        self.assertTrue(
+            mcs_scene_ingest.FRONT_RIGHT_CORNER in correct_corners)
 
         test_scene["goal"]["sceneInfo"]["ambiguous"] = True
         test_scene["goal"]["sceneInfo"]["corner"] = "front_left"
 
-        incorrect_corners = (
-            mcs_scene_ingest.reorientation_incorrect_corners(test_scene))
+        (incorrect_corners, correct_corners) = (
+            mcs_scene_ingest.reorientation_calculate_corners(test_scene))
         self.assertEqual(len(incorrect_corners), 2)
+        self.assertEqual(len(correct_corners), 2)
         self.assertTrue(
             mcs_scene_ingest.FRONT_LEFT_CORNER not in incorrect_corners)
         self.assertTrue(
             mcs_scene_ingest.BACK_RIGHT_CORNER not in incorrect_corners)
+        self.assertTrue(
+            mcs_scene_ingest.BACK_RIGHT_CORNER in correct_corners)
 
     def test_check_agent_to_corner_position(self):
         test_scene = {
@@ -123,17 +129,24 @@ class TestMcsSceneIngest(unittest.TestCase):
             }
         }
 
+        corner_order = []
         position = {"x": -5.5, "z": -3.9}
-        incorrect_corners = (
-            mcs_scene_ingest.reorientation_incorrect_corners(test_scene))
+        (incorrect_corners, correct_corners) = (
+            mcs_scene_ingest.reorientation_calculate_corners(test_scene))
 
-        too_close_to_corner = mcs_scene_ingest.check_agent_to_corner_position(
-            position, incorrect_corners)
+        (
+            too_close_to_corner,
+            corner_order
+        ) = mcs_scene_ingest.check_agent_to_corner_position(
+            position, incorrect_corners, correct_corners, corner_order)
         self.assertTrue(too_close_to_corner)
 
         position = {"x": 0, "z": 0}
-        too_close_to_corner = mcs_scene_ingest.check_agent_to_corner_position(
-            position, incorrect_corners)
+        (
+            too_close_to_corner,
+            corner_order
+        ) = mcs_scene_ingest.check_agent_to_corner_position(
+            position, incorrect_corners, correct_corners, corner_order)
         self.assertFalse(too_close_to_corner)
 
 

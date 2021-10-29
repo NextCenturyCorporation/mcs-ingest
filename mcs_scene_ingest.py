@@ -237,15 +237,32 @@ def determine_team_mapping_name(info_team: str) -> str:
 
 def check_agent_to_corner_position(
         position: dict,
-        incorrect_corners: List[dict]) -> bool:
+        incorrect_corners: List[dict],
+        correct_corners: List[dict],
+        corner_visit_order: List[dict]) -> bool:
 
     for corner in incorrect_corners:
         if math.dist(
                 [position["x"], position["z"]],
                 [corner["x"], corner["z"]]) < DISTANCE_FROM_CORNER:
-            return True
+            corner_visit_order.append({
+                "name": corner["name"],
+                "type": "incorrect"
+            })
+            return (True, corner_visit_order)
 
-    return False
+    for corner in correct_corners:
+        if math.dist(
+                [position["x"], position["z"]],
+                [corner["x"], corner["z"]]) < DISTANCE_FROM_CORNER:
+            corner_type = "correct" if (
+                corner["name"] == correct_corners[0]["name"]) else "neutral"
+            corner_visit_order.append({
+                "name": corner["name"],
+                "type": corner_type
+            })
+
+    return (False, corner_visit_order)
 
 
 def build_new_step_obj(
@@ -254,6 +271,8 @@ def build_new_step_obj(
         interactive_goal_achieved: int,
         number_steps: int,
         incorrect_corners: List[dict],
+        correct_corners: List[dict],
+        corner_visit_order: List[dict],
         incorrect_corner_visited: bool,
         reorientation_scoring_override: bool) -> tuple:
     new_step = {}
@@ -283,8 +302,14 @@ def build_new_step_obj(
                 reorientation_scoring_override and
                 number_steps > STEP_TO_CHECK_CORNER and
                 not incorrect_corner_visited):
-            incorrect_corner_visited = check_agent_to_corner_position(
-                step["output"]["position"], incorrect_corners)
+            (
+                incorrect_corner_visited,
+                corner_visit_order
+            ) = check_agent_to_corner_position(
+                step["output"]["position"],
+                incorrect_corners,
+                correct_corners,
+                corner_visit_order)
 
         output["return_status"] = step["output"]["return_status"]
         output["reward"] = step["output"]["reward"]
@@ -304,7 +329,8 @@ def build_new_step_obj(
         new_step,
         interactive_reward,
         interactive_goal_achieved,
-        incorrect_corner_visited)
+        incorrect_corner_visited,
+        corner_visit_order)
 
 
 def add_weighted_cube_scoring(history_item: dict, scene: dict) -> tuple:
@@ -344,14 +370,21 @@ def process_score(
         history_item: dict,
         scene: dict,
         interactive_goal_achieved: int,
-        interactive_reward: int) -> dict:
+        interactive_reward: int,
+        corner_visit_order: List[dict],
+        reorientation_scoring_override: bool) -> dict:
     # Removed Adjusted Confidence, should be OBE
     if (history_item["category"] == "interactive"):
         if "score" not in history_item:
             history_item["score"] = {}
             history_item["score"]["classification"] = "end"
             history_item["score"]["confidence"] = 0
-        history_item["score"]["score"] = interactive_goal_achieved
+        history_item["score"]["goal_achieved"] = interactive_goal_achieved
+        if reorientation_scoring_override:
+            history_item["score"]["score"] = 1 if (
+                corner_visit_order[0]["type"] != "incorrect") else 0
+        else:
+            history_item["score"]["score"] = interactive_goal_achieved
         history_item["score"]["reward"] = interactive_reward
         history_item["score"]["ground_truth"] = 1
     else:
@@ -391,7 +424,7 @@ def process_score(
     return history_item["score"]
 
 
-def reorientation_incorrect_corners(scene: dict) -> List[dict]:
+def reorientation_calculate_corners(scene: dict) -> List[dict]:
     possible_corners = [
         FRONT_RIGHT_CORNER,
         FRONT_LEFT_CORNER,
@@ -408,8 +441,10 @@ def reorientation_incorrect_corners(scene: dict) -> List[dict]:
         correct_corners.append(
             ambigous_corner_part1 + "_" + ambigous_corner_part2)
 
-    return [corner for corner in possible_corners if (
-        not corner["name"] in correct_corners)]
+    return ([corner for corner in possible_corners if (
+        not corner["name"] in correct_corners)],
+        [corner for corner in possible_corners if (
+            corner["name"] in correct_corners)])
 
 
 def build_history_item(
@@ -459,9 +494,13 @@ def build_history_item(
         scene["goal"]["sceneInfo"]["tertiaryType"] == "reorientation")
 
     # set all corners incorrect at beginning of scene
-    incorrect_corners = reorientation_incorrect_corners(scene) if (
-        reorientation_scoring_override) else []
+    (
+        incorrect_corners,
+        correct_corners
+    ) = reorientation_calculate_corners(scene) if (
+        reorientation_scoring_override) else ([], [])
     incorrect_corner_visited = False
+    corner_visit_order = []
 
     # Loop through and process steps
     steps = []
@@ -475,19 +514,23 @@ def build_history_item(
             new_step,
             interactive_reward,
             interactive_goal_achieved,
-            incorrect_corner_visited
+            incorrect_corner_visited,
+            corner_visit_order
         ) = build_new_step_obj(
             step,
             interactive_reward,
             interactive_goal_achieved,
             number_steps,
             incorrect_corners,
+            correct_corners,
+            corner_visit_order,
             incorrect_corner_visited,
             reorientation_scoring_override)
         steps.append(new_step)
 
     history_item["steps"] = steps
     history_item["step_counter"] = number_steps
+    history_item["corner_visit_order"] = corner_visit_order
 
     if scene:
         # Add some basic scene information into history object to make
@@ -517,7 +560,9 @@ def build_history_item(
             history_item,
             scene,
             interactive_goal_achieved,
-            interactive_reward)
+            interactive_reward,
+            corner_visit_order,
+            reorientation_scoring_override)
         history_item["score"]["scorecard"] = calc_scorecard(history, scene)
 
         return history_item
