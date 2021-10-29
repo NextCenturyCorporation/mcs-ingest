@@ -3,8 +3,10 @@ import io
 import json
 import logging
 import os
+import math
 import sys
 from collections.abc import MutableMapping
+from typing import List
 
 from pymongo import MongoClient
 
@@ -62,6 +64,15 @@ SHAPE_CONSTANCY_8X_CUBE = ["A2", "B2", "C2", "D2"]
 
 MAX_XY_VIOLATIONS = 50
 SCENE_DEBUG_EXTENSION = "_debug.json"
+
+# Temporary Reorientation Scoring Variables
+# Todo:  Move scoring to MCS api
+FRONT_RIGHT_CORNER = {"x": 6, "z": 4, "name": "front_right"}
+FRONT_LEFT_CORNER = {"x": -6, "z": 4, "name": "front_left"}
+BACK_RIGHT_CORNER = {"x": 6, "z": -4, "name": "back_right"}
+BACK_LEFT_CORNER = {"x": -6, "z": -4, "name": "back_left"}
+DISTANCE_FROM_CORNER = 1.5
+STEP_TO_CHECK_CORNER = 550
 
 
 def load_json_file(folder: str, file_name: str) -> dict:
@@ -224,11 +235,27 @@ def determine_team_mapping_name(info_team: str) -> str:
     return name_str
 
 
+def check_agent_to_corner_position(
+        position: dict,
+        incorrect_corners: List[dict]) -> bool:
+
+    for corner in incorrect_corners:
+        if math.dist(
+                [position["x"], position["z"]],
+                [corner["x"], corner["z"]]) < DISTANCE_FROM_CORNER:
+            return True
+
+    return False
+
+
 def build_new_step_obj(
         step: dict,
         interactive_reward: int,
         interactive_goal_achieved: int,
-        number_steps: int) -> tuple:
+        number_steps: int,
+        incorrect_corners: List[dict],
+        incorrect_corner_visited: bool,
+        reorientation_scoring_override: bool) -> tuple:
     new_step = {}
     new_step["stepNumber"] = step["step"]
     new_step["action"] = step["action"]
@@ -252,6 +279,13 @@ def build_new_step_obj(
 
     output = {}
     if ("output" in step):
+        if (
+                reorientation_scoring_override and
+                number_steps > STEP_TO_CHECK_CORNER and
+                not incorrect_corner_visited):
+            incorrect_corner_visited = check_agent_to_corner_position(
+                step["output"]["position"], incorrect_corners)
+
         output["return_status"] = step["output"]["return_status"]
         output["reward"] = step["output"]["reward"]
         # TODO: Added if check because key error in 3.75 and earlier
@@ -259,11 +293,18 @@ def build_new_step_obj(
             output["physics_frames_per_second"] = step[
                 "output"]["physics_frames_per_second"]
         interactive_reward = output["reward"]
-        if (output["reward"] >= (0 - ((number_steps - 1) * 0.001) + 1)):
+        if (
+                output["reward"] >= (
+                    0 - ((number_steps - 1) * 0.001) + 1) and
+                not incorrect_corner_visited):
             interactive_goal_achieved = 1
     new_step["output"] = output
 
-    return (new_step, interactive_reward, interactive_goal_achieved)
+    return (
+        new_step,
+        interactive_reward,
+        interactive_goal_achieved,
+        incorrect_corner_visited)
 
 
 def add_weighted_cube_scoring(history_item: dict, scene: dict) -> tuple:
@@ -350,6 +391,27 @@ def process_score(
     return history_item["score"]
 
 
+def reorientation_incorrect_corners(scene: dict) -> List[dict]:
+    possible_corners = [
+        FRONT_RIGHT_CORNER,
+        FRONT_LEFT_CORNER,
+        BACK_RIGHT_CORNER,
+        BACK_LEFT_CORNER]
+    correct_corners = [scene["goal"]["sceneInfo"]["corner"]]
+
+    if scene["goal"]["sceneInfo"]["ambiguous"]:
+        correct_corner_parts = correct_corners[0].split("_")
+        ambigous_corner_part1 = "front" if (
+            correct_corner_parts[0] == "back") else "back"
+        ambigous_corner_part2 = "left" if (
+            correct_corner_parts[1] == "right") else "right"
+        correct_corners.append(
+            ambigous_corner_part1 + "_" + ambigous_corner_part2)
+
+    return [corner for corner in possible_corners if (
+        not corner["name"] in correct_corners)]
+
+
 def build_history_item(
         history_file: str,
         folder: str,
@@ -378,28 +440,6 @@ def build_history_item(
     history_item["fileTimestamp"] = history["info"]["timestamp"]
     history_item["score"] = history["score"]
 
-    # Loop through and process steps
-    steps = []
-    number_steps = 0
-    interactive_goal_achieved = 0
-    interactive_reward = 0
-
-    for step in history["steps"]:
-        number_steps += 1
-        (
-            new_step,
-            interactive_reward,
-            interactive_goal_achieved
-        ) = build_new_step_obj(
-            step,
-            interactive_reward,
-            interactive_goal_achieved,
-            number_steps)
-        steps.append(new_step)
-
-    history_item["steps"] = steps
-    history_item["step_counter"] = number_steps
-
     # Load Scene from Database or File
     scene = None
     if scene_folder is None:
@@ -412,6 +452,42 @@ def build_history_item(
     else:
         scene = load_json_file(
             scene_folder, history_item["name"] + SCENE_DEBUG_EXTENSION)
+
+    # This variable will override any rewards for a reorientation task
+    #    should the agent visit a corner it should not be at
+    reorientation_scoring_override = (
+        scene["goal"]["sceneInfo"]["tertiaryType"] == "reorientation")
+
+    # set all corners incorrect at beginning of scene
+    incorrect_corners = reorientation_incorrect_corners(scene) if (
+        reorientation_scoring_override) else []
+    incorrect_corner_visited = False
+
+    # Loop through and process steps
+    steps = []
+    number_steps = 0
+    interactive_goal_achieved = 0
+    interactive_reward = 0
+
+    for step in history["steps"]:
+        number_steps += 1
+        (
+            new_step,
+            interactive_reward,
+            interactive_goal_achieved,
+            incorrect_corner_visited
+        ) = build_new_step_obj(
+            step,
+            interactive_reward,
+            interactive_goal_achieved,
+            number_steps,
+            incorrect_corners,
+            incorrect_corner_visited,
+            reorientation_scoring_override)
+        steps.append(new_step)
+
+    history_item["steps"] = steps
+    history_item["step_counter"] = number_steps
 
     if scene:
         # Add some basic scene information into history object to make
@@ -426,7 +502,8 @@ def build_history_item(
         history_item["scene_goal_id"] = scene["goal"]["sceneInfo"]["id"][0]
         history_item["test_type"] = scene["goal"]["sceneInfo"]["secondaryType"]
         history_item["category"] = scene["goal"]["sceneInfo"]["primaryType"]
-        history_item["hasNovelty"] = scene["goal"]["sceneInfo"]["untrained"]["any"]
+        history_item["hasNovelty"] = scene["goal"][
+            "sceneInfo"]["untrained"]["any"]
 
         if scene["goal"]["sceneInfo"]["secondaryType"] == "retrieval":
             history_item["category_type"] = \
