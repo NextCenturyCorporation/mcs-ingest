@@ -130,24 +130,23 @@ class TestMcsSceneIngest(unittest.TestCase):
         }
 
         corner_order = []
-        position = {"x": -5.5, "z": -3.9}
+        position = {"x": 5.5, "z": 3.9}
         (incorrect_corners, correct_corners) = (
             mcs_scene_ingest.reorientation_calculate_corners(test_scene))
 
-        (
-            too_close_to_corner,
-            corner_order
-        ) = mcs_scene_ingest.check_agent_to_corner_position(
+        corner_order = mcs_scene_ingest.check_agent_to_corner_position(
             position, incorrect_corners, correct_corners, corner_order)
-        self.assertTrue(too_close_to_corner)
+        reorientation_score = (
+            mcs_scene_ingest.calculate_reorientation_score(corner_order, 0))
+        self.assertEqual(reorientation_score, 1)
 
+        corner_order = []
         position = {"x": 0, "z": 0}
-        (
-            too_close_to_corner,
-            corner_order
-        ) = mcs_scene_ingest.check_agent_to_corner_position(
+        corner_order = mcs_scene_ingest.check_agent_to_corner_position(
             position, incorrect_corners, correct_corners, corner_order)
-        self.assertFalse(too_close_to_corner)
+        reorientation_score = (
+            mcs_scene_ingest.calculate_reorientation_score(corner_order, 0))
+        self.assertEqual(reorientation_score, 0)
 
 
 if __name__ == '__main__':

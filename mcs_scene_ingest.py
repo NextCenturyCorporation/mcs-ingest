@@ -73,6 +73,11 @@ BACK_RIGHT_CORNER = {"x": 6, "z": -4, "name": "back_right"}
 BACK_LEFT_CORNER = {"x": -6, "z": -4, "name": "back_left"}
 DISTANCE_FROM_CORNER = 1.5
 STEP_TO_CHECK_CORNER = 550
+POSSIBLE_CORNERS = [
+    FRONT_RIGHT_CORNER,
+    FRONT_LEFT_CORNER,
+    BACK_RIGHT_CORNER,
+    BACK_LEFT_CORNER]
 
 
 def load_json_file(folder: str, file_name: str) -> dict:
@@ -239,30 +244,41 @@ def check_agent_to_corner_position(
         position: dict,
         incorrect_corners: List[dict],
         correct_corners: List[dict],
-        corner_visit_order: List[dict]) -> bool:
+        corner_visit_order: List[dict]) -> List[dict]:
 
-    for corner in incorrect_corners:
+    corner_visited = None
+
+    # Check if agent is close to any corner
+    for corner in POSSIBLE_CORNERS:
         if math.dist(
                 [position["x"], position["z"]],
                 [corner["x"], corner["z"]]) < DISTANCE_FROM_CORNER:
-            corner_visit_order.append({
-                "name": corner["name"],
-                "type": "incorrect"
-            })
-            return (True, corner_visit_order)
+            corner_visited = corner
 
-    for corner in correct_corners:
-        if math.dist(
-                [position["x"], position["z"]],
-                [corner["x"], corner["z"]]) < DISTANCE_FROM_CORNER:
-            corner_type = "correct" if (
-                corner["name"] == correct_corners[0]["name"]) else "neutral"
-            corner_visit_order.append({
-                "name": corner["name"],
-                "type": corner_type
-            })
+    # Return if not near a corner, or still near last corner
+    if (corner_visited is None or (
+            len(corner_visit_order) > 0 and
+            corner_visit_order[-1]["name"] == corner_visited["name"])):
+        return corner_visit_order
 
-    return (False, corner_visit_order)
+    if corner_visited in incorrect_corners:
+        corner_visit_order.append({
+            "name": corner_visited["name"],
+            "type": "incorrect"
+        })
+
+    if corner_visited in correct_corners:
+        # Corners get added to correct list, first is always correct
+        #   Second corner is always ambiguous corner
+        corner_type = "correct" if (
+            corner_visited["name"] == correct_corners[0]["name"]) else (
+                "neutral")
+        corner_visit_order.append({
+            "name": corner_visited["name"],
+            "type": corner_type
+        })
+
+    return corner_visit_order
 
 
 def build_new_step_obj(
@@ -273,7 +289,6 @@ def build_new_step_obj(
         incorrect_corners: List[dict],
         correct_corners: List[dict],
         corner_visit_order: List[dict],
-        incorrect_corner_visited: bool,
         reorientation_scoring_override: bool) -> tuple:
     new_step = {}
     new_step["stepNumber"] = step["step"]
@@ -300,12 +315,8 @@ def build_new_step_obj(
     if ("output" in step):
         if (
                 reorientation_scoring_override and
-                number_steps > STEP_TO_CHECK_CORNER and
-                not incorrect_corner_visited):
-            (
-                incorrect_corner_visited,
-                corner_visit_order
-            ) = check_agent_to_corner_position(
+                number_steps > STEP_TO_CHECK_CORNER):
+            corner_visit_order = check_agent_to_corner_position(
                 step["output"]["position"],
                 incorrect_corners,
                 correct_corners,
@@ -320,8 +331,7 @@ def build_new_step_obj(
         interactive_reward = output["reward"]
         if (
                 output["reward"] >= (
-                    0 - ((number_steps - 1) * 0.001) + 1) and
-                not incorrect_corner_visited):
+                    0 - ((number_steps - 1) * 0.001) + 1)):
             interactive_goal_achieved = 1
     new_step["output"] = output
 
@@ -329,7 +339,6 @@ def build_new_step_obj(
         new_step,
         interactive_reward,
         interactive_goal_achieved,
-        incorrect_corner_visited,
         corner_visit_order)
 
 
@@ -366,6 +375,38 @@ def calc_scorecard(history_item: dict, scene: dict) -> dict:
     return scorecard_vals
 
 
+def calculate_reorientation_true_score(
+        corner_visit_order: List[dict],
+        interactive_goal_achieved: int) -> int:
+    # This is correct if the agent goes to the correct corner first
+    if(len(corner_visit_order) > 0):
+        return 1 if corner_visit_order[0].type == "correct" else 0
+    else:
+        return interactive_goal_achieved
+
+
+def calculate_reorientation_score(
+        corner_visit_order: List[dict],
+        interactive_goal_achieved: int) -> int:
+    # This is correct if they get to the correct corner before ever
+    #  going to an incorrect corner, so they could go to an
+    #  ambiguous/neutral corner first and still be correct
+    if(len(corner_visit_order) > 0):
+        correct_corner_achieved = 1
+        # loop through corners, ignore neutral corner, if come to
+        #   incorrect corner before correct, set it false and exit
+        #   loop, if come to correct first, exit loop, correct score
+        for corner in corner_visit_order:
+            if corner["type"] == "incorrect":
+                correct_corner_achieved = 0
+                break
+            if corner["type"] == "correct":
+                break
+        return correct_corner_achieved
+    else:
+        return interactive_goal_achieved
+
+
 def process_score(
         history_item: dict,
         scene: dict,
@@ -380,11 +421,16 @@ def process_score(
             history_item["score"]["classification"] = "end"
             history_item["score"]["confidence"] = 0
         history_item["score"]["goal_achieved"] = interactive_goal_achieved
+        # TO DO
         if reorientation_scoring_override:
+            history_item["score"]["goal_achieved"] = (
+                calculate_reorientation_true_score(
+                    corner_visit_order, interactive_goal_achieved))
             history_item["score"]["score"] = 1 if (
                 corner_visit_order[0]["type"] != "incorrect") else 0
         else:
             history_item["score"]["score"] = interactive_goal_achieved
+            history_item["score"]["goal_achieved"] = interactive_goal_achieved
         history_item["score"]["reward"] = interactive_reward
         history_item["score"]["ground_truth"] = 1
     else:
@@ -425,11 +471,6 @@ def process_score(
 
 
 def reorientation_calculate_corners(scene: dict) -> List[dict]:
-    possible_corners = [
-        FRONT_RIGHT_CORNER,
-        FRONT_LEFT_CORNER,
-        BACK_RIGHT_CORNER,
-        BACK_LEFT_CORNER]
     correct_corners = [scene["goal"]["sceneInfo"]["corner"]]
 
     if scene["goal"]["sceneInfo"]["ambiguous"]:
@@ -441,9 +482,9 @@ def reorientation_calculate_corners(scene: dict) -> List[dict]:
         correct_corners.append(
             ambigous_corner_part1 + "_" + ambigous_corner_part2)
 
-    return ([corner for corner in possible_corners if (
+    return ([corner for corner in POSSIBLE_CORNERS if (
         not corner["name"] in correct_corners)],
-        [corner for corner in possible_corners if (
+        [corner for corner in POSSIBLE_CORNERS if (
             corner["name"] in correct_corners)])
 
 
@@ -499,7 +540,7 @@ def build_history_item(
         correct_corners
     ) = reorientation_calculate_corners(scene) if (
         reorientation_scoring_override) else ([], [])
-    incorrect_corner_visited = False
+
     corner_visit_order = []
 
     # Loop through and process steps
@@ -514,7 +555,6 @@ def build_history_item(
             new_step,
             interactive_reward,
             interactive_goal_achieved,
-            incorrect_corner_visited,
             corner_visit_order
         ) = build_new_step_obj(
             step,
@@ -524,7 +564,6 @@ def build_history_item(
             incorrect_corners,
             correct_corners,
             corner_visit_order,
-            incorrect_corner_visited,
             reorientation_scoring_override)
         steps.append(new_step)
 
