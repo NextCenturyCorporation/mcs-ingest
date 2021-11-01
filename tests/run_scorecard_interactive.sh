@@ -26,6 +26,7 @@ PYTHONPATH='.' python test_data_generator/scorecard_generate_reopen_data.py $MCS
 PYTHONPATH='.' python test_data_generator/scorecard_generate_unopenable_data.py $MCS ./tests/golf_0018_15_debug.json
 PYTHONPATH='.' python test_data_generator/scorecard_generate_revisit_data.py $MCS ./tests/india_0003_17_debug.json
 PYTHONPATH='.' python test_data_generator/scorecard_generate_move_toward.py $MCS ./tests/india_0003_17_debug.json
+PYTHONPATH='.' python test_data_generator/scorecard_generate_repeat_failed.py $MCS ./tests/golf_0018_15_debug.json
 
 # Run the integration test
 PYTHONPATH='.' python tests/test_scorecard_ground_truth.py

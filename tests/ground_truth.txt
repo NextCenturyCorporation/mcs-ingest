@@ -7,3 +7,5 @@ golf_0018_15_debug.json            unopenable_two                  0            
 golf_0018_15_debug.json            reopen_zero_1                   1               0               0            0                 0
 golf_0018_15_debug.json            reopen_one_1                    0               0               1            0                 0
 india_0003_17_debug.json           not_moving_toward_zero_1        0               0               0            0                 0
+golf_0018_15_debug.json            repeat_failed_zero              0               1               0            0                 0
+golf_0018_15_debug.json            repeat_failed_one               0               0               0            0                 1
