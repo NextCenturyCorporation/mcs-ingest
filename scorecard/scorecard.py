@@ -34,10 +34,10 @@ MIN_TILT_LOOK_DOWN = 30
 SEEN_COUNT_MIN = 4
 
 # How many steps required before the agent has to have moved toward the
-# target.  Why 38?  If there is an object between the agent and the target
-# this gives it time to turn (9 steps), move (about 10 steps), turn (9),
-# and move towards it (10).  That's 38 steps.
-STEPS_NOT_MOVED_TOWARD_LIMIT = 38
+# target?  If there is an object between the agent and the target
+# this gives it time to turn move to the side (about 15 steps), turn (9),
+# and move towards it (15).  So about 30 steps.
+STEPS_NOT_MOVED_TOWARD_LIMIT = 30
 
 
 def minAngDist(a, b):
@@ -416,6 +416,12 @@ class Scorecard:
         steps_list = self.history['steps']
         for step_num, single_step in enumerate(steps_list):
 
+            # Do not count non-motion actions, like PASS and TURN
+            action = single_step['action']
+            if action not in ['MoveAhead', 'MoveBack',
+                              'MoveLeft', 'MoveRight']:
+                continue
+
             visible = single_step['target_visible']
             pos = single_step['output']['position']
             x, y, z = itemgetter('x', 'y', 'z')(pos)
@@ -469,6 +475,8 @@ class Scorecard:
                               f"count: {self.not_moving_toward_object} --")
                 seen_count = -1
                 steps_not_moving_towards = 0
+
+        return self.not_moving_toward_object
 
     def calc_repeat_failed(self):
         pass

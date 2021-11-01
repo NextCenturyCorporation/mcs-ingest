@@ -122,6 +122,14 @@ class TestMcsScorecard(unittest.TestCase):
         np.testing.assert_almost_equal(x, 0.0, err_msg="x location is wrong")
         np.testing.assert_almost_equal(z, -0.15, err_msg="Z location is wrong")
 
+    def test_calc_not_moving_toward_object(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_CONTAINER)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_CONTAINER)
+        scorecard = Scorecard(history_file, scene_file)
+        not_moving = scorecard.calc_not_moving_toward_object()
+        print(f"{not_moving}")
 
 if __name__ == '__main__':
     logging.basicConfig(
