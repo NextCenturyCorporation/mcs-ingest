@@ -99,16 +99,20 @@ up for the fact that the agent was moving away while going around the obstacle
 
 #### Repeated Failed Actions
 
-If the agent repeatedly tries an action and fails, then it should be counted.  In 
-terms of what it means to 'repeat' an action, it needs to occur:
- * Facing the same object, or 
- * From approximately the same place and facing the same direction
+If the agent repeatedly tries an action and fails, then it should be counted.  
+For each action type (Open / Close, Pickup, etc), we note when it fails a 
+first time.  If the same action type is done again with the same failure 
+type, it counts.  
+
+Because of the difficulty in moving, if the agent tries to move and it is 
+OBSTRUCTED, it is _not_ counted.   
 
 Note that this overlaps with some of the other scorecard elements.  For example,
 attempting to open an unopenable object will cause it to count in that category.
 This one will count if the agent tries to do it twice (or more times).  If the 
 agent does it twice, then the unopenable object count will be 2 and the 
-repeated failed actions will 
+repeated failed actions will 1.  
+
 
 ## Running the Scorecard
 

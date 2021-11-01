@@ -206,6 +206,9 @@ class Scorecard:
     def get_not_moving_towards(self):
         return self.not_moving_toward_object
 
+    def get_repeat_failed(self):
+        return self.repeat_failed
+
     def calc_revisiting(self):
 
         steps_list = self.history['steps']
@@ -479,7 +482,40 @@ class Scorecard:
         return self.not_moving_toward_object
 
     def calc_repeat_failed(self):
-        pass
+        """Calculate repeated failures, so keep track of first
+        time a failure occurs, then increment after that.  """
+
+        previously_failed = []
+        self.repeat_failed = 0
+
+        steps_list = self.history['steps']
+        for step_num, single_step in enumerate(steps_list):
+            action = single_step['action']
+            return_status = single_step['output']['return_status']
+            logging.debug(f"{step_num}  {action}  {return_status}")
+
+            if return_status == 'SUCCESSFUL':
+                continue
+
+            if return_status == 'OBSTRUCTED':
+                continue
+
+            # FAILED means an internal MCS error.  Report and continue
+            if return_status == 'FAILED':
+                logging.warning(f"Received FAILED for step {step_num}!!!!")
+                continue
+
+            # If already failed, then count; otherwise keep track that
+            # it failed a first time.
+            key = action + return_status
+            if key in previously_failed:
+                self.repeat_failed += 1
+                logging.debug(f"Repeated failure {key} : {self.repeat_failed}")
+            else:
+                previously_failed.append(key)
+                logging.debug(f"First failure: {key} : {self.repeat_failed}")
+
+        return self.repeat_failed
 
     def calc_attempt_impossible(self):
         pass
