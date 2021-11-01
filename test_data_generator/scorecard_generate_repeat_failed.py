@@ -60,15 +60,13 @@ def pickup_fail_twice(step_metadata, runner_script):
     return decode_moves(step, code)
 
 
-
-
-
 def main(mcs_unity_filepath, scene_filepath):
-    # DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
-    #                     'repeat_failed_zero', open_different_ways).run_scene()
+    DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
+                        'repeat_failed_zero', open_different_ways).run_scene()
 
     DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
                         'repeat_failed_one', pickup_fail_twice).run_scene()
+
 
 def parse_args():
     parser = argparse.ArgumentParser()

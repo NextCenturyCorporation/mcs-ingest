@@ -131,6 +131,7 @@ class TestMcsScorecard(unittest.TestCase):
         not_moving = scorecard.calc_not_moving_toward_object()
         print(f"{not_moving}")
 
+
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.INFO,
