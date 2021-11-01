@@ -18,7 +18,6 @@ TEST_HISTORY_CONTAINER = "golf_0018_15_baseline.json"
 TEST_SCENE_NO_TARGET = "juliett_0001_01_debug.json"
 
 TEST_FOLDER = "tests"
-TEST_FOLDER = '/home/clark/work/mcs/mcs-ingest/tests/'
 
 
 class TestMcsScorecard(unittest.TestCase):

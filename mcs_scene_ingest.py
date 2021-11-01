@@ -426,6 +426,7 @@ def build_history_item(
         history_item["scene_goal_id"] = scene["goal"]["sceneInfo"]["id"][0]
         history_item["test_type"] = scene["goal"]["sceneInfo"]["secondaryType"]
         history_item["category"] = scene["goal"]["sceneInfo"]["primaryType"]
+        history_item["hasNovelty"] = scene["goal"]["sceneInfo"]["untrained"]["any"]
 
         if scene["goal"]["sceneInfo"]["secondaryType"] == "retrieval":
             history_item["category_type"] = \
