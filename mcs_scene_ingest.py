@@ -426,8 +426,9 @@ def process_score(
             history_item["score"]["goal_achieved"] = (
                 calculate_reorientation_true_score(
                     corner_visit_order, interactive_goal_achieved))
-            history_item["score"]["score"] = 1 if (
-                corner_visit_order[0]["type"] != "incorrect") else 0
+            history_item["score"]["score"] = (
+                calculate_reorientation_score(
+                    corner_visit_order, interactive_goal_achieved))
         else:
             history_item["score"]["score"] = interactive_goal_achieved
             history_item["score"]["goal_achieved"] = interactive_goal_achieved
