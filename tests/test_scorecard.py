@@ -18,7 +18,6 @@ TEST_HISTORY_CONTAINER = "golf_0018_15_baseline.json"
 TEST_SCENE_NO_TARGET = "juliett_0001_01_debug.json"
 
 TEST_FOLDER = "tests"
-TEST_FOLDER = '/home/clark/work/mcs/mcs-ingest/tests/'
 
 
 class TestMcsScorecard(unittest.TestCase):
@@ -130,6 +129,7 @@ class TestMcsScorecard(unittest.TestCase):
         scorecard = Scorecard(history_file, scene_file)
         not_moving = scorecard.calc_not_moving_toward_object()
         print(f"{not_moving}")
+
 
 if __name__ == '__main__':
     logging.basicConfig(
