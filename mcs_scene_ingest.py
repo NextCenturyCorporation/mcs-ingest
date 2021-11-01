@@ -421,7 +421,7 @@ def process_score(
             history_item["score"]["classification"] = "end"
             history_item["score"]["confidence"] = 0
         history_item["score"]["goal_achieved"] = interactive_goal_achieved
-        # TO DO
+        # TODO: Remove this socring check when moving scoring to MCS api
         if reorientation_scoring_override:
             history_item["score"]["goal_achieved"] = (
                 calculate_reorientation_true_score(
