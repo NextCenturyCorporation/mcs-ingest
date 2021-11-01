@@ -97,7 +97,18 @@ moving away while going around the obstacle (10).  Based on some testing, 38 is 
 right.  
   
 
-####
+#### Repeated Failed Actions
+
+If the agent repeatedly tries an action and fails, then it should be counted.  In 
+terms of what it means to 'repeat' an action, it needs to occur:
+ * Facing the same object, or 
+ * From approximately the same place and facing the same direction
+
+Note that this overlaps with some of the other scorecard elements.  For example,
+attempting to open an unopenable object will cause it to count in that category.
+This one will count if the agent tries to do it twice (or more times).  If the 
+agent does it twice, then the unopenable object count will be 2 and the 
+repeated failed actions will 
 
 ## Running the Scorecard
 
