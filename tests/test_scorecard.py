@@ -1,13 +1,21 @@
 import logging
 import unittest
 
+import numpy as np
+
 import mcs_scene_ingest
-from scorecard.scorecard import Scorecard, find_closest_container
+from scorecard.scorecard import Scorecard
+from scorecard.scorecard import find_closest_container
+from scorecard.scorecard import find_target_location
 from scorecard.scorecard import get_lookpoint
 
 TEST_SCENE_FILE_NAME = "occluders_0001_17_I1_debug.json"
 TEST_HISTORY_FILE_NAME = "india_0003_baseline_level1.json"
+
 TEST_SCENE_CONTAINER = "golf_0018_15_debug.json"
+TEST_HISTORY_CONTAINER = "golf_0018_15_baseline.json"
+
+TEST_SCENE_NO_TARGET = "juliett_0001_01_debug.json"
 
 TEST_FOLDER = "tests"
 
@@ -94,6 +102,33 @@ class TestMcsScorecard(unittest.TestCase):
         x, z = get_lookpoint(-3., 1., -3., 350., 18.)
         np.testing.assert_almost_equal(x, -3.5344, decimal=4)
         np.testing.assert_almost_equal(z, 0.03093, decimal=4)
+
+    def test_find_target_location_no_target(self):
+        '''Test trying to find a target, when there is not one'''
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_NO_TARGET)
+        target_id, x, z = find_target_location(scene_file)
+        self.assertFalse(target_id, "Target should not exist, " +
+                         f"but it does {x} {z}")
+
+    def test_find_target_location_with_target(self):
+        '''Test trying to find a target, when there is not one'''
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_CONTAINER)
+        target_id, x, z = find_target_location(scene_file)
+        if target_id is None:
+            self.fail("Target not found")
+        np.testing.assert_almost_equal(x, 0.0, err_msg="x location is wrong")
+        np.testing.assert_almost_equal(z, -0.15, err_msg="Z location is wrong")
+
+    def test_calc_not_moving_toward_object(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_CONTAINER)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_CONTAINER)
+        scorecard = Scorecard(history_file, scene_file)
+        not_moving = scorecard.calc_not_moving_toward_object()
+        print(f"{not_moving}")
 
 
 if __name__ == '__main__':

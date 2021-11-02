@@ -21,7 +21,12 @@ from test_data_generator.data_gen_runner import (
 def simple_loop_callback(step_metadata, runner_script):
     '''  Do a loop around the room, but not overlapping, so no revisit'''
     actions = "WWWW L WWWW L WWW L WWW L WWWWWW"
-    return decode_moves(step_metadata.step_number, actions)
+    movement = decode_moves(step_metadata.step_number, actions)
+
+    # DEBUGGING, this allows us to single-step through the scene
+    # print(f"{step_metadata.step_number}  {movement}")
+    # getinput = input()
+    return movement
 
 
 def loop_callback_with_revisit(step_metadata, runner_script):

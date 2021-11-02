@@ -28,6 +28,19 @@ DIST_BETWEEN_RELOOKS = 0.4
 # container
 MIN_TILT_LOOK_DOWN = 30
 
+# Min number of times in a row that the target has to be visible for us
+# to count it as seen by the agent, because the target can be 'visible'
+# but only in the corner for a single frame.
+SEEN_COUNT_MIN = 4
+
+# How many steps required before the agent has to have moved toward the
+# target?  If there is an object between the agent and the target
+# this gives it time to turn move to the side (about 15 steps), turn (9),
+# and move towards it (15).  So about 30 steps.
+STEPS_NOT_MOVED_TOWARD_LIMIT = 30
+
+DEFAULT_ROOM_DIMENSIONS = {'x': 10, 'y': 3, 'z': 10}
+
 
 def minAngDist(a, b):
     """Calculate the difference between two angles in degrees, keeping
@@ -87,6 +100,24 @@ def find_closest_container(x, z, scene):
     return locs[dists.index(min(dists))]
 
 
+def find_target_location(scene):
+    '''Get the x,z of the target, if any.  If it exists, return
+    True and the location;  otherwise, return False'''
+    try:
+        target_id = scene["goal"]["metadata"]["target"]["id"]
+        for possible_target in scene["objects"]:
+            test_id = possible_target["id"]
+            if test_id == target_id:
+                pos = possible_target['shows'][0]['position']
+                x, y, z = itemgetter('x', 'y', 'z')(pos)
+                return target_id, x, z
+        logging.warning(f"Target is supposed to be {target_id} but not found!")
+    except Exception:
+        logging.debug(f"No target in scene {scene['name']}")
+
+    return None, 0, 0
+
+
 class GridHistory:
     """A history of the times a grid square has been visited"""
 
@@ -125,8 +156,8 @@ class Scorecard:
         self.history = history
         self.scene = scene
 
-        x_size = scene.get("roomDimensions").get("x")
-        z_size = scene.get("roomDimensions").get("z")
+        x_size = scene.get("roomDimensions", DEFAULT_ROOM_DIMENSIONS).get("x")
+        z_size = scene.get("roomDimensions", DEFAULT_ROOM_DIMENSIONS).get("z")
         self.space_size = 2 * max(x_size, z_size)
 
         # Size of the grid for calculating revisiting
@@ -151,8 +182,8 @@ class Scorecard:
         self.calc_attempt_impossible()
         self.calc_open_unopenable()
         self.calc_relook()
-        self.calc_not_moving_toward_object()
         self.calc_revisiting()
+        self.calc_not_moving_toward_object()
 
         scorecard_vals = {}
         scorecard_vals["repeat_failed"] = self.repeat_failed
@@ -173,6 +204,9 @@ class Scorecard:
 
     def get_relooks(self):
         return self.relooks
+
+    def get_not_moving_towards(self):
+        return self.not_moving_toward_object
 
     def calc_revisiting(self):
 
@@ -366,13 +400,90 @@ class Scorecard:
 
         return self.relooks
 
+    def calc_not_moving_toward_object(self):
+        """Calculate number of times that the agent
+        did not move toward the target"""
+
+        self.not_moving_toward_object = 0
+
+        target_id, target_x, target_z = find_target_location(self.scene)
+        logging.debug(f"Target location:  {target_x}  {target_z}")
+        if target_id is None:
+            return self.not_moving_toward_object
+
+        seen_count = -1
+        steps_not_moving_towards = 0
+        min_dist = float('inf')
+
+        steps_list = self.history['steps']
+        for step_num, single_step in enumerate(steps_list):
+
+            # Do not count non-motion actions, like PASS and TURN
+            action = single_step['action']
+            if action not in ['MoveAhead', 'MoveBack',
+                              'MoveLeft', 'MoveRight']:
+                continue
+
+            visible = single_step['target_visible']
+            pos = single_step['output']['position']
+            x, y, z = itemgetter('x', 'y', 'z')(pos)
+            current_dist = math.dist((x, z), (target_x, target_z))
+            logging.debug(f"xyz:   {x} {y} {z}")
+
+            # If first time that we have seen the target, start counter
+            if seen_count == -1 and visible:
+                logging.debug(f"-- First visible {step_num} --")
+                seen_count = 1
+                steps_not_moving_towards = 0
+                continue
+
+            # If the counter is less than the minimum needed and still visible,
+            # increase the count.   If not visible, reset counting
+            if seen_count < SEEN_COUNT_MIN:
+                if visible:
+                    min_dist = current_dist
+                    seen_count += 1
+                    steps_not_moving_towards = 0
+                    logging.debug(f"-- visible again {step_num} " +
+                                  f"count: {seen_count}  " +
+                                  f"dist: {min_dist} --")
+                else:
+                    seen_count = -1
+                    min_dist = -1
+                    logging.debug(f"-- not seen at {step_num} reset --")
+                continue
+
+            # At this point, target has been seen enough times that we should
+            # be moving towards it.  Over time we should get closer and closer
+            if current_dist < min_dist:
+                min_dist = current_dist
+                steps_not_moving_towards = 0
+                logging.debug(f"-- moved towards at {step_num} " +
+                              f"current_dist: {current_dist} --")
+                continue
+
+            # We did not move closer, so increment the counter that keeps
+            # track of number of steps
+            steps_not_moving_towards += 1
+            logging.debug(f"-- did not move towards {step_num} " +
+                          f"current_dist: {current_dist}  " +
+                          f"count: {steps_not_moving_towards} --")
+
+            # If we have gone enough moves and haven't gotten closer, then
+            # increment overall counter and reset
+            if steps_not_moving_towards > STEPS_NOT_MOVED_TOWARD_LIMIT:
+                self.not_moving_toward_object += 1
+                logging.debug(f"-- hit limit {steps_not_moving_towards} " +
+                              f"count: {self.not_moving_toward_object} --")
+                seen_count = -1
+                steps_not_moving_towards = 0
+
+        return self.not_moving_toward_object
+
     def calc_repeat_failed(self):
         pass
 
     def calc_attempt_impossible(self):
-        pass
-
-    def calc_not_moving_toward_object(self):
         pass
 
     def set_revisit_grid_size(self, grid_size):
