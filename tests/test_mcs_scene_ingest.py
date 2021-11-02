@@ -100,10 +100,8 @@ class TestMcsSceneIngest(unittest.TestCase):
             mcs_scene_ingest.reorientation_calculate_corners(test_scene))
         self.assertEqual(len(incorrect_corners), 3)
         self.assertEqual(len(correct_corners), 1)
-        self.assertTrue(
-            mcs_scene_ingest.FRONT_RIGHT_CORNER not in incorrect_corners)
-        self.assertTrue(
-            mcs_scene_ingest.FRONT_RIGHT_CORNER in correct_corners)
+        self.assertTrue("front_right" not in incorrect_corners)
+        self.assertTrue("front_right" in correct_corners)
 
         test_scene["goal"]["sceneInfo"]["ambiguous"] = True
         test_scene["goal"]["sceneInfo"]["corner"] = "front_left"
@@ -112,12 +110,9 @@ class TestMcsSceneIngest(unittest.TestCase):
             mcs_scene_ingest.reorientation_calculate_corners(test_scene))
         self.assertEqual(len(incorrect_corners), 2)
         self.assertEqual(len(correct_corners), 2)
-        self.assertTrue(
-            mcs_scene_ingest.FRONT_LEFT_CORNER not in incorrect_corners)
-        self.assertTrue(
-            mcs_scene_ingest.BACK_RIGHT_CORNER not in incorrect_corners)
-        self.assertTrue(
-            mcs_scene_ingest.BACK_RIGHT_CORNER in correct_corners)
+        self.assertTrue("front_left" not in incorrect_corners)
+        self.assertTrue("back_right" not in incorrect_corners)
+        self.assertTrue("back_right" in correct_corners)
 
     def test_check_agent_to_corner_position(self):
         test_scene = {

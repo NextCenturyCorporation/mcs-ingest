@@ -67,17 +67,14 @@ SCENE_DEBUG_EXTENSION = "_debug.json"
 
 # Temporary Reorientation Scoring Variables
 # Todo:  Move scoring to MCS api
-FRONT_RIGHT_CORNER = {"x": 6, "z": 4, "name": "front_right"}
-FRONT_LEFT_CORNER = {"x": -6, "z": 4, "name": "front_left"}
-BACK_RIGHT_CORNER = {"x": 6, "z": -4, "name": "back_right"}
-BACK_LEFT_CORNER = {"x": -6, "z": -4, "name": "back_left"}
 DISTANCE_FROM_CORNER = 1.5
 STEP_TO_CHECK_CORNER = 550
-POSSIBLE_CORNERS = [
-    FRONT_RIGHT_CORNER,
-    FRONT_LEFT_CORNER,
-    BACK_RIGHT_CORNER,
-    BACK_LEFT_CORNER]
+REORIENTATION_CORNERS = {
+    'front_right': {'x': 6, 'z': 4},
+    'front_left': {'x': -6, 'z': 4},
+    'back_right': {'x': 6, 'z': -4},
+    'back_left': {'x': -6, 'z': -4}
+}
 
 
 def load_json_file(folder: str, file_name: str) -> dict:
@@ -249,21 +246,24 @@ def check_agent_to_corner_position(
     corner_visited = None
 
     # Check if agent is close to any corner
-    for corner in POSSIBLE_CORNERS:
+    for corner in REORIENTATION_CORNERS:
         if math.dist(
                 [position["x"], position["z"]],
-                [corner["x"], corner["z"]]) < DISTANCE_FROM_CORNER:
+                [
+                    REORIENTATION_CORNERS[corner]["x"],
+                    REORIENTATION_CORNERS[corner]["z"]
+                ]) < DISTANCE_FROM_CORNER:
             corner_visited = corner
 
     # Return if not near a corner, or still near last corner
     if (corner_visited is None or (
             len(corner_visit_order) > 0 and
-            corner_visit_order[-1]["name"] == corner_visited["name"])):
+            corner_visit_order[-1]["name"] == corner_visited)):
         return corner_visit_order
 
     if corner_visited in incorrect_corners:
         corner_visit_order.append({
-            "name": corner_visited["name"],
+            "name": corner_visited,
             "type": "incorrect"
         })
 
@@ -271,10 +271,9 @@ def check_agent_to_corner_position(
         # Corners get added to correct list, first is always correct
         #   Second corner is always ambiguous corner
         corner_type = "correct" if (
-            corner_visited["name"] == correct_corners[0]["name"]) else (
-                "neutral")
+            corner_visited == correct_corners[0]) else ("neutral")
         corner_visit_order.append({
-            "name": corner_visited["name"],
+            "name": corner_visited,
             "type": corner_type
         })
 
@@ -473,20 +472,20 @@ def process_score(
 
 def reorientation_calculate_corners(scene: dict) -> List[dict]:
     correct_corners = [scene["goal"]["sceneInfo"]["corner"]]
+    incorrect_corners = []
 
     if scene["goal"]["sceneInfo"]["ambiguous"]:
-        correct_corner_parts = correct_corners[0].split("_")
-        ambigous_corner_part1 = "front" if (
-            correct_corner_parts[0] == "back") else "back"
-        ambigous_corner_part2 = "left" if (
-            correct_corner_parts[1] == "right") else "right"
-        correct_corners.append(
-            ambigous_corner_part1 + "_" + ambigous_corner_part2)
+        opposite_corner = {k: -v for k, v in REORIENTATION_CORNERS[
+            scene["goal"]["sceneInfo"]["corner"]].items()}
+        for k, v in REORIENTATION_CORNERS.items():
+            if(opposite_corner == v):
+                correct_corners.append(k)
 
-    return ([corner for corner in POSSIBLE_CORNERS if (
-        not corner["name"] in correct_corners)],
-        [corner for corner in POSSIBLE_CORNERS if (
-            corner["name"] in correct_corners)])
+    for k, v in REORIENTATION_CORNERS.items():
+        if(k not in correct_corners):
+            incorrect_corners.append(k)
+
+    return (incorrect_corners, correct_corners)
 
 
 def build_history_item(
