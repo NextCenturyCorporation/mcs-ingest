@@ -39,6 +39,8 @@ SEEN_COUNT_MIN = 4
 # and move towards it (15).  So about 30 steps.
 STEPS_NOT_MOVED_TOWARD_LIMIT = 30
 
+DEFAULT_ROOM_DIMENSIONS = {'x': 10, 'y': 3, 'z': 10}
+
 
 def minAngDist(a, b):
     """Calculate the difference between two angles in degrees, keeping
@@ -154,8 +156,8 @@ class Scorecard:
         self.history = history
         self.scene = scene
 
-        x_size = scene.get("roomDimensions").get("x")
-        z_size = scene.get("roomDimensions").get("z")
+        x_size = scene.get("roomDimensions", DEFAULT_ROOM_DIMENSIONS).get("x")
+        z_size = scene.get("roomDimensions", DEFAULT_ROOM_DIMENSIONS).get("z")
         self.space_size = 2 * max(x_size, z_size)
 
         # Size of the grid for calculating revisiting
