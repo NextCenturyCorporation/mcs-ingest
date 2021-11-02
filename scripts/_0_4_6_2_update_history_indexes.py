@@ -44,3 +44,9 @@ def create_new_cat_eval2_and_indexes(mongoDB):
     ])
 
     print("Index creation result: ", result)
+
+    result = collection.create_index([
+        ("eval", 1), ("category_type", 1)
+    ])
+
+    print("Index creation result: ", result)
