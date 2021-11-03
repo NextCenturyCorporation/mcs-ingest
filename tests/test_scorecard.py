@@ -61,6 +61,15 @@ class TestMcsScorecard(unittest.TestCase):
         container = find_closest_container(x, z, scene_file)
         self.assertEqual(container['type'], 'case_3')
         logging.info(f"Closest:  {container}")
+    
+    def test_find_closest_container_but_none(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_FILE_NAME)
+
+        x = -3.04
+        z = 0.66
+        container = find_closest_container(x, z, scene_file)
+        self.assertEqual(container, [])
 
     def test_load_json_file(self):
         scene_file = mcs_scene_ingest.load_json_file(

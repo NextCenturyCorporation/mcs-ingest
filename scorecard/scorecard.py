@@ -97,7 +97,7 @@ def find_closest_container(x, z, scene):
         dists.append(dist)
         locs.append({'type': type, 'x': cx, 'z': cz})
 
-    return locs[dists.index(min(dists))]
+    return locs[dists.index(min(dists))] if dists else []
 
 
 def find_target_location(scene):
@@ -424,7 +424,7 @@ class Scorecard:
                               'MoveLeft', 'MoveRight']:
                 continue
 
-            visible = single_step['target_visible']
+            visible = single_step.get('target_visible')
             pos = single_step['output']['position']
             x, y, z = itemgetter('x', 'y', 'z')(pos)
             current_dist = math.dist((x, z), (target_x, target_z))
