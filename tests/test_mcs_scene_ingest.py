@@ -86,6 +86,63 @@ class TestMcsSceneIngest(unittest.TestCase):
             "eval_4", "cora", TEST_FOLDER, ".json", client, "mcs")
         logging.info(f"{history_item}")
 
+    def test_reorientation_calculate_corners(self):
+        test_scene = {
+            "goal": {
+                "sceneInfo": {
+                    "ambiguous": False,
+                    "corner": "front_right"
+                }
+            }
+        }
+
+        (incorrect_corners, correct_corners) = (
+            mcs_scene_ingest.reorientation_calculate_corners(test_scene))
+        self.assertEqual(len(incorrect_corners), 3)
+        self.assertEqual(len(correct_corners), 1)
+        self.assertTrue("front_right" not in incorrect_corners)
+        self.assertTrue("front_right" in correct_corners)
+
+        test_scene["goal"]["sceneInfo"]["ambiguous"] = True
+        test_scene["goal"]["sceneInfo"]["corner"] = "front_left"
+
+        (incorrect_corners, correct_corners) = (
+            mcs_scene_ingest.reorientation_calculate_corners(test_scene))
+        self.assertEqual(len(incorrect_corners), 2)
+        self.assertEqual(len(correct_corners), 2)
+        self.assertTrue("front_left" not in incorrect_corners)
+        self.assertTrue("back_right" not in incorrect_corners)
+        self.assertTrue("back_right" in correct_corners)
+
+    def test_check_agent_to_corner_position(self):
+        test_scene = {
+            "goal": {
+                "sceneInfo": {
+                    "ambiguous": False,
+                    "corner": "front_right"
+                }
+            }
+        }
+
+        corner_order = []
+        position = {"x": 5.5, "z": 3.9}
+        (incorrect_corners, correct_corners) = (
+            mcs_scene_ingest.reorientation_calculate_corners(test_scene))
+
+        corner_order = mcs_scene_ingest.check_agent_to_corner_position(
+            position, incorrect_corners, correct_corners, corner_order)
+        reorientation_score = (
+            mcs_scene_ingest.calculate_reorientation_score(corner_order, 0))
+        self.assertEqual(reorientation_score, 1)
+
+        corner_order = []
+        position = {"x": 0, "z": 0}
+        corner_order = mcs_scene_ingest.check_agent_to_corner_position(
+            position, incorrect_corners, correct_corners, corner_order)
+        reorientation_score = (
+            mcs_scene_ingest.calculate_reorientation_score(corner_order, 0))
+        self.assertEqual(reorientation_score, 0)
+
 
 if __name__ == '__main__':
     logging.basicConfig(
