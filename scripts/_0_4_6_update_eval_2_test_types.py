@@ -18,7 +18,7 @@ def update_test_types(mongoDB):
             "test_type": {"$ne": "interactive"}
         }, [{
             "$set": {
-                'test_type': 'intuitive physics', 
+                'test_type': 'intuitive physics',
                 'score.weighted_score': '$score.score',
                 'score.weighted_score_worth': 1
             }
@@ -38,4 +38,3 @@ def update_test_types(mongoDB):
     ])
 
     print("Index creation result: ", result)
-
