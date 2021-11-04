@@ -435,12 +435,12 @@ def process_score(
         history_item["score"]["ground_truth"] = 1
     else:
         if "score" in history_item:
-            history_item["score"]["score"] = 1 if \
-                history_item["score"]["classification"] == \
-                scene["goal"]["answer"]["choice"] else 0
             history_item["score"]["ground_truth"] = 1 if \
                 ("plausible" == scene["goal"]["answer"]["choice"] or
                  "expected" == scene["goal"]["answer"]["choice"]) else 0
+            history_item["score"]["score"] = 1 if \
+                history_item["score"]["classification"] == \
+                history_item["score"]["ground_truth"] else 0
         else:
             # Eval 2 backwards compatiblity
             history_item["score"] = {}
@@ -584,16 +584,11 @@ def build_history_item(
         history_item["scene_goal_id"] = scene["goal"]["sceneInfo"]["id"][0]
         history_item["test_type"] = scene["goal"]["sceneInfo"]["secondaryType"]
         history_item["category"] = scene["goal"]["sceneInfo"]["primaryType"]
-        history_item["hasNovelty"] = scene["goal"][
-            "sceneInfo"]["untrained"]["any"]
 
-        if scene["goal"]["sceneInfo"]["secondaryType"] == "retrieval":
-            history_item["category_type"] = \
-                scene["goal"]["sceneInfo"]["secondaryType"] + \
-                "_" + scene["goal"]["sceneInfo"]["tertiaryType"]
-        else:
-            history_item["category_type"] = scene[
-                "goal"]["sceneInfo"]["tertiaryType"]
+        history_item["hasNovelty"] = scene[
+            "goal"]["sceneInfo"]["untrained"]["any"]
+        history_item["category_type"] = scene[
+            "goal"]["sceneInfo"]["tertiaryType"]
 
         history_item["score"] = process_score(
             history_item,
