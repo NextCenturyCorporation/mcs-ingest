@@ -379,7 +379,7 @@ def calculate_reorientation_true_score(
         interactive_goal_achieved: int) -> int:
     # This is correct if the agent goes to the correct corner first
     if(len(corner_visit_order) > 0):
-        return 1 if corner_visit_order[0].type == "correct" else 0
+        return 1 if corner_visit_order[0]["type"] == "correct" else 0
     else:
         return interactive_goal_achieved
 

@@ -1,7 +1,6 @@
 import json
 import logging
 import os
-
 import boto3
 
 import mcs_scene_ingest
@@ -10,10 +9,13 @@ import mcs_scene_ingest
 sqs = boto3.resource('sqs')
 history_queue = sqs.get_queue_by_name(QueueName='mongo-mcs-ingestion-queue')
 scene_queue = sqs.get_queue_by_name(QueueName='mcs-scene-ingestion-queue')
+error_queue = sqs.get_queue_by_name(QueueName='ingest-error')
 dev_history_queue = sqs.get_queue_by_name(
     QueueName='dev-mongo-mcs-ingestion-queue')
 dev_scene_queue = sqs.get_queue_by_name(
     QueueName='dev-mcs-scene-ingestion-queue')
+dev_error_queue = sqs.get_queue_by_name(
+    QueueName='dev-ingest-error')
 s3 = boto3.resource('s3')
 
 # Message Type Constants
@@ -32,12 +34,20 @@ def process_message(message, message_type, db_string):
         bucket.download_file(history_file, basename)
 
         # Ingest File
-        if message_type == HISTORY_MESSAGE:
-            mcs_scene_ingest.automated_history_ingest_file(
-                basename, "", db_string)
-        if message_type == SCENE_MESSAGE:
-            mcs_scene_ingest.automated_scene_ingest_file(
-                basename, "", db_string)
+        try:
+            if message_type == HISTORY_MESSAGE:
+                mcs_scene_ingest.automated_history_ingest_file(
+                    basename, "", db_string)
+            if message_type == SCENE_MESSAGE:
+                mcs_scene_ingest.automated_scene_ingest_file(
+                    basename, "", db_string)
+        except Exception as e:
+            eq =  error_queue if db_string == "mcs" else dev_error_queue
+            response = eq.send_message(MessageBody='IngestError', MessageAttributes={
+                'file': {'StringValue': str(basename), 'DataType': 'String'},
+                'error': {'StringValue': str(e), 'DataType': 'String'}
+            })
+            logging.info(f"Sending {response}")
 
         # Delete File
         logging.info(f"Deleting {basename}")
