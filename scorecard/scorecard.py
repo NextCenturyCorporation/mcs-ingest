@@ -42,6 +42,68 @@ STEPS_NOT_MOVED_TOWARD_LIMIT = 30
 DEFAULT_ROOM_DIMENSIONS = {'x': 10, 'y': 3, 'z': 10}
 
 
+def calc_repeat_failed(steps_list: list) -> int:
+    """Calculate repeated failures, so keep track of first
+    time a failure occurs, then increment after that.  """
+
+    previously_failed = []
+    repeat_failed = 0
+
+    for step_num, single_step in enumerate(steps_list):
+        action = single_step['action']
+        params = single_step['params']
+        return_status = single_step['output']['return_status']
+        logging.debug(f"{step_num}  {action}  {return_status}")
+
+        if return_status == 'SUCCESSFUL':
+            continue
+
+        if return_status == 'OBSTRUCTED':
+            continue
+
+        # FAILED means an internal MCS error.  Report and continue
+        if return_status == 'FAILED':
+            logging.warning(f"Received FAILED for step {step_num}!!!!")
+            continue
+
+        # Round floats so we have more accurate key string comparisons.
+        position = single_step['position']
+        object_coords = params.get('objectImageCoords', {})
+        receptacle_coords = params.get('receptacleObjectImageCoords', {})
+        for variable in [position, object_coords, receptacle_coords]:
+            for axis in ['x', 'y', 'z']:
+                if axis in variable:
+                    variable[axis] = round(variable[axis], 2)
+
+        # Create a unique string identifier for the action and status. This
+        # includes the performer's position and rotation (because, if the
+        # performer moves between failed actions, we don't count it) and
+        # the action's object params (because, if the performer uses the
+        # same action on a different object, or the same action with
+        # different coords for the same object, we don't count it).
+        key = '_'.join([
+            action,
+            return_status,
+            str(position),
+            str(single_step['rotation']),
+            str(params.get('objectId')),
+            str(object_coords),
+            str(params.get('receptacleObjectId')),
+            str(receptacle_coords)
+        ])
+
+        # If already failed, then count; otherwise keep track that
+        # it failed a first time.
+        if key in previously_failed:
+            repeat_failed += 1
+            logging.debug(f"Repeated failure {key} : {repeat_failed}")
+        else:
+            previously_failed.append(key)
+            logging.debug(f"First failure: {key} : {repeat_failed}")
+
+    return repeat_failed
+
+
 def minAngDist(a, b):
     """Calculate the difference between two angles in degrees, keeping
     in mind that 0 and 360 are the same.  Also, keep value in range [0-180].
@@ -487,36 +549,8 @@ class Scorecard:
         """Calculate repeated failures, so keep track of first
         time a failure occurs, then increment after that.  """
 
-        previously_failed = []
-        self.repeat_failed = 0
-
         steps_list = self.history['steps']
-        for step_num, single_step in enumerate(steps_list):
-            action = single_step['action']
-            return_status = single_step['output']['return_status']
-            logging.debug(f"{step_num}  {action}  {return_status}")
-
-            if return_status == 'SUCCESSFUL':
-                continue
-
-            if return_status == 'OBSTRUCTED':
-                continue
-
-            # FAILED means an internal MCS error.  Report and continue
-            if return_status == 'FAILED':
-                logging.warning(f"Received FAILED for step {step_num}!!!!")
-                continue
-
-            # If already failed, then count; otherwise keep track that
-            # it failed a first time.
-            key = action + return_status
-            if key in previously_failed:
-                self.repeat_failed += 1
-                logging.debug(f"Repeated failure {key} : {self.repeat_failed}")
-            else:
-                previously_failed.append(key)
-                logging.debug(f"First failure: {key} : {self.repeat_failed}")
-
+        self.repeat_failed = calc_repeat_failed(steps_list)
         return self.repeat_failed
 
     def calc_attempt_impossible(self):
