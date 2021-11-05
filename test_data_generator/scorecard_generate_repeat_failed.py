@@ -42,7 +42,7 @@ def open_different_ways(step_metadata, runner_script):
 
 
 def pickup_fail_twice(step_metadata, runner_script):
-    ''' Go to the chest and try to open it twice.  '''
+    ''' Fail to pick up an unpickupable object twice. '''
 
     step = step_metadata.step_number
 

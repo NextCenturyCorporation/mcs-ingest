@@ -68,6 +68,9 @@ def calc_repeat_failed(steps_list: list) -> int:
 
         # Round floats so we have more accurate key string comparisons.
         position = single_step['position']
+        # TODO MCS-978 Rather than using the image coords, use the ID for the
+        #      object that Unity has detected at the image coords, once Unity
+        #      returns that info and we save it in the scene history files.
         object_coords = params.get('objectImageCoords', {})
         receptacle_coords = params.get('receptacleObjectImageCoords', {})
         for variable in [position, object_coords, receptacle_coords]:
