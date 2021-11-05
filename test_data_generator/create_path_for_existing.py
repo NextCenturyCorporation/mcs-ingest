@@ -11,6 +11,9 @@ import os
 from test_data_generator.path_plotter import PathPlotter
 
 
+DEFAULT_ROOM_DIMENSIONS = {'x': 10, 'y': 3, 'z': 10}
+
+
 def run_scene(output_json_file: str,
               x_size: int, y_size: int, z_size: int):
     with open(output_json_file) as history_file:
@@ -37,9 +40,9 @@ def make_plots_for_files(scene_file_path, output_json_file):
     with open(scene_file_path) as scene_file:
         scene = json.load(scene_file)
 
-        x_size = scene.get("roomDimensions").get("x")
-        y_size = scene.get("roomDimensions").get("y")
-        z_size = scene.get("roomDimensions").get("z")
+        x_size = scene.get("roomDimensions", DEFAULT_ROOM_DIMENSIONS).get("x")
+        y_size = scene.get("roomDimensions", DEFAULT_ROOM_DIMENSIONS).get("y")
+        z_size = scene.get("roomDimensions", DEFAULT_ROOM_DIMENSIONS).get("z")
         run_scene(output_json_file, x_size, y_size, z_size)
 
 

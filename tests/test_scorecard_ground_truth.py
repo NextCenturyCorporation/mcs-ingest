@@ -118,8 +118,8 @@ def process_line(line: str):
 
     history_filepath = find_fullpath_latest(basefilename, HISTORY_DIR)
     if not history_filepath:
-        logging.warning(f"Unable to find {HISTORY_DIR} and " +
-                        f"{basefilename}")
+        logging.warning(f"Unable to find '{basefilename}' in " +
+                        f"{HISTORY_DIR}")
         return 0, 0, 1
     logging.info(f"Reporting on {history_filepath}")
 

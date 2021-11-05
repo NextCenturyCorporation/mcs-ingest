@@ -11,6 +11,9 @@ from machine_common_sense import Action
 from test_data_generator.path_plotter import PathPlotter
 
 
+DEFAULT_ROOM_DIMENSIONS = {'x': 10, 'y': 3, 'z': 10}
+
+
 def key_to_movement(key):
     """Convert a character key to an instruction that the controller
     understands.  See Action to see the keys.  """
@@ -83,9 +86,9 @@ class DataGenRunnerScript():
 
         with open(self.scene_filepath) as scene_file:
             scene = json.load(scene_file)
-            x_size = scene.get("roomDimensions").get("x")
-            y_size = scene.get("roomDimensions").get("y")
-            z_size = scene.get("roomDimensions").get("z")
+            x_size = scene.get("roomDimensions", DEFAULT_ROOM_DIMENSIONS).get("x")
+            y_size = scene.get("roomDimensions", DEFAULT_ROOM_DIMENSIONS).get("y")
+            z_size = scene.get("roomDimensions", DEFAULT_ROOM_DIMENSIONS).get("z")
 
             plotter = PathPlotter(team="", scene_name=self.name,
                                   plot_width=600, plot_height=450,
