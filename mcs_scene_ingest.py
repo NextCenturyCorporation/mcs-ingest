@@ -3,8 +3,10 @@ import io
 import json
 import logging
 import os
+import math
 import sys
 from collections.abc import MutableMapping
+from typing import List
 
 from pymongo import MongoClient
 
@@ -62,6 +64,17 @@ SHAPE_CONSTANCY_8X_CUBE = ["A2", "B2", "C2", "D2"]
 
 MAX_XY_VIOLATIONS = 50
 SCENE_DEBUG_EXTENSION = "_debug.json"
+
+# Temporary Reorientation Scoring Variables
+# Todo:  Move scoring to MCS api
+DISTANCE_FROM_CORNER = 1.5
+STEP_TO_CHECK_CORNER = 550
+REORIENTATION_CORNERS = {
+    'front_right': {'x': 6, 'z': 4},
+    'front_left': {'x': -6, 'z': 4},
+    'back_right': {'x': 6, 'z': -4},
+    'back_left': {'x': -6, 'z': -4}
+}
 
 
 def load_json_file(folder: str, file_name: str) -> dict:
@@ -224,11 +237,58 @@ def determine_team_mapping_name(info_team: str) -> str:
     return name_str
 
 
+def check_agent_to_corner_position(
+        position: dict,
+        incorrect_corners: List[dict],
+        correct_corners: List[dict],
+        corner_visit_order: List[dict]) -> List[dict]:
+
+    corner_visited = None
+
+    # Check if agent is close to any corner
+    for corner in REORIENTATION_CORNERS:
+        if math.dist(
+                [position["x"], position["z"]],
+                [
+                    REORIENTATION_CORNERS[corner]["x"],
+                    REORIENTATION_CORNERS[corner]["z"]
+                ]) < DISTANCE_FROM_CORNER:
+            corner_visited = corner
+
+    # Return if not near a corner, or still near last corner
+    if (corner_visited is None or (
+            len(corner_visit_order) > 0 and
+            corner_visit_order[-1]["name"] == corner_visited)):
+        return corner_visit_order
+
+    if corner_visited in incorrect_corners:
+        corner_visit_order.append({
+            "name": corner_visited,
+            "type": "incorrect"
+        })
+
+    if corner_visited in correct_corners:
+        # Corners get added to correct list, first is always correct
+        #   Second corner is always ambiguous corner
+        corner_type = "correct" if (
+            corner_visited == correct_corners[0]) else ("neutral")
+        corner_visit_order.append({
+            "name": corner_visited,
+            "type": corner_type
+        })
+
+    return corner_visit_order
+
+
 def build_new_step_obj(
         step: dict,
         interactive_reward: int,
         interactive_goal_achieved: int,
-        number_steps: int) -> tuple:
+        number_steps: int,
+        incorrect_corners: List[dict],
+        correct_corners: List[dict],
+        corner_visit_order: List[dict],
+        reorientation_scoring_override: bool) -> tuple:
     new_step = {}
     new_step["stepNumber"] = step["step"]
     new_step["action"] = step["action"]
@@ -252,6 +312,15 @@ def build_new_step_obj(
 
     output = {}
     if ("output" in step):
+        if (
+                reorientation_scoring_override and
+                number_steps > STEP_TO_CHECK_CORNER):
+            corner_visit_order = check_agent_to_corner_position(
+                step["output"]["position"],
+                incorrect_corners,
+                correct_corners,
+                corner_visit_order)
+
         output["return_status"] = step["output"]["return_status"]
         output["reward"] = step["output"]["reward"]
         # TODO: Added if check because key error in 3.75 and earlier
@@ -259,11 +328,17 @@ def build_new_step_obj(
             output["physics_frames_per_second"] = step[
                 "output"]["physics_frames_per_second"]
         interactive_reward = output["reward"]
-        if (output["reward"] >= (0 - ((number_steps - 1) * 0.001) + 1)):
+        if (
+                output["reward"] >= (
+                    0 - ((number_steps - 1) * 0.001) + 1)):
             interactive_goal_achieved = 1
     new_step["output"] = output
 
-    return (new_step, interactive_reward, interactive_goal_achieved)
+    return (
+        new_step,
+        interactive_reward,
+        interactive_goal_achieved,
+        corner_visit_order)
 
 
 def add_weighted_cube_scoring(history_item: dict, scene: dict) -> tuple:
@@ -299,28 +374,73 @@ def calc_scorecard(history_item: dict, scene: dict) -> dict:
     return scorecard_vals
 
 
+def calculate_reorientation_true_score(
+        corner_visit_order: List[dict],
+        interactive_goal_achieved: int) -> int:
+    # This is correct if the agent goes to the correct corner first
+    if(len(corner_visit_order) > 0):
+        return 1 if corner_visit_order[0]["type"] == "correct" else 0
+    else:
+        return interactive_goal_achieved
+
+
+def calculate_reorientation_score(
+        corner_visit_order: List[dict],
+        interactive_goal_achieved: int) -> int:
+    # This is correct if they get to the correct corner before ever
+    #  going to an incorrect corner, so they could go to an
+    #  ambiguous/neutral corner first and still be correct
+    if(len(corner_visit_order) > 0):
+        correct_corner_achieved = 1
+        # loop through corners, ignore neutral corner, if come to
+        #   incorrect corner before correct, set it false and exit
+        #   loop, if come to correct first, exit loop, correct score
+        for corner in corner_visit_order:
+            if corner["type"] == "incorrect":
+                correct_corner_achieved = 0
+                break
+            if corner["type"] == "correct":
+                break
+        return correct_corner_achieved
+    else:
+        return interactive_goal_achieved
+
+
 def process_score(
         history_item: dict,
         scene: dict,
         interactive_goal_achieved: int,
-        interactive_reward: int) -> dict:
+        interactive_reward: int,
+        corner_visit_order: List[dict],
+        reorientation_scoring_override: bool) -> dict:
     # Removed Adjusted Confidence, should be OBE
     if (history_item["category"] == "interactive"):
         if "score" not in history_item:
             history_item["score"] = {}
             history_item["score"]["classification"] = "end"
             history_item["score"]["confidence"] = 0
-        history_item["score"]["score"] = interactive_goal_achieved
+        history_item["score"]["goal_achieved"] = interactive_goal_achieved
+        # TODO: Remove this socring check when moving scoring to MCS api
+        if reorientation_scoring_override:
+            history_item["score"]["goal_achieved"] = (
+                calculate_reorientation_true_score(
+                    corner_visit_order, interactive_goal_achieved))
+            history_item["score"]["score"] = (
+                calculate_reorientation_score(
+                    corner_visit_order, interactive_goal_achieved))
+        else:
+            history_item["score"]["score"] = interactive_goal_achieved
+            history_item["score"]["goal_achieved"] = interactive_goal_achieved
         history_item["score"]["reward"] = interactive_reward
         history_item["score"]["ground_truth"] = 1
     else:
         if "score" in history_item:
-            history_item["score"]["score"] = 1 if \
-                history_item["score"]["classification"] == \
-                scene["goal"]["answer"]["choice"] else 0
             history_item["score"]["ground_truth"] = 1 if \
                 ("plausible" == scene["goal"]["answer"]["choice"] or
                  "expected" == scene["goal"]["answer"]["choice"]) else 0
+            history_item["score"]["score"] = 1 if \
+                history_item["score"]["classification"] == \
+                history_item["score"]["ground_truth"] else 0
         else:
             # Eval 2 backwards compatiblity
             history_item["score"] = {}
@@ -348,6 +468,24 @@ def process_score(
     history_item["score"]["weighted_confidence"] = weighted_confidence
 
     return history_item["score"]
+
+
+def reorientation_calculate_corners(scene: dict) -> List[dict]:
+    correct_corners = [scene["goal"]["sceneInfo"]["corner"]]
+    incorrect_corners = []
+
+    if scene["goal"]["sceneInfo"]["ambiguous"]:
+        opposite_corner = {k: -v for k, v in REORIENTATION_CORNERS[
+            scene["goal"]["sceneInfo"]["corner"]].items()}
+        for k, v in REORIENTATION_CORNERS.items():
+            if(opposite_corner == v):
+                correct_corners.append(k)
+
+    for k, v in REORIENTATION_CORNERS.items():
+        if(k not in correct_corners):
+            incorrect_corners.append(k)
+
+    return (incorrect_corners, correct_corners)
 
 
 def build_history_item(
@@ -378,28 +516,6 @@ def build_history_item(
     history_item["fileTimestamp"] = history["info"]["timestamp"]
     history_item["score"] = history["score"]
 
-    # Loop through and process steps
-    steps = []
-    number_steps = 0
-    interactive_goal_achieved = 0
-    interactive_reward = 0
-
-    for step in history["steps"]:
-        number_steps += 1
-        (
-            new_step,
-            interactive_reward,
-            interactive_goal_achieved
-        ) = build_new_step_obj(
-            step,
-            interactive_reward,
-            interactive_goal_achieved,
-            number_steps)
-        steps.append(new_step)
-
-    history_item["steps"] = steps
-    history_item["step_counter"] = number_steps
-
     # Load Scene from Database or File
     scene = None
     if scene_folder is None:
@@ -412,6 +528,48 @@ def build_history_item(
     else:
         scene = load_json_file(
             scene_folder, history_item["name"] + SCENE_DEBUG_EXTENSION)
+
+    # This variable will override any rewards for a reorientation task
+    #    should the agent visit a corner it should not be at
+    reorientation_scoring_override = (
+        scene["goal"]["sceneInfo"]["tertiaryType"] == "reorientation")
+
+    # set all corners incorrect at beginning of scene
+    (
+        incorrect_corners,
+        correct_corners
+    ) = reorientation_calculate_corners(scene) if (
+        reorientation_scoring_override) else ([], [])
+
+    corner_visit_order = []
+
+    # Loop through and process steps
+    steps = []
+    number_steps = 0
+    interactive_goal_achieved = 0
+    interactive_reward = 0
+
+    for step in history["steps"]:
+        number_steps += 1
+        (
+            new_step,
+            interactive_reward,
+            interactive_goal_achieved,
+            corner_visit_order
+        ) = build_new_step_obj(
+            step,
+            interactive_reward,
+            interactive_goal_achieved,
+            number_steps,
+            incorrect_corners,
+            correct_corners,
+            corner_visit_order,
+            reorientation_scoring_override)
+        steps.append(new_step)
+
+    history_item["steps"] = steps
+    history_item["step_counter"] = number_steps
+    history_item["corner_visit_order"] = corner_visit_order
 
     if scene:
         # Add some basic scene information into history object to make
@@ -426,21 +584,19 @@ def build_history_item(
         history_item["scene_goal_id"] = scene["goal"]["sceneInfo"]["id"][0]
         history_item["test_type"] = scene["goal"]["sceneInfo"]["secondaryType"]
         history_item["category"] = scene["goal"]["sceneInfo"]["primaryType"]
-        history_item["hasNovelty"] = scene["goal"]["sceneInfo"]["untrained"]["any"]
 
-        if scene["goal"]["sceneInfo"]["secondaryType"] == "retrieval":
-            history_item["category_type"] = \
-                scene["goal"]["sceneInfo"]["secondaryType"] + \
-                "_" + scene["goal"]["sceneInfo"]["tertiaryType"]
-        else:
-            history_item["category_type"] = scene[
-                "goal"]["sceneInfo"]["tertiaryType"]
+        history_item["hasNovelty"] = scene[
+            "goal"]["sceneInfo"]["untrained"]["any"]
+        history_item["category_type"] = scene[
+            "goal"]["sceneInfo"]["tertiaryType"]
 
         history_item["score"] = process_score(
             history_item,
             scene,
             interactive_goal_achieved,
-            interactive_reward)
+            interactive_reward,
+            corner_visit_order,
+            reorientation_scoring_override)
         history_item["score"]["scorecard"] = calc_scorecard(history, scene)
 
         return history_item
