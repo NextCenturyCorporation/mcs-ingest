@@ -33,3 +33,10 @@ def find_collection_keys(index: str, collection_name: str, mongoDB):
     result = collection.update_one(
         {"name": collection_name}, {"$set": keys_dict}, True)
     print(result)
+
+
+def check_collection_has_key(collection_name: str, mongoDB):
+    collection = mongoDB["collection_keys"]
+    key_name = collection.find_one({"name": collection_name})
+
+    return True if key_name else False
