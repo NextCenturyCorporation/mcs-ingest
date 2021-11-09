@@ -39,4 +39,4 @@ def check_collection_has_key(collection_name: str, mongoDB):
     collection = mongoDB["collection_keys"]
     key_name = collection.find_one({"name": collection_name})
 
-    return True if key_name else False
+    return key_name
