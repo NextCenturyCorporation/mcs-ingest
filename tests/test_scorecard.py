@@ -4,10 +4,13 @@ import unittest
 import numpy as np
 
 import mcs_scene_ingest
-from scorecard.scorecard import Scorecard
-from scorecard.scorecard import find_closest_container
-from scorecard.scorecard import find_target_location
-from scorecard.scorecard import get_lookpoint
+from scorecard.scorecard import (
+    Scorecard,
+    calc_repeat_failed,
+    find_closest_container,
+    find_target_location,
+    get_lookpoint,
+)
 
 TEST_SCENE_FILE_NAME = "occluders_0001_17_I1_debug.json"
 TEST_HISTORY_FILE_NAME = "india_0003_baseline_level1.json"
@@ -18,6 +21,36 @@ TEST_HISTORY_CONTAINER = "golf_0018_15_baseline.json"
 TEST_SCENE_NO_TARGET = "juliett_0001_01_debug.json"
 
 TEST_FOLDER = "tests"
+
+# Hide all non-error log messages while running these unit tests.
+logging.basicConfig(
+    level=logging.ERROR,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
+
+def create_mock_step(
+    action: str = 'Pass',
+    object_coords: dict = None,
+    position: dict = None,
+    receptacle_coords: dict = None,
+    return_status: str = 'SUCCESSFUL',
+    rotation: int = 0
+) -> dict:
+    return {
+        'action': action,
+        'output': {
+            'return_status': return_status
+        },
+        'params': {
+            'objectImageCoords': object_coords or {'x': 0, 'y': 0},
+            'receptacleObjectImageCoords': (
+                receptacle_coords or {'x': 0, 'y': 0},
+            )
+        },
+        'position': position or {'x': 0, 'y': 0, 'z': 0},
+        'rotation': rotation
+    }
 
 
 class TestMcsScorecard(unittest.TestCase):
@@ -137,12 +170,166 @@ class TestMcsScorecard(unittest.TestCase):
             TEST_FOLDER, TEST_HISTORY_CONTAINER)
         scorecard = Scorecard(history_file, scene_file)
         not_moving = scorecard.calc_not_moving_toward_object()
-        print(f"{not_moving}")
 
+    def test_calc_repeat_failed_ignore_failed(self):
+        repeat_failed = calc_repeat_failed([
+            create_mock_step(action='MoveAhead', return_status='FAILED'),
+            create_mock_step(action='MoveAhead', return_status='FAILED')
+        ])
+        self.assertEqual(repeat_failed, 0)
 
-if __name__ == '__main__':
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    def test_calc_repeat_failed_ignore_obstructed(self):
+        repeat_failed = calc_repeat_failed([
+            create_mock_step(action='MoveAhead', return_status='OBSTRUCTED'),
+            create_mock_step(action='MoveAhead', return_status='OBSTRUCTED')
+        ])
+        self.assertEqual(repeat_failed, 0)
 
-    unittest.main()
+    def test_calc_repeat_failed_one_success(self):
+        repeat_failed = calc_repeat_failed([
+            create_mock_step(
+                action='PickupObject',
+                object_coords={'x': 300, 'y': 200}
+            )
+        ])
+        self.assertEqual(repeat_failed, 0)
+
+    def test_calc_repeat_failed_one_failure(self):
+        repeat_failed = calc_repeat_failed([
+            create_mock_step(
+                action='PickupObject',
+                object_coords={'x': 300, 'y': 200},
+                return_status='OUT_OF_REACH'
+            )
+        ])
+        self.assertEqual(repeat_failed, 0)
+
+    def test_calc_repeat_failed_two_failures(self):
+        repeat_failed = calc_repeat_failed([
+            create_mock_step(
+                action='PickupObject',
+                object_coords={'x': 300, 'y': 200},
+                return_status='OUT_OF_REACH'
+            ),
+            create_mock_step(
+                action='PickupObject',
+                object_coords={'x': 300, 'y': 200},
+                return_status='OUT_OF_REACH'
+            )
+        ])
+        self.assertEqual(repeat_failed, 1)
+
+    def test_calc_repeat_failed_three_failures(self):
+        repeat_failed = calc_repeat_failed([
+            create_mock_step(
+                action='PickupObject',
+                object_coords={'x': 300, 'y': 200},
+                return_status='OUT_OF_REACH'
+            ),
+            create_mock_step(
+                action='PickupObject',
+                object_coords={'x': 300, 'y': 200},
+                return_status='OUT_OF_REACH'
+            ),
+            create_mock_step(
+                action='PickupObject',
+                object_coords={'x': 300, 'y': 200},
+                return_status='OUT_OF_REACH'
+            )
+        ])
+        self.assertEqual(repeat_failed, 2)
+
+    def test_calc_repeat_failed_two_failures_with_pause_in_between(self):
+        repeat_failed = calc_repeat_failed([
+            create_mock_step(
+                action='PickupObject',
+                object_coords={'x': 300, 'y': 200},
+                return_status='OUT_OF_REACH'
+            ),
+            create_mock_step(),
+            create_mock_step(
+                action='PickupObject',
+                object_coords={'x': 300, 'y': 200},
+                return_status='OUT_OF_REACH'
+            )
+        ])
+        self.assertEqual(repeat_failed, 1)
+
+    def test_calc_repeat_failed_two_failures_different_action(self):
+        repeat_failed = calc_repeat_failed([
+            create_mock_step(
+                action='CloseObject',
+                object_coords={'x': 300, 'y': 200},
+                return_status='OUT_OF_REACH'
+            ),
+            create_mock_step(
+                action='OpenObject',
+                object_coords={'x': 300, 'y': 200},
+                return_status='OUT_OF_REACH'
+            )
+        ])
+        self.assertEqual(repeat_failed, 0)
+
+    def test_calc_repeat_failed_two_failures_different_params(self):
+        repeat_failed = calc_repeat_failed([
+            create_mock_step(
+                action='PickupObject',
+                object_coords={'x': 300, 'y': 200},
+                return_status='OUT_OF_REACH'
+            ),
+            create_mock_step(
+                action='PickupObject',
+                object_coords={'x': 0, 'y': 0},
+                return_status='OUT_OF_REACH'
+            )
+        ])
+        self.assertEqual(repeat_failed, 0)
+
+    def test_calc_repeat_failed_two_failures_different_position(self):
+        repeat_failed = calc_repeat_failed([
+            create_mock_step(
+                action='PickupObject',
+                object_coords={'x': 300, 'y': 200},
+                position={'x': 0, 'y': 0, 'z': 0},
+                return_status='OUT_OF_REACH'
+            ),
+            create_mock_step(
+                action='PickupObject',
+                object_coords={'x': 300, 'y': 200},
+                position={'x': 1, 'y': 0, 'z': 0},
+                return_status='OUT_OF_REACH'
+            )
+        ])
+        self.assertEqual(repeat_failed, 0)
+
+    def test_calc_repeat_failed_two_failures_different_rotation(self):
+        repeat_failed = calc_repeat_failed([
+            create_mock_step(
+                action='PickupObject',
+                object_coords={'x': 300, 'y': 200},
+                return_status='OUT_OF_REACH',
+                rotation=0
+            ),
+            create_mock_step(
+                action='PickupObject',
+                object_coords={'x': 300, 'y': 200},
+                return_status='OUT_OF_REACH',
+                rotation=10
+            )
+        ])
+        self.assertEqual(repeat_failed, 0)
+
+    def test_calc_repeat_failed_two_failures_different_status(self):
+        repeat_failed = calc_repeat_failed([
+            create_mock_step(
+                action='PickupObject',
+                object_coords={'x': 300, 'y': 200},
+                return_status='OUT_OF_REACH'
+            ),
+            create_mock_step(
+                action='PickupObject',
+                object_coords={'x': 300, 'y': 200},
+                return_status='NOT_OBJECT'
+            )
+        ])
+        self.assertEqual(repeat_failed, 0)

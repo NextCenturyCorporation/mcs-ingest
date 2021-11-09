@@ -20,7 +20,7 @@ from test_data_generator.data_gen_runner import (
 
 def open_objects_callback(step_metadata, runner_script):
     '''  Generate output that has 2 successful opens,
-    1 NOT_RECEPTACLE, 1 NOT_OPENABLE'''
+    2 NOT_OPENABLE'''
 
     step = step_metadata.step_number
     part1 = "wwwwwjjjWlllWWwwss kkkkk 3 "
