@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import boto3
+import traceback
 
 import mcs_scene_ingest
 
@@ -45,7 +46,7 @@ def process_message(message, message_type, db_string):
             eq =  error_queue if db_string == "mcs" else dev_error_queue
             response = eq.send_message(MessageBody='IngestError', MessageAttributes={
                 'file': {'StringValue': str(basename), 'DataType': 'String'},
-                'error': {'StringValue': str(e), 'DataType': 'String'}
+                'error': {'StringValue': str(traceback.format_exc()), 'DataType': 'String'}
             })
             logging.info(f"Sending {response}")
 
