@@ -432,15 +432,17 @@ def update_agency_paired_history_item(
 
 
 def update_agency_scoring(
-        history_item_1: dict, 
+        history_item_1: dict,
         history_item_2: dict) -> None:
-    if float(history_item_1["score"]["classification"]) > (
-                    float(history_item_2["score"]["classification"])):
+    if (history_item_1["score"]["classification"] is not None) and (
+            history_item_2["score"]["classification"] is not None) and (
+                float(history_item_1["score"]["classification"]) > (
+                    float(history_item_2["score"]["classification"]))):
         history_item_1["score"]["score"] = 1
         history_item_1["score"]["weighted_score"] = 1
         history_item_1["score"]["weighted_score_worth"] = 1
         history_item_1["score"]["score_description"] = "Correct"
-        
+
         history_item_2["score"]["score"] = 1
         history_item_2["score"]["weighted_score"] = 1
         history_item_2["score"]["weighted_score_worth"] = 0
@@ -522,17 +524,18 @@ def process_score(
 
     # Agency Scoring Check
     # Get Paired Agency Task
-    paired_history_item = return_agency_paired_history_item(
-        client, db_string, history_item)
-    if paired_history_item:
-        # Determine which pair item is correct (1)
-        if paired_history_item["score"]["ground_truth"] == 1:
-            update_agency_scoring(paired_history_item, history_item)
-        else:
-            update_agency_scoring(history_item, paired_history_item)
+    if history_item["test_type"] == "agents":
+        paired_history_item = return_agency_paired_history_item(
+            client, db_string, history_item)
+        if paired_history_item:
+            # Determine which pair item is correct (1)
+            if paired_history_item["score"]["ground_truth"] == 1:
+                update_agency_scoring(paired_history_item, history_item)
+            else:
+                update_agency_scoring(history_item, paired_history_item)
 
-        update_agency_paired_history_item(
-            client, db_string, paired_history_item)
+            update_agency_paired_history_item(
+                client, db_string, paired_history_item)
 
     return history_item["score"]
 
