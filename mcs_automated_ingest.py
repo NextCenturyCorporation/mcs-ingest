@@ -43,7 +43,7 @@ def process_message(message, message_type, db_string):
                 mcs_scene_ingest.automated_scene_ingest_file(
                     basename, "", db_string)
         except Exception as e:
-            logging.info(f"Error {traceback.format_exc()}")
+            logging.error(f"Error {traceback.format_exc()}")
             eq =  error_queue if db_string == "mcs" else dev_error_queue
             response = eq.send_message(MessageBody='IngestError', MessageAttributes={
                 'file': {'StringValue': str(basename), 'DataType': 'String'},
