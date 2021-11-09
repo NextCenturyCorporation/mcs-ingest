@@ -434,6 +434,9 @@ def update_agency_paired_history_item(
 def update_agency_scoring(
         history_item_1: dict,
         history_item_2: dict) -> None:
+    # If either classification is none it should be marked as incorrect
+    # history_item_1 will always be the correct item when calling this 
+    #  so its classification should be higher to be correct
     if (history_item_1["score"]["classification"] is not None) and (
             history_item_2["score"]["classification"] is not None) and (
                 float(history_item_1["score"]["classification"]) > (
@@ -527,8 +530,11 @@ def process_score(
     if history_item["test_type"] == "agents":
         paired_history_item = return_agency_paired_history_item(
             client, db_string, history_item)
+        # Only attempt pair scoring if the other pair item has already 
+        #   been ingested
         if paired_history_item:
-            # Determine which pair item is correct (1)
+            # Determine which pair item is correct (1), the correct pair
+            #   item should have a higher classification to be correct
             if paired_history_item["score"]["ground_truth"] == 1:
                 update_agency_scoring(paired_history_item, history_item)
             else:
