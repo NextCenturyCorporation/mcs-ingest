@@ -70,7 +70,7 @@ To run the unit tests, run the command:  python3 -m unittest
 
 # Scorecard
 
-See README.md in scorecard/ directory for details.
+See [scorecard/README.md](./scorecard/README.md) for details.
 
 
 ## Acknowledgements

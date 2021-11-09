@@ -76,28 +76,44 @@ It is recognized that this is a limitation of the algorithm.
 #### Target object in the field of view but agent does not move toward it
 
 If the agent can see the target object, it should move toward it.  This is slightly
-more complicated than that because there might be objects in the way or the target may not 
-be very visible (a single pixel on the edge of the field of view). 
+more complicated than that because there might be objects in the way or the target may not
+be very visible (a single pixel on the edge of the field of view).
 
 Algorithm:
-  * The target needs to be visible for a number of frames in a row (4) before it counts 
+  * The target needs to be visible for a number of frames in a row (4) before it counts
   as being sufficiently visible that the agent should have seen it.  A timer is then
-  started and the distance to the target is saved   
+  started and the distance to the target is saved
   * After 30 steps, the agent should have had time to go around whatever is in the way
-  and moved closer to the target.  
+  and moved closer to the target.
   * If it doesn't move towards the target, then we increment by one and reset
-  * If it does move towards the target, it needs to continue moving towards 
+  * If it does move towards the target, it needs to continue moving towards
   the target (within the next 30 steps)
-  
-The number 30 is to give the agent sufficient time to go around an obstacle. We 
-ignore turns, passes, tilts, etc and only count MoveAhead, MoveBack, MoveLeft, 
-and MoveRight.  It takes maybe 15 steps to the side to get past an object 
-(during which distance will increase), and then some number of steps to make 
-up for the fact that the agent was moving away while going around the obstacle 
-(15).  Based on some testing, 30 is about right.  
+
+The number 30 is to give the agent sufficient time to go around an obstacle. We
+ignore turns, passes, tilts, etc and only count MoveAhead, MoveBack, MoveLeft,
+and MoveRight.  It takes maybe 15 steps to the side to get past an object
+(during which distance will increase), and then some number of steps to make
+up for the fact that the agent was moving away while going around the obstacle
+(15).  Based on some testing, 30 is about right.
 
 
-####
+#### Repeated Failed Actions
+
+If the agent repeatedly tries an action and fails, then it should be counted.
+For each action type (Open / Close, Pickup, etc), we note when it fails a
+first time.  If the same action type is done again with the same failure
+type, from the same position/rotation, with the same action parameters, it
+counts.
+
+Because of the difficulty in moving, if the agent tries to move and it is
+OBSTRUCTED, it is _not_ counted.
+
+Note that this overlaps with some of the other scorecard elements.  For example,
+attempting to open an unopenable object will cause it to count in that category.
+This one will count if the agent tries to do it twice (or more times).  If the
+agent does it twice, then the unopenable object count will be 2 and the
+repeated failed actions will 1.
+
 
 ## Running the Scorecard
 
@@ -105,15 +121,15 @@ up for the fact that the agent was moving away while going around the obstacle
 The file ```tests/scorecard_test_ground_truth.py``` shows an example of how to run the
 scorecard code:  You create a Scorecard object, passing in the scene json file
 along with the json file with the MCS history output, and then tell it to score all
-the parts of the scorecard: 
+the parts of the scorecard:
 
 ```
 scorecard = Scorecard(scene_json_filepath, ouput_json_filepath)
 scorecard_dict = scorecard.score_all()
 ```
 
-For testing and experimentation, you can tell it calculate the 
-score for particular parts of the scorecard: 
+For testing and experimentation, you can tell it calculate the
+score for particular parts of the scorecard:
 
 ```
 scorecard = Scorecard(scene_json_filepath, ouput_json_filepath)
@@ -143,7 +159,7 @@ Note that the generators use scene files, since the generator is running the
 MCS software and needs a scene relevant for the scorecard test.  The scene files
 have been modified from the original used in the evaluation in 2 ways:
 1. The roomDimensions object has been added. For testing, they are 10,11,12; they were 10,10,10
-1. Objects have been moved and the starting point for the agent has sometimes been
+2. Objects have been moved and the starting point for the agent has sometimes been
 moved.
 
 ### Reopen Generator ###
@@ -175,3 +191,22 @@ To use the unopenable generator:
 
 The scene_file to use should be `tests/golf_0018_15_debug.json` which has
 both openable and unopenable objects.
+
+### Move Toward
+
+To use the move toward generator:
+
+```
+% PYTHONPATH='.' python test_data_generator/scorecard_generate_move_toward.py [MCS_unity] [scene_file]
+```
+
+The scene_file to use should be `tests/india_0003_17.json`
+
+### Repeat Failed
+
+To use the repeat failed generator:
+```
+% PYTHONPATH='.' python test_data_generator/scorecard_generate_repeat_failed.py [MCS_unity] [scene_file]
+```
+
+The scene_file to use should be `tests/golf_0018_15_debug.json`

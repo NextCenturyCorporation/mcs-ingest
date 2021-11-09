@@ -51,37 +51,44 @@ def find_fullpath_latest(basefilename: str, dir_name: str) -> os.path:
 def compare_with_ground_truth(
         scorecard: Scorecard, gt_revisit: int,
         gt_unopenable: int, gt_relook: int,
-        gt_not_moving_towards: int):
+        gt_not_moving_towards: int, gt_repeat_failed: int):
     ''' compare to ground truth (num_revisit)'''
     num_revisit_calc = scorecard.get_revisits()
     num_unopenable_calc = scorecard.get_unopenable()
     num_relook_calc = scorecard.get_relooks()
     num_not_moving_twd = scorecard.get_not_moving_towards()
+    num_repeat_failed = scorecard.get_repeat_failed()
 
     logging.info(f"     revisit: {gt_revisit} {num_revisit_calc}" +
                  f"   unopenable: {gt_unopenable} {num_unopenable_calc}"
                  f"   relook: {gt_relook}  {num_relook_calc}"
-                 f"  nottoward: {gt_not_moving_towards} {num_not_moving_twd}")
+                 f"  nottoward: {gt_not_moving_towards} {num_not_moving_twd}"
+                 f"  repeatfailed: {gt_repeat_failed} {num_repeat_failed}")
 
     passed = 0
     failed = 0
 
-    if gt_unopenable == scorecard.get_unopenable():
+    if gt_unopenable == num_unopenable_calc:
         passed += 1
     else:
         failed += 1
 
-    if gt_revisit == scorecard.get_revisits():
+    if gt_revisit == num_revisit_calc:
         passed += 1
     else:
         failed += 1
 
-    if gt_relook == scorecard.get_relooks():
+    if gt_relook == num_relook_calc:
         passed += 1
     else:
         failed += 1
 
-    if gt_not_moving_towards == scorecard.get_not_moving_towards():
+    if gt_not_moving_towards == num_not_moving_twd:
+        passed += 1
+    else:
+        failed += 1
+
+    if gt_repeat_failed == num_repeat_failed:
         passed += 1
     else:
         failed += 1
@@ -101,6 +108,7 @@ def process_line(line: str):
     gt_unopenable = int(vals[3].strip())
     gt_relook = int(vals[4].strip())
     gt_not_moving_towards = int(vals[5].strip())
+    gt_repeat_failed = int(vals[6].strip())
 
     scene_filepath = find_fullpath_latest(scenefile, SCENE_DIR)
     if not scene_filepath:
@@ -110,15 +118,15 @@ def process_line(line: str):
 
     history_filepath = find_fullpath_latest(basefilename, HISTORY_DIR)
     if not history_filepath:
-        logging.warning(f"Unable to find {HISTORY_DIR} and " +
-                        f"{basefilename}")
+        logging.warning(f"Unable to find '{basefilename}' in " +
+                        f"{HISTORY_DIR}")
         return 0, 0, 1
     logging.info(f"Reporting on {history_filepath}")
 
     scorecard = get_scorecard(history_filepath, scene_filepath)
     p, f = compare_with_ground_truth(
         scorecard, gt_revisits, gt_unopenable,
-        gt_relook, gt_not_moving_towards)
+        gt_relook, gt_not_moving_towards, gt_repeat_failed)
     logging.info(f"     results  pass: {p}   fail: {f}")
     return p, f, 0
 

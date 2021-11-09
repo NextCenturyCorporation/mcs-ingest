@@ -178,9 +178,8 @@ def automated_scene_ingest_file(
         collection.insert_one(scene_item)
 
     # Add Keys when a new evluation item is created
-    collection_count = collection.find(
-        {"evaluation": scene_item["eval"]}).count()
-    if collection_count == 1:
+    if create_collection_keys.check_collection_has_key(
+            scene_item["eval"], mongoDB) is None:
         create_collection_keys.find_collection_keys(
             SCENE_INDEX, scene_item["eval"], mongoDB)
 
@@ -406,13 +405,67 @@ def calculate_reorientation_score(
         return interactive_goal_achieved
 
 
+def return_agency_paired_history_item(
+        client: MongoClient,
+        db_string: str,
+        history_item: dict) -> dict:
+    mongoDB = client[db_string]
+    collection = mongoDB[HISTORY_INDEX]
+    history = collection.find_one({
+        "eval": history_item["eval"],
+        "category_type": history_item["category_type"],
+        "performer": history_item["performer"],
+        "test_num": history_item["test_num"],
+        "scene_num": 2 if history_item["scene_num"] == 1 else 1
+    })
+    return history
+
+
+def update_agency_paired_history_item(
+        client: MongoClient,
+        db_string: str,
+        history_item: dict) -> None:
+    mongoDB = client[db_string]
+    collection = mongoDB[HISTORY_INDEX]
+    logging.info(f"Updating Agency Pair {history_item['name']}")
+    collection.replace_one({"_id": history_item["_id"]}, history_item)
+
+
+def update_agency_scoring(
+        history_item_1: dict, 
+        history_item_2: dict) -> None:
+    if float(history_item_1["score"]["classification"]) > (
+                    float(history_item_2["score"]["classification"])):
+        history_item_1["score"]["score"] = 1
+        history_item_1["score"]["weighted_score"] = 1
+        history_item_1["score"]["weighted_score_worth"] = 1
+        history_item_1["score"]["score_description"] = "Correct"
+        
+        history_item_2["score"]["score"] = 1
+        history_item_2["score"]["weighted_score"] = 1
+        history_item_2["score"]["weighted_score_worth"] = 0
+        history_item_2["score"]["score_description"] = "Correct"
+    else:
+        history_item_1["score"]["score"] = 0
+        history_item_1["score"]["weighted_score"] = 0
+        history_item_1["score"]["weighted_score_worth"] = 1
+        history_item_1["score"]["score_description"] = "Incorrect"
+
+        history_item_2["score"]["score"] = 0
+        history_item_2["score"]["weighted_score"] = 0
+        history_item_2["score"]["weighted_score_worth"] = 0
+        history_item_2["score"]["score_description"] = "Incorrect"
+
+
 def process_score(
         history_item: dict,
         scene: dict,
         interactive_goal_achieved: int,
         interactive_reward: int,
         corner_visit_order: List[dict],
-        reorientation_scoring_override: bool) -> dict:
+        reorientation_scoring_override: bool,
+        client: MongoClient,
+        db_string: str) -> dict:
     # Removed Adjusted Confidence, should be OBE
     if (history_item["category"] == "interactive"):
         if "score" not in history_item:
@@ -466,6 +519,20 @@ def process_score(
     history_item["score"]["weighted_score"] = weighted_score
     history_item["score"]["weighted_score_worth"] = weighted_score_worth
     history_item["score"]["weighted_confidence"] = weighted_confidence
+
+    # Agency Scoring Check
+    # Get Paired Agency Task
+    paired_history_item = return_agency_paired_history_item(
+        client, db_string, history_item)
+    if paired_history_item:
+        # Determine which pair item is correct (1)
+        if paired_history_item["score"]["ground_truth"] == 1:
+            update_agency_scoring(paired_history_item, history_item)
+        else:
+            update_agency_scoring(history_item, paired_history_item)
+
+        update_agency_paired_history_item(
+            client, db_string, paired_history_item)
 
     return history_item["score"]
 
@@ -596,8 +663,18 @@ def build_history_item(
             interactive_goal_achieved,
             interactive_reward,
             corner_visit_order,
-            reorientation_scoring_override)
+            reorientation_scoring_override,
+            client,
+            db_string)
         history_item["score"]["scorecard"] = calc_scorecard(history, scene)
+
+        print("Check Scene Keys")
+        # Add Keys when a list of keys doesn't exist
+        if create_collection_keys.check_collection_has_key(
+                scene["eval"], mongoDB) is None:
+            print("Add Scene Keys")
+            create_collection_keys.find_collection_keys(
+                SCENE_INDEX, scene["eval"], mongoDB)
 
         return history_item
 
@@ -631,10 +708,9 @@ def automated_history_ingest_file(
                 logging.info(f"Updating {history_item['name']}")
                 collection.replace_one({"_id": item["_id"]}, history_item)
 
-    # Add Keys when a new evluation item is created
-    collection_count = collection.find(
-        {"eval": history_item["eval"]}).count()
-    if collection_count == 1:
+    # Add Keys when a list of keys doesn't exist
+    if create_collection_keys.check_collection_has_key(
+            history_item["eval"], mongoDB) is None:
         create_collection_keys.find_collection_keys(
             HISTORY_INDEX, history_item["eval"], mongoDB)
 
