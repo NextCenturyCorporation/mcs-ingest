@@ -528,7 +528,7 @@ def process_score(
         # Determine which pair item is correct (1)
         if paired_history_item["score"]["ground_truth"] == 1:
             update_agency_scoring(paired_history_item, history_item)
-        if paired_history_item["score"]["ground_truth"] == 0:
+        else:
             update_agency_scoring(history_item, paired_history_item)
 
         update_agency_paired_history_item(
