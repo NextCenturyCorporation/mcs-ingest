@@ -67,7 +67,7 @@ def calc_repeat_failed(steps_list: list) -> int:
             continue
 
         # Round floats so we have more accurate key string comparisons.
-        position = single_step['position']
+        position = single_step['output']['position']
         # TODO MCS-978 Rather than using the image coords, use the ID for the
         #      object that Unity has detected at the image coords, once Unity
         #      returns that info and we save it in the scene history files.
@@ -88,7 +88,7 @@ def calc_repeat_failed(steps_list: list) -> int:
             action,
             return_status,
             str(position),
-            str(single_step['rotation']),
+            str(single_step['output']['rotation']),
             str(params.get('objectId')),
             str(object_coords),
             str(params.get('receptacleObjectId')),

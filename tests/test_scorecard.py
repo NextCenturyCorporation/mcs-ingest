@@ -40,16 +40,16 @@ def create_mock_step(
     return {
         'action': action,
         'output': {
-            'return_status': return_status
+            'position': position or {'x': 0, 'y': 0, 'z': 0},
+            'return_status': return_status,
+            'rotation': rotation
         },
         'params': {
             'objectImageCoords': object_coords or {'x': 0, 'y': 0},
             'receptacleObjectImageCoords': (
                 receptacle_coords or {'x': 0, 'y': 0},
             )
-        },
-        'position': position or {'x': 0, 'y': 0, 'z': 0},
-        'rotation': rotation
+        }
     }
 
 
