@@ -73,7 +73,7 @@ class TestMcsSceneIngest(unittest.TestCase):
             'mongodb://mongomcs:mongomcspassword@localhost:27017/mcs')
         history_item = mcs_scene_ingest.build_history_item(
             TEST_HISTORY_FILE_NAME, TEST_FOLDER, "eval_4",
-            "cora", TEST_FOLDER, ".json", client, "mcs")
+            "cora", TEST_FOLDER, ".json", client, "mcs", ignore_keys=True)
         logging.info(f"{history_item}")
 
     def test_build_interactive_history_item(self):
@@ -83,7 +83,8 @@ class TestMcsSceneIngest(unittest.TestCase):
             'mongodb://mongomcs:mongomcspassword@localhost:27017/mcs')
         history_item = mcs_scene_ingest.build_history_item(
             TEST_INTERACTIVE_HISTORY_FILE_NAME, TEST_FOLDER,
-            "eval_4", "cora", TEST_FOLDER, ".json", client, "mcs")
+            "eval_4", "cora", TEST_FOLDER, ".json", client, "mcs",
+            ignore_keys=True)
         logging.info(f"{history_item}")
 
     def test_reorientation_calculate_corners(self):
