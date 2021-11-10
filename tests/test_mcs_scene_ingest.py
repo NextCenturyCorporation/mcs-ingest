@@ -219,6 +219,32 @@ class TestMcsSceneIngest(unittest.TestCase):
         self.assertEqual(history_item_2['score']['weighted_score_worth'], 0)
         self.assertEqual(history_item_2['score']['score_description'], 'Correct')
 
+    def test_process_score_correct(self):
+        history_item = {
+            'category': 'passive',
+            'test_type': 'intuitive physics',
+            'score': {'classification': '1'}
+        }
+        scene = {'goal': {'answer': {'choice': 'plausible'}}}
+        history_item["score"] = mcs_scene_ingest.process_score(
+            history_item, scene, False, False, None, False, None, None)
+
+        self.assertEqual(history_item['score']['score'], 1)
+        self.assertEqual(history_item['score']['score_description'], 'Correct')
+
+    def test_process_score_incorrect(self):
+        history_item = {
+            'category': 'passive',
+            'test_type': 'intuitive physics',
+            'score': {'classification': '0'}
+        }
+        scene = {'goal': {'answer': {'choice': 'plausible'}}}
+        history_item["score"] = mcs_scene_ingest.process_score(
+            history_item, scene, False, False, None, False, None, None)
+
+        self.assertEqual(history_item['score']['score'], 0)
+        self.assertEqual(history_item['score']['score_description'], 'Incorrect')
+
 
 if __name__ == '__main__':
     logging.basicConfig(

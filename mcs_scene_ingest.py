@@ -497,8 +497,8 @@ def process_score(
                 ("plausible" == scene["goal"]["answer"]["choice"] or
                  "expected" == scene["goal"]["answer"]["choice"]) else 0
             history_item["score"]["score"] = 1 if \
-                history_item["score"]["classification"] == \
-                history_item["score"]["ground_truth"] else 0
+                float(history_item["score"]["classification"]) == \
+                float(history_item["score"]["ground_truth"]) else 0
         else:
             # Eval 2 backwards compatiblity
             history_item["score"] = {}
