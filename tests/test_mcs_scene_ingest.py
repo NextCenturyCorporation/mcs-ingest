@@ -143,6 +143,81 @@ class TestMcsSceneIngest(unittest.TestCase):
             mcs_scene_ingest.calculate_reorientation_score(corner_order, 0))
         self.assertEqual(reorientation_score, 0)
 
+    def test_update_agency_scoring_both_none(self):
+        history_item_1 = {'score': {'classification': None}}
+        history_item_2 = {'score': {'classification': None}}
+        mcs_scene_ingest.update_agency_scoring(history_item_1, history_item_2)
+        
+        self.assertEqual(history_item_1['score']['score'], 0)
+        self.assertEqual(history_item_1['score']['weighted_score'], 0)
+        self.assertEqual(history_item_1['score']['weighted_score_worth'], 1)
+        self.assertEqual(history_item_1['score']['score_description'], 'Incorrect')
+
+        self.assertEqual(history_item_2['score']['score'], 0)
+        self.assertEqual(history_item_2['score']['weighted_score'], 0)
+        self.assertEqual(history_item_2['score']['weighted_score_worth'], 0)
+        self.assertEqual(history_item_2['score']['score_description'], 'Incorrect')
+
+    def test_update_agency_scoring_item1_none(self):
+        history_item_1 = {'score': {'classification': None}}
+        history_item_2 = {'score': {'classification': 0.999}}
+        mcs_scene_ingest.update_agency_scoring(history_item_1, history_item_2)
+        
+        self.assertEqual(history_item_1['score']['score'], 0)
+        self.assertEqual(history_item_1['score']['weighted_score'], 0)
+        self.assertEqual(history_item_1['score']['weighted_score_worth'], 1)
+        self.assertEqual(history_item_1['score']['score_description'], 'Incorrect')
+
+        self.assertEqual(history_item_2['score']['score'], 0)
+        self.assertEqual(history_item_2['score']['weighted_score'], 0)
+        self.assertEqual(history_item_2['score']['weighted_score_worth'], 0)
+        self.assertEqual(history_item_2['score']['score_description'], 'Incorrect')
+
+    def test_update_agency_scoring_item2_none(self):
+        history_item_1 = {'score': {'classification': 0.999}}
+        history_item_2 = {'score': {'classification': None}}
+        mcs_scene_ingest.update_agency_scoring(history_item_1, history_item_2)
+        
+        self.assertEqual(history_item_1['score']['score'], 0)
+        self.assertEqual(history_item_1['score']['weighted_score'], 0)
+        self.assertEqual(history_item_1['score']['weighted_score_worth'], 1)
+        self.assertEqual(history_item_1['score']['score_description'], 'Incorrect')
+
+        self.assertEqual(history_item_2['score']['score'], 0)
+        self.assertEqual(history_item_2['score']['weighted_score'], 0)
+        self.assertEqual(history_item_2['score']['weighted_score_worth'], 0)
+        self.assertEqual(history_item_2['score']['score_description'], 'Incorrect')
+
+    def test_update_agency_scoring_item1_lower_score(self):
+        history_item_1 = {'score': {'classification': 0.888}}
+        history_item_2 = {'score': {'classification': 0.999}}
+        mcs_scene_ingest.update_agency_scoring(history_item_1, history_item_2)
+        
+        self.assertEqual(history_item_1['score']['score'], 0)
+        self.assertEqual(history_item_1['score']['weighted_score'], 0)
+        self.assertEqual(history_item_1['score']['weighted_score_worth'], 1)
+        self.assertEqual(history_item_1['score']['score_description'], 'Incorrect')
+
+        self.assertEqual(history_item_2['score']['score'], 0)
+        self.assertEqual(history_item_2['score']['weighted_score'], 0)
+        self.assertEqual(history_item_2['score']['weighted_score_worth'], 0)
+        self.assertEqual(history_item_2['score']['score_description'], 'Incorrect')
+
+    def test_update_agency_scoring_item1_higher_score(self):
+        history_item_1 = {'score': {'classification': 0.999}}
+        history_item_2 = {'score': {'classification': 0.888}}
+        mcs_scene_ingest.update_agency_scoring(history_item_1, history_item_2)
+        
+        self.assertEqual(history_item_1['score']['score'], 1)
+        self.assertEqual(history_item_1['score']['weighted_score'], 1)
+        self.assertEqual(history_item_1['score']['weighted_score_worth'], 1)
+        self.assertEqual(history_item_1['score']['score_description'], 'Correct')
+
+        self.assertEqual(history_item_2['score']['score'], 1)
+        self.assertEqual(history_item_2['score']['weighted_score'], 1)
+        self.assertEqual(history_item_2['score']['weighted_score_worth'], 0)
+        self.assertEqual(history_item_2['score']['score_description'], 'Correct')
+
 
 if __name__ == '__main__':
     logging.basicConfig(
