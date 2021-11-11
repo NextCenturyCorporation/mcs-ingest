@@ -497,8 +497,8 @@ def process_score(
                 ("plausible" == scene["goal"]["answer"]["choice"] or
                  "expected" == scene["goal"]["answer"]["choice"]) else 0
             history_item["score"]["score"] = 1 if \
-                history_item["score"]["classification"] == \
-                history_item["score"]["ground_truth"] else 0
+                float(history_item["score"]["classification"]) == \
+                float(history_item["score"]["ground_truth"]) else 0
         else:
             # Eval 2 backwards compatiblity
             history_item["score"] = {}
@@ -565,14 +565,16 @@ def reorientation_calculate_corners(scene: dict) -> List[dict]:
 
 
 def build_history_item(
-        history_file: str,
-        folder: str,
-        eval_name: str,
-        performer: str,
-        scene_folder: str,
-        extension: str,
-        client: MongoClient,
-        db_string: str) -> dict:
+    history_file: str,
+    folder: str,
+    eval_name: str,
+    performer: str,
+    scene_folder: str,
+    extension: str,
+    client: MongoClient,
+    db_string: str,
+    ignore_keys: bool = False
+) -> dict:
     logging.info(f"Ingest history file: {history_file}")
     mongoDB = client[db_string]
 
@@ -675,15 +677,20 @@ def build_history_item(
             reorientation_scoring_override,
             client,
             db_string)
-        history_item["score"]["scorecard"] = calc_scorecard(history, scene)
+        history_item["score"]["scorecard"] = (
+            calc_scorecard(history, scene)
+            if history_item['category'] == 'interactive' else None
+        )
 
-        print("Check Scene Keys")
-        # Add Keys when a list of keys doesn't exist
-        if create_collection_keys.check_collection_has_key(
-                scene["eval"], mongoDB) is None:
-            print("Add Scene Keys")
-            create_collection_keys.find_collection_keys(
-                SCENE_INDEX, scene["eval"], mongoDB)
+        # Ignore keys during unit tests because we don't want to query mongo.
+        if not ignore_keys:
+            print("Check Scene Keys")
+            # Add Keys when a list of keys doesn't exist
+            if create_collection_keys.check_collection_has_key(
+                    scene["eval"], mongoDB) is None:
+                print("Add Scene Keys")
+                create_collection_keys.find_collection_keys(
+                    SCENE_INDEX, scene["eval"], mongoDB)
 
         return history_item
 

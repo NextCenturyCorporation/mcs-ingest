@@ -73,7 +73,7 @@ class TestMcsSceneIngest(unittest.TestCase):
             'mongodb://mongomcs:mongomcspassword@localhost:27017/mcs')
         history_item = mcs_scene_ingest.build_history_item(
             TEST_HISTORY_FILE_NAME, TEST_FOLDER, "eval_4",
-            "cora", TEST_FOLDER, ".json", client, "mcs")
+            "cora", TEST_FOLDER, ".json", client, "mcs", ignore_keys=True)
         logging.info(f"{history_item}")
 
     def test_build_interactive_history_item(self):
@@ -83,7 +83,8 @@ class TestMcsSceneIngest(unittest.TestCase):
             'mongodb://mongomcs:mongomcspassword@localhost:27017/mcs')
         history_item = mcs_scene_ingest.build_history_item(
             TEST_INTERACTIVE_HISTORY_FILE_NAME, TEST_FOLDER,
-            "eval_4", "cora", TEST_FOLDER, ".json", client, "mcs")
+            "eval_4", "cora", TEST_FOLDER, ".json", client, "mcs",
+            ignore_keys=True)
         logging.info(f"{history_item}")
 
     def test_reorientation_calculate_corners(self):
@@ -217,6 +218,32 @@ class TestMcsSceneIngest(unittest.TestCase):
         self.assertEqual(history_item_2['score']['weighted_score'], 1)
         self.assertEqual(history_item_2['score']['weighted_score_worth'], 0)
         self.assertEqual(history_item_2['score']['score_description'], 'Correct')
+
+    def test_process_score_correct(self):
+        history_item = {
+            'category': 'passive',
+            'test_type': 'intuitive physics',
+            'score': {'classification': '1'}
+        }
+        scene = {'goal': {'answer': {'choice': 'plausible'}}}
+        history_item["score"] = mcs_scene_ingest.process_score(
+            history_item, scene, False, False, None, False, None, None)
+
+        self.assertEqual(history_item['score']['score'], 1)
+        self.assertEqual(history_item['score']['score_description'], 'Correct')
+
+    def test_process_score_incorrect(self):
+        history_item = {
+            'category': 'passive',
+            'test_type': 'intuitive physics',
+            'score': {'classification': '0'}
+        }
+        scene = {'goal': {'answer': {'choice': 'plausible'}}}
+        history_item["score"] = mcs_scene_ingest.process_score(
+            history_item, scene, False, False, None, False, None, None)
+
+        self.assertEqual(history_item['score']['score'], 0)
+        self.assertEqual(history_item['score']['score_description'], 'Incorrect')
 
 
 if __name__ == '__main__':
