@@ -440,19 +440,19 @@ def update_agency_scoring(
     score_1 = history_item_1["score"]
     score_2 = history_item_2["score"]
 
-    if score_1.get("classification") is None or \
-        score_2.get("classification") is None:
-        score_1["score"] = 0
-        score_1["weighted_score"] = 0
-        score_1["weighted_score_worth"] = 1
-        score_1["score_description"] = "Incorrect"
+    # convert classification field to float
+    # if None or unconvertible string, catch exception and assign -1
+    try:
+        classification_1 = float(score_1.get("classification"))
+    except (TypeError, ValueError):
+        classification_1 = float(-1)
 
-        score_2["score"] = 0
-        score_2["weighted_score"] = 0
-        score_2["weighted_score_worth"] = 0
-        score_2["score_description"] = "Incorrect"
-    elif float(score_1["classification"]) == -1 and \
-        float(score_2["classification"]) == -1:
+    try:
+        classification_2 = float(score_2.get("classification"))
+    except (TypeError, ValueError):
+        classification_2 = float(-1)
+
+    if classification_1 == -1 and classification_2 == -1:
         score_1["score"] = 0
         score_1["weighted_score"] = 0
         score_1["weighted_score_worth"] = 1
@@ -462,7 +462,7 @@ def update_agency_scoring(
         score_2["weighted_score"] = 0
         score_2["weighted_score_worth"] = 0
         score_2["score_description"] = "No answer"
-    elif float(score_1["classification"]) == -1:
+    elif classification_1 == -1:
         score_1["score"] = 0
         score_1["weighted_score"] = 0
         score_1["weighted_score_worth"] = 0
@@ -472,7 +472,7 @@ def update_agency_scoring(
         score_2["weighted_score"] = 0
         score_2["weighted_score_worth"] = 1
         score_2["score_description"] = "Incorrect"
-    elif float(score_2["classification"]) == -1:
+    elif classification_2 == -1:
         score_1["score"] = 0
         score_1["weighted_score"] = 0
         score_1["weighted_score_worth"] = 1
@@ -482,7 +482,7 @@ def update_agency_scoring(
         score_2["weighted_score"] = 0
         score_2["weighted_score_worth"] = 0
         score_2["score_description"] = "No answer"
-    elif float(score_1["classification"]) > float(score_2["classification"]):
+    elif classification_1 > classification_2:
         score_1["score"] = 1
         score_1["weighted_score"] = 1
         score_1["weighted_score_worth"] = 1

@@ -152,12 +152,12 @@ class TestMcsSceneIngest(unittest.TestCase):
         self.assertEqual(history_item_1['score']['score'], 0)
         self.assertEqual(history_item_1['score']['weighted_score'], 0)
         self.assertEqual(history_item_1['score']['weighted_score_worth'], 1)
-        self.assertEqual(history_item_1['score']['score_description'], 'Incorrect')
+        self.assertEqual(history_item_1['score']['score_description'], 'No answer')
 
         self.assertEqual(history_item_2['score']['score'], 0)
         self.assertEqual(history_item_2['score']['weighted_score'], 0)
         self.assertEqual(history_item_2['score']['weighted_score_worth'], 0)
-        self.assertEqual(history_item_2['score']['score_description'], 'Incorrect')
+        self.assertEqual(history_item_2['score']['score_description'], 'No answer')
 
     def test_update_agency_scoring_item1_none(self):
         history_item_1 = {'score': {'classification': None}}
@@ -166,12 +166,12 @@ class TestMcsSceneIngest(unittest.TestCase):
         
         self.assertEqual(history_item_1['score']['score'], 0)
         self.assertEqual(history_item_1['score']['weighted_score'], 0)
-        self.assertEqual(history_item_1['score']['weighted_score_worth'], 1)
-        self.assertEqual(history_item_1['score']['score_description'], 'Incorrect')
+        self.assertEqual(history_item_1['score']['weighted_score_worth'], 0)
+        self.assertEqual(history_item_1['score']['score_description'], 'No answer')
 
         self.assertEqual(history_item_2['score']['score'], 0)
         self.assertEqual(history_item_2['score']['weighted_score'], 0)
-        self.assertEqual(history_item_2['score']['weighted_score_worth'], 0)
+        self.assertEqual(history_item_2['score']['weighted_score_worth'], 1)
         self.assertEqual(history_item_2['score']['score_description'], 'Incorrect')
 
     def test_update_agency_scoring_item2_none(self):
@@ -187,7 +187,7 @@ class TestMcsSceneIngest(unittest.TestCase):
         self.assertEqual(history_item_2['score']['score'], 0)
         self.assertEqual(history_item_2['score']['weighted_score'], 0)
         self.assertEqual(history_item_2['score']['weighted_score_worth'], 0)
-        self.assertEqual(history_item_2['score']['score_description'], 'Incorrect')
+        self.assertEqual(history_item_2['score']['score_description'], 'No answer')
 
     def test_update_agency_scoring_item1_lower_score(self):
         history_item_1 = {'score': {'classification': 0.888}}
