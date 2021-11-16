@@ -437,29 +437,71 @@ def update_agency_scoring(
     # If either classification is none it should be marked as incorrect
     # history_item_1 will always be the correct item when calling this 
     #  so its classification should be higher to be correct
-    if (history_item_1["score"]["classification"] is not None) and (
-            history_item_2["score"]["classification"] is not None) and (
-                float(history_item_1["score"]["classification"]) > (
-                    float(history_item_2["score"]["classification"]))):
-        history_item_1["score"]["score"] = 1
-        history_item_1["score"]["weighted_score"] = 1
-        history_item_1["score"]["weighted_score_worth"] = 1
-        history_item_1["score"]["score_description"] = "Correct"
+    score_1 = history_item_1["score"]
+    score_2 = history_item_2["score"]
 
-        history_item_2["score"]["score"] = 1
-        history_item_2["score"]["weighted_score"] = 1
-        history_item_2["score"]["weighted_score_worth"] = 0
-        history_item_2["score"]["score_description"] = "Correct"
+    if score_1.get("classification") is None or \
+        score_2.get("classification") is None:
+        score_1["score"] = 0
+        score_1["weighted_score"] = 0
+        score_1["weighted_score_worth"] = 1
+        score_1["score_description"] = "Incorrect"
+
+        score_2["score"] = 0
+        score_2["weighted_score"] = 0
+        score_2["weighted_score_worth"] = 0
+        score_2["score_description"] = "Incorrect"
+    elif float(score_1["classification"]) == -1 and \
+        float(score_2["classification"]) == -1:
+        score_1["score"] = -1
+        score_1["weighted_score"] = 0
+        score_1["weighted_score_worth"] = 1
+        score_1["score_description"] = "No answer"
+
+        score_2["score"] = -1
+        score_2["weighted_score"] = 0
+        score_2["weighted_score_worth"] = 0
+        score_2["score_description"] = "No answer"
+    elif float(score_1["classification"]) == -1:
+        score_1["score"] = -1
+        score_1["weighted_score"] = 0
+        score_1["weighted_score_worth"] = 0
+        score_1["score_description"] = "No answer"
+
+        score_2["score"] = 0
+        score_2["weighted_score"] = 0
+        score_2["weighted_score_worth"] = 1
+        score_2["score_description"] = "Incorrect"
+    elif float(score_2["classification"]) == -1:
+        score_1["score"] = 0
+        score_1["weighted_score"] = 0
+        score_1["weighted_score_worth"] = 1
+        score_1["score_description"] = "Incorrect"
+
+        score_2["score"] = -1
+        score_2["weighted_score"] = 0
+        score_2["weighted_score_worth"] = 0
+        score_2["score_description"] = "No answer"
+    elif float(score_1["classification"]) > float(score_2["classification"]):
+        score_1["score"] = 1
+        score_1["weighted_score"] = 1
+        score_1["weighted_score_worth"] = 1
+        score_1["score_description"] = "Correct"
+
+        score_2["score"] = 1
+        score_2["weighted_score"] = 1
+        score_2["weighted_score_worth"] = 0
+        score_2["score_description"] = "Correct"
     else:
-        history_item_1["score"]["score"] = 0
-        history_item_1["score"]["weighted_score"] = 0
-        history_item_1["score"]["weighted_score_worth"] = 1
-        history_item_1["score"]["score_description"] = "Incorrect"
+        score_1["score"] = 0
+        score_1["weighted_score"] = 0
+        score_1["weighted_score_worth"] = 1
+        score_1["score_description"] = "Incorrect"
 
-        history_item_2["score"]["score"] = 0
-        history_item_2["score"]["weighted_score"] = 0
-        history_item_2["score"]["weighted_score_worth"] = 0
-        history_item_2["score"]["score_description"] = "Incorrect"
+        score_2["score"] = 0
+        score_2["weighted_score"] = 0
+        score_2["weighted_score_worth"] = 0
+        score_2["score_description"] = "Incorrect"
 
 
 def process_score(
@@ -478,7 +520,7 @@ def process_score(
             history_item["score"]["classification"] = "end"
             history_item["score"]["confidence"] = 0
         history_item["score"]["goal_achieved"] = interactive_goal_achieved
-        # TODO: Remove this socring check when moving scoring to MCS api
+        # TODO: Remove this scoring check when moving scoring to MCS api
         if reorientation_scoring_override:
             history_item["score"]["goal_achieved"] = (
                 calculate_reorientation_true_score(
@@ -498,7 +540,9 @@ def process_score(
                  "expected" == scene["goal"]["answer"]["choice"]) else 0
             history_item["score"]["score"] = 1 if \
                 float(history_item["score"]["classification"]) == \
-                float(history_item["score"]["ground_truth"]) else 0
+                float(history_item["score"]["ground_truth"]) else \
+                (-1 if float(history_item["score"]["classification"]) == -1 \
+                    else 0)
         else:
             # Eval 2 backwards compatiblity
             history_item["score"] = {}

@@ -219,6 +219,51 @@ class TestMcsSceneIngest(unittest.TestCase):
         self.assertEqual(history_item_2['score']['weighted_score_worth'], 0)
         self.assertEqual(history_item_2['score']['score_description'], 'Correct')
 
+    def test_update_agency_scoring_item1_failure(self):
+        history_item_1 = {'score': {'classification': -1}}
+        history_item_2 = {'score': {'classification': 0.888}}
+        mcs_scene_ingest.update_agency_scoring(history_item_1, history_item_2)
+        
+        self.assertEqual(history_item_1['score']['score'], -1)
+        self.assertEqual(history_item_1['score']['weighted_score'], 0)
+        self.assertEqual(history_item_1['score']['weighted_score_worth'], 0)
+        self.assertEqual(history_item_1['score']['score_description'], 'No answer')
+
+        self.assertEqual(history_item_2['score']['score'], 0)
+        self.assertEqual(history_item_2['score']['weighted_score'], 0)
+        self.assertEqual(history_item_2['score']['weighted_score_worth'], 1)
+        self.assertEqual(history_item_2['score']['score_description'], 'Incorrect')
+
+    def test_update_agency_scoring_item2_failure(self):
+        history_item_1 = {'score': {'classification': 0.999}}
+        history_item_2 = {'score': {'classification': -1}}
+        mcs_scene_ingest.update_agency_scoring(history_item_1, history_item_2)
+        
+        self.assertEqual(history_item_1['score']['score'], 0)
+        self.assertEqual(history_item_1['score']['weighted_score'], 0)
+        self.assertEqual(history_item_1['score']['weighted_score_worth'], 1)
+        self.assertEqual(history_item_1['score']['score_description'], 'Incorrect')
+
+        self.assertEqual(history_item_2['score']['score'], -1)
+        self.assertEqual(history_item_2['score']['weighted_score'], 0)
+        self.assertEqual(history_item_2['score']['weighted_score_worth'], 0)
+        self.assertEqual(history_item_2['score']['score_description'], 'No answer')
+
+    def test_update_agency_scoring_both_item_failure(self):
+        history_item_1 = {'score': {'classification': -1}}
+        history_item_2 = {'score': {'classification': -1}}
+        mcs_scene_ingest.update_agency_scoring(history_item_1, history_item_2)
+        
+        self.assertEqual(history_item_1['score']['score'], -1)
+        self.assertEqual(history_item_1['score']['weighted_score'], 0)
+        self.assertEqual(history_item_1['score']['weighted_score_worth'], 1)
+        self.assertEqual(history_item_1['score']['score_description'], 'No answer')
+
+        self.assertEqual(history_item_2['score']['score'], -1)
+        self.assertEqual(history_item_2['score']['weighted_score'], 0)
+        self.assertEqual(history_item_2['score']['weighted_score_worth'], 0)
+        self.assertEqual(history_item_2['score']['score_description'], 'No answer')
+
     def test_process_score_correct(self):
         history_item = {
             'category': 'passive',
@@ -244,6 +289,21 @@ class TestMcsSceneIngest(unittest.TestCase):
 
         self.assertEqual(history_item['score']['score'], 0)
         self.assertEqual(history_item['score']['score_description'], 'Incorrect')
+
+    def test_process_score_failure(self):
+        history_item = {
+            'category': 'passive',
+            'test_type': 'intuitive physics',
+            'score': {'classification': '-1'}
+        }
+        scene = {'goal': {'answer': {'choice': 'plausible'}}}
+        history_item["score"] = mcs_scene_ingest.process_score(
+            history_item, scene, False, False, None, False, None, None)
+
+        self.assertEqual(history_item['score']['score'], -1)
+        self.assertEqual(history_item['score']['score_description'], 'No answer')
+        self.assertEqual(history_item['score']['weighted_score'], 0)
+        self.assertEqual(history_item['score']['weighted_score_worth'], 0)
 
 
 if __name__ == '__main__':
