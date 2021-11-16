@@ -224,7 +224,7 @@ class TestMcsSceneIngest(unittest.TestCase):
         history_item_2 = {'score': {'classification': 0.888}}
         mcs_scene_ingest.update_agency_scoring(history_item_1, history_item_2)
         
-        self.assertEqual(history_item_1['score']['score'], -1)
+        self.assertEqual(history_item_1['score']['score'], 0)
         self.assertEqual(history_item_1['score']['weighted_score'], 0)
         self.assertEqual(history_item_1['score']['weighted_score_worth'], 0)
         self.assertEqual(history_item_1['score']['score_description'], 'No answer')
@@ -244,7 +244,7 @@ class TestMcsSceneIngest(unittest.TestCase):
         self.assertEqual(history_item_1['score']['weighted_score_worth'], 1)
         self.assertEqual(history_item_1['score']['score_description'], 'Incorrect')
 
-        self.assertEqual(history_item_2['score']['score'], -1)
+        self.assertEqual(history_item_2['score']['score'], 0)
         self.assertEqual(history_item_2['score']['weighted_score'], 0)
         self.assertEqual(history_item_2['score']['weighted_score_worth'], 0)
         self.assertEqual(history_item_2['score']['score_description'], 'No answer')
@@ -254,12 +254,12 @@ class TestMcsSceneIngest(unittest.TestCase):
         history_item_2 = {'score': {'classification': -1}}
         mcs_scene_ingest.update_agency_scoring(history_item_1, history_item_2)
         
-        self.assertEqual(history_item_1['score']['score'], -1)
+        self.assertEqual(history_item_1['score']['score'], 0)
         self.assertEqual(history_item_1['score']['weighted_score'], 0)
         self.assertEqual(history_item_1['score']['weighted_score_worth'], 1)
         self.assertEqual(history_item_1['score']['score_description'], 'No answer')
 
-        self.assertEqual(history_item_2['score']['score'], -1)
+        self.assertEqual(history_item_2['score']['score'], 0)
         self.assertEqual(history_item_2['score']['weighted_score'], 0)
         self.assertEqual(history_item_2['score']['weighted_score_worth'], 0)
         self.assertEqual(history_item_2['score']['score_description'], 'No answer')
@@ -301,9 +301,10 @@ class TestMcsSceneIngest(unittest.TestCase):
             history_item, scene, False, False, None, False, None, None)
 
         self.assertEqual(history_item['score']['score'], -1)
-        self.assertEqual(history_item['score']['score_description'], 'No answer')
         self.assertEqual(history_item['score']['weighted_score'], 0)
         self.assertEqual(history_item['score']['weighted_score_worth'], 0)
+        self.assertEqual(history_item['score']['score_description'], 'No answer')
+
 
 
 if __name__ == '__main__':

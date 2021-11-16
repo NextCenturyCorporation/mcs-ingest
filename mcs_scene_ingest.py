@@ -453,17 +453,17 @@ def update_agency_scoring(
         score_2["score_description"] = "Incorrect"
     elif float(score_1["classification"]) == -1 and \
         float(score_2["classification"]) == -1:
-        score_1["score"] = -1
+        score_1["score"] = 0
         score_1["weighted_score"] = 0
         score_1["weighted_score_worth"] = 1
         score_1["score_description"] = "No answer"
 
-        score_2["score"] = -1
+        score_2["score"] = 0
         score_2["weighted_score"] = 0
         score_2["weighted_score_worth"] = 0
         score_2["score_description"] = "No answer"
     elif float(score_1["classification"]) == -1:
-        score_1["score"] = -1
+        score_1["score"] = 0
         score_1["weighted_score"] = 0
         score_1["weighted_score_worth"] = 0
         score_1["score_description"] = "No answer"
@@ -478,7 +478,7 @@ def update_agency_scoring(
         score_1["weighted_score_worth"] = 1
         score_1["score_description"] = "Incorrect"
 
-        score_2["score"] = -1
+        score_2["score"] = 0
         score_2["weighted_score"] = 0
         score_2["weighted_score_worth"] = 0
         score_2["score_description"] = "No answer"
