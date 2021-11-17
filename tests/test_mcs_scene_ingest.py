@@ -220,7 +220,7 @@ class TestMcsSceneIngest(unittest.TestCase):
         self.assertEqual(history_item_2['score']['score_description'], 'Correct')
 
     def test_update_agency_scoring_item1_failure(self):
-        history_item_1 = {'score': {'classification': -1}}
+        history_item_1 = {'score': {'classification': ''}}
         history_item_2 = {'score': {'classification': 0.888}}
         mcs_scene_ingest.update_agency_scoring(history_item_1, history_item_2)
         
@@ -236,7 +236,7 @@ class TestMcsSceneIngest(unittest.TestCase):
 
     def test_update_agency_scoring_item2_failure(self):
         history_item_1 = {'score': {'classification': 0.999}}
-        history_item_2 = {'score': {'classification': -1}}
+        history_item_2 = {'score': {'classification': ''}}
         mcs_scene_ingest.update_agency_scoring(history_item_1, history_item_2)
         
         self.assertEqual(history_item_1['score']['score'], 0)
@@ -250,8 +250,8 @@ class TestMcsSceneIngest(unittest.TestCase):
         self.assertEqual(history_item_2['score']['score_description'], 'No answer')
 
     def test_update_agency_scoring_both_item_failure(self):
-        history_item_1 = {'score': {'classification': -1}}
-        history_item_2 = {'score': {'classification': -1}}
+        history_item_1 = {'score': {'classification': ''}}
+        history_item_2 = {'score': {'classification': ''}}
         mcs_scene_ingest.update_agency_scoring(history_item_1, history_item_2)
         
         self.assertEqual(history_item_1['score']['score'], 0)
@@ -294,7 +294,7 @@ class TestMcsSceneIngest(unittest.TestCase):
         history_item = {
             'category': 'passive',
             'test_type': 'intuitive physics',
-            'score': {'classification': '-1'}
+            'score': {'classification': ''}
         }
         scene = {'goal': {'answer': {'choice': 'plausible'}}}
         history_item["score"] = mcs_scene_ingest.process_score(
@@ -304,7 +304,6 @@ class TestMcsSceneIngest(unittest.TestCase):
         self.assertEqual(history_item['score']['weighted_score'], 0)
         self.assertEqual(history_item['score']['weighted_score_worth'], 0)
         self.assertEqual(history_item['score']['score_description'], 'No answer')
-
 
 
 if __name__ == '__main__':

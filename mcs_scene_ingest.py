@@ -538,11 +538,13 @@ def process_score(
             history_item["score"]["ground_truth"] = 1 if \
                 ("plausible" == scene["goal"]["answer"]["choice"] or
                  "expected" == scene["goal"]["answer"]["choice"]) else 0
+            try:
+                classification = float(history_item["score"].get("classification"))
+            except (ValueError, TypeError):
+                classification = float(-1)
             history_item["score"]["score"] = 1 if \
-                float(history_item["score"]["classification"]) == \
-                float(history_item["score"]["ground_truth"]) else \
-                (-1 if float(history_item["score"]["classification"]) == -1 \
-                    else 0)
+                classification == float(history_item["score"]["ground_truth"]) else \
+                (-1 if classification == -1 else 0)
         else:
             # Eval 2 backwards compatiblity
             history_item["score"] = {}
