@@ -300,7 +300,7 @@ class TestMcsSceneIngest(unittest.TestCase):
         history_item["score"] = mcs_scene_ingest.process_score(
             history_item, scene, False, False, None, False, None, None)
 
-        self.assertEqual(history_item['score']['score'], -1)
+        self.assertEqual(history_item['score']['score'], 0)
         self.assertEqual(history_item['score']['weighted_score'], 0)
         self.assertEqual(history_item['score']['weighted_score_worth'], 0)
         self.assertEqual(history_item['score']['score_description'], 'No answer')

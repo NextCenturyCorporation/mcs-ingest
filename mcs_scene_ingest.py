@@ -559,6 +559,7 @@ def process_score(
         history_item["score"]["score_description"] = "Incorrect"
     elif history_item["score"]["score"] == -1:
         history_item["score"]["score_description"] = "No answer"
+        history_item["score"]["score"] = 0
 
     # Calculate Cube Weighted Scoring
     (
