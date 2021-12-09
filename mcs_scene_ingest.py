@@ -4,6 +4,7 @@ import json
 import logging
 import os
 import math
+import re
 import sys
 from collections.abc import MutableMapping
 from typing import List
@@ -136,6 +137,7 @@ def build_scene_item(file_name: str, folder: str, eval_name: str) -> dict:
     else:
         scene["eval"] = eval_name
 
+    scene["evalNumber"] = int(re.sub("[^0-9]", "", scene["eval"]))
     scene["scene_num"] = scene["debug"]["sceneNumber"]
     if "sequenceNumber" in scene["debug"]:
         scene["test_num"] = scene["debug"]["sequenceNumber"]
@@ -633,6 +635,7 @@ def build_history_item(
         eval_name,
         history["info"]["evaluation_name"]
     )
+    history_item["evalNumber"] = int(re.sub("[^0-9]", "", history_item["eval"]))
     history_item["performer"] = determine_team_mapping_name(
         history["info"]["team"])
     history_item["name"] = history["info"]["name"]
