@@ -418,6 +418,7 @@ def return_agency_paired_history_item(
         "category_type": history_item["category_type"],
         "performer": history_item["performer"],
         "test_num": history_item["test_num"],
+        "metadata": history_item["metadata"],
         "scene_num": 2 if history_item["scene_num"] == 1 else 1
     })
     return history
