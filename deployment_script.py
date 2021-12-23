@@ -1,12 +1,12 @@
 from pymongo import MongoClient
-from scripts._0_4_7_2_no_inaccessible_goals import update_score_worth
+from scripts._0_4_7_3_more_no_inaccessible_goals import update_score_worth
 
 # We might want to move mongo user/pass to new file
 VERSION_COLLECTION = "mcs_version"
 
 # Change this version if running a new deploy script
 # Make sure the first two numbers match the current MCS API Release
-db_version = "0.4.7.2"
+db_version = "0.4.7.3"
 
 
 def check_version(mongoDB):
