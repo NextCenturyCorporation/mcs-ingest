@@ -92,15 +92,13 @@ def load_json_file(folder: str, file_name: str) -> dict:
 def delete_keys_from_scene(scene, keys) -> dict:
     """Remove keys from a scene object (represented as dict).
     Useful for making the scene smaller (no images) and cleanup"""
-    new_scene = {}
-    for key, value in scene.items():
-        if key not in set(keys):
-            if isinstance(value, MutableMapping):
-                new_scene[key] = delete_keys_from_scene(value, set(keys))
-            else:
-                new_scene[key] = value
-
-    return new_scene
+    return {
+        key: delete_keys_from_scene(value, set(keys))
+        if isinstance(value, MutableMapping)
+        else value
+        for key, value in scene.items()
+        if key not in set(keys)
+    }
 
 
 def ingest_to_mongo(index: str, ingest_files: dict, client: MongoClient):
@@ -210,32 +208,31 @@ def determine_evaluation_hist_name(
         eval_name: str, history_eval_name: str) -> str:
     eval_str = ""
     if eval_name is None:
-        if history_eval_name in EVAL_HIST_MAPPING_DICT:
-            eval_str = EVAL_HIST_MAPPING_DICT[history_eval_name]
-        else:
-            eval_str = history_eval_name
+        return (
+            EVAL_HIST_MAPPING_DICT[history_eval_name]
+            if history_eval_name in EVAL_HIST_MAPPING_DICT
+            else history_eval_name
+        )
+
     else:
-        eval_str = eval_name
-    return eval_str
+        return eval_name
 
 
 def determine_evaluation_scene_name(history_eval_name: str) -> str:
     eval_str = ""
     if history_eval_name in EVAL_SCENE_MAPPING_DICT:
-        eval_str = EVAL_SCENE_MAPPING_DICT[history_eval_name]
+        return EVAL_SCENE_MAPPING_DICT[history_eval_name]
     else:
-        eval_str = history_eval_name
-    return eval_str
+        return history_eval_name
 
 
 def determine_team_mapping_name(info_team: str) -> str:
     name_str = ""
     if info_team in TEAM_MAPPING_DICT:
-        name_str = TEAM_MAPPING_DICT[info_team]
+        return TEAM_MAPPING_DICT[info_team]
     else:
         # Add code to convert something like mess2 to MESS2
-        name_str = info_team.upper()
-    return name_str
+        return info_team.upper()
 
 
 def check_agent_to_corner_position(
@@ -257,9 +254,11 @@ def check_agent_to_corner_position(
             corner_visited = corner
 
     # Return if not near a corner, or still near last corner
-    if (corner_visited is None or (
-            len(corner_visit_order) > 0 and
-            corner_visit_order[-1]["name"] == corner_visited)):
+    if (
+        corner_visited is None
+        or corner_visit_order
+        and corner_visit_order[-1]["name"] == corner_visited
+    ):
         return corner_visit_order
 
     if corner_visited in incorrect_corners:
@@ -290,13 +289,14 @@ def build_new_step_obj(
         correct_corners: List[dict],
         corner_visit_order: List[dict],
         reorientation_scoring_override: bool) -> tuple:
-    new_step = {}
-    new_step["stepNumber"] = step["step"]
-    new_step["action"] = step["action"]
-    new_step["args"] = step["args"]
-    new_step["classification"] = step["classification"]
-    new_step["confidence"] = step["confidence"]
-    new_step["internal_state"] = step["internal_state"]
+    new_step = {
+        'stepNumber': step["step"],
+        'action': step["action"],
+        'args': step["args"],
+        'classification': step["classification"],
+        'confidence': step["confidence"],
+        'internal_state': step["internal_state"],
+    }
 
     # TODO: Added if check because key error in 3.75 and earlier
     if "delta_time_millis" in step:
@@ -329,9 +329,7 @@ def build_new_step_obj(
             output["physics_frames_per_second"] = step[
                 "output"]["physics_frames_per_second"]
         interactive_reward = output["reward"]
-        if (
-                output["reward"] >= (
-                    0 - ((number_steps - 1) * 0.001) + 1)):
+        if interactive_reward >= 0 - ((number_steps - 1) * 0.001) + 1:
             interactive_goal_achieved = 1
     new_step["output"] = output
 
@@ -344,42 +342,40 @@ def build_new_step_obj(
 
 def add_weighted_cube_scoring(history_item: dict, scene: dict) -> tuple:
     weighted_score, weighted_score_worth, weighted_confidence = 0, 0, 0
-    if "goal" in scene:
-        if "sceneInfo" in scene["goal"]:
-            if scene["goal"]["sceneInfo"]["tertiaryType"] == "shape constancy":
-                if history_item["scene_goal_id"] in \
-                        SHAPE_CONSTANCY_DUPLICATE_CUBE:
-                    weighted_score = history_item["score"]["score"] * 2
-                    weighted_score_worth = 2
-                    weighted_confidence = float(
-                        history_item["score"]["confidence"]) * 2
-                elif history_item["scene_goal_id"] in SHAPE_CONSTANCY_8X_CUBE:
-                    weighted_score = history_item["score"]["score"] * 8
-                    weighted_score_worth = 8
-                    weighted_confidence = float(
-                        history_item["score"]["confidence"]) * 8
-                else:
-                    weighted_score = history_item["score"]["score"]
-                    weighted_score_worth = 1
-                    weighted_confidence = history_item["score"]["confidence"]
+    if "goal" in scene and "sceneInfo" in scene["goal"]:
+        if scene["goal"]["sceneInfo"]["tertiaryType"] == "shape constancy":
+            if history_item["scene_goal_id"] in \
+                    SHAPE_CONSTANCY_DUPLICATE_CUBE:
+                weighted_score = history_item["score"]["score"] * 2
+                weighted_score_worth = 2
+                weighted_confidence = float(
+                    history_item["score"]["confidence"]) * 2
+            elif history_item["scene_goal_id"] in SHAPE_CONSTANCY_8X_CUBE:
+                weighted_score = history_item["score"]["score"] * 8
+                weighted_score_worth = 8
+                weighted_confidence = float(
+                    history_item["score"]["confidence"]) * 8
             else:
                 weighted_score = history_item["score"]["score"]
                 weighted_score_worth = 1
                 weighted_confidence = history_item["score"]["confidence"]
+        else:
+            weighted_score = history_item["score"]["score"]
+            weighted_score_worth = 1
+            weighted_confidence = history_item["score"]["confidence"]
     return (weighted_score, weighted_score_worth, weighted_confidence)
 
 
 def calc_scorecard(history_item: dict, scene: dict) -> dict:
     scorecard = Scorecard(history_item, scene)
-    scorecard_vals = scorecard.score_all()
-    return scorecard_vals
+    return scorecard.score_all()
 
 
 def calculate_reorientation_true_score(
         corner_visit_order: List[dict],
         interactive_goal_achieved: int) -> int:
     # This is correct if the agent goes to the correct corner first
-    if(len(corner_visit_order) > 0):
+    if corner_visit_order:
         return 1 if corner_visit_order[0]["type"] == "correct" else 0
     else:
         return interactive_goal_achieved
@@ -391,20 +387,19 @@ def calculate_reorientation_score(
     # This is correct if they get to the correct corner before ever
     #  going to an incorrect corner, so they could go to an
     #  ambiguous/neutral corner first and still be correct
-    if(len(corner_visit_order) > 0):
-        correct_corner_achieved = 1
-        # loop through corners, ignore neutral corner, if come to
-        #   incorrect corner before correct, set it false and exit
-        #   loop, if come to correct first, exit loop, correct score
-        for corner in corner_visit_order:
-            if corner["type"] == "incorrect":
-                correct_corner_achieved = 0
-                break
-            if corner["type"] == "correct":
-                break
-        return correct_corner_achieved
-    else:
+    if len(corner_visit_order) <= 0:
         return interactive_goal_achieved
+    correct_corner_achieved = 1
+    # loop through corners, ignore neutral corner, if come to
+    #   incorrect corner before correct, set it false and exit
+    #   loop, if come to correct first, exit loop, correct score
+    for corner in corner_visit_order:
+        if corner["type"] == "incorrect":
+            correct_corner_achieved = 0
+            break
+        if corner["type"] == "correct":
+            break
+    return correct_corner_achieved
 
 
 def return_agency_paired_history_item(
@@ -413,7 +408,7 @@ def return_agency_paired_history_item(
         history_item: dict) -> dict:
     mongoDB = client[db_string]
     collection = mongoDB[HISTORY_INDEX]
-    history = collection.find_one({
+    return collection.find_one({
         "eval": history_item["eval"],
         "category_type": history_item["category_type"],
         "performer": history_item["performer"],
@@ -421,7 +416,6 @@ def return_agency_paired_history_item(
         "metadata": history_item["metadata"],
         "scene_num": 2 if history_item["scene_num"] == 1 else 1
     })
-    return history
 
 
 def update_agency_paired_history_item(
@@ -519,9 +513,7 @@ def process_score(
     # Removed Adjusted Confidence, should be OBE
     if (history_item["category"] == "interactive"):
         if "score" not in history_item:
-            history_item["score"] = {}
-            history_item["score"]["classification"] = "end"
-            history_item["score"]["confidence"] = 0
+            history_item["score"] = {'classification': 'end', 'confidence': 0}
         history_item["score"]["goal_achieved"] = interactive_goal_achieved
         # TODO: Remove this scoring check when moving scoring to MCS api
         if reorientation_scoring_override:
@@ -536,24 +528,25 @@ def process_score(
             history_item["score"]["goal_achieved"] = interactive_goal_achieved
         history_item["score"]["reward"] = interactive_reward
         history_item["score"]["ground_truth"] = 1
+    elif "score" in history_item:
+        history_item["score"]["ground_truth"] = (
+            1
+            if scene["goal"]["answer"]["choice"] in ["plausible", "expected"]
+            else 0
+        )
+
+        try:
+            classification = float(history_item["score"].get("classification"))
+        except (ValueError, TypeError):
+            classification = float(-1)
+        history_item["score"]["score"] = 1 if \
+            classification == float(history_item["score"]["ground_truth"]) else \
+            (-1 if classification == -1 else 0)
     else:
-        if "score" in history_item:
-            history_item["score"]["ground_truth"] = 1 if \
-                ("plausible" == scene["goal"]["answer"]["choice"] or
-                 "expected" == scene["goal"]["answer"]["choice"]) else 0
-            try:
-                classification = float(history_item["score"].get("classification"))
-            except (ValueError, TypeError):
-                classification = float(-1)
-            history_item["score"]["score"] = 1 if \
-                classification == float(history_item["score"]["ground_truth"]) else \
-                (-1 if classification == -1 else 0)
-        else:
             # Eval 2 backwards compatiblity
-            history_item["score"] = {}
-            history_item["score"]["score"] = -1
-            history_item["score"]["ground_truth"] = 1 if "plausible" == scene[
-                "answer"]["choice"] else 0
+        history_item["score"] = {'score': -1}
+        history_item["score"]["ground_truth"] = 1 if scene[
+                "answer"]["choice"] == "plausible" else 0
 
     # Psychologists wanted to see a definitive answer of correctness
     if history_item["score"]["score"] == 1:
@@ -598,8 +591,6 @@ def process_score(
 
 def reorientation_calculate_corners(scene: dict) -> List[dict]:
     correct_corners = [scene["goal"]["sceneInfo"]["corner"]]
-    incorrect_corners = []
-
     if scene["goal"]["sceneInfo"]["ambiguous"]:
         opposite_corner = {k: -v for k, v in REORIENTATION_CORNERS[
             scene["goal"]["sceneInfo"]["corner"]].items()}
@@ -607,9 +598,12 @@ def reorientation_calculate_corners(scene: dict) -> List[dict]:
             if(opposite_corner == v):
                 correct_corners.append(k)
 
-    for k, v in REORIENTATION_CORNERS.items():
-        if(k not in correct_corners):
-            incorrect_corners.append(k)
+    incorrect_corners = [
+        k
+        for k, v in REORIENTATION_CORNERS.items()
+        if (k not in correct_corners)
+    ]
+
 
     return (incorrect_corners, correct_corners)
 
@@ -631,11 +625,12 @@ def build_history_item(
     # Create History Object and add basic information
     history = load_json_file(folder, history_file)
 
-    history_item = {}
-    history_item["eval"] = determine_evaluation_hist_name(
-        eval_name,
-        history["info"]["evaluation_name"]
-    )
+    history_item = {
+        'eval': determine_evaluation_hist_name(
+            eval_name, history["info"]["evaluation_name"]
+        )
+    }
+
     history_item["evalNumber"] = int(re.sub("[^0-9]", "", history_item["eval"]))
     history_item["performer"] = determine_team_mapping_name(
         history["info"]["team"])
@@ -808,9 +803,11 @@ def ingest_history_files(
 
         replacementIndex = -1
         for index, item in enumerate(ingest_history):
-            if item["fullFilename"] == history_item["fullFilename"]:
-                if history_item["fileTimestamp"] > item["fileTimestamp"]:
-                    replacementIndex = index
+            if (
+                item["fullFilename"] == history_item["fullFilename"]
+                and history_item["fileTimestamp"] > item["fileTimestamp"]
+            ):
+                replacementIndex = index
 
         if replacementIndex == -1:
             ingest_history.append(history_item)
