@@ -5,6 +5,7 @@ import boto3
 import traceback
 
 import mcs_scene_ingest
+import mcs_history_ingest
 
 # Create SQS client
 sqs = boto3.resource('sqs')
@@ -37,7 +38,7 @@ def process_message(message, message_type, db_string):
         # Ingest File
         try:
             if message_type == HISTORY_MESSAGE:
-                mcs_scene_ingest.automated_history_ingest_file(
+                mcs_history_ingest.automated_history_ingest_file(
                     basename, "", db_string)
             if message_type == SCENE_MESSAGE:
                 mcs_scene_ingest.automated_scene_ingest_file(

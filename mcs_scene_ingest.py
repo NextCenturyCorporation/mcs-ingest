@@ -4,7 +4,6 @@ import json
 import logging
 import os
 import re
-import sys
 from collections.abc import MutableMapping
 
 from pymongo import MongoClient
@@ -82,14 +81,6 @@ def find_scene_files(folder: str) -> dict:
             folder) if str(f).endswith(SCENE_DEBUG_EXTENSION)]
     scene_files.sort()
     return scene_files
-
-
-def find_history_files(folder: str, extension: str) -> dict:
-    history_files = [
-        f for f in os.listdir(
-            folder) if str(f).endswith("." + extension)]
-    history_files.sort()
-    return history_files
 
 
 def build_scene_item(file_name: str, folder: str, eval_name: str) -> dict:

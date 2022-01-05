@@ -6,9 +6,7 @@ import mcs_scene_ingest
 from pymongo import MongoClient
 
 TEST_SCENE_FILE_NAME = "test_juliett_0001_01_debug.json"
-TEST_HISTORY_FILE_NAME = "test_eval_3-5_level2_baseline_juliett_0001_01.json"
-TEST_INTERACTIVE_SCENE_FILE_NAME = "occluders_0001_17_I1_debug.json"
-TEST_INTERACTIVE_HISTORY_FILE_NAME = "occluders_0001_17_baseline.json"
+# TEST_INTERACTIVE_SCENE_FILE_NAME = "occluders_0001_17_I1_debug.json"
 TEST_FOLDER = "tests"
 
 
