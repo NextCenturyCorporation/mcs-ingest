@@ -17,7 +17,7 @@ class MongoDockerTest(unittest.TestCase):
             ports={27017:cls.mongo_host_port},
             healthcheck= {
                 "Test": f"mongo --eval \'db.runCommand(\"ping\").ok\' " \
-                        f"localhost:{cls.mongo_host_port}/test --quiet",
+                        f"localhost:27017/test --quiet",
                 "Interval": 1_000_000 * 1_000
             },
             remove=True,
@@ -28,6 +28,7 @@ class MongoDockerTest(unittest.TestCase):
         while health != "healthy" and (time.time() < max_time):
             inspection = api_client.inspect_container(mongo_container.id)
             health = inspection["State"]["Health"]["Status"]
+            print(health)
             time.sleep(1)
         return mongo_container
 
