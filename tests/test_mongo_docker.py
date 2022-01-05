@@ -7,14 +7,17 @@ from pymongo import MongoClient
 class MongoDockerTest(unittest.TestCase):
 
     mongo_client = None
+    mongo_host_port = 27027
 
-    def create_mongo_container(docker_client, api_client, timeout=60):
+    @classmethod
+    def create_mongo_container(cls, docker_client, api_client, timeout=60):
         '''Helper method to create the mongodb container'''
         mongo_container = docker_client.containers.run(
             'mongo:latest',
-            ports={27017:27017},
+            ports={27017:cls.mongo_host_port},
             healthcheck= {
-                "Test": "mongo --eval \'db.runCommand(\"ping\").ok\' localhost:27017/test --quiet",
+                "Test": f"mongo --eval \'db.runCommand(\"ping\").ok\' " \
+                        f"localhost:{cls.mongo_host_port}/test --quiet",
                 "Interval": 1_000_000 * 1_000
             },
             remove=True,
@@ -35,8 +38,10 @@ class MongoDockerTest(unittest.TestCase):
         # create low-level API client
         cls.api_client = docker.APIClient(
             base_url="unix://var/run/docker.sock")
-        cls.mongo_container = cls.create_mongo_container(cls.docker_client, cls.api_client)
-        cls.mongo_client = MongoClient()
+        cls.mongo_container = cls.create_mongo_container(
+            cls.docker_client,
+            cls.api_client)
+        cls.mongo_client = MongoClient(host="localhost", port=cls.mongo_host_port)
 
     @classmethod
     def tearDownClass(cls) -> None:
