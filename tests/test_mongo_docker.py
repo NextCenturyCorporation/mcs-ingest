@@ -14,22 +14,22 @@ class MongoDockerTest(unittest.TestCase):
         '''Helper method to create the mongodb container'''
         mongo_container = docker_client.containers.run(
             'mongo:latest',
-            ports={27017:cls.mongo_host_port},
-            healthcheck= {
-                "Test": f"mongo --eval \'db.runCommand(\"ping\").ok\' " \
-                        f"localhost:27017/test --quiet",
-                "Interval": 1_000_000 * 1_000
+            ports={27017: cls.mongo_host_port},
+            healthcheck={
+                "Test": 'mongo --eval \'db.runCommand("ping").ok\' localhost:27017/test --quiet',
+                "Interval": 1_000_000 * 1_000,
             },
             remove=True,
-            detach=True
+            detach=True,
         )
+
         health = None
         max_time = time.time() + timeout
         while health != "healthy" and (time.time() < max_time):
             inspection = api_client.inspect_container(mongo_container.id)
             health = inspection["State"]["Health"]["Status"]
-            print(health)
             time.sleep(1)
+        # TODO health check could reach max_time and still be unhealthy
         return mongo_container
 
     @classmethod
