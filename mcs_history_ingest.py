@@ -500,9 +500,10 @@ def add_weighted_cube_scoring(history_item: dict, scene: dict) -> tuple:
 def automated_history_ingest_file(
         history_file: str,
         folder: str,
-        db_string: str) -> None:
-    client = MongoClient(
-        'mongodb://mongomcs:mongomcspassword@localhost:27017/' + db_string)
+        db_string: str,
+        client: MongoClient) -> None:
+    # client = MongoClient(
+    #     'mongodb://mongomcs:mongomcspassword@localhost:27017/' + db_string)
     mongoDB = client[db_string]
 
     history_item = build_history_item(

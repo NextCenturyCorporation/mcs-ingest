@@ -260,3 +260,10 @@ class TestMcsHistoryIngest(unittest.TestCase):
         eval_name = mcs_history_ingest.determine_evaluation_hist_name(
             None, "eval_3-5")
         self.assertEqual(eval_name, "Evaluation 3.5 Results")
+
+    def test_determine_team_mapping_name(self):
+        team_name = mcs_history_ingest.determine_team_mapping_name("ibm")
+        self.assertEqual(team_name, "IBM")
+        team_name = mcs_history_ingest.determine_team_mapping_name("mit")
+        self.assertEqual(team_name, "IBM-MIT-Harvard-Stanford")
+        
