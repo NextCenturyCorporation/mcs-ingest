@@ -145,7 +145,7 @@ def ingest_to_mongo(index: str, ingest_files: dict, client: MongoClient):
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description='Ingest MCS Scene JSON files into Elasticsearch')
+        description='Ingest MCS Scene JSON files into database')
     parser.add_argument(
         '--folder',
         required=True,

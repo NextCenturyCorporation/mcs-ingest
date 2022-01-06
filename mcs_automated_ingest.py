@@ -11,7 +11,7 @@ from pymongo import MongoClient
 
 
 # Create SQS client
-sqs = boto3.resource('sqs')
+sqs = boto3.resource('sqs', region_name='us-east-1')
 history_queue = sqs.get_queue_by_name(QueueName='mongo-mcs-ingestion-queue')
 scene_queue = sqs.get_queue_by_name(QueueName='mcs-scene-ingestion-queue')
 error_queue = sqs.get_queue_by_name(QueueName='ingest-error')
