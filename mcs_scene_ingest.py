@@ -29,27 +29,24 @@ def automated_scene_ingest_file(
         client: MongoClient) -> None:
     # Called from mcs_automated_ingest when a new message in pulled
     #    from the AWS Queue, singular scene file
-    
-    # We might want to move mongo user/pass to new file
-    # client = MongoClient(
-    #     'mongodb://mongomcs:mongomcspassword@localhost:27017/' + db_string)
     mongoDB = client[db_string]
 
     scene_item = build_scene_item(file_name, folder, None)
     collection = mongoDB[SCENE_INDEX]
-    check_exists = collection.find(
+    count = collection.count_documents(
         {
             "name": scene_item["name"],
-            "evaluation": scene_item["eval"]
+            "eval": scene_item["eval"]
         }
     )
 
     # Do not insert a scene if we already have it in the database
     #     for this particular evaluation
-    if check_exists.count() == 0:
+    if count == 0:
         logging.info(f"Inserting {scene_item['name']}")
         collection.insert_one(scene_item)
 
+    # DW: TODO functionize (create_evaluation_index)
     # Add Keys when a new evaluation item is created
     if create_collection_keys.check_collection_has_key(
             scene_item["eval"], mongoDB) is None:
