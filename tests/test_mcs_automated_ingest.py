@@ -2,7 +2,8 @@ import unittest
 import boto3
 import os
 
-from moto import mock_s3
+from moto import mock_s3, mock_sqs
+from unittest.mock import patch
 
 import mcs_automated_ingest as mai
 
@@ -60,3 +61,67 @@ class TestMcsAutomatedIngest(unittest.TestCase):
         mai.s3 = boto3.resource("s3")
         basename = mai.download_file(record)
         self.assertTrue(os.path.exists(basename))
+
+    def test_ingest_scene_file(self):
+        '''Ensure scene ingest is called with SCENE_MESSAGE'''
+        with patch("mcs_scene_ingest.automated_scene_ingest_file") as patched_function:
+            mai.ingest_file("basename", mai.SCENE_MESSAGE, 'mcs')
+        patched_function.assert_called()
+        
+    def test_ingest_history_file(self):
+        '''Ensure history ingest is called with HISTORY_MESSAGE'''
+        with patch("mcs_history_ingest.automated_history_ingest_file") as patched_function:
+            mai.ingest_file("basename", mai.HISTORY_MESSAGE, 'mcs')
+        patched_function.assert_called()
+
+    @mock_sqs
+    def test_ingest_scene_file_with_error(self):
+        '''While ingesting a scene file, an exception occurs'''
+        sqs = boto3.resource('sqs', region_name='us-east-1')
+        mai.error_queue = sqs.create_queue(QueueName='ingest-error')
+        sqs_client = boto3.client('sqs', region_name='us-east-1')
+
+        with patch("mcs_scene_ingest.automated_scene_ingest_file") as patched_function:
+            patched_function.side_effect = Exception()
+            mai.ingest_file("basename", mai.SCENE_MESSAGE, "mcs")
+
+        response = sqs_client.get_queue_attributes(
+            QueueUrl=mai.error_queue.url,
+            AttributeNames=['ApproximateNumberOfMessages']
+
+        )
+        self.assertEqual(int(response['Attributes']['ApproximateNumberOfMessages']), 1)
+
+    @mock_sqs
+    def test_ingest_history_file_with_error(self):
+        '''While ingesting a history file, an exception occurs'''
+        sqs = boto3.resource('sqs', region_name='us-east-1')
+        mai.error_queue = sqs.create_queue(QueueName='ingest-error')
+        sqs_client = boto3.client('sqs', region_name='us-east-1')
+
+        with patch("mcs_history_ingest.automated_history_ingest_file") as patched_function:
+            patched_function.side_effect = Exception()
+            mai.ingest_file("basename", mai.HISTORY_MESSAGE, "mcs")
+
+        response = sqs_client.get_queue_attributes(
+            QueueUrl=mai.error_queue.url,
+            AttributeNames=['ApproximateNumberOfMessages']
+
+        )
+        self.assertEqual(int(response['Attributes']['ApproximateNumberOfMessages']), 1)
+
+    @mock_sqs
+    def test_ingest_file_with_invalid_message_type(self):
+        '''Nothing happens if the message type is not history or scene types'''
+        sqs = boto3.resource('sqs', region_name='us-east-1')
+        mai.error_queue = sqs.create_queue(QueueName='ingest-error')
+        sqs_client = boto3.client('sqs', region_name='us-east-1')
+
+        mai.ingest_file("basename", "invalid_msg_type", "mcs")
+
+        response = sqs_client.get_queue_attributes(
+            QueueUrl=mai.error_queue.url,
+            AttributeNames=['ApproximateNumberOfMessages']
+
+        )
+        self.assertEqual(int(response['Attributes']['ApproximateNumberOfMessages']), 0)

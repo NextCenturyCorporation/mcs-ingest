@@ -1,4 +1,3 @@
-from unittest import skip
 import docker
 import logging
 import time
@@ -14,6 +13,7 @@ TEST_SCENE_FILE_NAME = "test_juliett_0001_01_debug.json"
 TEST_FOLDER = "tests"
 
 class TestMcsSceneIngestMongo(unittest.TestCase):
+    '''Test database functionality of mcs_scene_ingest using docker/mongo'''
 
     mongo_client = None
     mongo_host_port = 27027
@@ -76,7 +76,6 @@ class TestMcsSceneIngestMongo(unittest.TestCase):
         self.mongo_client.close()
 
     def test_automated_scene_ingest_file(self):
-
         scene = self.mongo_client['mcs'][mcs_scene_ingest.SCENE_INDEX].find_one()
         self.assertTrue(scene['name'] in TEST_SCENE_FILE_NAME)
 
@@ -100,7 +99,6 @@ class TestMcsSceneIngestMongo(unittest.TestCase):
         self.assertEqual(count, 1)
 
     def test_automated_scene_ingest_collection_key_created(self):
-
         scene = self.mongo_client['mcs'][mcs_scene_ingest.SCENE_INDEX].find_one()
         coll_keys = create_collection_keys.check_collection_has_key(
             scene["eval"], self.mongo_client['mcs'])
