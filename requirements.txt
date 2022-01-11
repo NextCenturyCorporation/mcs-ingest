@@ -1,5 +1,6 @@
 machine_common_sense==0.4.6
 boto3==1.17.27
+docker==5.0.3
 pymongo==3.11.3
 flake8==3.8.4
 moto==2.3.0
