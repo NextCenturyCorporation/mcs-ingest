@@ -501,8 +501,6 @@ def automated_history_ingest_file(
         folder: str,
         db_string: str,
         client: MongoClient) -> None:
-    # client = MongoClient(
-    #     'mongodb://mongomcs:mongomcspassword@localhost:27017/' + db_string)
     mongoDB = client[db_string]
 
     history_item = build_history_item(

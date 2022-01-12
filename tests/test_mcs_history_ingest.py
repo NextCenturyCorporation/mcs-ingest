@@ -1,13 +1,89 @@
+import docker
 import logging
+import time
 import unittest
 
 import mcs_history_ingest
+import mcs_scene_ingest
 
 from pymongo import MongoClient
 
 TEST_HISTORY_FILE_NAME = "test_eval_3-5_level2_baseline_juliett_0001_01.json"
+TEST_SCENE_FILE_NAME = "test_juliett_0001_01_debug.json"
 TEST_INTERACTIVE_HISTORY_FILE_NAME = "occluders_0001_17_baseline.json"
 TEST_FOLDER = "tests"
+
+
+class TestMcsHistoryIngestMongo(unittest.TestCase):
+    '''Test database functionality of mcs_history_ingest using docker/mongo'''
+
+    mongo_client = None
+    mongo_host_port = 27027
+
+    @classmethod
+    def create_mongo_container(cls, docker_client, api_client, timeout=60):
+        '''Helper method to create the mongodb container'''
+        mongo_container = docker_client.containers.run(
+            'mongo:latest',
+            ports={27017: cls.mongo_host_port},
+            healthcheck={
+                "Test": 'mongo --eval \'db.runCommand("ping").ok\' localhost:27017/test --quiet',
+                "Interval": 1_000_000 * 1_000,
+            },
+            remove=True,
+            detach=True,
+        )
+
+        health = None
+        max_time = time.time() + timeout
+        while health != "healthy" and (time.time() < max_time):
+            inspection = api_client.inspect_container(mongo_container.id)
+            health = inspection["State"]["Health"]["Status"]
+            time.sleep(1)
+        # TODO health check could reach max_time and still be unhealthy
+        return mongo_container
+
+    @classmethod
+    def setUpClass(cls):
+        '''Start the mongo docker container'''
+        # connect to docker daemon
+        cls.docker_client = docker.from_env()
+        # create low-level API client for health checks
+        cls.api_client = docker.APIClient(
+            base_url="unix://var/run/docker.sock")
+        cls.mongo_container = cls.create_mongo_container(
+            cls.docker_client,
+            cls.api_client)
+        cls.mongo_client = MongoClient(host="localhost", port=cls.mongo_host_port)
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        '''Stop the docker container and close docker connections'''
+        cls.mongo_container.stop()
+        cls.docker_client.close()
+        cls.api_client.close()
+
+    def setUp(self):
+        '''Create the client and insert a single document'''
+        self.mongo_client = MongoClient(host='localhost', port=self.mongo_host_port)
+        mcs_scene_ingest.automated_scene_ingest_file(
+            file_name=TEST_SCENE_FILE_NAME,
+            folder=TEST_FOLDER,
+            db_string="mcs",
+            client=self.mongo_client)    
+        mcs_history_ingest.automated_history_ingest_file(
+            history_file=TEST_HISTORY_FILE_NAME,
+            folder=TEST_FOLDER,
+            db_string="mcs",
+            client=self.mongo_client)
+
+    def tearDown(self):
+        '''Drop the database and close the connection'''
+        self.mongo_client.drop_database('mcs')
+        self.mongo_client.close()
+
+    def test_true(self):
+        self.assertTrue(True)
 
 
 class TestMcsHistoryIngest(unittest.TestCase):
