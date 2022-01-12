@@ -46,7 +46,6 @@ def automated_scene_ingest_file(
         logging.info(f"Inserting {scene_item['name']}")
         collection.insert_one(scene_item)
 
-    # DW: TODO functionize (create_evaluation_index)
     # Add Keys when a new evaluation item is created
     if create_collection_keys.check_collection_has_key(
             scene_item["eval"], mongoDB) is None:
