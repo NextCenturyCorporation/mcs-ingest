@@ -85,9 +85,7 @@ class TestMcsHistoryIngestMongo(unittest.TestCase):
     def test_true(self):
         self.assertTrue(True)
 
-
-class TestMcsHistoryIngest(unittest.TestCase):
-
+    @unittest.skip
     def test_build_history_item(self):
         client = MongoClient(
             'mongodb://mongomcs:mongomcspassword@localhost:27017/mcs')
@@ -96,6 +94,7 @@ class TestMcsHistoryIngest(unittest.TestCase):
             "cora", TEST_FOLDER, ".json", client, "mcs", ignore_keys=True)
         logging.info(f"{history_item}")
 
+    @unittest.skip
     def test_build_interactive_history_item(self):
         '''Generates history item for an interactive, which follows
         a different code path (and includes scorecard)'''
@@ -106,6 +105,9 @@ class TestMcsHistoryIngest(unittest.TestCase):
             "eval_4", "cora", TEST_FOLDER, ".json", client, "mcs",
             ignore_keys=True)
         logging.info(f"{history_item}")
+
+
+class TestMcsHistoryIngest(unittest.TestCase):
 
     def test_reorientation_calculate_corners(self):
         test_scene = {

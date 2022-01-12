@@ -240,8 +240,7 @@ def build_history_item(
     scene_folder: str,
     extension: str,
     client: MongoClient,
-    db_string: str,
-    ignore_keys: bool = False
+    db_string: str
 ) -> dict:
     logging.info(f"Ingest history file: {history_file}")
     mongoDB = client[db_string]
@@ -352,15 +351,12 @@ def build_history_item(
             if history_item['category'] == 'interactive' else None
         )
 
-        # Ignore keys during unit tests because we don't want to query mongo.
-        if not ignore_keys:
-            print("Check Scene Keys")
-            # Add Keys when a list of keys doesn't exist
-            if create_collection_keys.check_collection_has_key(
-                    scene["eval"], mongoDB) is None:
-                print("Add Scene Keys")
-                create_collection_keys.find_collection_keys(
-                    SCENE_INDEX, scene["eval"], mongoDB)
+        # Add Keys when a list of keys doesn't exist
+        if create_collection_keys.check_collection_has_key(
+                scene["eval"], mongoDB) is None:
+            print("Add Scene Keys")
+            create_collection_keys.find_collection_keys(
+                SCENE_INDEX, scene["eval"], mongoDB)
 
         return history_item
 
