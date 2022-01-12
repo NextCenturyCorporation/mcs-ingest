@@ -1,5 +1,3 @@
-# is there some base class to use for both scene and history
-# they both interact with AWS/mongo
 import argparse
 import io
 import json
@@ -59,7 +57,7 @@ SHAPE_CONSTANCY_8X_CUBE = ["A2", "B2", "C2", "D2"]
 MAX_XY_VIOLATIONS = 50
 
 # Temporary Reorientation Scoring Variables
-# Todo:  Move scoring to MCS api
+# TODO:  Move scoring to MCS api
 DISTANCE_FROM_CORNER = 1.5
 STEP_TO_CHECK_CORNER = 550
 REORIENTATION_CORNERS = {

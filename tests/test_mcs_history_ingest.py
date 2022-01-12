@@ -1,5 +1,4 @@
 import docker
-import logging
 import time
 import unittest
 
@@ -85,26 +84,19 @@ class TestMcsHistoryIngestMongo(unittest.TestCase):
     def test_true(self):
         self.assertTrue(True)
 
-    @unittest.skip
     def test_build_history_item(self):
-        client = MongoClient(
-            'mongodb://mongomcs:mongomcspassword@localhost:27017/mcs')
         history_item = mcs_history_ingest.build_history_item(
             TEST_HISTORY_FILE_NAME, TEST_FOLDER, "eval_4",
-            "cora", TEST_FOLDER, ".json", client, "mcs", ignore_keys=True)
-        logging.info(f"{history_item}")
+            "cora", TEST_FOLDER, ".json", self.mongo_client, "mcs")
+        self.assertIsNotNone(history_item)
 
-    @unittest.skip
     def test_build_interactive_history_item(self):
         '''Generates history item for an interactive, which follows
         a different code path (and includes scorecard)'''
-        client = MongoClient(
-            'mongodb://mongomcs:mongomcspassword@localhost:27017/mcs')
         history_item = mcs_history_ingest.build_history_item(
             TEST_INTERACTIVE_HISTORY_FILE_NAME, TEST_FOLDER,
-            "eval_4", "cora", TEST_FOLDER, ".json", client, "mcs",
-            ignore_keys=True)
-        logging.info(f"{history_item}")
+            "eval_4", "cora", TEST_FOLDER, ".json", self.mongo_client, "mcs")
+        self.assertIsNotNone(history_item)
 
 
 class TestMcsHistoryIngest(unittest.TestCase):
@@ -344,4 +336,7 @@ class TestMcsHistoryIngest(unittest.TestCase):
         self.assertEqual(team_name, "IBM")
         team_name = mcs_history_ingest.determine_team_mapping_name("mit")
         self.assertEqual(team_name, "IBM-MIT-Harvard-Stanford")
-        
+
+
+if __name__ == '__main__':
+    unittest.main()
