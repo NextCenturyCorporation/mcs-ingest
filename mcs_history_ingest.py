@@ -13,8 +13,7 @@ from typing import List
 from pymongo import MongoClient
 import create_collection_keys
 
-# We might want to move mongo user/pass to new file
-from scorecard.scorecard import Scorecard
+from scorecard import Scorecard
 
 
 HISTORY_INDEX = "mcs_history"

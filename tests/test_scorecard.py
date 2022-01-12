@@ -4,7 +4,7 @@ import unittest
 import numpy as np
 
 import mcs_scene_ingest
-from scorecard.scorecard import (
+from scorecard import (
     Scorecard,
     calc_repeat_failed,
     find_closest_container,
