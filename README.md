@@ -48,7 +48,7 @@ python mcs_scene_ingest.py --folder ../genScenes/  --eval_name eval-test
 ## Ingest history file (requires scenes already ingested)
 
 ```
-python mcs_scene_ingest.py --folder ../MCS/SCENE_HISTORY/  --eval_name eval-test --performer "baseline"
+python mcs_history_ingest.py --folder ../MCS/SCENE_HISTORY/  --eval_name eval-test --performer "baseline"
 ```
 
 # Recommendations when testing:
