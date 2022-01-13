@@ -1,6 +1,9 @@
-machine_common_sense==0.4.6
+machine_common_sense==0.5.0
+boto3==1.17.27
+docker==5.0.3
 pymongo==3.11.3
 flake8==3.8.4
-numpy==1.19.4
+moto==2.3.0
+numpy==1.21.0
 pandas==1.2.3
 pytest

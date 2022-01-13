@@ -10,7 +10,7 @@ import json
 import logging
 import os
 
-from scorecard.scorecard import Scorecard
+from scorecard import Scorecard
 
 HISTORY_DIR = './SCENE_HISTORY/'
 SCENE_DIR = './tests/'
