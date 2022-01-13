@@ -29,7 +29,7 @@ python -m pip install -r requirements.txt
 ### Without virtual environment
 
 ```bash
-python -m pip install pymongo
+python -m pip install -r requirements.txt
 ```
 
 ## Create Files
