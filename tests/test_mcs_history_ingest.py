@@ -1,6 +1,7 @@
 import docker
 import time
 import unittest
+import warnings
 
 import mcs_history_ingest
 import mcs_scene_ingest
@@ -64,6 +65,7 @@ class TestMcsHistoryIngestMongo(unittest.TestCase):
 
     def setUp(self):
         '''Create the client and insert a single document'''
+        warnings.simplefilter('ignore', category=ResourceWarning)
         self.mongo_client = MongoClient(host='localhost', port=self.mongo_host_port)
         mcs_scene_ingest.automated_scene_ingest_file(
             file_name=TEST_SCENE_FILE_NAME,
