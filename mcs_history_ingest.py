@@ -723,11 +723,6 @@ def main() -> None:
         required=False,
         help='Path to folder to link scene history with scene')
     parser.add_argument(
-        '--type',
-        required=True,
-        help='Choose if ingesting scenes or history',
-        choices=['scene', 'history'])
-    parser.add_argument(
         '--extension',
         required=False,
         default="json",
@@ -735,17 +730,13 @@ def main() -> None:
 
     args = parser.parse_args()
 
-
-    # if args.type == 'scene':
-    #     ingest_scene_files(args.folder, args.eval_name)
-    if args.type == 'history':
-        ingest_history_files(
-            args.folder,
-            args.eval_name,
-            args.performer,
-            args.scene_folder,
-            args.extension
-        )
+    ingest_history_files(
+        args.folder,
+        args.eval_name,
+        args.performer,
+        args.scene_folder,
+        args.extension
+    )
 
 
 if __name__ == '__main__':
