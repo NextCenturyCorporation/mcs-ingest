@@ -42,13 +42,13 @@ python -m pip install pymongo
 
 ## Ingest scene file
 ```
-python mcs_scene_ingest.py --folder ../genScenes/  --eval_name eval-test --type scene
+python mcs_scene_ingest.py --folder ../genScenes/  --eval_name eval-test
 ```
 
 ## Ingest history file (requires scenes already ingested)
 
 ```
-python mcs_scene_ingest.py --folder ../MCS/SCENE_HISTORY/  --eval_name eval-test --type history    --performer "baseline"
+python mcs_history_ingest.py --folder ../MCS/SCENE_HISTORY/  --eval_name eval-test --performer "baseline"
 ```
 
 # Recommendations when testing:

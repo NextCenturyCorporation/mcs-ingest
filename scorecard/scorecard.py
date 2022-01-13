@@ -112,8 +112,7 @@ def minAngDist(a, b):
     in mind that 0 and 360 are the same.  Also, keep value in range [0-180].
     You cannot just do an abs(a-b).    """
     normDeg = (a - b) % 360
-    minAng = min(360 - normDeg, normDeg)
-    return minAng
+    return min(360 - normDeg, normDeg)
 
 
 def get_lookpoint(x, y, z, rot, tilt):
@@ -250,16 +249,14 @@ class Scorecard:
         self.calc_revisiting()
         self.calc_not_moving_toward_object()
 
-        scorecard_vals = {}
-        scorecard_vals["repeat_failed"] = self.repeat_failed
-        scorecard_vals["attempt_impossible"] = self.attempt_impossible
-        scorecard_vals["open_unopenable"] = self.open_unopenable
-        scorecard_vals["multiple_container_look"] = self.relooks
-        scorecard_vals["not_moving_toward_object"] = \
-            self.not_moving_toward_object
-        scorecard_vals["revisits"] = self.revisits
-
-        return scorecard_vals
+        return {
+            'repeat_failed': self.repeat_failed,
+            'attempt_impossible': self.attempt_impossible,
+            'open_unopenable': self.open_unopenable,
+            'multiple_container_look': self.relooks,
+            'not_moving_toward_object': self.not_moving_toward_object,
+            'revisits': self.revisits,
+        }
 
     def get_revisits(self):
         return self.revisits
@@ -381,10 +378,10 @@ class Scorecard:
 
         self.open_unopenable = 0
 
-        for step_num, single_step in enumerate(steps_list):
+        for single_step in steps_list:
             action = single_step['action']
-            return_status = single_step['output']['return_status']
             if action == 'MCSOpenObject':
+                return_status = single_step['output']['return_status']
                 if return_status in ["SUCCESSFUL",
                                      "IS_OPENED_COMPLETELY",
                                      'OUT_OF_REACH']:

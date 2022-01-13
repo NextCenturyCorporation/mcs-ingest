@@ -20,23 +20,16 @@ def find_collection_keys(index: str, collection_name: str, mongoDB):
     # Loop through documents to generate a keys collection to help
     #   speed in loading keys in UI
     keys = []
-    print(collection_name)
     documents = collection.find({"eval": collection_name})
     for doc in documents:
         recursive_find_keys(doc, keys, "")
 
-    keys_dict = {}
-    keys_dict["name"] = collection_name
-    keys_dict["keys"] = keys
-
+    keys_dict = {'name': collection_name, 'keys': keys}
     collection = mongoDB["collection_keys"]
     result = collection.update_one(
         {"name": collection_name}, {"$set": keys_dict}, True)
-    print(result)
 
 
 def check_collection_has_key(collection_name: str, mongoDB):
     collection = mongoDB["collection_keys"]
-    key_name = collection.find_one({"name": collection_name})
-
-    return key_name
+    return collection.find_one({"name": collection_name})
