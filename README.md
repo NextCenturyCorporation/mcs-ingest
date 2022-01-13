@@ -23,7 +23,7 @@ python3 -m venv --prompt mcs-ingest venv
 . venv/bin/activate
 python -m pip install --upgrade pip setuptools wheel
 # The following line is the only one unique to Ingest
-python -m pip install pymongo
+python -m pip install -r requirements.txt
 ```
 
 ### Without virtual environment
