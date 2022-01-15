@@ -26,12 +26,6 @@ python -m pip install --upgrade pip setuptools wheel
 python -m pip install -r requirements.txt
 ```
 
-### Without virtual environment
-
-```bash
-python -m pip install -r requirements.txt
-```
-
 ## Create Files
 
 * See scene generator to create scene files
