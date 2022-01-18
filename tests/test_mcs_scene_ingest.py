@@ -78,13 +78,13 @@ class TestMcsSceneIngestMongo(unittest.TestCase):
         self.mongo_client.close()
 
     def test_automated_scene_ingest_file(self):
-        scene_item = mcs_scene_ingest.build_scene_item(TEST_SCENE_FILE_NAME, TEST_FOLDER, None)
+        scene_item = mcs_scene_ingest.build_scene_item(TEST_SCENE_FILE_NAME, TEST_FOLDER)
         collection_name = mcs_scene_ingest.get_scene_collection("mcs", self.mongo_client, scene_item["eval"])
         scene = self.mongo_client['mcs'][collection_name].find_one()
         self.assertTrue(scene['name'] in TEST_SCENE_FILE_NAME)
 
     def test_automated_scene_ingest_file_already_exists(self):
-        scene_item = mcs_scene_ingest.build_scene_item(TEST_SCENE_FILE_NAME, TEST_FOLDER, None)
+        scene_item = mcs_scene_ingest.build_scene_item(TEST_SCENE_FILE_NAME, TEST_FOLDER)
         collection_name = mcs_scene_ingest.get_scene_collection("mcs", self.mongo_client, scene_item["eval"])
         scene = self.mongo_client['mcs'][collection_name].find_one()
         self.assertTrue(scene['name'] in TEST_SCENE_FILE_NAME)
@@ -105,7 +105,7 @@ class TestMcsSceneIngestMongo(unittest.TestCase):
         self.assertEqual(count, 1)
 
     def test_automated_scene_ingest_collection_key_created(self):
-        scene_item = mcs_scene_ingest.build_scene_item(TEST_SCENE_FILE_NAME, TEST_FOLDER, None)
+        scene_item = mcs_scene_ingest.build_scene_item(TEST_SCENE_FILE_NAME, TEST_FOLDER)
         collection_name = mcs_scene_ingest.get_scene_collection("mcs", self.mongo_client, scene_item["eval"])
         scene = self.mongo_client['mcs'][collection_name].find_one()
         coll_keys = create_collection_keys.check_collection_has_key(
@@ -140,14 +140,9 @@ class TestMcsSceneIngest(unittest.TestCase):
         self.assertEqual(scene_removed_keys.get("image"), None)
         self.assertEqual(scene_removed_keys.get("debug"), None)
 
-    def test_find_scene_files(self):
-        scene_files = mcs_scene_ingest.find_scene_files(TEST_FOLDER)
-        self.assertEqual(len(scene_files), 5)
-        self.assertTrue(TEST_SCENE_FILE_NAME in scene_files)
-
     def test_build_scene_item(self):
         scene = mcs_scene_ingest.build_scene_item(
-            TEST_SCENE_FILE_NAME, TEST_FOLDER, None)
+            TEST_SCENE_FILE_NAME, TEST_FOLDER)
         self.assertEqual(scene["eval"], "Evaluation 3.5 Scenes")
         self.assertEqual(scene["test_num"], 1)
         self.assertEqual(scene.get("debug"), None)

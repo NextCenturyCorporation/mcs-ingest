@@ -11,6 +11,7 @@ from pymongo import MongoClient
 TEST_HISTORY_FILE_NAME = "test_eval_3-5_level2_baseline_juliett_0001_01.json"
 TEST_SCENE_FILE_NAME = "test_juliett_0001_01_debug.json"
 TEST_INTERACTIVE_HISTORY_FILE_NAME = "occluders_0001_17_baseline.json"
+TEST_INTERACTIVE_SCENE_FILE = "occluders_0001_17_I1_debug.json"
 TEST_FOLDER = "tests"
 
 
@@ -71,7 +72,12 @@ class TestMcsHistoryIngestMongo(unittest.TestCase):
             file_name=TEST_SCENE_FILE_NAME,
             folder=TEST_FOLDER,
             db_string="mcs",
-            client=self.mongo_client)    
+            client=self.mongo_client)
+        mcs_scene_ingest.automated_scene_ingest_file(
+            file_name=TEST_INTERACTIVE_SCENE_FILE,
+            folder=TEST_FOLDER,
+            db_string="mcs",
+            client=self.mongo_client)     
         mcs_history_ingest.automated_history_ingest_file(
             history_file=TEST_HISTORY_FILE_NAME,
             folder=TEST_FOLDER,
@@ -88,8 +94,8 @@ class TestMcsHistoryIngestMongo(unittest.TestCase):
 
     def test_build_history_item(self):
         history_item = mcs_history_ingest.build_history_item(
-            TEST_HISTORY_FILE_NAME, TEST_FOLDER, "eval_4",
-            "cora", TEST_FOLDER, ".json", self.mongo_client, "mcs")
+            TEST_HISTORY_FILE_NAME, TEST_FOLDER, 
+            self.mongo_client, "mcs")
         self.assertIsNotNone(history_item)
 
     def test_build_interactive_history_item(self):
@@ -97,7 +103,7 @@ class TestMcsHistoryIngestMongo(unittest.TestCase):
         a different code path (and includes scorecard)'''
         history_item = mcs_history_ingest.build_history_item(
             TEST_INTERACTIVE_HISTORY_FILE_NAME, TEST_FOLDER,
-            "eval_4", "cora", TEST_FOLDER, ".json", self.mongo_client, "mcs")
+            self.mongo_client, "mcs")
         self.assertIsNotNone(history_item)
 
 
@@ -324,13 +330,10 @@ class TestMcsHistoryIngest(unittest.TestCase):
 
     def test_determine_evaluation_hist_name(self):
         eval_name = mcs_history_ingest.determine_evaluation_hist_name(
-            "Eval3", "eval3.5")
-        self.assertEqual(eval_name, "Eval3")
-        eval_name = mcs_history_ingest.determine_evaluation_hist_name(
-            None, "eval3.5")
+            "eval3.5")
         self.assertEqual(eval_name, "eval3.5")
         eval_name = mcs_history_ingest.determine_evaluation_hist_name(
-            None, "eval_3-5")
+            "eval_3-5")
         self.assertEqual(eval_name, "Evaluation 3.5 Results")
 
     def test_determine_team_mapping_name(self):

@@ -52,7 +52,7 @@ def automated_scene_ingest_file(
     #    from the AWS Queue, singular scene file
     mongoDB = client[db_string]
 
-    scene_item = build_scene_item(file_name, folder, None)
+    scene_item = build_scene_item(file_name, folder)
     collection_name = get_scene_collection(db_string, client, scene_item["eval"])
     collection = mongoDB[collection_name]
     count = collection.count_documents(
@@ -75,15 +75,11 @@ def automated_scene_ingest_file(
             collection_name, scene_item["eval"], mongoDB)
 
 
-def build_scene_item(file_name: str, folder: str, eval_name: str) -> dict:
+def build_scene_item(file_name: str, folder: str) -> dict:
     logging.info(f"Ingest scene file: {file_name}")
     scene = load_json_file(folder, file_name)
 
-    if eval_name is None:
-        scene["eval"] = scene["debug"]["evaluation"]
-        eval_name = scene["debug"]["evaluation"]
-    else:
-        scene["eval"] = eval_name
+    scene["eval"] = scene["debug"]["evaluation"]
 
     scene["evalNumber"] = float(re.sub("[^0-9.]", "", scene["eval"]))
     scene["scene_num"] = scene["debug"]["sceneNumber"]
