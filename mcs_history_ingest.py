@@ -81,7 +81,12 @@ def get_history_collection(
     )
 
     if mapping is None:
-        eval_number = float(re.sub("[^0-9.]", "", eval_name))
+        eval_number_str = re.sub("[^0-9.]", "", eval_name)
+        if "." in eval_number_str:
+            eval_number = float(eval_number_str)
+        else:
+            eval_number = int(eval_number_str)
+
         collection_name = "eval_" + (str(eval_number)).replace(".", "_") + "_scenes"
         collection.insert_one({"name": eval_name, "collection": collection_name})
         return collection_name

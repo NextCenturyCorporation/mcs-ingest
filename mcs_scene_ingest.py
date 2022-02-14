@@ -81,7 +81,12 @@ def build_scene_item(file_name: str, folder: str) -> dict:
 
     scene["eval"] = scene["debug"]["evaluation"]
 
-    scene["evalNumber"] = float(re.sub("[^0-9.]", "", scene["eval"]))
+    eval_number_str = re.sub("[^0-9.]", "", scene["eval"])
+    if "." in eval_number_str:
+        scene["evalNumber"] = float(eval_number_str)
+    else:
+        scene["evalNumber"] = int(eval_number_str)
+
     scene["scene_num"] = scene["debug"]["sceneNumber"]
     if "sequenceNumber" in scene["debug"]:
         scene["test_num"] = scene["debug"]["sequenceNumber"]
