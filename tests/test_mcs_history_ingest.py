@@ -342,6 +342,70 @@ class TestMcsHistoryIngest(unittest.TestCase):
         team_name = mcs_history_ingest.determine_team_mapping_name("mit")
         self.assertEqual(team_name, "IBM-MIT-Harvard-Stanford")
 
+    def test_build_new_step_obj_interactive(self):
+        step = {
+            "step": 1,
+            "action": "MoveAhead",
+            "args": {},
+            "classification": None,
+            "confidence": None,
+            "violations_xy_list": None,
+            "internal_state": None,
+            "output": {
+                "goal": {
+                    "metadata": {
+                        "target": {
+                            "id": "9d31fa87-193f-4c08-bf6c-9eff9b30e341",
+                            "position": {
+                                "x": -3.654195547103882,
+                                "y": 3.2224996089935303,
+                                "z": 3.75
+                            }
+                        },
+                        "category": "retrieval"
+                    }
+                },
+                "physics_frames_per_second": 20,
+                "return_status": "SUCCESSFUL",
+                "reward": -0.001
+            },
+            "delta_time_millis": 12464.299655999997,
+            "target_visible": True
+        }
+
+        corner_visit_order = []
+        interactive_goal_achieved = 0
+        interactive_reward = 0
+
+        (
+            new_step,
+            interactive_reward,
+            interactive_goal_achieved,
+            corner_visit_order
+        ) = mcs_history_ingest.build_new_step_obj(
+            step,
+            interactive_reward,
+            interactive_goal_achieved,
+            1,
+            [],
+            [],
+            [],
+            False)
+
+        self.assertIsNotNone(new_step)
+        self.assertEqual(new_step["stepNumber"], 1)
+        self.assertEqual(new_step["action"], "MoveAhead")
+        self.assertEqual(new_step["args"], {})
+        self.assertIsNone(new_step["classification"])
+        self.assertIsNone(new_step["confidence"])
+        self.assertIsNone(new_step["internal_state"])
+        self.assertEqual(new_step["delta_time_millis"], step["delta_time_millis"])
+        self.assertIsNone(new_step["violations_xy_list"], step["violations_xy_list"])
+        self.assertEqual(new_step["physics_frames_per_second"], step["physics_frames_per_second"])
+        self.assertEqual(new_step["return_status"], step["return_status"])
+        self.assertEqual(new_step["reward"], step["reward"])
+        self.assertEqual(new_step["target_visible"], step["target_visible"])
+        self.assertEqual(new_step["target"], step["output"]["goal"]["metadata"]["target"])
 
 if __name__ == '__main__':
     unittest.main()
