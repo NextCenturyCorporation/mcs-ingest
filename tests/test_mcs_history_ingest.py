@@ -401,11 +401,11 @@ class TestMcsHistoryIngest(unittest.TestCase):
         self.assertIsNone(new_step["internal_state"])
         self.assertEqual(new_step["delta_time_millis"], step["delta_time_millis"])
         self.assertIsNone(new_step["violations_xy_list"], step["violations_xy_list"])
-        self.assertEqual(new_step["physics_frames_per_second"], step["physics_frames_per_second"])
-        self.assertEqual(new_step["return_status"], step["return_status"])
-        self.assertEqual(new_step["reward"], step["reward"])
+        self.assertEqual(new_step["output"]["physics_frames_per_second"], step["output"]["physics_frames_per_second"])
+        self.assertEqual(new_step["output"]["return_status"], step["output"]["return_status"])
+        self.assertEqual(new_step["output"]["reward"], step["output"]["reward"])
         self.assertEqual(new_step["target_visible"], step["target_visible"])
-        self.assertEqual(new_step["target"], step["output"]["goal"]["metadata"]["target"])
+        self.assertEqual(new_step["output"]["target"], step["output"]["goal"]["metadata"]["target"])
 
 if __name__ == '__main__':
     unittest.main()
