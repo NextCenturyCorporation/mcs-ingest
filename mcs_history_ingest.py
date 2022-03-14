@@ -53,6 +53,7 @@ EVAL_HIST_MAPPING_DICT = {
 #   because there aren't as many as the implausible ones
 SHAPE_CONSTANCY_DUPLICATE_CUBE = ["A1", "B1"]
 SHAPE_CONSTANCY_8X_CUBE = ["A2", "B2", "C2", "D2"]
+SPATIAL_ELIMINATION_IGNORED = ["A3", "C3", "A4", "C4"]
 
 MAX_XY_VIOLATIONS = 50
 
@@ -479,6 +480,16 @@ def add_weighted_cube_scoring(history_item: dict, scene: dict) -> tuple:
                 weighted_score_worth = 8
                 weighted_confidence = float(
                     history_item["score"]["confidence"]) * 8
+            else:
+                weighted_score = history_item["score"]["score"]
+                weighted_score_worth = 1
+                weighted_confidence = history_item["score"]["confidence"]
+        elif scene["goal"]["sceneInfo"]["tertiaryType"] == "spatial elimination":
+            if history_item["scene_goal_id"] in \
+                    SPATIAL_ELIMINATION_IGNORED:
+                weighted_score = 0
+                weighted_score_worth = 0
+                weighted_confidence = 0
             else:
                 weighted_score = history_item["score"]["score"]
                 weighted_score_worth = 1
