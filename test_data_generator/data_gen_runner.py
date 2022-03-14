@@ -95,9 +95,8 @@ class DataGenRunnerScript():
                                   x_size=x_size, y_size=y_size,
                                   z_size=z_size)
 
-            scene_data, status = mcs.load_scene_json_file(self.scene_filepath)
+            scene_data = mcs.load_scene_json_file(self.scene_filepath)
             if not scene_data:
-                logging.warning(f"Result of loading scene: {status}")
                 return
             scene_data['name'] = self.name
             step_metadata = self.controller.start_scene(scene_data)
@@ -117,5 +116,5 @@ class DataGenRunnerScript():
 
             img = plotter.get_image()
             img.save(self.name + "_path.gif")
-            self.controller.end_scene("", 1)
+            self.controller.end_scene()
             return scene_data['name']
