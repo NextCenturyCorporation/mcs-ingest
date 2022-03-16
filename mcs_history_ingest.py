@@ -466,39 +466,22 @@ def build_new_step_obj(
 
 
 def add_weighted_cube_scoring(history_item: dict, scene: dict) -> tuple:
-    weighted_score, weighted_score_worth, weighted_confidence = 0, 0, 0
     if "goal" in scene and "sceneInfo" in scene["goal"]:
         if scene["goal"]["sceneInfo"]["tertiaryType"] == "shape constancy":
             if history_item["scene_goal_id"] in \
                     SHAPE_CONSTANCY_DUPLICATE_CUBE:
-                weighted_score = history_item["score"]["score"] * 2
-                weighted_score_worth = 2
-                weighted_confidence = float(
-                    history_item["score"]["confidence"]) * 2
+                return (history_item["score"]["score"] * 2, 2, float(
+                    history_item["score"]["confidence"]) * 2)
             elif history_item["scene_goal_id"] in SHAPE_CONSTANCY_8X_CUBE:
-                weighted_score = history_item["score"]["score"] * 8
-                weighted_score_worth = 8
-                weighted_confidence = float(
-                    history_item["score"]["confidence"]) * 8
-            else:
-                weighted_score = history_item["score"]["score"]
-                weighted_score_worth = 1
-                weighted_confidence = history_item["score"]["confidence"]
+                return (history_item["score"]["score"] * 8, 8, float(
+                    history_item["score"]["confidence"]) * 8)
         elif scene["goal"]["sceneInfo"]["tertiaryType"] == "spatial elimination":
             if history_item["scene_goal_id"] in \
                     SPATIAL_ELIMINATION_IGNORED:
-                weighted_score = 0
-                weighted_score_worth = 0
-                weighted_confidence = 0
-            else:
-                weighted_score = history_item["score"]["score"]
-                weighted_score_worth = 1
-                weighted_confidence = history_item["score"]["confidence"]
-        else:
-            weighted_score = history_item["score"]["score"]
-            weighted_score_worth = 1
-            weighted_confidence = history_item["score"]["confidence"]
-    return (weighted_score, weighted_score_worth, weighted_confidence)
+                return (0,0,0)
+        return (history_item["score"]["score"], 1, float(
+            history_item["score"]["confidence"]))
+    return (0,0,0)
 
   
 def automated_history_ingest_file(
