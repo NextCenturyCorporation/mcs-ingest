@@ -466,6 +466,16 @@ def build_new_step_obj(
         interactive_reward = output["reward"]
         if interactive_reward >= 0 - ((number_steps - 1) * 0.001) + 1:
             interactive_goal_achieved = 1
+
+        if "target_visible" in step:
+            new_step["target_visible"] = step["target_visible"]
+
+        target_keys = ['target', 'target_1', 'target_2']
+
+        for target in target_keys:
+            if target in step["output"]["goal"]["metadata"]:
+                output[target] = step["output"]["goal"]["metadata"][target]
+
     new_step["output"] = output
 
     return (

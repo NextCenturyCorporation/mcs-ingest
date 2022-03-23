@@ -164,20 +164,18 @@ def find_closest_container(x, z, scene):
     return locs[dists.index(min(dists))] if dists else []
 
 
-def find_target_location(scene):
-    '''Get the x,z of the target, if any.  If it exists, return
-    True and the location;  otherwise, return False'''
+def find_target_loc_by_step(scene, step):
+    '''Get the x,z of the target in the step information, if any.
+    If it exists, return True and the location;  otherwise, 
+    return False'''
     try:
-        target_id = scene["goal"]["metadata"]["target"]["id"]
-        for possible_target in scene["objects"]:
-            test_id = possible_target["id"]
-            if test_id == target_id:
-                pos = possible_target['shows'][0]['position']
-                x, y, z = itemgetter('x', 'y', 'z')(pos)
-                return target_id, x, z
-        logging.warning(f"Target is supposed to be {target_id} but not found!")
+        target_info = step["output"]["goal"]["metadata"]["target"]
+        target_id = target_info["id"]
+        target_pos = target_info["position"]
+        x, y, z = itemgetter('x', 'y', 'z')(target_pos)
+        return target_id, x, z
     except Exception:
-        logging.debug(f"No target in scene {scene['name']}")
+        logging.debug(f"No target by step data for scene {scene['name']}")
 
     return None, 0, 0
 
@@ -471,11 +469,6 @@ class Scorecard:
 
         self.not_moving_toward_object = 0
 
-        target_id, target_x, target_z = find_target_location(self.scene)
-        logging.debug(f"Target location:  {target_x}  {target_z}")
-        if target_id is None:
-            return self.not_moving_toward_object
-
         seen_count = -1
         steps_not_moving_towards = 0
         min_dist = float('inf')
@@ -488,6 +481,11 @@ class Scorecard:
             if action not in ['MoveAhead', 'MoveBack',
                               'MoveLeft', 'MoveRight']:
                 continue
+
+            target_id, target_x, target_z = find_target_loc_by_step(self.scene, single_step)
+            logging.debug(f"Target location at step {step_num}:  {target_x}  {target_z}")
+            if target_id is None:
+                return self.not_moving_toward_object
 
             visible = single_step.get('target_visible')
             pos = single_step['output']['position']
