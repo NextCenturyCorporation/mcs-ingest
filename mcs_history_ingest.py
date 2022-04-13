@@ -87,7 +87,7 @@ def get_history_collection(
         else:
             eval_number = int(eval_number_str)
 
-        collection_name = "eval_" + (str(eval_number)).replace(".", "_") + "_scenes"
+        collection_name = "eval_" + (str(eval_number)).replace(".", "_") + "_results"
         collection.insert_one({"name": eval_name, "collection": collection_name})
         return collection_name
     else:
