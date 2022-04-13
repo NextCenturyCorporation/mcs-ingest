@@ -25,7 +25,7 @@ TEST_HISTORY_MOVING_TARGET_FAIL = "alpha_0001_03_test_fail.json"
 TEST_SCENE_NO_TARGET = "juliett_0001_01_debug.json"
 TEST_HISTORY_NO_TARGET = "test_eval_3-5_level2_baseline_juliett_0001_01.json"
 
-TEST_FOLDER = "tests"
+TEST_FOLDER = "test_data"
 
 # Hide all non-error log messages while running these unit tests.
 logging.basicConfig(

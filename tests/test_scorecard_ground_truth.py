@@ -12,8 +12,8 @@ import os
 
 from scorecard import Scorecard
 
-HISTORY_DIR = './SCENE_HISTORY/'
-SCENE_DIR = './tests/'
+HISTORY_DIR = './test_data/'
+SCENE_DIR = './test_data/'
 
 
 def get_scorecard(
