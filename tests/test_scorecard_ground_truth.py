@@ -99,6 +99,10 @@ def compare_with_ground_truth(
 def process_line(line: str):
     if line[0] == "#":
         return 0, 0, 0
+
+    if len(line.strip()) == 0:
+        return 0, 0, 0
+
     vals = line.split()
 
     scenefile = vals[0].strip()

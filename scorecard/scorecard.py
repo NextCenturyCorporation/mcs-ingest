@@ -372,22 +372,26 @@ class Scorecard:
     def calc_open_unopenable(self):
         ''' Determine the number of times that the agent tried to
         open an unopenable object.  '''
+        logging.debug('Starting calculating unopenable')
         steps_list = self.history['steps']
 
         self.open_unopenable = 0
 
         for single_step in steps_list:
+            step = single_step['step']
             action = single_step['action']
-            if action == 'MCSOpenObject':
+            if action == 'OpenObject':
                 return_status = single_step['output']['return_status']
                 if return_status in ["SUCCESSFUL",
                                      "IS_OPENED_COMPLETELY",
                                      'OUT_OF_REACH']:
-                    logging.debug("Successful opening of container")
+                    logging.debug(f"Successful opening of container. Step {step}")
                 else:
-                    logging.debug("Unsuccessful opening of container")
+                    logging.debug("Unsuccessful opening of container. "+
+                                  f"Step {step} Status: {return_status}")
                     self.open_unopenable += 1
 
+        logging.debug('Ending calculating unopenable')
         return self.open_unopenable
 
     def calc_relook(self):
@@ -419,7 +423,7 @@ class Scorecard:
             return_status = single_step['output']['return_status']
             x, z = calc_viewpoint(single_step)
 
-            if action == 'MCSOpenObject':
+            if action == 'OpenObject':
                 logging.debug("tried to open container")
                 container = find_closest_container(x, z, self.scene)
 

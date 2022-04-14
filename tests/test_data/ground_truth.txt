@@ -1,11 +1,15 @@
-# Scene file                       Basename of history file     Num revisits   NumUnopenable   NumRelook   NumNotMoveTwd   NumRepeatFailed
-india_0003_17_debug.json           revisit_zero_1                  0               0               0            0                 0
-india_0003_17_debug.json           revisit_one_1                   1               0               0            0                 0
-india_0003_17_debug.json           revisit_one_2                   1               0               0            0                 0
-india_0003_17_debug.json           revisit_one_3                   1               0               0            0                 0
-golf_0018_15_debug.json            unopenable_two                  0               2               0            0                 0
-golf_0018_15_debug.json            reopen_zero_1                   1               0               0            0                 0
-golf_0018_15_debug.json            reopen_one_1                    0               0               1            0                 0
-india_0003_17_debug.json           not_moving_toward_zero_1        0               0               0            0                 0
-golf_0018_15_debug.json            repeat_failed_zero              0               1               0            0                 0
-golf_0018_15_debug.json            repeat_failed_one               0               0               0            0                 1
+# Scene file                       Basename of history file     Num revisits   NumUnopenable     NumReOpen   NumNotMoveTwd   NumRepeatFailed
+india_0003_17_debug.json           gen_revisit_zero_1                  0               0              0            1                 0
+india_0003_17_debug.json           gen_revisit_one_1                   1               0              0            1                 0
+india_0003_17_debug.json           gen_revisit_one_2                   1               0              0            1                 0
+india_0003_17_debug.json           gen_revisit_one_3                   1               0              0            0                 0
+
+golf_0018_15_debug.json            gen_unopenable_two                  0               2              0            0                 0
+
+golf_0018_15_debug.json            gen_reopen_zero_1                   1               0              0            0                 0
+golf_0018_15_debug.json            gen_reopen_one_1                    0               0              1            0                 0
+
+india_0003_17_debug.json           gen_not_moving_toward_zero_1        0               0              0            0                 0
+
+golf_0018_15_debug.json            gen_repeat_failed_zero              0               1              0            0                 0
+golf_0018_15_debug.json            gen_repeat_failed_one               0               0              0            0                 1

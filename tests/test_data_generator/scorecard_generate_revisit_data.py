@@ -12,7 +12,7 @@ import argparse
 import logging
 import os
 
-from test_data_generator.data_gen_runner import (
+from data_gen_runner import (
     decode_moves,
     DataGenRunnerScript
 )
@@ -47,7 +47,7 @@ def come_from_behind(step_metadata, runner_script):
     return decode_moves(step_metadata.step_number, actions)
 
 
-def main(mcs_unity_filepath, scene_filepath):
+def main(scene_filepath):
     ''' Call the script several times, passing in a different set of
     movements.  Naming scheme:
                       revisit_one_1
@@ -55,23 +55,22 @@ def main(mcs_unity_filepath, scene_filepath):
                           |    +----- how many revisits
                           +---------- this is a revisit example
     '''
-    DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
-                        'revisit_zero_1',
+    DataGenRunnerScript(scene_filepath,
+                        'gen_revisit_zero_1',
                         simple_loop_callback).run_scene()
-    DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
-                        'revisit_one_1',
+    DataGenRunnerScript(scene_filepath,
+                        'gen_revisit_one_1',
                         loop_callback_with_revisit).run_scene()
-    DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
-                        'revisit_one_2',
+    DataGenRunnerScript(scene_filepath,
+                        'gen_revisit_one_2',
                         loop_callback_with_spin).run_scene()
-    DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
-                        'revisit_one_3',
+    DataGenRunnerScript(scene_filepath,
+                        'gen_revisit_one_3',
                         come_from_behind).run_scene()
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('mcs_unity_filepath')
     parser.add_argument('scene_filepath')
     return parser.parse_args()
 
@@ -83,11 +82,8 @@ if __name__ == "__main__":
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
     args = parse_args()
-    if not os.path.exists(args.mcs_unity_filepath):
-        logging.warning(f"File {args.mcs_unity_filepath} does not exist")
-        exit(1)
     if not os.path.exists(args.scene_filepath):
-        logging.warning(f"File {args.scene_filepath} does not exist")
+        logging.error(f"File {args.scene_filepath} does not exist")
         exit(1)
 
-    main(args.mcs_unity_filepath, args.scene_filepath)
+    main(args.scene_filepath)
