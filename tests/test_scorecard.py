@@ -8,7 +8,7 @@ from scorecard import (
     Scorecard,
     calc_repeat_failed,
     find_closest_container,
-    find_target_location,
+    find_target_loc_by_step,
     get_lookpoint,
 )
 
@@ -18,7 +18,12 @@ TEST_HISTORY_FILE_NAME = "india_0003_baseline_level1.json"
 TEST_SCENE_CONTAINER = "golf_0018_15_debug.json"
 TEST_HISTORY_CONTAINER = "golf_0018_15_baseline.json"
 
+TEST_SCENE_MOVING_TARGET = "alpha_0001_03_debug.json"
+TEST_HISTORY_MOVING_TARGET_PASS= "alpha_0001_03_test_pass.json"
+TEST_HISTORY_MOVING_TARGET_FAIL = "alpha_0001_03_test_fail.json"
+
 TEST_SCENE_NO_TARGET = "juliett_0001_01_debug.json"
+TEST_HISTORY_NO_TARGET = "test_eval_3-5_level2_baseline_juliett_0001_01.json"
 
 TEST_FOLDER = "tests"
 
@@ -149,27 +154,42 @@ class TestMcsScorecard(unittest.TestCase):
         '''Test trying to find a target, when there is not one'''
         scene_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, TEST_SCENE_NO_TARGET)
-        target_id, x, z = find_target_location(scene_file)
+        hist_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_NO_TARGET)
+        target_id, x, z = find_target_loc_by_step(scene_file, hist_file["steps"][0])
         self.assertFalse(target_id, "Target should not exist, " +
                          f"but it does {x} {z}")
+
 
     def test_find_target_location_with_target(self):
         '''Test trying to find a target, when there is not one'''
         scene_file = mcs_scene_ingest.load_json_file(
-            TEST_FOLDER, TEST_SCENE_CONTAINER)
-        target_id, x, z = find_target_location(scene_file)
+            TEST_FOLDER, TEST_SCENE_MOVING_TARGET)
+        hist_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_MOVING_TARGET_PASS)
+        target_id, x, z = find_target_loc_by_step(scene_file, hist_file["steps"][0])
         if target_id is None:
             self.fail("Target not found")
-        np.testing.assert_almost_equal(x, 0.0, err_msg="x location is wrong")
-        np.testing.assert_almost_equal(z, -0.15, err_msg="Z location is wrong")
+        np.testing.assert_almost_equal(x, -3.654195547103882, err_msg="x location is wrong")
+        np.testing.assert_almost_equal(z, 3.75, err_msg="Z location is wrong")
 
-    def test_calc_not_moving_toward_object(self):
+    def test_calc_not_moving_toward_object_zero(self):
         scene_file = mcs_scene_ingest.load_json_file(
-            TEST_FOLDER, TEST_SCENE_CONTAINER)
+            TEST_FOLDER, TEST_SCENE_MOVING_TARGET)
         history_file = mcs_scene_ingest.load_json_file(
-            TEST_FOLDER, TEST_HISTORY_CONTAINER)
+            TEST_FOLDER, TEST_HISTORY_MOVING_TARGET_PASS)
         scorecard = Scorecard(history_file, scene_file)
         not_moving = scorecard.calc_not_moving_toward_object()
+        self.assertEqual(not_moving, 0)
+
+    def test_calc_not_moving_toward_object_greater_than_zero(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_MOVING_TARGET)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_MOVING_TARGET_FAIL)
+        scorecard = Scorecard(history_file, scene_file)
+        not_moving = scorecard.calc_not_moving_toward_object()
+        self.assertGreater(not_moving, 0)
 
     def test_calc_repeat_failed_ignore_failed(self):
         repeat_failed = calc_repeat_failed([

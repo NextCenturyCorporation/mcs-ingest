@@ -28,11 +28,11 @@ HISTORY_MESSAGE = "history"
 SCENE_MESSAGE = "scene"
 
 
-def process_message(message, message_type, db_string):
+def process_message(message, message_type, db_string, client):
     message_body = json.loads(message.body)
     for record in message_body["Records"]:
         basename = download_file(record)
-        ingest_file(basename, message_type, db_string)
+        ingest_file(basename, message_type, db_string, client)
         logging.info(f"Deleting {basename}")
         os.remove(basename)
 
@@ -47,15 +47,15 @@ def download_file(record) -> str:
     return basename
 
 
-def ingest_file(basename: str, message_type: str, db_string: str) -> None:
+def ingest_file(basename: str, message_type: str, db_string: str, client: MongoClient) -> None:
     '''Ingest file into DB'''
     try:
         if message_type == HISTORY_MESSAGE:
             mcs_history_ingest.automated_history_ingest_file(
-                basename, "", db_string)
+                basename, "", db_string, client)
         elif message_type == SCENE_MESSAGE:
             mcs_scene_ingest.automated_scene_ingest_file(
-                basename, "", db_string)
+                basename, "", db_string, client)
     except Exception:
         eq = error_queue if db_string == "mcs" else dev_error_queue
         response = eq.send_message(MessageBody='IngestError', MessageAttributes={

@@ -65,13 +65,13 @@ class TestMcsAutomatedIngest(unittest.TestCase):
     def test_ingest_scene_file(self):
         '''Ensure scene ingest is called with SCENE_MESSAGE'''
         with patch("mcs_scene_ingest.automated_scene_ingest_file") as patched_function:
-            mai.ingest_file("basename", mai.SCENE_MESSAGE, 'mcs')
+            mai.ingest_file("basename", mai.SCENE_MESSAGE, 'mcs', client=None)
         patched_function.assert_called()
         
     def test_ingest_history_file(self):
         '''Ensure history ingest is called with HISTORY_MESSAGE'''
         with patch("mcs_history_ingest.automated_history_ingest_file") as patched_function:
-            mai.ingest_file("basename", mai.HISTORY_MESSAGE, 'mcs')
+            mai.ingest_file("basename", mai.HISTORY_MESSAGE, 'mcs', client=None)
         patched_function.assert_called()
 
     @mock_sqs
@@ -83,7 +83,7 @@ class TestMcsAutomatedIngest(unittest.TestCase):
 
         with patch("mcs_scene_ingest.automated_scene_ingest_file") as patched_function:
             patched_function.side_effect = Exception()
-            mai.ingest_file("basename", mai.SCENE_MESSAGE, "mcs")
+            mai.ingest_file("basename", mai.SCENE_MESSAGE, "mcs", client=None)
 
         response = sqs_client.get_queue_attributes(
             QueueUrl=mai.error_queue.url,
@@ -101,7 +101,7 @@ class TestMcsAutomatedIngest(unittest.TestCase):
 
         with patch("mcs_history_ingest.automated_history_ingest_file") as patched_function:
             patched_function.side_effect = Exception()
-            mai.ingest_file("basename", mai.HISTORY_MESSAGE, "mcs")
+            mai.ingest_file("basename", mai.HISTORY_MESSAGE, "mcs", client=None)
 
         response = sqs_client.get_queue_attributes(
             QueueUrl=mai.error_queue.url,
@@ -117,7 +117,7 @@ class TestMcsAutomatedIngest(unittest.TestCase):
         mai.error_queue = sqs.create_queue(QueueName='ingest-error')
         sqs_client = boto3.client('sqs', region_name='us-east-1')
 
-        mai.ingest_file("basename", "invalid_msg_type", "mcs")
+        mai.ingest_file("basename", "invalid_msg_type", "mcs", client=None)
 
         response = sqs_client.get_queue_attributes(
             QueueUrl=mai.error_queue.url,

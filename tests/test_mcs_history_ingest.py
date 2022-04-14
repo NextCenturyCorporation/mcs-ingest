@@ -11,6 +11,7 @@ from pymongo import MongoClient
 TEST_HISTORY_FILE_NAME = "test_eval_3-5_level2_baseline_juliett_0001_01.json"
 TEST_SCENE_FILE_NAME = "test_juliett_0001_01_debug.json"
 TEST_INTERACTIVE_HISTORY_FILE_NAME = "occluders_0001_17_baseline.json"
+TEST_INTERACTIVE_SCENE_FILE = "occluders_0001_17_I1_debug.json"
 TEST_FOLDER = "tests"
 
 
@@ -71,7 +72,12 @@ class TestMcsHistoryIngestMongo(unittest.TestCase):
             file_name=TEST_SCENE_FILE_NAME,
             folder=TEST_FOLDER,
             db_string="mcs",
-            client=self.mongo_client)    
+            client=self.mongo_client)
+        mcs_scene_ingest.automated_scene_ingest_file(
+            file_name=TEST_INTERACTIVE_SCENE_FILE,
+            folder=TEST_FOLDER,
+            db_string="mcs",
+            client=self.mongo_client)     
         mcs_history_ingest.automated_history_ingest_file(
             history_file=TEST_HISTORY_FILE_NAME,
             folder=TEST_FOLDER,
@@ -88,8 +94,8 @@ class TestMcsHistoryIngestMongo(unittest.TestCase):
 
     def test_build_history_item(self):
         history_item = mcs_history_ingest.build_history_item(
-            TEST_HISTORY_FILE_NAME, TEST_FOLDER, "eval_4",
-            "cora", TEST_FOLDER, ".json", self.mongo_client, "mcs")
+            TEST_HISTORY_FILE_NAME, TEST_FOLDER, 
+            self.mongo_client, "mcs")
         self.assertIsNotNone(history_item)
 
     def test_build_interactive_history_item(self):
@@ -97,7 +103,7 @@ class TestMcsHistoryIngestMongo(unittest.TestCase):
         a different code path (and includes scorecard)'''
         history_item = mcs_history_ingest.build_history_item(
             TEST_INTERACTIVE_HISTORY_FILE_NAME, TEST_FOLDER,
-            "eval_4", "cora", TEST_FOLDER, ".json", self.mongo_client, "mcs")
+            self.mongo_client, "mcs")
         self.assertIsNotNone(history_item)
 
 
@@ -324,13 +330,10 @@ class TestMcsHistoryIngest(unittest.TestCase):
 
     def test_determine_evaluation_hist_name(self):
         eval_name = mcs_history_ingest.determine_evaluation_hist_name(
-            "Eval3", "eval3.5")
-        self.assertEqual(eval_name, "Eval3")
-        eval_name = mcs_history_ingest.determine_evaluation_hist_name(
-            None, "eval3.5")
+            "eval3.5")
         self.assertEqual(eval_name, "eval3.5")
         eval_name = mcs_history_ingest.determine_evaluation_hist_name(
-            None, "eval_3-5")
+            "eval_3-5")
         self.assertEqual(eval_name, "Evaluation 3.5 Results")
 
     def test_determine_team_mapping_name(self):
@@ -411,6 +414,70 @@ class TestMcsHistoryIngest(unittest.TestCase):
         self.assertEqual(history_item['score']['weighted_score_worth'], 1)
         self.assertEqual(history_item['score']['weighted_confidence'], 1)
 
+    def test_build_new_step_obj_interactive(self):
+        step = {
+            "step": 1,
+            "action": "MoveAhead",
+            "args": {},
+            "classification": None,
+            "confidence": None,
+            "violations_xy_list": None,
+            "internal_state": None,
+            "output": {
+                "goal": {
+                    "metadata": {
+                        "target": {
+                            "id": "9d31fa87-193f-4c08-bf6c-9eff9b30e341",
+                            "position": {
+                                "x": -3.654195547103882,
+                                "y": 3.2224996089935303,
+                                "z": 3.75
+                            }
+                        },
+                        "category": "retrieval"
+                    }
+                },
+                "physics_frames_per_second": 20,
+                "return_status": "SUCCESSFUL",
+                "reward": -0.001
+            },
+            "delta_time_millis": 12464.299655999997,
+            "target_visible": True
+        }
+
+        corner_visit_order = []
+        interactive_goal_achieved = 0
+        interactive_reward = 0
+
+        (
+            new_step,
+            interactive_reward,
+            interactive_goal_achieved,
+            corner_visit_order
+        ) = mcs_history_ingest.build_new_step_obj(
+            step,
+            interactive_reward,
+            interactive_goal_achieved,
+            1,
+            [],
+            [],
+            [],
+            False)
+
+        self.assertIsNotNone(new_step)
+        self.assertEqual(new_step["stepNumber"], 1)
+        self.assertEqual(new_step["action"], "MoveAhead")
+        self.assertEqual(new_step["args"], {})
+        self.assertIsNone(new_step["classification"])
+        self.assertIsNone(new_step["confidence"])
+        self.assertIsNone(new_step["internal_state"])
+        self.assertEqual(new_step["delta_time_millis"], step["delta_time_millis"])
+        self.assertIsNone(new_step["violations_xy_list"], step["violations_xy_list"])
+        self.assertEqual(new_step["output"]["physics_frames_per_second"], step["output"]["physics_frames_per_second"])
+        self.assertEqual(new_step["output"]["return_status"], step["output"]["return_status"])
+        self.assertEqual(new_step["output"]["reward"], step["output"]["reward"])
+        self.assertEqual(new_step["target_visible"], step["target_visible"])
+        self.assertEqual(new_step["output"]["target"], step["output"]["goal"]["metadata"]["target"])
 
 if __name__ == '__main__':
     unittest.main()
