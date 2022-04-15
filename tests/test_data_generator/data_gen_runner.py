@@ -68,7 +68,8 @@ def decode_moves(step, code):
 class DataGenRunnerScript():
 
     def __init__(self, scene_filepath, name, action_callback):
-        self.controller = mcs.create_controller(config_file_or_dict='config_no_debug.ini')
+        self.controller = mcs.create_controller(
+            config_file_or_dict='config_no_debug.ini')
         if not self.controller:
             raise Exception("Unable to create controller")
         self.callback = action_callback
@@ -79,9 +80,10 @@ class DataGenRunnerScript():
 
         with open(self.scene_filepath) as scene_file:
             scene = json.load(scene_file)
-            x_size = scene.get("roomDimensions", DEFAULT_ROOM_DIMENSIONS).get("x")
-            y_size = scene.get("roomDimensions", DEFAULT_ROOM_DIMENSIONS).get("y")
-            z_size = scene.get("roomDimensions", DEFAULT_ROOM_DIMENSIONS).get("z")
+            dim = scene.get("roomDimensions", DEFAULT_ROOM_DIMENSIONS)
+            x_size = dim.get("x")
+            y_size = dim.get("y")
+            z_size = dim.get("z")
 
             plotter = PathPlotter(team="", scene_name=self.name,
                                   plot_width=600, plot_height=450,

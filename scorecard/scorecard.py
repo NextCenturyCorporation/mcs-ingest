@@ -166,7 +166,7 @@ def find_closest_container(x, z, scene):
 
 def find_target_loc_by_step(scene, step):
     '''Get the x,z of the target in the step information, if any.
-    If it exists, return True and the location;  otherwise, 
+    If it exists, return True and the location;  otherwise,
     return False'''
     try:
         target_info = step["output"]["goal"]["metadata"]["target"]
@@ -385,9 +385,10 @@ class Scorecard:
                 if return_status in ["SUCCESSFUL",
                                      "IS_OPENED_COMPLETELY",
                                      'OUT_OF_REACH']:
-                    logging.debug(f"Successful opening of container. Step {step}")
+                    logging.debug(
+                        f"Successful opening of container. Step {step}")
                 else:
-                    logging.debug("Unsuccessful opening of container. "+
+                    logging.debug("Unsuccessful opening of container. " +
                                   f"Step {step} Status: {return_status}")
                     self.open_unopenable += 1
 
@@ -486,8 +487,10 @@ class Scorecard:
                               'MoveLeft', 'MoveRight']:
                 continue
 
-            target_id, target_x, target_z = find_target_loc_by_step(self.scene, single_step)
-            logging.debug(f"Target location at step {step_num}:  {target_x}  {target_z}")
+            target_id, target_x, target_z = \
+                find_target_loc_by_step(self.scene, single_step)
+            logging.debug("Target location at step " +
+                          f"{step_num}:  {target_x}  {target_z}")
             if target_id is None:
                 return self.not_moving_toward_object
 

@@ -37,7 +37,8 @@ def open_objects_callback(step_metadata, runner_script):
 
 def main(scene_filepath):
     DataGenRunnerScript(scene_filepath,
-                        'gen_unopenable_two', open_objects_callback).run_scene()
+                        'gen_unopenable_two',
+                        open_objects_callback).run_scene()
 
 
 def parse_args():
