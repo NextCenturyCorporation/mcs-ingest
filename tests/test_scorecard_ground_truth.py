@@ -4,171 +4,110 @@
 # By default it calculates the scorecard for all the ground truth in the passed
 # text file.
 #
-
-import argparse
 import json
-import logging
-import os
+import unittest
+from dataclasses import dataclass
 
 from scorecard import Scorecard
 
-HISTORY_DIR = './test_data/'
-SCENE_DIR = './test_data/'
+TEST_DATA_DIR = './test_data/'
+GROUND_TRUTH = './test_data/ground_truth.txt'
 
 
-def get_scorecard(
-        history_filepath: str, scene_filepath: str) -> Scorecard:
-    """Process a particular json file,"""
-
-    with open(history_filepath) as history_file:
-        history = json.load(history_file)
-
-    with open(scene_filepath) as scene_file:
-        scene = json.load(scene_file)
-
-    scorecard = Scorecard(history, scene)
-    scorecard.score_all()
-    return scorecard
+@dataclass
+class GT_Test:
+    scene_file: str
+    history_file: str
+    num_revisits: int
+    num_unopenable: int
+    num_relook: int
+    num_notmovetwd: int
+    num_repeatfailed: int
 
 
-def find_fullpath_latest(basefilename: str, dir_name: str) -> os.path:
-    '''Look in the passed directory for files with the appropriate
-    basename.  Example: If passed 'reopen_one_1', it will return
-    "reopen_one_1-20211013-093519.json" if it finds it.  If there
-    are multiple files that match, it will return
-    the most recent one.'''
-    matching_files = []
-    for file in os.listdir(dir_name):
-        if file.startswith(basefilename):
-            full_path = os.path.join(dir_name, file)
-            matching_files.append(full_path)
-    matching_files.sort(key=lambda x: os.path.getmtime(x))
-    if len(matching_files) > 0:
-        return matching_files.pop()
-    return None
+class TestMcsScorecardGroundTruth(unittest.TestCase):
+    gt_tests = None
 
+    @classmethod
+    def setUpClass(cls) -> None:
 
-def compare_with_ground_truth(
-        scorecard: Scorecard, gt_revisit: int,
-        gt_unopenable: int, gt_relook: int,
-        gt_not_moving_towards: int, gt_repeat_failed: int):
-    ''' compare to ground truth (num_revisit)'''
-    num_revisit_calc = scorecard.get_revisits()
-    num_unopenable_calc = scorecard.get_unopenable()
-    num_relook_calc = scorecard.get_relooks()
-    num_not_moving_twd = scorecard.get_not_moving_towards()
-    num_repeat_failed = scorecard.get_repeat_failed()
+        cls.gt_tests = []
 
-    logging.info(f"     revisit: {gt_revisit} {num_revisit_calc}" +
-                 f"   unopenable: {gt_unopenable} {num_unopenable_calc}"
-                 f"   relook: {gt_relook}  {num_relook_calc}"
-                 f"  nottoward: {gt_not_moving_towards} {num_not_moving_twd}"
-                 f"  repeatfailed: {gt_repeat_failed} {num_repeat_failed}")
+        '''Read in ground truth file and store expected results'''
+        with open(GROUND_TRUTH) as f:
+            lines = f.readlines()
+            for line in lines:
+                if line[0] == "#" or len(line.strip()) == 0:
+                    continue
+                vals = line.split()
 
-    passed = 0
-    failed = 0
+                scene_filepath = vals[0].strip()
+                history_filepath = vals[1].strip()
 
-    if gt_unopenable == num_unopenable_calc:
-        passed += 1
-    else:
-        failed += 1
+                gt_revisits = int(vals[2].strip())
+                gt_unopenable = int(vals[3].strip())
+                gt_relook = int(vals[4].strip())
+                gt_not_moving_towards = int(vals[5].strip())
+                gt_repeat_failed = int(vals[6].strip())
 
-    if gt_revisit == num_revisit_calc:
-        passed += 1
-    else:
-        failed += 1
+                gt_test = GT_Test(scene_filepath,
+                                  history_filepath,
+                                  gt_revisits,
+                                  gt_unopenable,
+                                  gt_relook,
+                                  gt_not_moving_towards,
+                                  gt_repeat_failed)
+                cls.gt_tests.append(gt_test)
 
-    if gt_relook == num_relook_calc:
-        passed += 1
-    else:
-        failed += 1
+    def get_json(self, filename):
+        try:
+            with open(TEST_DATA_DIR + filename) as file:
+                json_data = json.load(file)
+                return json_data
+        except Exception as e:
+            self.fail(f"Unable to read in {filename}: {e}")
 
-    if gt_not_moving_towards == num_not_moving_twd:
-        passed += 1
-    else:
-        failed += 1
+    def test_move_toward(self):
+        for gt_test in self.gt_tests:
+            hist = self.get_json(gt_test.history_file)
+            scene = self.get_json(gt_test.scene_file)
+            s = Scorecard(hist, scene)
+            not_moving = s.calc_not_moving_toward_object()
+            self.assertEqual(gt_test.num_notmovetwd, not_moving,
+                             f"Move twd error: {gt_test.history_file}")
 
-    if gt_repeat_failed == num_repeat_failed:
-        passed += 1
-    else:
-        failed += 1
+    def test_relook(self):
+        for gt_test in self.gt_tests:
+            hist = self.get_json(gt_test.history_file)
+            scene = self.get_json(gt_test.scene_file)
+            s = Scorecard(hist, scene)
+            relooks = s.calc_relook()
+            self.assertEqual(gt_test.num_relook, relooks,
+                             f"Relook error: {gt_test.history_file}")
 
-    return passed, failed
+    def test_repeat_failed(self):
+        for gt_test in self.gt_tests:
+            hist = self.get_json(gt_test.history_file)
+            scene = self.get_json(gt_test.scene_file)
+            s = Scorecard(hist, scene)
+            repeat_failed = s.calc_repeat_failed()
+            self.assertEqual(gt_test.num_repeatfailed, repeat_failed,
+                             f"Repeat failed error: {gt_test.history_file}")
 
+    def test_revisit(self):
+        for gt_test in self.gt_tests:
+            hist = self.get_json(gt_test.history_file)
+            scene = self.get_json(gt_test.scene_file)
+            s = Scorecard(hist, scene)
+            revisit = s.calc_revisiting()
+            self.assertEqual(gt_test.num_revisits, revisit,
+                             f"Revisit error: {gt_test.history_file}")
 
-def process_line(line: str):
-    if line[0] == "#":
-        return 0, 0, 0
-
-    if len(line.strip()) == 0:
-        return 0, 0, 0
-
-    vals = line.split()
-
-    scenefile = vals[0].strip()
-    basefilename = vals[1].strip()
-
-    gt_revisits = int(vals[2].strip())
-    gt_unopenable = int(vals[3].strip())
-    gt_relook = int(vals[4].strip())
-    gt_not_moving_towards = int(vals[5].strip())
-    gt_repeat_failed = int(vals[6].strip())
-
-    scene_filepath = find_fullpath_latest(scenefile, SCENE_DIR)
-    if not scene_filepath:
-        logging.warning(f"Unable to find {SCENE_DIR} and " +
-                        f"{scenefile} found: {scene_filepath}")
-        return 0, 0, 1
-
-    history_filepath = find_fullpath_latest(basefilename, HISTORY_DIR)
-    if not history_filepath:
-        logging.warning(f"Unable to find '{basefilename}' in " +
-                        f"{HISTORY_DIR}")
-        return 0, 0, 1
-    logging.info(f"Reporting on {history_filepath}")
-
-    scorecard = get_scorecard(history_filepath, scene_filepath)
-    p, f = compare_with_ground_truth(
-        scorecard, gt_revisits, gt_unopenable,
-        gt_relook, gt_not_moving_towards, gt_repeat_failed)
-    logging.info(f"     results  pass: {p}   fail: {f}")
-    return p, f, 0
-
-
-def process_all_ground_truth(ground_truth_file: str):
-    passed = 0
-    failed = 0
-    missing = 0
-
-    with open(ground_truth_file) as f:
-        lines = f.readlines()
-        for line in lines:
-            p, f, m = process_line(line)
-
-            passed += p
-            failed += f
-            missing += m
-
-    logging.info(f"\nPassed: {passed}  Failed: {failed}  Missing: {missing}")
-
-
-def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--ground_truth_file',
-                        default='tests/ground_truth.txt')
-    return parser.parse_args()
-
-
-if __name__ == "__main__":
-
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
-    args = parse_args()
-
-    if not os.path.exists(args.ground_truth_file):
-        logging.warning(f"File {args.ground_truth_file} does not exist")
-        exit(1)
-
-    process_all_ground_truth(args.ground_truth_file)
+    def test_unopenable(self):
+        for gt_test in self.gt_tests:
+            hist = self.get_json(gt_test.history_file)
+            scene = self.get_json(gt_test.scene_file)
+            s = Scorecard(hist, scene)
+            unopenable = s.calc_open_unopenable()
+            self.assertEqual(gt_test.num_unopenable, unopenable,
+                             f"Unopenable error: {gt_test.history_file}")
