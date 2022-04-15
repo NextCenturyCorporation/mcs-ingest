@@ -342,6 +342,78 @@ class TestMcsHistoryIngest(unittest.TestCase):
         team_name = mcs_history_ingest.determine_team_mapping_name("mit")
         self.assertEqual(team_name, "IBM-MIT-Harvard-Stanford")
 
+    def test_ignored_spatial_elimination_scenes(self):
+        test_scene = {
+            "goal": {
+                "sceneInfo": {
+                    "tertiaryType": "spatial elimination"
+                },
+                'answer': {
+                    'choice': 'plausible'
+                }
+            }
+        }
+
+        history_item = {
+            'category': 'passive',
+            'test_type': 'spatial elimination',
+            'scene_goal_id': 'A3',
+            'score': {
+                'classification': '1',
+                'score': 1,
+                'weighted_score': 1,
+                'weighted_score_worth': 1,
+                'confidence': 1,
+                'weighted_confidence': 1
+            }
+        }
+        history_item["score"] = mcs_history_ingest.process_score(
+            history_item, test_scene, True, False, None, False, None, None)
+        self.assertEqual(history_item['score']['score'], 1)
+        self.assertEqual(history_item['score']['weighted_score'], 0)
+        self.assertEqual(history_item['score']['weighted_score_worth'], 0)
+        self.assertEqual(history_item['score']['weighted_confidence'], 0)
+
+        history_item = {
+            'category': 'passive',
+            'test_type': 'spatial elimination',
+            'scene_goal_id': 'C4',
+            'score': {
+                'classification': '1',
+                'score': 1,
+                'weighted_score': 1,
+                'weighted_score_worth': 1,
+                'confidence': 1,
+                'weighted_confidence': 1
+            }
+        }
+        history_item["score"] = mcs_history_ingest.process_score(
+            history_item, test_scene, True, False, None, False, None, None)
+        self.assertEqual(history_item['score']['score'], 1)
+        self.assertEqual(history_item['score']['weighted_score'], 0)
+        self.assertEqual(history_item['score']['weighted_score_worth'], 0)
+        self.assertEqual(history_item['score']['weighted_confidence'], 0)
+
+        history_item = {
+            'category': 'passive',
+            'test_type': 'spatial elimination',
+            'scene_goal_id': 'C2',
+            'score': {
+                'classification': '1',
+                'score': 1,
+                'weighted_score': 1,
+                'weighted_score_worth': 1,
+                'confidence': 1,
+                'weighted_confidence': 1
+            }
+        }
+        history_item["score"] = mcs_history_ingest.process_score(
+            history_item, test_scene, True, False, None, False, None, None)
+        self.assertEqual(history_item['score']['score'], 1)
+        self.assertEqual(history_item['score']['weighted_score'], 1)
+        self.assertEqual(history_item['score']['weighted_score_worth'], 1)
+        self.assertEqual(history_item['score']['weighted_confidence'], 1)
+
     def test_build_new_step_obj_interactive(self):
         step = {
             "step": 1,
