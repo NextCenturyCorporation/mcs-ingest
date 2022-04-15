@@ -1,8 +1,8 @@
 #
-#  Generate data for testing re-openening a container
+#  Generate data for testing re-looking into a container
 #
 #  Usage:
-#     python scorecard_generate_unopenable.py  mcs_unity  scene_file
+#     python scorecard_generate_relook.py  scene_file
 #
 #    (For scene_file, use tests/golf_0018_15_debug.json)
 #
@@ -19,7 +19,7 @@ from data_gen_runner import (
 )
 
 
-def reopen_objects_zero_1(step_metadata, runner_script):
+def relook_objects_zero_1(step_metadata, runner_script):
     step = step_metadata.step_number
     # Open on the side
     part1 = "WWW  wwwww L kkkkk 3"
@@ -32,7 +32,7 @@ def reopen_objects_zero_1(step_metadata, runner_script):
     return decode_moves(step, moves)
 
 
-def reopen_objects_one_1(step_metadata, runner_script):
+def relook_objects_one_1(step_metadata, runner_script):
     step = step_metadata.step_number
     # Open on the side
     part1 = "WWW  wwwww L kkkkk 3"
@@ -47,12 +47,12 @@ def reopen_objects_one_1(step_metadata, runner_script):
 
 def main(scene_filepath):
     DataGenRunnerScript(scene_filepath,
-                        'gen_reopen_zero_1',
-                        reopen_objects_zero_1).run_scene()
+                        'gen_relook_zero_1',
+                        relook_objects_zero_1).run_scene()
 
     DataGenRunnerScript(scene_filepath,
-                        'gen_reopen_one_1',
-                        reopen_objects_one_1).run_scene()
+                        'gen_relook_one_1',
+                        relook_objects_one_1).run_scene()
 
 
 def parse_args():

@@ -9,7 +9,7 @@ rm ./SCENE_HISTORY/gen_*.json || true
 
 # Generate the output data from moving around the ILE
 python scorecard_generate_move_toward.py ../test_data/india_0003_17_debug.json
-python scorecard_generate_reopen_data.py ../test_data/golf_0018_15_debug.json
+python scorecard_generate_relook.py ../test_data/golf_0018_15_debug.json
 python scorecard_generate_repeat_failed.py ../test_data/golf_0018_15_debug.json
 python scorecard_generate_revisit_data.py ../test_data/india_0003_17_debug.json
 python scorecard_generate_unopenable_data.py ../test_data/golf_0018_15_debug.json
