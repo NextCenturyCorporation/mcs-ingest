@@ -51,8 +51,8 @@ def calc_repeat_failed(steps_list: list) -> int:
 
     for step_num, single_step in enumerate(steps_list):
         action = single_step['action']
-        params = single_step['params']
-        return_status = single_step['output']['return_status']
+        output = single_step['output']
+        return_status = output['return_status']
         logging.debug(f"{step_num}  {action}  {return_status}")
 
         if return_status == 'SUCCESSFUL':
@@ -67,16 +67,12 @@ def calc_repeat_failed(steps_list: list) -> int:
             continue
 
         # Round floats so we have more accurate key string comparisons.
-        position = single_step['output']['position']
-        # TODO MCS-978 Rather than using the image coords, use the ID for the
-        #      object that Unity has detected at the image coords, once Unity
-        #      returns that info and we save it in the scene history files.
-        object_coords = params.get('objectImageCoords', {})
-        receptacle_coords = params.get('receptacleObjectImageCoords', {})
-        for variable in [position, object_coords, receptacle_coords]:
-            for axis in ['x', 'y', 'z']:
-                if axis in variable:
-                    variable[axis] = round(variable[axis], 2)
+        position = output['position']
+        resolved_obj = output.get('resolved_object')
+        resolved_recept=  output.get('resolved_receptacle')
+        for axis in ['x', 'y', 'z']:
+            if axis in position:
+                position[axis] = round(position[axis], 2)
 
         # Create a unique string identifier for the action and status. This
         # includes the performer's position and rotation (because, if the
@@ -89,10 +85,8 @@ def calc_repeat_failed(steps_list: list) -> int:
             return_status,
             str(position),
             str(single_step['output']['rotation']),
-            str(params.get('objectId')),
-            str(object_coords),
-            str(params.get('receptacleObjectId')),
-            str(receptacle_coords)
+            str(resolved_obj),
+            str(resolved_recept)
         ])
 
         # If already failed, then count; otherwise keep track that

@@ -41,6 +41,8 @@ def create_mock_step(
         action: str = 'Pass',
         object_coords: dict = None,
         position: dict = None,
+        resolved_object = None,
+        resolved_receptacle = None,
         receptacle_coords: dict = None,
         return_status: str = 'SUCCESSFUL',
         rotation: int = 0
@@ -50,7 +52,9 @@ def create_mock_step(
         'output': {
             'position': position or {'x': 0, 'y': 0, 'z': 0},
             'return_status': return_status,
-            'rotation': rotation
+            'rotation': rotation,
+            'resolved_object': resolved_object,
+            'resolved_receptacle': resolved_receptacle
         },
         'params': {
             'objectImageCoords': object_coords or {'x': 0, 'y': 0},
@@ -339,12 +343,12 @@ class TestMcsScorecard(unittest.TestCase):
         repeat_failed = calc_repeat_failed([
             create_mock_step(
                 action='PickupObject',
-                object_coords={'x': 300, 'y': 200},
+                resolved_object='wall_back',
                 return_status='OUT_OF_REACH'
             ),
             create_mock_step(
                 action='PickupObject',
-                object_coords={'x': 0, 'y': 0},
+                resolved_object='wall_left',
                 return_status='OUT_OF_REACH'
             )
         ])
