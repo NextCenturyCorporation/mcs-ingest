@@ -409,7 +409,7 @@ class Scorecard:
                         f"Successful opening of container. Step {step}")
                 else:
                     obj_id = get_relevant_object(output)
-                    if obj_id is not "":
+                    if obj_id != "":
                         failed_objects[obj_id] += 1
                     logging.debug("Unsuccessful opening of object {obj_id} " +
                                   f"Step {step} Status: {return_status}")

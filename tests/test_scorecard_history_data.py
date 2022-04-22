@@ -120,17 +120,17 @@ class TestMcsScorecard(unittest.TestCase):
                 TEST_FOLDER, gt_test.history_file)
             s = Scorecard(history_file, scene_file)
             unopenable = s.calc_open_unopenable()
-            self.assertEqual(gt_test.num_unopenable, unopenable['total_unopenable_attempts'],
+            self.assertEqual(gt_test.num_unopenable,
+                             unopenable['total_unopenable_attempts'],
                              f"Unopenable error: {gt_test.history_file}")
 
     def test_get_scorecard_dict(self):
         scene_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, SCENE_FILE)
-        # history_file = mcs_scene_ingest.load_json_file(
-        #     './tests/test_data_generator/SCENE_HISTORY/', "gen_interactive-20220421-084806.json")
         history_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, HIST_FILE)
         s = Scorecard(history_file, scene_file)
         scorecard_dict = s.score_all()
-        self.assertEqual(scorecard_dict['repeat_failed']['total_repeat_failed'], 1)
-        self.assertEqual(scorecard_dict['repeat_failed']['d06bc6e8-3ab2-4956-8dee-c46e4357c73b'], 1)
+        repeat = scorecard_dict['repeat_failed']
+        self.assertEqual(repeat['total_repeat_failed'], 1)
+        self.assertEqual(repeat['d06bc6e8-3ab2-4956-8dee-c46e4357c73b'], 1)

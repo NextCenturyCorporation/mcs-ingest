@@ -1,12 +1,12 @@
-import docker
 import time
 import unittest
 import warnings
 
+import docker
+from pymongo import MongoClient
+
 import mcs_history_ingest
 import mcs_scene_ingest
-
-from pymongo import MongoClient
 
 TEST_HISTORY_FILE_NAME = "test_data/test_eval_3-5_level2_baseline_juliett_0001_01.json"
 TEST_SCENE_FILE_NAME = "test_data/test_juliett_0001_01_debug.json"
@@ -77,7 +77,7 @@ class TestMcsHistoryIngestMongo(unittest.TestCase):
             file_name=TEST_INTERACTIVE_SCENE_FILE,
             folder=TEST_FOLDER,
             db_string="mcs",
-            client=self.mongo_client)     
+            client=self.mongo_client)
         mcs_history_ingest.automated_history_ingest_file(
             history_file=TEST_HISTORY_FILE_NAME,
             folder=TEST_FOLDER,
@@ -94,7 +94,7 @@ class TestMcsHistoryIngestMongo(unittest.TestCase):
 
     def test_build_history_item(self):
         history_item = mcs_history_ingest.build_history_item(
-            TEST_HISTORY_FILE_NAME, TEST_FOLDER, 
+            TEST_HISTORY_FILE_NAME, TEST_FOLDER,
             self.mongo_client, "mcs")
         self.assertIsNotNone(history_item)
 
@@ -170,7 +170,7 @@ class TestMcsHistoryIngest(unittest.TestCase):
         history_item_1 = {'score': {'classification': None}}
         history_item_2 = {'score': {'classification': None}}
         mcs_history_ingest.update_agency_scoring(history_item_1, history_item_2)
-        
+
         self.assertEqual(history_item_1['score']['score'], 0)
         self.assertEqual(history_item_1['score']['weighted_score'], 0)
         self.assertEqual(history_item_1['score']['weighted_score_worth'], 1)
@@ -185,7 +185,7 @@ class TestMcsHistoryIngest(unittest.TestCase):
         history_item_1 = {'score': {'classification': None}}
         history_item_2 = {'score': {'classification': 0.999}}
         mcs_history_ingest.update_agency_scoring(history_item_1, history_item_2)
-        
+
         self.assertEqual(history_item_1['score']['score'], 0)
         self.assertEqual(history_item_1['score']['weighted_score'], 0)
         self.assertEqual(history_item_1['score']['weighted_score_worth'], 0)
@@ -200,7 +200,7 @@ class TestMcsHistoryIngest(unittest.TestCase):
         history_item_1 = {'score': {'classification': 0.999}}
         history_item_2 = {'score': {'classification': None}}
         mcs_history_ingest.update_agency_scoring(history_item_1, history_item_2)
-        
+
         self.assertEqual(history_item_1['score']['score'], 0)
         self.assertEqual(history_item_1['score']['weighted_score'], 0)
         self.assertEqual(history_item_1['score']['weighted_score_worth'], 1)
@@ -215,7 +215,7 @@ class TestMcsHistoryIngest(unittest.TestCase):
         history_item_1 = {'score': {'classification': 0.888}}
         history_item_2 = {'score': {'classification': 0.999}}
         mcs_history_ingest.update_agency_scoring(history_item_1, history_item_2)
-        
+
         self.assertEqual(history_item_1['score']['score'], 0)
         self.assertEqual(history_item_1['score']['weighted_score'], 0)
         self.assertEqual(history_item_1['score']['weighted_score_worth'], 1)
@@ -230,7 +230,7 @@ class TestMcsHistoryIngest(unittest.TestCase):
         history_item_1 = {'score': {'classification': 0.999}}
         history_item_2 = {'score': {'classification': 0.888}}
         mcs_history_ingest.update_agency_scoring(history_item_1, history_item_2)
-        
+
         self.assertEqual(history_item_1['score']['score'], 1)
         self.assertEqual(history_item_1['score']['weighted_score'], 1)
         self.assertEqual(history_item_1['score']['weighted_score_worth'], 1)
@@ -245,7 +245,7 @@ class TestMcsHistoryIngest(unittest.TestCase):
         history_item_1 = {'score': {'classification': ''}}
         history_item_2 = {'score': {'classification': 0.888}}
         mcs_history_ingest.update_agency_scoring(history_item_1, history_item_2)
-        
+
         self.assertEqual(history_item_1['score']['score'], 0)
         self.assertEqual(history_item_1['score']['weighted_score'], 0)
         self.assertEqual(history_item_1['score']['weighted_score_worth'], 0)
@@ -260,7 +260,7 @@ class TestMcsHistoryIngest(unittest.TestCase):
         history_item_1 = {'score': {'classification': 0.999}}
         history_item_2 = {'score': {'classification': ''}}
         mcs_history_ingest.update_agency_scoring(history_item_1, history_item_2)
-        
+
         self.assertEqual(history_item_1['score']['score'], 0)
         self.assertEqual(history_item_1['score']['weighted_score'], 0)
         self.assertEqual(history_item_1['score']['weighted_score_worth'], 1)
@@ -275,7 +275,7 @@ class TestMcsHistoryIngest(unittest.TestCase):
         history_item_1 = {'score': {'classification': ''}}
         history_item_2 = {'score': {'classification': ''}}
         mcs_history_ingest.update_agency_scoring(history_item_1, history_item_2)
-        
+
         self.assertEqual(history_item_1['score']['score'], 0)
         self.assertEqual(history_item_1['score']['weighted_score'], 0)
         self.assertEqual(history_item_1['score']['weighted_score_worth'], 1)
@@ -325,8 +325,8 @@ class TestMcsHistoryIngest(unittest.TestCase):
         self.assertEqual(history_item['score']['score'], 0)
         self.assertEqual(history_item['score']['weighted_score'], 0)
         self.assertEqual(history_item['score']['weighted_score_worth'], 0)
-        self.assertEqual(history_item['score']['score_description'], 'No answer')
-
+        self.assertEqual(history_item['score']['score_description'],
+                         'No answer')
 
     def test_determine_evaluation_hist_name(self):
         eval_name = mcs_history_ingest.determine_evaluation_hist_name(
@@ -478,6 +478,7 @@ class TestMcsHistoryIngest(unittest.TestCase):
         self.assertEqual(new_step["output"]["reward"], step["output"]["reward"])
         self.assertEqual(new_step["target_visible"], step["target_visible"])
         self.assertEqual(new_step["output"]["target"], step["output"]["goal"]["metadata"]["target"])
+
 
 if __name__ == '__main__':
     unittest.main()

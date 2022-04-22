@@ -42,8 +42,8 @@ def create_mock_step(
         action: str = 'Pass',
         object_coords: dict = None,
         position: dict = None,
-        resolved_object = None,
-        resolved_receptacle = None,
+        resolved_object=None,
+        resolved_receptacle=None,
         receptacle_coords: dict = None,
         return_status: str = 'SUCCESSFUL',
         rotation: int = 0
@@ -122,9 +122,10 @@ class TestMcsScorecard(unittest.TestCase):
             TEST_FOLDER, TEST_HISTORY_FILE_NAME)
         scorecard = Scorecard(history_file, scene_file)
         scorecard_vals = scorecard.score_all()
-        self.assertEqual(scorecard_vals["repeat_failed"], 0)
+        repeats = scorecard_vals["repeat_failed"]['total_repeat_failed']
+        self.assertEqual(repeats, 0)
         self.assertEqual(scorecard_vals["revisits"], 1)
-        logging.info(f"{scorecard_vals}")
+        logging.debug(f"{scorecard_vals}")
 
     def test_get_lookpoint(self):
         import numpy as np
@@ -162,7 +163,8 @@ class TestMcsScorecard(unittest.TestCase):
             TEST_FOLDER, TEST_SCENE_NO_TARGET)
         hist_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, TEST_HISTORY_NO_TARGET)
-        target_id, x, z = find_target_loc_by_step(scene_file, hist_file["steps"][0])
+        target_id, x, z = find_target_loc_by_step(scene_file,
+                                                  hist_file["steps"][0])
         self.assertFalse(target_id, "Target should not exist, " +
                          f"but it does {x} {z}")
 
@@ -172,11 +174,14 @@ class TestMcsScorecard(unittest.TestCase):
             TEST_FOLDER, TEST_SCENE_MOVING_TARGET)
         hist_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, TEST_HISTORY_MOVING_TARGET_PASS)
-        target_id, x, z = find_target_loc_by_step(scene_file, hist_file["steps"][0])
+        target_id, x, z = find_target_loc_by_step(scene_file,
+                                                  hist_file["steps"][0])
         if target_id is None:
             self.fail("Target not found")
-        np.testing.assert_almost_equal(x, -3.654195547103882, err_msg="x location is wrong")
-        np.testing.assert_almost_equal(z, 3.75, err_msg="Z location is wrong")
+        np.testing.assert_almost_equal(x, -3.654195547103882,
+                                       err_msg="x location is wrong")
+        np.testing.assert_almost_equal(z, 3.75,
+                                       err_msg="Z location is wrong")
 
     def test_calc_not_moving_toward_object_zero(self):
         scene_file = mcs_scene_ingest.load_json_file(
@@ -201,14 +206,14 @@ class TestMcsScorecard(unittest.TestCase):
             create_mock_step(action='MoveAhead', return_status='FAILED'),
             create_mock_step(action='MoveAhead', return_status='FAILED')
         ])
-        self.assertEqual(repeat_failed, 0)
+        self.assertEqual(repeat_failed['total_repeat_failed'], 0)
 
     def test_calc_repeat_failed_ignore_obstructed(self):
         repeat_failed = calc_repeat_failed([
             create_mock_step(action='MoveAhead', return_status='OBSTRUCTED'),
             create_mock_step(action='MoveAhead', return_status='OBSTRUCTED')
         ])
-        self.assertEqual(repeat_failed, 0)
+        self.assertEqual(repeat_failed['total_repeat_failed'], 0)
 
     def test_calc_repeat_failed_one_success(self):
         repeat_failed = calc_repeat_failed([
@@ -217,7 +222,7 @@ class TestMcsScorecard(unittest.TestCase):
                 object_coords={'x': 300, 'y': 200}
             )
         ])
-        self.assertEqual(repeat_failed, 0)
+        self.assertEqual(repeat_failed['total_repeat_failed'], 0)
 
     def test_calc_repeat_failed_one_failure(self):
         repeat_failed = calc_repeat_failed([
@@ -227,7 +232,7 @@ class TestMcsScorecard(unittest.TestCase):
                 return_status='OUT_OF_REACH'
             )
         ])
-        self.assertEqual(repeat_failed, 0)
+        self.assertEqual(repeat_failed['total_repeat_failed'], 0)
 
     def test_calc_repeat_failed_two_failures(self):
         repeat_failed = calc_repeat_failed([
@@ -242,7 +247,7 @@ class TestMcsScorecard(unittest.TestCase):
                 return_status='OUT_OF_REACH'
             )
         ])
-        self.assertEqual(repeat_failed, 1)
+        self.assertEqual(repeat_failed['total_repeat_failed'], 1)
 
     def test_calc_repeat_failed_three_failures(self):
         repeat_failed = calc_repeat_failed([
@@ -262,7 +267,7 @@ class TestMcsScorecard(unittest.TestCase):
                 return_status='OUT_OF_REACH'
             )
         ])
-        self.assertEqual(repeat_failed, 2)
+        self.assertEqual(repeat_failed['total_repeat_failed'], 2)
 
     def test_calc_repeat_failed_two_failures_with_pause_in_between(self):
         repeat_failed = calc_repeat_failed([
@@ -278,7 +283,7 @@ class TestMcsScorecard(unittest.TestCase):
                 return_status='OUT_OF_REACH'
             )
         ])
-        self.assertEqual(repeat_failed, 1)
+        self.assertEqual(repeat_failed['total_repeat_failed'], 1)
 
     def test_calc_repeat_failed_two_failures_different_action(self):
         repeat_failed = calc_repeat_failed([
@@ -293,7 +298,7 @@ class TestMcsScorecard(unittest.TestCase):
                 return_status='OUT_OF_REACH'
             )
         ])
-        self.assertEqual(repeat_failed, 0)
+        self.assertEqual(repeat_failed['total_repeat_failed'], 0)
 
     def test_calc_repeat_failed_two_failures_different_params(self):
         repeat_failed = calc_repeat_failed([
@@ -308,7 +313,7 @@ class TestMcsScorecard(unittest.TestCase):
                 return_status='OUT_OF_REACH'
             )
         ])
-        self.assertEqual(repeat_failed, 0)
+        self.assertEqual(repeat_failed['total_repeat_failed'], 0)
 
     def test_calc_repeat_failed_two_failures_different_position(self):
         repeat_failed = calc_repeat_failed([
@@ -325,7 +330,7 @@ class TestMcsScorecard(unittest.TestCase):
                 return_status='OUT_OF_REACH'
             )
         ])
-        self.assertEqual(repeat_failed, 0)
+        self.assertEqual(repeat_failed['total_repeat_failed'], 0)
 
     def test_calc_repeat_failed_two_failures_different_rotation(self):
         repeat_failed = calc_repeat_failed([
@@ -342,7 +347,7 @@ class TestMcsScorecard(unittest.TestCase):
                 rotation=10
             )
         ])
-        self.assertEqual(repeat_failed, 0)
+        self.assertEqual(repeat_failed['total_repeat_failed'], 0)
 
     def test_calc_repeat_failed_two_failures_different_status(self):
         repeat_failed = calc_repeat_failed([
@@ -357,5 +362,4 @@ class TestMcsScorecard(unittest.TestCase):
                 return_status='NOT_OBJECT'
             )
         ])
-        self.assertEqual(repeat_failed, 0)
-
+        self.assertEqual(repeat_failed['total_repeat_failed'], 0)
