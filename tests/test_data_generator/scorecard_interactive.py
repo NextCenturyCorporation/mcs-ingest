@@ -41,7 +41,7 @@ if __name__ == "__main__":
 
     args = parse_args()
     if not os.path.exists(args.scene_filepath):
-        logging.warning(f"File {args.scene_filepath} does not exist")
+        logging.error(f"File {args.scene_filepath} does not exist")
         exit(1)
 
     main(args.scene_filepath)

@@ -74,7 +74,7 @@ def calc_repeat_failed(steps_list: list) -> dict:
         action = single_step['action']
         output = single_step['output']
         return_status = output['return_status']
-        print(f"{step_num}  {action}  {return_status}")
+        logging.debug(f"{step_num}  {action}  {return_status}")
 
         if return_status == 'SUCCESSFUL':
             continue
@@ -115,10 +115,10 @@ def calc_repeat_failed(steps_list: list) -> dict:
         if key in previously_failed:
             repeat_failed += 1
             failed_objects[str(obj_id)] += 1
-            print(f"Repeated failure {key} : {repeat_failed}")
+            logging.debug(f"Repeated failure {key} : {repeat_failed}")
         else:
             previously_failed.append(key)
-            print(f"First failure: {key} : {repeat_failed}")
+            logging.debug(f"First failure: {key} : {repeat_failed}")
 
     failed_dict = {}
     failed_dict['total_repeat_failed'] = repeat_failed
@@ -150,10 +150,10 @@ def get_lookpoint(x, y, z, rot, tilt):
     dx = dist * math.cos(math.radians(90 - rot))
     dz = dist * math.sin(math.radians(90 - rot))
 
-    print(f"xyz ({x:0.3f} {y:0.3f} {z:0.3f})" +
+    logging.debug(f"xyz ({x:0.3f} {y:0.3f} {z:0.3f})" +
                   f" tilt {tilt:0.3f} rot {rot:0.3f}")
-    print(f"dist is {dist:0.3f}.  dx,dz {dx:0.3f} {dz:0.3f}")
-    print(f"looking point: {(x + dx):0.3f}  {(z + dz):0.3f}")
+    logging.debug(f"dist is {dist:0.3f}.  dx,dz {dx:0.3f} {dz:0.3f}")
+    logging.debug(f"looking point: {(x + dx):0.3f}  {(z + dz):0.3f}")
     return (x + dx), (z + dz)
 
 
@@ -194,7 +194,7 @@ def find_target_loc_by_step(scene, step):
         x, y, z = itemgetter('x', 'y', 'z')(target_pos)
         return target_id, x, z
     except Exception:
-        print(f"No target by step data for scene {scene['name']}")
+        logging.debug(f"No target by step data for scene {scene['name']}")
 
     return None, 0, 0
 
@@ -362,7 +362,6 @@ class Scorecard:
         # Debug printing
         # logging.debug_grid()
         logging.debug(f"Total number of revisits: {self.revisits}")
-
         return self.revisits
 
     def get_grid_by_location(self, x, z):
@@ -406,20 +405,20 @@ class Scorecard:
                 if return_status in ["SUCCESSFUL",
                                      "IS_OPENED_COMPLETELY",
                                      'OUT_OF_REACH']:
-                    print(
+                    logging.debug(
                         f"Successful opening of container. Step {step}")
                 else:
                     obj_id = get_relevant_object(output)
                     if obj_id is not "":
                         failed_objects[obj_id] += 1
-                    print("Unsuccessful opening of object {obj_id} " +
+                    logging.debug("Unsuccessful opening of object {obj_id} " +
                                   f"Step {step} Status: {return_status}")
                     unopenable += 1
 
         self.open_unopenable = {}
         self.open_unopenable['total_unopenable_attempts'] = unopenable
         self.open_unopenable.update(failed_objects)
-        print('Ending calculating unopenable')
+        logging.debug('Ending calculating unopenable')
         return self.open_unopenable
 
     def calc_relook(self):
@@ -516,7 +515,7 @@ class Scorecard:
 
             target_id, target_x, target_z = \
                 find_target_loc_by_step(self.scene, single_step)
-            print("Target location at step " +
+            logging.debug("Target location at step " +
                           f"{step_num}:  {target_x}  {target_z}")
             if target_id is None:
                 return self.not_moving_toward_object
@@ -525,11 +524,11 @@ class Scorecard:
             pos = single_step['output']['position']
             x, y, z = itemgetter('x', 'y', 'z')(pos)
             current_dist = math.dist((x, z), (target_x, target_z))
-            print(f"xyz:   {x} {y} {z}")
+            logging.debug(f"xyz:   {x} {y} {z}")
 
             # If first time that we have seen the target, start counter
             if seen_count == -1 and visible:
-                print(f"-- First visible {step_num} --")
+                logging.debug(f"-- First visible {step_num} --")
                 seen_count = 1
                 steps_not_moving_towards = 0
                 continue
@@ -541,13 +540,13 @@ class Scorecard:
                     min_dist = current_dist
                     seen_count += 1
                     steps_not_moving_towards = 0
-                    print(f"-- visible again {step_num} " +
+                    logging.debug(f"-- visible again {step_num} " +
                                   f"count: {seen_count}  " +
                                   f"dist: {min_dist} --")
                 else:
                     seen_count = -1
                     min_dist = -1
-                    print(f"-- not seen at {step_num} reset --")
+                    logging.debug(f"-- not seen at {step_num} reset --")
                 continue
 
             # At this point, target has been seen enough times that we should
@@ -555,14 +554,14 @@ class Scorecard:
             if current_dist < min_dist:
                 min_dist = current_dist
                 steps_not_moving_towards = 0
-                print(f"-- moved towards at {step_num} " +
+                logging.debug(f"-- moved towards at {step_num} " +
                               f"current_dist: {current_dist} --")
                 continue
 
             # We did not move closer, so increment the counter that keeps
             # track of number of steps
             steps_not_moving_towards += 1
-            print(f"-- did not move towards {step_num} " +
+            logging.debug(f"-- did not move towards {step_num} " +
                           f"current_dist: {current_dist}  " +
                           f"count: {steps_not_moving_towards} --")
 
@@ -570,7 +569,7 @@ class Scorecard:
             # increment overall counter and reset
             if steps_not_moving_towards > STEPS_NOT_MOVED_TOWARD_LIMIT:
                 self.not_moving_toward_object += 1
-                print(f"-- hit limit {steps_not_moving_towards} " +
+                logging.debug(f"-- hit limit {steps_not_moving_towards} " +
                               f"count: {self.not_moving_toward_object} --")
                 seen_count = -1
                 steps_not_moving_towards = 0

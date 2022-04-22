@@ -12,6 +12,9 @@ TEST_FOLDER = "./tests/test_data"
 
 GROUND_TRUTH = f'{TEST_FOLDER}/ground_truth.txt'
 
+SCENE_FILE = 'india_0003_17_debug.json'
+HIST_FILE = 'gen_repeat_failed_one.json'
+
 # Hide all non-error log messages while running these unit tests.
 logging.basicConfig(
     level=logging.ERROR,
@@ -93,7 +96,8 @@ class TestMcsScorecard(unittest.TestCase):
             history_file = mcs_scene_ingest.load_json_file(
                 TEST_FOLDER, gt_test.history_file)
             s = Scorecard(history_file, scene_file)
-            repeat_failed = s.calc_repeat_failed()
+            repeat_failed_dict = s.calc_repeat_failed()
+            repeat_failed = repeat_failed_dict['total_repeat_failed']
             self.assertEqual(gt_test.num_repeatfailed, repeat_failed,
                              f"Repeat failed error: {gt_test.history_file}")
 
@@ -116,5 +120,17 @@ class TestMcsScorecard(unittest.TestCase):
                 TEST_FOLDER, gt_test.history_file)
             s = Scorecard(history_file, scene_file)
             unopenable = s.calc_open_unopenable()
-            self.assertEqual(gt_test.num_unopenable, unopenable,
+            self.assertEqual(gt_test.num_unopenable, unopenable['total_unopenable_attempts'],
                              f"Unopenable error: {gt_test.history_file}")
+
+    def test_get_scorecard_dict(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, SCENE_FILE)
+        # history_file = mcs_scene_ingest.load_json_file(
+        #     './tests/test_data_generator/SCENE_HISTORY/', "gen_interactive-20220421-084806.json")
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, HIST_FILE)
+        s = Scorecard(history_file, scene_file)
+        scorecard_dict = s.score_all()
+        self.assertEqual(scorecard_dict['repeat_failed']['total_repeat_failed'], 1)
+        self.assertEqual(scorecard_dict['repeat_failed']['d06bc6e8-3ab2-4956-8dee-c46e4357c73b'], 1)
