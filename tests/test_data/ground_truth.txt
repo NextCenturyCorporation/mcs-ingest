@@ -1,0 +1,15 @@
+# Scene file                       Basename of history file       NumRevisits    NumUnopenable     NumReLook   NumNotMoveTwd   NumRepeatFailed
+india_0003_17_debug.json           gen_revisit_zero_1.json              0               0              0            1                 0
+india_0003_17_debug.json           gen_revisit_one_1.json               1               0              0            1                 0
+india_0003_17_debug.json           gen_revisit_one_2.json               1               0              0            1                 0
+india_0003_17_debug.json           gen_revisit_one_3.json               1               0              0            0                 0
+
+golf_0018_15_debug.json            gen_unopenable_two.json              0               2              0            0                 0
+
+golf_0018_15_debug.json            gen_relook_zero_1.json               1               0              0            0                 0
+golf_0018_15_debug.json            gen_relook_one_1.json                0               0              1            0                 0
+
+india_0003_17_debug.json           gen_not_moving_toward_zero_1.json    0               0              0            0                 0
+
+golf_0018_15_debug.json            gen_repeat_failed_zero.json          0               1              0            0                 0
+golf_0018_15_debug.json            gen_repeat_failed_one.json           0               0              0            0                 1

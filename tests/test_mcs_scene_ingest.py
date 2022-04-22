@@ -9,7 +9,7 @@ import create_collection_keys
 
 from pymongo import MongoClient
 
-TEST_SCENE_FILE_NAME = "test_juliett_0001_01_debug.json"
+TEST_SCENE_FILE_NAME = "test_data/test_juliett_0001_01_debug.json"
 # TEST_INTERACTIVE_SCENE_FILE_NAME = "occluders_0001_17_I1_debug.json"
 TEST_FOLDER = "tests"
 

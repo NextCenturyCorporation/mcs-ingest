@@ -1,3 +1,7 @@
+#
+# Scorecard tests on individual functions, passing in locally generated
+# data.
+#
 import logging
 import unittest
 
@@ -19,13 +23,13 @@ TEST_SCENE_CONTAINER = "golf_0018_15_debug.json"
 TEST_HISTORY_CONTAINER = "golf_0018_15_baseline.json"
 
 TEST_SCENE_MOVING_TARGET = "alpha_0001_03_debug.json"
-TEST_HISTORY_MOVING_TARGET_PASS= "alpha_0001_03_test_pass.json"
+TEST_HISTORY_MOVING_TARGET_PASS = "alpha_0001_03_test_pass.json"
 TEST_HISTORY_MOVING_TARGET_FAIL = "alpha_0001_03_test_fail.json"
 
 TEST_SCENE_NO_TARGET = "juliett_0001_01_debug.json"
 TEST_HISTORY_NO_TARGET = "test_eval_3-5_level2_baseline_juliett_0001_01.json"
 
-TEST_FOLDER = "tests"
+TEST_FOLDER = "./tests/test_data"
 
 # Hide all non-error log messages while running these unit tests.
 logging.basicConfig(
@@ -35,12 +39,12 @@ logging.basicConfig(
 
 
 def create_mock_step(
-    action: str = 'Pass',
-    object_coords: dict = None,
-    position: dict = None,
-    receptacle_coords: dict = None,
-    return_status: str = 'SUCCESSFUL',
-    rotation: int = 0
+        action: str = 'Pass',
+        object_coords: dict = None,
+        position: dict = None,
+        receptacle_coords: dict = None,
+        return_status: str = 'SUCCESSFUL',
+        rotation: int = 0
 ) -> dict:
     return {
         'action': action,
@@ -59,6 +63,7 @@ def create_mock_step(
 
 
 class TestMcsScorecard(unittest.TestCase):
+    gt_tests = None
 
     def test_get_grid_by_location(self):
         scene_file = mcs_scene_ingest.load_json_file(
@@ -67,12 +72,9 @@ class TestMcsScorecard(unittest.TestCase):
             TEST_FOLDER, TEST_HISTORY_FILE_NAME)
         scorecard = Scorecard(history_file, scene_file)
 
-        gx, gz = scorecard.get_grid_by_location(0, 0)
-
         x1 = -2.006410598754883
         z1 = 0.6039760112762451
         gx1, gz1 = scorecard.get_grid_by_location(x1, z1)
-        # print(f"Grid location 1:  {gx} {gz}")
 
         x2 = -2.4064102172851562
         z2 = 0.6039760112762451
@@ -99,7 +101,7 @@ class TestMcsScorecard(unittest.TestCase):
         container = find_closest_container(x, z, scene_file)
         self.assertEqual(container['type'], 'case_3')
         logging.info(f"Closest:  {container}")
-    
+
     def test_find_closest_container_but_none(self):
         scene_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, TEST_SCENE_FILE_NAME)
@@ -159,7 +161,6 @@ class TestMcsScorecard(unittest.TestCase):
         target_id, x, z = find_target_loc_by_step(scene_file, hist_file["steps"][0])
         self.assertFalse(target_id, "Target should not exist, " +
                          f"but it does {x} {z}")
-
 
     def test_find_target_location_with_target(self):
         '''Test trying to find a target, when there is not one'''
@@ -353,3 +354,4 @@ class TestMcsScorecard(unittest.TestCase):
             )
         ])
         self.assertEqual(repeat_failed, 0)
+
