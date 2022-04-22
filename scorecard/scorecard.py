@@ -4,6 +4,7 @@
 #
 import logging
 import math
+from collections import defaultdict
 from operator import itemgetter
 
 import numpy as np
@@ -17,8 +18,10 @@ GRID_DIMENSION = 0.5
 DIRECTION_LIMIT = 11
 
 # Minimum timesteps between looking in a container and looking again before
-# we count again
-STEPS_BETWEEN_RELOOKS = 10
+# we count again.  We start counting when AI opens the container, but it
+# could be unable to see into the container (on back side), so give it time to
+# go around the front
+STEPS_BETWEEN_RELOOKS = 15
 
 # Min distance between 'look' locations such that we count them as looking
 # in the same container
@@ -42,18 +45,36 @@ STEPS_NOT_MOVED_TOWARD_LIMIT = 30
 DEFAULT_ROOM_DIMENSIONS = {'x': 10, 'y': 3, 'z': 10}
 
 
-def calc_repeat_failed(steps_list: list) -> int:
+def get_relevant_object(output) -> str:
+    """See if there is an object for the current action output"""
+    resolved_obj = output.get('resolved_object')
+    if resolved_obj is not None and len(resolved_obj) > 0:
+        return resolved_obj
+
+    resolved_recept = output.get('resolved_receptacle')
+    if resolved_recept is not None and len(resolved_recept) > 0:
+        return resolved_recept
+
+    object_id = output.get('objectId')
+    if object_id is not None and len(object_id) > 0:
+        return object_id
+
+    return ""
+
+
+def calc_repeat_failed(steps_list: list) -> dict:
     """Calculate repeated failures, so keep track of first
     time a failure occurs, then increment after that.  """
 
     previously_failed = []
     repeat_failed = 0
+    failed_objects = defaultdict(int)
 
     for step_num, single_step in enumerate(steps_list):
         action = single_step['action']
         output = single_step['output']
         return_status = output['return_status']
-        logging.debug(f"{step_num}  {action}  {return_status}")
+        print(f"{step_num}  {action}  {return_status}")
 
         if return_status == 'SUCCESSFUL':
             continue
@@ -68,11 +89,12 @@ def calc_repeat_failed(steps_list: list) -> int:
 
         # Round floats so we have more accurate key string comparisons.
         position = output['position']
-        resolved_obj = output.get('resolved_object')
-        resolved_recept=  output.get('resolved_receptacle')
         for axis in ['x', 'y', 'z']:
             if axis in position:
                 position[axis] = round(position[axis], 2)
+
+        # Get the id of the object that was used, if any
+        obj_id = get_relevant_object(output)
 
         # Create a unique string identifier for the action and status. This
         # includes the performer's position and rotation (because, if the
@@ -85,20 +107,23 @@ def calc_repeat_failed(steps_list: list) -> int:
             return_status,
             str(position),
             str(single_step['output']['rotation']),
-            str(resolved_obj),
-            str(resolved_recept)
+            str(obj_id)
         ])
 
         # If already failed, then count; otherwise keep track that
         # it failed a first time.
         if key in previously_failed:
             repeat_failed += 1
-            logging.debug(f"Repeated failure {key} : {repeat_failed}")
+            failed_objects[str(obj_id)] += 1
+            print(f"Repeated failure {key} : {repeat_failed}")
         else:
             previously_failed.append(key)
-            logging.debug(f"First failure: {key} : {repeat_failed}")
+            print(f"First failure: {key} : {repeat_failed}")
 
-    return repeat_failed
+    failed_dict = {}
+    failed_dict['total_repeat_failed'] = repeat_failed
+    failed_dict.update(failed_objects)
+    return failed_dict
 
 
 def minAngDist(a, b):
@@ -125,10 +150,10 @@ def get_lookpoint(x, y, z, rot, tilt):
     dx = dist * math.cos(math.radians(90 - rot))
     dz = dist * math.sin(math.radians(90 - rot))
 
-    logging.debug(f"xyz ({x:0.3f} {y:0.3f} {z:0.3f})" +
+    print(f"xyz ({x:0.3f} {y:0.3f} {z:0.3f})" +
                   f" tilt {tilt:0.3f} rot {rot:0.3f}")
-    logging.debug(f"dist is {dist:0.3f}.  dx,dz {dx:0.3f} {dz:0.3f}")
-    logging.debug(f"looking point: {(x + dx):0.3f}  {(z + dz):0.3f}")
+    print(f"dist is {dist:0.3f}.  dx,dz {dx:0.3f} {dz:0.3f}")
+    print(f"looking point: {(x + dx):0.3f}  {(z + dz):0.3f}")
     return (x + dx), (z + dz)
 
 
@@ -169,7 +194,7 @@ def find_target_loc_by_step(scene, step):
         x, y, z = itemgetter('x', 'y', 'z')(target_pos)
         return target_id, x, z
     except Exception:
-        logging.debug(f"No target by step data for scene {scene['name']}")
+        print(f"No target by step data for scene {scene['name']}")
 
     return None, 0, 0
 
@@ -245,7 +270,7 @@ class Scorecard:
             'repeat_failed': self.repeat_failed,
             'attempt_impossible': self.attempt_impossible,
             'open_unopenable': self.open_unopenable,
-            'multiple_container_look': self.relooks,
+            'container_relook': self.relooks,
             'not_moving_toward_object': self.not_moving_toward_object,
             'revisits': self.revisits,
         }
@@ -369,24 +394,32 @@ class Scorecard:
         logging.debug('Starting calculating unopenable')
         steps_list = self.history['steps']
 
-        self.open_unopenable = 0
+        unopenable = 0
+        failed_objects = defaultdict(int)
 
         for single_step in steps_list:
             step = single_step['step']
             action = single_step['action']
+            output = single_step['output']
             if action == 'OpenObject':
-                return_status = single_step['output']['return_status']
+                return_status = output['return_status']
                 if return_status in ["SUCCESSFUL",
                                      "IS_OPENED_COMPLETELY",
                                      'OUT_OF_REACH']:
-                    logging.debug(
+                    print(
                         f"Successful opening of container. Step {step}")
                 else:
-                    logging.debug("Unsuccessful opening of container. " +
+                    obj_id = get_relevant_object(output)
+                    if obj_id is not "":
+                        failed_objects[obj_id] += 1
+                    print("Unsuccessful opening of object {obj_id} " +
                                   f"Step {step} Status: {return_status}")
-                    self.open_unopenable += 1
+                    unopenable += 1
 
-        logging.debug('Ending calculating unopenable')
+        self.open_unopenable = {}
+        self.open_unopenable['total_unopenable_attempts'] = unopenable
+        self.open_unopenable.update(failed_objects)
+        print('Ending calculating unopenable')
         return self.open_unopenable
 
     def calc_relook(self):
@@ -483,7 +516,7 @@ class Scorecard:
 
             target_id, target_x, target_z = \
                 find_target_loc_by_step(self.scene, single_step)
-            logging.debug("Target location at step " +
+            print("Target location at step " +
                           f"{step_num}:  {target_x}  {target_z}")
             if target_id is None:
                 return self.not_moving_toward_object
@@ -492,11 +525,11 @@ class Scorecard:
             pos = single_step['output']['position']
             x, y, z = itemgetter('x', 'y', 'z')(pos)
             current_dist = math.dist((x, z), (target_x, target_z))
-            logging.debug(f"xyz:   {x} {y} {z}")
+            print(f"xyz:   {x} {y} {z}")
 
             # If first time that we have seen the target, start counter
             if seen_count == -1 and visible:
-                logging.debug(f"-- First visible {step_num} --")
+                print(f"-- First visible {step_num} --")
                 seen_count = 1
                 steps_not_moving_towards = 0
                 continue
@@ -508,13 +541,13 @@ class Scorecard:
                     min_dist = current_dist
                     seen_count += 1
                     steps_not_moving_towards = 0
-                    logging.debug(f"-- visible again {step_num} " +
+                    print(f"-- visible again {step_num} " +
                                   f"count: {seen_count}  " +
                                   f"dist: {min_dist} --")
                 else:
                     seen_count = -1
                     min_dist = -1
-                    logging.debug(f"-- not seen at {step_num} reset --")
+                    print(f"-- not seen at {step_num} reset --")
                 continue
 
             # At this point, target has been seen enough times that we should
@@ -522,14 +555,14 @@ class Scorecard:
             if current_dist < min_dist:
                 min_dist = current_dist
                 steps_not_moving_towards = 0
-                logging.debug(f"-- moved towards at {step_num} " +
+                print(f"-- moved towards at {step_num} " +
                               f"current_dist: {current_dist} --")
                 continue
 
             # We did not move closer, so increment the counter that keeps
             # track of number of steps
             steps_not_moving_towards += 1
-            logging.debug(f"-- did not move towards {step_num} " +
+            print(f"-- did not move towards {step_num} " +
                           f"current_dist: {current_dist}  " +
                           f"count: {steps_not_moving_towards} --")
 
@@ -537,7 +570,7 @@ class Scorecard:
             # increment overall counter and reset
             if steps_not_moving_towards > STEPS_NOT_MOVED_TOWARD_LIMIT:
                 self.not_moving_toward_object += 1
-                logging.debug(f"-- hit limit {steps_not_moving_towards} " +
+                print(f"-- hit limit {steps_not_moving_towards} " +
                               f"count: {self.not_moving_toward_object} --")
                 seen_count = -1
                 steps_not_moving_towards = 0
