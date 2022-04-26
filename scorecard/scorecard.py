@@ -4,6 +4,7 @@
 #
 import logging
 import math
+from collections import defaultdict
 from operator import itemgetter
 
 import numpy as np
@@ -17,8 +18,10 @@ GRID_DIMENSION = 0.5
 DIRECTION_LIMIT = 11
 
 # Minimum timesteps between looking in a container and looking again before
-# we count again
-STEPS_BETWEEN_RELOOKS = 10
+# we count again.  We start counting when AI opens the container, but it
+# could be unable to see into the container (on back side), so give it time to
+# go around the front
+STEPS_BETWEEN_RELOOKS = 15
 
 # Min distance between 'look' locations such that we count them as looking
 # in the same container
@@ -42,17 +45,35 @@ STEPS_NOT_MOVED_TOWARD_LIMIT = 30
 DEFAULT_ROOM_DIMENSIONS = {'x': 10, 'y': 3, 'z': 10}
 
 
-def calc_repeat_failed(steps_list: list) -> int:
+def get_relevant_object(output) -> str:
+    """See if there is an object for the current action output"""
+    resolved_obj = output.get('resolved_object')
+    if resolved_obj is not None and len(resolved_obj) > 0:
+        return resolved_obj
+
+    resolved_recept = output.get('resolved_receptacle')
+    if resolved_recept is not None and len(resolved_recept) > 0:
+        return resolved_recept
+
+    object_id = output.get('objectId')
+    if object_id is not None and len(object_id) > 0:
+        return object_id
+
+    return ""
+
+
+def calc_repeat_failed(steps_list: list) -> dict:
     """Calculate repeated failures, so keep track of first
     time a failure occurs, then increment after that.  """
 
     previously_failed = []
     repeat_failed = 0
+    failed_objects = defaultdict(int)
 
     for step_num, single_step in enumerate(steps_list):
         action = single_step['action']
-        params = single_step['params']
-        return_status = single_step['output']['return_status']
+        output = single_step['output']
+        return_status = output['return_status']
         logging.debug(f"{step_num}  {action}  {return_status}")
 
         if return_status == 'SUCCESSFUL':
@@ -67,16 +88,13 @@ def calc_repeat_failed(steps_list: list) -> int:
             continue
 
         # Round floats so we have more accurate key string comparisons.
-        position = single_step['output']['position']
-        # TODO MCS-978 Rather than using the image coords, use the ID for the
-        #      object that Unity has detected at the image coords, once Unity
-        #      returns that info and we save it in the scene history files.
-        object_coords = params.get('objectImageCoords', {})
-        receptacle_coords = params.get('receptacleObjectImageCoords', {})
-        for variable in [position, object_coords, receptacle_coords]:
-            for axis in ['x', 'y', 'z']:
-                if axis in variable:
-                    variable[axis] = round(variable[axis], 2)
+        position = output['position']
+        for axis in ['x', 'y', 'z']:
+            if axis in position:
+                position[axis] = round(position[axis], 2)
+
+        # Get the id of the object that was used, if any
+        obj_id = get_relevant_object(output)
 
         # Create a unique string identifier for the action and status. This
         # includes the performer's position and rotation (because, if the
@@ -89,22 +107,23 @@ def calc_repeat_failed(steps_list: list) -> int:
             return_status,
             str(position),
             str(single_step['output']['rotation']),
-            str(params.get('objectId')),
-            str(object_coords),
-            str(params.get('receptacleObjectId')),
-            str(receptacle_coords)
+            str(obj_id)
         ])
 
         # If already failed, then count; otherwise keep track that
         # it failed a first time.
         if key in previously_failed:
             repeat_failed += 1
+            failed_objects[str(obj_id)] += 1
             logging.debug(f"Repeated failure {key} : {repeat_failed}")
         else:
             previously_failed.append(key)
             logging.debug(f"First failure: {key} : {repeat_failed}")
 
-    return repeat_failed
+    failed_dict = {}
+    failed_dict['total_repeat_failed'] = repeat_failed
+    failed_dict.update(failed_objects)
+    return failed_dict
 
 
 def minAngDist(a, b):
@@ -251,7 +270,7 @@ class Scorecard:
             'repeat_failed': self.repeat_failed,
             'attempt_impossible': self.attempt_impossible,
             'open_unopenable': self.open_unopenable,
-            'multiple_container_look': self.relooks,
+            'container_relook': self.relooks,
             'not_moving_toward_object': self.not_moving_toward_object,
             'revisits': self.revisits,
         }
@@ -343,7 +362,6 @@ class Scorecard:
         # Debug printing
         # logging.debug_grid()
         logging.debug(f"Total number of revisits: {self.revisits}")
-
         return self.revisits
 
     def get_grid_by_location(self, x, z):
@@ -375,23 +393,31 @@ class Scorecard:
         logging.debug('Starting calculating unopenable')
         steps_list = self.history['steps']
 
-        self.open_unopenable = 0
+        unopenable = 0
+        failed_objects = defaultdict(int)
 
         for single_step in steps_list:
             step = single_step['step']
             action = single_step['action']
+            output = single_step['output']
             if action == 'OpenObject':
-                return_status = single_step['output']['return_status']
+                return_status = output['return_status']
                 if return_status in ["SUCCESSFUL",
                                      "IS_OPENED_COMPLETELY",
                                      'OUT_OF_REACH']:
                     logging.debug(
                         f"Successful opening of container. Step {step}")
                 else:
-                    logging.debug("Unsuccessful opening of container. " +
+                    obj_id = get_relevant_object(output)
+                    if obj_id != "":
+                        failed_objects[obj_id] += 1
+                    logging.debug("Unsuccessful opening of object {obj_id} " +
                                   f"Step {step} Status: {return_status}")
-                    self.open_unopenable += 1
+                    unopenable += 1
 
+        self.open_unopenable = {}
+        self.open_unopenable['total_unopenable_attempts'] = unopenable
+        self.open_unopenable.update(failed_objects)
         logging.debug('Ending calculating unopenable')
         return self.open_unopenable
 
