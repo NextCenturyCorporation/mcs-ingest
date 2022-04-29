@@ -9,8 +9,9 @@ from operator import itemgetter
 
 import numpy as np
 import pandas
-
 # Grid Dimension determines how big our grid is for revisiting
+from machine_common_sense.action import MOVE_ACTIONS
+
 GRID_DIMENSION = 0.5
 
 # Direction limit:  Degrees difference that we allow before we count actors
@@ -260,11 +261,15 @@ class Scorecard:
 
     def score_all(self) -> dict:
         self.calc_repeat_failed()
-        self.calc_attempt_impossible()
+
         self.calc_open_unopenable()
         self.calc_relook()
         self.calc_revisiting()
         self.calc_not_moving_toward_object()
+        self.calc_ramp_actions()
+
+        # To be implemented
+        # self.calc_attempt_impossible()
 
         return {
             'repeat_failed': self.repeat_failed,
@@ -575,6 +580,117 @@ class Scorecard:
                 steps_not_moving_towards = 0
 
         return self.not_moving_toward_object
+
+    def calc_ramp_actions(self):
+        '''Calculate the number of times that the AI went
+        up ramps, failed to go up/down a ramp (went other way),
+        and fell off.'''
+        logging.debug('Starting calculating ramp actions')
+        steps_list = self.history['steps']
+
+        old_position = steps_list[0]['output']['position']
+        was_on_ramp = False
+        headed_up = False
+        ramp_actions = defaultdict(int)
+
+        for single_step in steps_list:
+            step = single_step['step']
+            action = single_step['action']
+            output = single_step['output']
+            return_status = output['return_status']
+            logging.debug(f"On step: {step}")
+
+            # Can only go up/down a ramp when actually moving
+            if action not in MOVE_ACTIONS:
+                logging.debug(f"Not a move {action}")
+                continue
+
+            if return_status != "SUCCESSFUL":
+                logging.debug(f"Not successful {return_status}")
+                continue
+
+            # Only care if we transitioned on or off a ramp
+            position = output['position']
+            now_on_ramp, ramp_name = self.on_ramp(position)
+            logging.debug(f"Whether on ramp:   {now_on_ramp} {ramp_name}")
+            if was_on_ramp == now_on_ramp:
+                logging.debug(f"No ramp change")
+                continue
+
+            # if we were not on a ramp, but now we are, determine
+            # if we are going up or down and continue
+            if not was_on_ramp:
+                headed_up = False
+                if position['y'] > old_position['y']:
+                    headed_up = True
+                was_on_ramp = now_on_ramp
+                logging.debug(f"Now on ramp, headed up? {headed_up}")
+                continue
+
+            # We were on a ramp, and now off a ramp.
+            if was_on_ramp:  # Was on ramp, now not
+                logging.debug(f"Now off ramp!")
+                was_on_ramp = False
+
+                # See if we successfully completed a ramp, either up or down
+                if (position['y'] > old_position['y']) and headed_up:
+                    ramp_actions['went_up'] += 1
+                    logging.debug(f"were headed up, now off ramp on top {ramp_actions['went_up']}")
+                    continue
+
+                if (position['y'] < old_position['y']) and not headed_up:
+                    ramp_actions['went_down'] += 1
+                    logging.debug(f"were headed down, now off ramp on bottom {ramp_actions['went_down']}")
+                    continue
+
+                # something bad happened.  We were on a ramp but now
+                # we are not, and we didn't finish the ramp
+                if self.fell_off_ramp(old_position, position):
+                    ramp_actions['fell_off'] += 1
+                    logging.debug(f"fell off {ramp_actions['fell_off']}")
+                    continue
+
+                # Last condition:  Started on a ramp and changed our
+                # mind.
+                if headed_up:
+                    ramp_actions['went_up_abandoned'] += 1
+                    logging.debug(f"were headed up, but went back down {ramp_actions['went_up_abandoned']}")
+                else:
+                    ramp_actions['went_down_abandoned'] += 1
+                    logging.debug(f"were headed down, but went back up {ramp_actions['went_down_abandoned']}")
+
+        self.ramp_actions = {}
+        self.ramp_actions.update(ramp_actions)
+        logging.debug('Ending calculating ramp actions')
+        return self.ramp_actions
+
+    def on_ramp(self, position) -> (bool, str):
+        '''Determine if a position is in a ramp.  Return
+        a boolean and, if True, the ID'''
+
+        # go through all the objects in the scene, and see if they are
+        # a ramp.
+        for obj in self.scene['objects']:
+            if obj['type'] != 'triangle':
+                continue
+
+            x = position['x']
+            z = position['z']
+            if 'shows' in obj and len(obj['shows']) > 0:
+                sh = obj['shows'][0]
+                objx1 = sh['position']['x']
+                objx2 = sh['position']['x'] + sh['scale']['x']
+                objz1 = sh['position']['z']
+                objz2 = sh['position']['z']+ sh['scale']['z']
+
+                if x > objx1 and x < objx2 and z > objz1 and z < objz2:
+                    return True, obj["id"]
+        return False, ""
+
+    def fell_off_ramp(self, old_position, new_position) -> bool:
+        ''' Determine if the line of travel from old to new position
+        goes over the edge of a ramp.'''
+        return False
 
     def calc_repeat_failed(self):
         """Calculate repeated failures, so keep track of first
