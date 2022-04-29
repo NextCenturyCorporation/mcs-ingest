@@ -52,7 +52,9 @@ def replace_short_hand(code):
 def interactive_cb(step_metadata, runner_script):
     '''  Rather than using a string to represent
     movements, get interactive input'''
-    print(f"{step_metadata.step_number}")
+    step=step_metadata.step_number
+    pos=step_metadata.position
+    print(f"{step} {pos}")
     x = input()
     return key_to_movement(x)
 

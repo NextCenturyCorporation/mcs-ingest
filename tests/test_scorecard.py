@@ -36,7 +36,8 @@ TEST_FOLDER = "./tests/test_data"
 
 # Hide all non-error log messages while running these unit tests.
 logging.basicConfig(
-    level=logging.ERROR,
+    level=logging.DEBUG,
+    # level=logging.ERROR,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 
@@ -374,11 +375,6 @@ class TestMcsScorecard(unittest.TestCase):
             TEST_FOLDER, TEST_HISTORY_RAMP_UP_DOWN)
         scorecard = Scorecard(history_file, scene_file)
 
-
-        acts = scorecard.calc_ramp_actions()
-        logging.error(f"acts: {acts}")
-        logging.error("here")
-
         # Lower ramp pos (1.5, 1), size (2,1)
         position = {'x': 1.51, 'z': 1.1}
         on_ramp_bool, ramp_id = scorecard.on_ramp(position)
@@ -390,3 +386,5 @@ class TestMcsScorecard(unittest.TestCase):
         self.assertFalse(on_ramp_bool)
         self.assertEqual(ramp_id, "")
 
+        acts = scorecard.calc_ramp_actions()
+        logging.error(f"actions: {acts}")

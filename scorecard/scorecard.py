@@ -10,7 +10,9 @@ from operator import itemgetter
 import numpy as np
 import pandas
 # Grid Dimension determines how big our grid is for revisiting
-from machine_common_sense.action import MOVE_ACTIONS
+from machine_common_sense.action import MOVE_ACTIONS, Action
+
+from scorecard.scorecard_location_utils import is_on_ramp
 
 GRID_DIMENSION = 0.5
 
@@ -195,7 +197,7 @@ def find_target_loc_by_step(scene, step):
         x, y, z = itemgetter('x', 'y', 'z')(target_pos)
         return target_id, x, z
     except Exception:
-        logging.debug(f"No target by step data for scene {scene['name']}")
+        logging.error(f"No target by step data for scene {scene['name']}")
 
     return None, 0, 0
 
@@ -365,7 +367,7 @@ class Scorecard:
         self.revisits = int(self.grid_counts.sum())
 
         # Debug printing
-        # logging.debug_grid()
+        # logging.print_grid()
         logging.debug(f"Total number of revisits: {self.revisits}")
         return self.revisits
 
@@ -595,7 +597,9 @@ class Scorecard:
 
         for single_step in steps_list:
             step = single_step['step']
-            action = single_step['action']
+            if step > 99:
+                print("")
+            action = Action(single_step['action'])
             output = single_step['output']
             return_status = output['return_status']
             logging.debug(f"On step: {step}")
@@ -615,6 +619,7 @@ class Scorecard:
             logging.debug(f"Whether on ramp:   {now_on_ramp} {ramp_name}")
             if was_on_ramp == now_on_ramp:
                 logging.debug(f"No ramp change")
+                old_position = position
                 continue
 
             # if we were not on a ramp, but now we are, determine
@@ -625,6 +630,7 @@ class Scorecard:
                     headed_up = True
                 was_on_ramp = now_on_ramp
                 logging.debug(f"Now on ramp, headed up? {headed_up}")
+                old_position = position
                 continue
 
             # We were on a ramp, and now off a ramp.
@@ -636,11 +642,13 @@ class Scorecard:
                 if (position['y'] > old_position['y']) and headed_up:
                     ramp_actions['went_up'] += 1
                     logging.debug(f"were headed up, now off ramp on top {ramp_actions['went_up']}")
+                    old_position = position
                     continue
 
                 if (position['y'] < old_position['y']) and not headed_up:
                     ramp_actions['went_down'] += 1
                     logging.debug(f"were headed down, now off ramp on bottom {ramp_actions['went_down']}")
+                    old_position = position
                     continue
 
                 # something bad happened.  We were on a ramp but now
@@ -648,6 +656,7 @@ class Scorecard:
                 if self.fell_off_ramp(old_position, position):
                     ramp_actions['fell_off'] += 1
                     logging.debug(f"fell off {ramp_actions['fell_off']}")
+                    old_position = position
                     continue
 
                 # Last condition:  Started on a ramp and changed our
@@ -659,6 +668,8 @@ class Scorecard:
                     ramp_actions['went_down_abandoned'] += 1
                     logging.debug(f"were headed down, but went back up {ramp_actions['went_down_abandoned']}")
 
+                old_position = position
+
         self.ramp_actions = {}
         self.ramp_actions.update(ramp_actions)
         logging.debug('Ending calculating ramp actions')
@@ -668,8 +679,6 @@ class Scorecard:
         '''Determine if a position is in a ramp.  Return
         a boolean and, if True, the ID'''
 
-        # go through all the objects in the scene, and see if they are
-        # a ramp.
         for obj in self.scene['objects']:
             if obj['type'] != 'triangle':
                 continue
@@ -678,13 +687,16 @@ class Scorecard:
             z = position['z']
             if 'shows' in obj and len(obj['shows']) > 0:
                 sh = obj['shows'][0]
-                objx1 = sh['position']['x']
-                objx2 = sh['position']['x'] + sh['scale']['x']
-                objz1 = sh['position']['z']
-                objz2 = sh['position']['z']+ sh['scale']['z']
-
-                if x > objx1 and x < objx2 and z > objz1 and z < objz2:
-                    return True, obj["id"]
+                pos = sh['position']
+                size = sh['scale']
+                rot = sh['rotation']['y']
+                on_obj = is_on_ramp(
+                    x, z,
+                    pos['x'], pos['z'],
+                    size['x'], size['z'],
+                    rot)
+                if on_obj:
+                    return True, obj['id']
         return False, ""
 
     def fell_off_ramp(self, old_position, new_position) -> bool:
