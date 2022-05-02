@@ -4,22 +4,42 @@ from math import sqrt
 from point2d import Point2D
 
 from scorecard.scorecard_location_utils import (
-    get_polygon_from_center_size_rotation,
-    is_point_in_polygon)
+    is_point_in_polygon, rotate_x_z, get_polygon_from_center_size_rotation2)
 
 
 class TestScorecardLocationutils(unittest.TestCase):
+
+    def test_rotate_point(self):
+        # Compare to results at:
+        # https://www.emathhelp.net/en/calculators/algebra-2/rotation-calculator/
+        x = 3
+        z = 5
+        center_x = 0
+        center_z = 0
+        rot = 33
+        x_p, z_p = rotate_x_z(x, z, center_x, center_z, rot)
+        self.assertAlmostEqual(5.2392, x_p, delta=0.0001)
+        self.assertAlmostEqual(2.55943, z_p, delta=0.0001)
+
+        x = -4
+        z = 1.5
+        center_x = -1
+        center_z = -1
+        rot = 61
+        x_p, z_p = rotate_x_z(x, z, center_x, center_z, rot)
+        self.assertAlmostEqual(-0.26787, x_p, delta=0.0001)
+        self.assertAlmostEqual(2.83588, z_p, delta=0.0001)
 
     def test_get_polygon_from_center_size_rotation_1(self):
         center = Point2D(0, 0)
         size = Point2D(1, 1)
         rotation = 60
 
-        polygon = get_polygon_from_center_size_rotation(center, size, rotation)
-        pt1 = polygon[0]
+        polygon = get_polygon_from_center_size_rotation2(center, size, rotation)
+        pt1 = polygon[3]
         # should be x_contrib = 0.5 / 2.;  z_contrib = sqrt(3)/2 / 2.
         x_expected = 0.25 * sqrt(3) + 0.25
-        self.assertAlmostEqual(x_expected, pt1.x, delta=0.0001)
+        self.assertAlmostEqual(-x_expected, pt1.x, delta=0.0001)
 
     def test_get_polygon_from_center_size_rotation_2(self):
         # This is ramp_lower from ramps_eval_5_ex_1.json
@@ -27,8 +47,8 @@ class TestScorecardLocationutils(unittest.TestCase):
         size = Point2D(2, 1)
         rotation = 90
 
-        polygon = get_polygon_from_center_size_rotation(center, size, rotation)
-        pt = polygon[3]
+        polygon = get_polygon_from_center_size_rotation2(center, size, rotation)
+        pt = polygon[0]
         x_expected = 2.0
         y_expected = 2.0
         self.assertAlmostEqual(x_expected, pt.x, delta=0.0001)
@@ -44,8 +64,8 @@ class TestScorecardLocationutils(unittest.TestCase):
         # of size, you should add size to x and subtract from z.
         # Then rotate coordinate frame.
 
-        polygon = get_polygon_from_center_size_rotation(center, size, rotation)
-        pt = polygon[2]
+        polygon = get_polygon_from_center_size_rotation2(center, size, rotation)
+        pt = polygon[3]
         x_expected = -2.20704
         y_expected = 5.1018
         self.assertAlmostEqual(x_expected, pt.x, delta=0.0001)

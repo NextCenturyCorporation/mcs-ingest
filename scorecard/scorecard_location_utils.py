@@ -45,11 +45,35 @@ def get_polygon_from_center_size_rotation(
     return polygon
 
 
+def get_polygon_from_center_size_rotation2(
+        center: Point2D,
+        size: Point2D,
+        rotation: float) -> List[Point2D]:
+    pt1 = Point2D(center.x - (size.x / 2.), center.y + (size.y / 2.))
+    pt2 = Point2D(center.x + (size.x / 2.), center.y + (size.y / 2.))
+    pt3 = Point2D(center.x + (size.x / 2.), center.y - (size.y / 2.))
+    pt4 = Point2D(center.x - (size.x / 2.), center.y - (size.y / 2.))
+
+    pt1 = rotate_point(pt1, center, rotation)
+    pt2 = rotate_point(pt2, center, rotation)
+    pt3 = rotate_point(pt3, center, rotation)
+    pt4 = rotate_point(pt4, center, rotation)
+
+    print(f"{pt1}")
+    print(f"{pt2}")
+    print(f"{pt3}")
+    print(f"{pt4}")
+
+    polygon = [pt1, pt2, pt3, pt4]
+    return polygon
+
+
 def is_point_in_polygon(pt: Point2D, polygon: List[Point2D]):
     '''Determine if a point is in a polygon.  General solution
     for any polygon that does not contain holes or crossovers.
     pt:  point we are determining
-    polygon:  list of points, in order, does not have first point as last
+    polygon:  list of points, in order, does NOT have first
+    point as last
 
     See: https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html
     for discussion'''
@@ -71,12 +95,38 @@ def is_point_in_polygon(pt: Point2D, polygon: List[Point2D]):
     return is_inside
 
 
+def rotate_point(p1: Point2D, center: Point2D, rot):
+    return Point2D(rotate_x_z(p1.x, p1.y, center.x, center.y, rot))
+
+
+def rotate_x_z(x, z, center_x, center_z, rotation):
+    '''Rotate a coordinate system by rot (measured CW)
+    around a center point.  Calculate new point'''
+    rot = deg2rad(-rotation)
+    x_shift = x - center_x
+    y_shift = z - center_z
+
+    x_prime = x_shift * cos(rot) - y_shift * sin(rot)
+    y_prime = x_shift * sin(rot) + y_shift * cos(rot)
+
+    x_prime += center_x
+    y_prime += center_z
+    return x_prime, y_prime
+
+
+def is_point_near_base(pt, center, size, rotation) -> bool:
+    return False
+
+
 def is_on_ramp(x, z, center_x, center_z, size_x, size_z, rotation) \
         -> bool:
     '''Helper function to convert to Point2D and perform inside calc'''
     pt = Point2D(x, z)
     center = Point2D(center_x, center_z)
     size = Point2D(size_x, size_z)
-    return is_point_in_polygon(
+
+    is_actually_on = is_point_in_polygon(
         pt,
         get_polygon_from_center_size_rotation(center, size, rotation))
+    is_near_base = is_point_near_base(pt, center, size, rotation)
+    return is_actually_on

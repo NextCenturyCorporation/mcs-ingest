@@ -77,7 +77,7 @@ def calc_repeat_failed(steps_list: list) -> dict:
         action = single_step['action']
         output = single_step['output']
         return_status = output['return_status']
-        logging.debug(f"{step_num}  {action}  {return_status}")
+        logging.error(f"{step_num}  {action}  {return_status}")
 
         if return_status == 'SUCCESSFUL':
             continue
@@ -118,10 +118,10 @@ def calc_repeat_failed(steps_list: list) -> dict:
         if key in previously_failed:
             repeat_failed += 1
             failed_objects[str(obj_id)] += 1
-            logging.debug(f"Repeated failure {key} : {repeat_failed}")
+            logging.error(f"Repeated failure {key} : {repeat_failed}")
         else:
             previously_failed.append(key)
-            logging.debug(f"First failure: {key} : {repeat_failed}")
+            logging.error(f"First failure: {key} : {repeat_failed}")
 
     failed_dict = {}
     failed_dict['total_repeat_failed'] = repeat_failed
@@ -153,10 +153,10 @@ def get_lookpoint(x, y, z, rot, tilt):
     dx = dist * math.cos(math.radians(90 - rot))
     dz = dist * math.sin(math.radians(90 - rot))
 
-    logging.debug(f"xyz ({x:0.3f} {y:0.3f} {z:0.3f})" +
+    logging.error(f"xyz ({x:0.3f} {y:0.3f} {z:0.3f})" +
                   f" tilt {tilt:0.3f} rot {rot:0.3f}")
-    logging.debug(f"dist is {dist:0.3f}.  dx,dz {dx:0.3f} {dz:0.3f}")
-    logging.debug(f"looking point: {(x + dx):0.3f}  {(z + dz):0.3f}")
+    logging.error(f"dist is {dist:0.3f}.  dx,dz {dx:0.3f} {dz:0.3f}")
+    logging.error(f"looking point: {(x + dx):0.3f}  {(z + dz):0.3f}")
     return (x + dx), (z + dz)
 
 
@@ -316,7 +316,7 @@ class Scorecard:
 
             grid_x, grid_z = self.get_grid_by_location(loc['x'], loc['z'])
             grid_hist = self.grid[grid_x][grid_z]
-            logging.debug(f"Step num {step_num}  Location is {loc}.  Dir: " +
+            logging.error(f"Step num {step_num}  Location is {loc}.  Dir: " +
                           f"{direction}  Grid loc is {grid_x} {grid_z}")
 
             # ---------------------------------
@@ -325,7 +325,7 @@ class Scorecard:
             # If never been there, then not a revisit, and no longer in
             # revisiting mode
             if not grid_hist.any_visits():
-                logging.debug("never visited")
+                logging.error("never visited")
                 grid_hist.add(step_num, direction)
                 old_x, old_z = grid_x, grid_z
                 previous_revisit = False
@@ -334,14 +334,14 @@ class Scorecard:
             # If we did not change grid location (for example, change tilt,
             # rotate, etc), do not count
             if old_x == grid_x and old_z == grid_z:
-                logging.debug("didn't change location")
+                logging.error("didn't change location")
                 old_x, old_z = grid_x, grid_z
                 grid_hist.add(step_num, direction)
                 continue
 
             # See if ever been in this direction before
             if not grid_hist.seen_before(step_num, direction):
-                logging.debug("visited but not this direction")
+                logging.error("visited but not this direction")
                 grid_hist.add(step_num, direction)
                 old_x, old_z = grid_x, grid_z
                 previous_revisit = False
@@ -350,7 +350,7 @@ class Scorecard:
             # If previous step was a revisit, don't mark this one, but
             # still in revisiting mode
             if previous_revisit:
-                logging.debug("visited / this direction, but in revisit mode")
+                logging.error("visited / this direction, but in revisit mode")
                 grid_hist.add(step_num, direction)
                 old_x, old_z = grid_x, grid_z
                 continue
@@ -359,7 +359,7 @@ class Scorecard:
             # there, we are facing in the same direction as before, and
             # previous_revisit==False (i.e. we are not in revisiting mode)
             # So, we are revisiting
-            logging.debug("revisiting")
+            logging.error("revisiting")
             previous_revisit = True
             self.grid_counts[grid_x, grid_z] += 1
             old_x, old_z = grid_x, grid_z
@@ -368,7 +368,7 @@ class Scorecard:
 
         # Debug printing
         # logging.print_grid()
-        logging.debug(f"Total number of revisits: {self.revisits}")
+        logging.error(f"Total number of revisits: {self.revisits}")
         return self.revisits
 
     def get_grid_by_location(self, x, z):
@@ -392,12 +392,12 @@ class Scorecard:
         pandas.set_option("display.max_rows", None,
                           "display.max_columns", None)
         pandas.options.display.width = 0
-        logging.debug(df)
+        logging.error(df)
 
     def calc_open_unopenable(self):
         ''' Determine the number of times that the agent tried to
         open an unopenable object.  '''
-        logging.debug('Starting calculating unopenable')
+        logging.error('Starting calculating unopenable')
         steps_list = self.history['steps']
 
         unopenable = 0
@@ -412,20 +412,20 @@ class Scorecard:
                 if return_status in ["SUCCESSFUL",
                                      "IS_OPENED_COMPLETELY",
                                      'OUT_OF_REACH']:
-                    logging.debug(
+                    logging.error(
                         f"Successful opening of container. Step {step}")
                 else:
                     obj_id = get_relevant_object(output)
                     if obj_id != "":
                         failed_objects[obj_id] += 1
-                    logging.debug("Unsuccessful opening of object {obj_id} " +
+                    logging.error("Unsuccessful opening of object {obj_id} " +
                                   f"Step {step} Status: {return_status}")
                     unopenable += 1
 
         self.open_unopenable = {}
         self.open_unopenable['total_unopenable_attempts'] = unopenable
         self.open_unopenable.update(failed_objects)
-        logging.debug('Ending calculating unopenable')
+        logging.error('Ending calculating unopenable')
         return self.open_unopenable
 
     def calc_relook(self):
@@ -444,13 +444,13 @@ class Scorecard:
 
             # If we had a relook recently, ignore
             if abs(step_num - last_look_time) < STEPS_BETWEEN_RELOOKS:
-                logging.debug(f"Skip since too close to last look {step_num}")
+                logging.error(f"Skip since too close to last look {step_num}")
                 continue
 
             # If not looking down, then it doesn't count
             tilt = single_step['output']['head_tilt']
             if tilt < MIN_TILT_LOOK_DOWN:
-                logging.debug(f"Skip since head tilt to low {tilt}")
+                logging.error(f"Skip since head tilt to low {tilt}")
                 continue
 
             action = single_step['action']
@@ -458,13 +458,13 @@ class Scorecard:
             x, z = calc_viewpoint(single_step)
 
             if action == 'OpenObject':
-                logging.debug("tried to open container")
+                logging.error("tried to open container")
                 container = find_closest_container(x, z, self.scene)
 
                 # Most return_status should be treated like open did not happen
                 # happened, but what if too far away or obstructed?
                 if return_status == "SUCCESSFUL":
-                    logging.debug(" successful ")
+                    logging.error(" successful ")
                     # Since agent just opened it, not be on the list
                     looked_at_containers.append(container)
                     last_look_time = step_num
@@ -472,7 +472,7 @@ class Scorecard:
                     continue
 
                 elif return_status == "IS_OPENED_COMPLETELY":
-                    logging.debug(" already open ")
+                    logging.error(" already open ")
                     # Since agent already looked at it, must be a relook
                     last_look_time = step_num
                     self.relooks += 1
@@ -480,7 +480,7 @@ class Scorecard:
                     continue
 
                 else:
-                    logging.debug(f" something else {return_status} ")
+                    logging.error(f" something else {return_status} ")
 
             # determine if this container has been looked at before
             for container_look in looked_at_containers:
@@ -489,10 +489,10 @@ class Scorecard:
 
                 # Find distance between
                 dist = math.dist((x, z), (cx, cz))
-                logging.debug(f" looking at {x} {z}  closest: {cx} {cz} " +
+                logging.error(f" looking at {x} {z}  closest: {cx} {cz} " +
                               f"   dist {dist}  still looking {still_looking}")
                 if dist < DIST_BETWEEN_RELOOKS and not still_looking:
-                    logging.debug("increasing by 1 ")
+                    logging.error("increasing by 1 ")
                     last_look_time = step_num
                     self.relooks += 1
                     continue
@@ -522,7 +522,7 @@ class Scorecard:
 
             target_id, target_x, target_z = \
                 find_target_loc_by_step(self.scene, single_step)
-            logging.debug("Target location at step " +
+            logging.error("Target location at step " +
                           f"{step_num}:  {target_x}  {target_z}")
             if target_id is None:
                 return self.not_moving_toward_object
@@ -531,11 +531,11 @@ class Scorecard:
             pos = single_step['output']['position']
             x, y, z = itemgetter('x', 'y', 'z')(pos)
             current_dist = math.dist((x, z), (target_x, target_z))
-            logging.debug(f"xyz:   {x} {y} {z}")
+            logging.error(f"xyz:   {x} {y} {z}")
 
             # If first time that we have seen the target, start counter
             if seen_count == -1 and visible:
-                logging.debug(f"-- First visible {step_num} --")
+                logging.error(f"-- First visible {step_num} --")
                 seen_count = 1
                 steps_not_moving_towards = 0
                 continue
@@ -547,13 +547,13 @@ class Scorecard:
                     min_dist = current_dist
                     seen_count += 1
                     steps_not_moving_towards = 0
-                    logging.debug(f"-- visible again {step_num} " +
+                    logging.error(f"-- visible again {step_num} " +
                                   f"count: {seen_count}  " +
                                   f"dist: {min_dist} --")
                 else:
                     seen_count = -1
                     min_dist = -1
-                    logging.debug(f"-- not seen at {step_num} reset --")
+                    logging.error(f"-- not seen at {step_num} reset --")
                 continue
 
             # At this point, target has been seen enough times that we should
@@ -561,14 +561,14 @@ class Scorecard:
             if current_dist < min_dist:
                 min_dist = current_dist
                 steps_not_moving_towards = 0
-                logging.debug(f"-- moved towards at {step_num} " +
+                logging.error(f"-- moved towards at {step_num} " +
                               f"current_dist: {current_dist} --")
                 continue
 
             # We did not move closer, so increment the counter that keeps
             # track of number of steps
             steps_not_moving_towards += 1
-            logging.debug(f"-- did not move towards {step_num} " +
+            logging.error(f"-- did not move towards {step_num} " +
                           f"current_dist: {current_dist}  " +
                           f"count: {steps_not_moving_towards} --")
 
@@ -576,7 +576,7 @@ class Scorecard:
             # increment overall counter and reset
             if steps_not_moving_towards > STEPS_NOT_MOVED_TOWARD_LIMIT:
                 self.not_moving_toward_object += 1
-                logging.debug(f"-- hit limit {steps_not_moving_towards} " +
+                logging.error(f"-- hit limit {steps_not_moving_towards} " +
                               f"count: {self.not_moving_toward_object} --")
                 seen_count = -1
                 steps_not_moving_towards = 0
@@ -587,67 +587,66 @@ class Scorecard:
         '''Calculate the number of times that the AI went
         up ramps, failed to go up/down a ramp (went other way),
         and fell off.'''
-        logging.debug('Starting calculating ramp actions')
+        logging.error('Starting calculating ramp actions')
         steps_list = self.history['steps']
 
         old_position = steps_list[0]['output']['position']
         was_on_ramp = False
-        headed_up = False
+        orig_y = 0.0
         ramp_actions = defaultdict(int)
 
         for single_step in steps_list:
             step = single_step['step']
-            if step > 99:
+            if step > 109:
                 print("")
             action = Action(single_step['action'])
             output = single_step['output']
             return_status = output['return_status']
-            logging.debug(f"On step: {step}")
+            logging.error(f"On step: {step}")
 
             # Can only go up/down a ramp when actually moving
             if action not in MOVE_ACTIONS:
-                logging.debug(f"Not a move {action}")
+                logging.error(f"Not a move {action}")
                 continue
 
             if return_status != "SUCCESSFUL":
-                logging.debug(f"Not successful {return_status}")
+                logging.error(f"Not successful {return_status}")
                 continue
 
             # Only care if we transitioned on or off a ramp
             position = output['position']
             now_on_ramp, ramp_name = self.on_ramp(position)
-            logging.debug(f"Whether on ramp:   {now_on_ramp} {ramp_name}")
+            logging.error(f"Whether on ramp:   {now_on_ramp} {ramp_name}")
             if was_on_ramp == now_on_ramp:
-                logging.debug(f"No ramp change")
+                logging.error(f"No ramp change")
                 old_position = position
                 continue
 
             # if we were not on a ramp, but now we are, determine
             # if we are going up or down and continue
             if not was_on_ramp:
-                headed_up = False
-                if position['y'] > old_position['y']:
-                    headed_up = True
+                orig_y = position['y']
                 was_on_ramp = now_on_ramp
-                logging.debug(f"Now on ramp, headed up? {headed_up}")
                 old_position = position
                 continue
 
             # We were on a ramp, and now off a ramp.
             if was_on_ramp:  # Was on ramp, now not
-                logging.debug(f"Now off ramp!")
+                logging.error(f"Now off ramp!")
                 was_on_ramp = False
 
+                height_change = position['y'] - orig_y
+
                 # See if we successfully completed a ramp, either up or down
-                if (position['y'] > old_position['y']) and headed_up:
+                if height_change > 0.05:
                     ramp_actions['went_up'] += 1
-                    logging.debug(f"were headed up, now off ramp on top {ramp_actions['went_up']}")
+                    logging.error(f"were headed up, now off ramp on top {ramp_actions['went_up']}")
                     old_position = position
                     continue
 
-                if (position['y'] < old_position['y']) and not headed_up:
+                if height_change < 0.05:
                     ramp_actions['went_down'] += 1
-                    logging.debug(f"were headed down, now off ramp on bottom {ramp_actions['went_down']}")
+                    logging.error(f"were headed down, now off ramp on bottom {ramp_actions['went_down']}")
                     old_position = position
                     continue
 
@@ -655,24 +654,24 @@ class Scorecard:
                 # we are not, and we didn't finish the ramp
                 if self.fell_off_ramp(old_position, position):
                     ramp_actions['fell_off'] += 1
-                    logging.debug(f"fell off {ramp_actions['fell_off']}")
+                    logging.error(f"fell off {ramp_actions['fell_off']}")
                     old_position = position
                     continue
 
                 # Last condition:  Started on a ramp and changed our
                 # mind.
                 if headed_up:
-                    ramp_actions['went_up_abandoned'] += 1
-                    logging.debug(f"were headed up, but went back down {ramp_actions['went_up_abandoned']}")
+                    ramp_actions['ramp_abandoned'] += 1
+                    logging.error(f"were headed up, but went back down {ramp_actions['went_up_abandoned']}")
                 else:
                     ramp_actions['went_down_abandoned'] += 1
-                    logging.debug(f"were headed down, but went back up {ramp_actions['went_down_abandoned']}")
+                    logging.error(f"were headed down, but went back up {ramp_actions['went_down_abandoned']}")
 
                 old_position = position
 
         self.ramp_actions = {}
         self.ramp_actions.update(ramp_actions)
-        logging.debug('Ending calculating ramp actions')
+        logging.error('Ending calculating ramp actions')
         return self.ramp_actions
 
     def on_ramp(self, position) -> (bool, str):
