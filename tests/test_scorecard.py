@@ -36,8 +36,7 @@ TEST_FOLDER = "./tests/test_data"
 
 # Hide all non-error log messages while running these unit tests.
 logging.basicConfig(
-    level=logging.DEBUG,
-    # level=logging.ERROR,
+    level=logging.ERROR,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 
