@@ -640,7 +640,7 @@ class Scorecard:
             if not now_on_ramp and (step - last_ramp_action_step) < STEP_CHECK_FALL_OFF:
                 if self.fell_off_ramp(last_ramp_action_position, position):
                     ramp_actions[last_ramp_action] -= 1
-                    ramp_actions['fell_off'] += 1
+                    ramp_actions['ramp_fell_off'] += 1
                     last_ramp_action_step = 0
                     continue
 
@@ -695,7 +695,7 @@ class Scorecard:
             # See if the drop was a lot, meaning fell off
             if self.fell_off_ramp(old_position, position):
                 ramp_actions['fell_off_going_down'] += 1
-                logging.error(f"fell off going down {step} {ramp_actions['fell_off']}")
+                logging.error(f"fell off going down {step} {ramp_actions['ramp_fell_off']}")
                 old_position = position
                 continue
 

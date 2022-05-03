@@ -15,9 +15,12 @@ GROUND_TRUTH = f'{TEST_FOLDER}/ground_truth.txt'
 SCENE_FILE = 'india_0003_17_debug.json'
 HIST_FILE = 'gen_repeat_failed_one.json'
 
+TEST_SCENE_RAMP = "ramps_eval_5_ex_1.json"
+TEST_HISTORY_RAMP_UP_DOWN = "ramps_all_moves.json"
+
 # Hide all non-error log messages while running these unit tests.
 logging.basicConfig(
-    level=logging.ERROR,
+    level=logging.DEBUG,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 
@@ -31,6 +34,11 @@ class GT_Test:
     num_relook: int
     num_notmovetwd: int
     num_repeatfailed: int
+    num_ramp_up: int
+    num_ramp_down: int
+    num_ramp_up_abandoned: int
+    num_ramp_down_abandoned: int
+    num_ramp_fell_off: int
 
 
 class TestMcsScorecard(unittest.TestCase):
@@ -57,6 +65,11 @@ class TestMcsScorecard(unittest.TestCase):
                 gt_relook = int(vals[4].strip())
                 gt_not_moving_towards = int(vals[5].strip())
                 gt_repeat_failed = int(vals[6].strip())
+                gt_ramp_up = int(vals[7].strip())
+                gt_ramp_down = int(vals[8].strip())
+                gt_ramp_up_abandoned = int(vals[9].strip())
+                gt_ramp_down_abandoned = int(vals[10].strip())
+                gt_ramp_fell_off = int(vals[11].strip())
 
                 gt_test = GT_Test(scene_filepath,
                                   history_filepath,
@@ -64,7 +77,12 @@ class TestMcsScorecard(unittest.TestCase):
                                   gt_unopenable,
                                   gt_relook,
                                   gt_not_moving_towards,
-                                  gt_repeat_failed)
+                                  gt_repeat_failed,
+                                  gt_ramp_up,
+                                  gt_ramp_down,
+                                  gt_ramp_up_abandoned,
+                                  gt_ramp_down_abandoned,
+                                  gt_ramp_fell_off)
                 cls.gt_tests.append(gt_test)
 
     def test_move_toward(self):
@@ -134,3 +152,22 @@ class TestMcsScorecard(unittest.TestCase):
         repeat = scorecard_dict['repeat_failed']
         self.assertEqual(repeat['total_repeat_failed'], 1)
         self.assertEqual(repeat['d06bc6e8-3ab2-4956-8dee-c46e4357c73b'], 1)
+
+    def test_ramps(self):
+        for gt_test in self.gt_tests:
+            scene_file = mcs_scene_ingest.load_json_file(
+                TEST_FOLDER, gt_test.scene_file)
+            history_file = mcs_scene_ingest.load_json_file(
+                TEST_FOLDER, gt_test.history_file)
+            s = Scorecard(history_file, scene_file)
+            ramp_actions = s.calc_ramp_actions()
+            self.assertEqual(gt_test.num_ramp_up,
+                             ramp_actions['went_up'])
+            self.assertEqual(gt_test.num_ramp_down,
+                             ramp_actions['went_down'])
+            self.assertEqual(gt_test.num_ramp_up_abandoned,
+                             ramp_actions['went_up_abandoned'])
+            self.assertEqual(gt_test.num_ramp_down_abandoned,
+                             ramp_actions['went_down_abandoned'])
+            self.assertEqual(gt_test.num_ramp_fell_off,
+                             ramp_actions['ramp_fell_off'])
