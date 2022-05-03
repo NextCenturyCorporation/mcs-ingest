@@ -50,7 +50,7 @@ def ramp_up_down_abandon_fall(step_metadata, runner_script):
 
 def main(scene_filepath):
     DataGenRunnerScript(scene_filepath,
-                        'gen_ramp_all_moves',
+                        'gen_ramps_all_moves',
                         ramp_up_down_abandon_fall).run_scene()
 
 

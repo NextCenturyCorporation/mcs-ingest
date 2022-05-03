@@ -14,6 +14,6 @@ india_0003_17_debug.json   gen_not_moving_toward_zero_1.json    0          0    
 golf_0018_15_debug.json    gen_repeat_failed_zero.json          0          1          0        0           0           0     0   0   0   0
 golf_0018_15_debug.json    gen_repeat_failed_one.json           0          0          0        0           1           0     0   0   0   0
 
-ramps_eval_5_ex_1.json     gen_ramps_all_moves.json             0          0          0        0           1           2     1   1   1   2
+ramps_eval_5_ex_1.json     gen_ramps_all_moves.json             2          0          0        4           0           2     1   1   1   2
 
 

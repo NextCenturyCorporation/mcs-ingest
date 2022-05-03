@@ -136,7 +136,7 @@ def up_ramp_or_down(A_x, A_z, B_x, B_z, rot):
 
     # Vector for rotation.  Note that we are using: 0 -> vertical,
     # 90 -> point to right;  180 -> down,  270 -> point to left
-    rotation = deg2rad(90-rot)
+    rotation = deg2rad(90 - rot)
     rot_vec = Point2D(cos(rotation), sin(rotation))
 
     # Dot product
@@ -146,8 +146,14 @@ def up_ramp_or_down(A_x, A_z, B_x, B_z, rot):
     return False
 
 
-def is_on_ramp(x, z, center_x, center_z, size_x, size_z, rotation, size_limit) \
-        -> bool:
+def is_on_ramp(
+        x,
+        z,
+        center_x,
+        center_z,
+        size_x,
+        size_z,
+        rotation) -> bool:
     '''Helper function to convert to Point2D and perform inside calc'''
     pt = Point2D(x, z)
     center = Point2D(center_x, center_z)

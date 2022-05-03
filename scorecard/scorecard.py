@@ -605,7 +605,11 @@ class Scorecard:
         was_on_ramp = False
         headed_up = False
         orig_y = 0.0
-        ramp_actions = defaultdict(int)
+        ramp_actions = {'went_up': 0,
+                        'went_down': 0,
+                        'went_up_abandoned': 0,
+                        'went_down_abandoned': 0,
+                        'ramp_fell_off': 0}
         last_ramp_action_step = 0
         last_ramp_action_position = old_position
         last_ramp_action = 'None'
@@ -634,10 +638,11 @@ class Scorecard:
 
             # Special case:  We previously thought that we had reached the top
             # or bottom, but we really went over the side and just didn't
-            # realize it at the time.  This can occur when the AI goes most of the
-            # way up the ramp, then goes mostly over the side, but the size
+            # realize it at the time.  This can occur when the AI goes
+            # up the ramp, then goes mostly over the side, but the size
             # of the AI base is such that it didn't drop.
-            if not now_on_ramp and (step - last_ramp_action_step) < STEP_CHECK_FALL_OFF:
+            if (not now_on_ramp) and \
+                    (step - last_ramp_action_step) < STEP_CHECK_FALL_OFF:
                 if self.fell_off_ramp(last_ramp_action_position, position):
                     ramp_actions[last_ramp_action] -= 1
                     ramp_actions['ramp_fell_off'] += 1
@@ -646,7 +651,7 @@ class Scorecard:
 
             # Case 1:  Unchanged (either on ramp or off ramp)
             if was_on_ramp == now_on_ramp:
-                logging.debug(f"No ramp change")
+                logging.debug("No ramp change")
                 old_position = position
                 continue
 
@@ -661,13 +666,14 @@ class Scorecard:
                     position['z'],
                     ramp_rot)
                 old_position = position
-                logging.error(f"Starting ramp {step} Up: {headed_up}. Y orig {orig_y}")
+                logging.error(f"Starting ramp {step} Up:" +
+                              f"{headed_up}. Y orig {orig_y}")
                 continue
 
             # Case 3: Exited a ramp!
             # This is the interesting one.  Figure out if
             # we went up, went down, or fell off
-            logging.debug(f"Now off ramp!")
+            logging.debug("Now off ramp!")
             was_on_ramp = False
 
             height_change = position['y'] - orig_y
@@ -675,18 +681,20 @@ class Scorecard:
             # See if we successfully completed a ramp going up
             if headed_up and height_change > RAMP_MIN_HEIGHT_CHANGE:
                 ramp_actions['went_up'] += 1
-                logging.error(f"were headed up, now off ramp on top {step} {ramp_actions['went_up']}")
+                logging.error("were headed up, now off ramp on top " +
+                              f"{step} {ramp_actions['went_up']}")
                 old_position = position
                 last_ramp_action = 'went_up'
                 last_ramp_action_step = step
                 last_ramp_action_position = position
                 continue
 
-            # If we were going up but didn't end up higher, then we either turned around
-            # or fell off
+            # If we were going up but didn't end up higher, then we
+            # either turned around or fell off
             if headed_up:
                 ramp_actions['went_up_abandoned'] += 1
-                logging.error(f"were headed up, abandoned {step} {ramp_actions['went_up_abandoned']}")
+                logging.error(f"were headed up, abandoned {step}" +
+                              f"{ramp_actions['went_up_abandoned']}")
                 old_position = position
                 continue
 
@@ -695,14 +703,17 @@ class Scorecard:
             # See if the drop was a lot, meaning fell off
             if self.fell_off_ramp(old_position, position):
                 ramp_actions['fell_off_going_down'] += 1
-                logging.error(f"fell off going down {step} {ramp_actions['ramp_fell_off']}")
+                logging.error(f"fell off going down {step} " +
+                              f"{ramp_actions['ramp_fell_off']}")
                 old_position = position
                 continue
 
-            # If didn't fall off, but overall height change was a lot, then success
+            # If didn't fall off, but overall height change was a lot,
+            # then success
             if height_change < -RAMP_MIN_HEIGHT_CHANGE:
                 ramp_actions['went_down'] += 1
-                logging.error(f"were headed down, now off ramp on bottom {step} {ramp_actions['went_down']}")
+                logging.error("were headed down, now off ramp on bottom " +
+                              f"{step} {ramp_actions['went_down']}")
                 old_position = position
                 last_ramp_action = 'went_down'
                 last_ramp_action_step = step
@@ -711,7 +722,8 @@ class Scorecard:
 
             # Last case is they went down, but turned around
             ramp_actions['went_down_abandoned'] += 1
-            logging.error(f"were headed down, but went back up {step} {ramp_actions['went_down_abandoned']}")
+            logging.error("were headed down, but went back up " +
+                          f"{step} {ramp_actions['went_down_abandoned']}")
             old_position = position
             continue
 
