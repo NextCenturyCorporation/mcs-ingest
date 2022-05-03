@@ -20,7 +20,7 @@ TEST_HISTORY_RAMP_UP_DOWN = "ramps_all_moves.json"
 
 # Hide all non-error log messages while running these unit tests.
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.ERROR,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 

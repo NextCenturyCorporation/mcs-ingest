@@ -4,7 +4,11 @@ from math import sqrt
 from point2d import Point2D
 
 from scorecard.scorecard_location_utils import (
-    is_point_in_polygon, rotate_x_z, get_corners_from_center_size_rotation, calc_dist_point_to_segment, up_ramp_or_down)
+    is_point_in_polygon,
+    rotate_x_z,
+    get_corners_from_center_size_rotation,
+    calc_dist_point_to_segment,
+    up_ramp_or_down)
 
 
 class TestScorecardLocationutils(unittest.TestCase):
@@ -55,7 +59,8 @@ class TestScorecardLocationutils(unittest.TestCase):
         self.assertAlmostEqual(y_expected, pt.y, delta=0.0001)
 
     def test_get_polygon_from_center_size_rotation_3(self):
-        '''Random values, computed with https://keisan.casio.com/exec/system/1223522781 '''
+        '''Random values, computed with
+        https://keisan.casio.com/exec/system/1223522781 '''
         center = Point2D(-3., 2.)
         size = Point2D(5, 4)
         rotation = -217
@@ -110,7 +115,8 @@ class TestScorecardLocationutils(unittest.TestCase):
         dist = calc_dist_point_to_segment(E, A, B)
         self.assertAlmostEqual(5, dist, delta=0.0001)
 
-        # From: https://www.mathportal.org/calculators/analytic-geometry/line-point-distance.php
+        # From: https://www.mathportal.org/calculators/\
+        # analytic-geometry/line-point-distance.php
         E = Point2D(-3.75, -4)
         A = Point2D(-4, 1)
         B = Point2D(-2.5, -2)
