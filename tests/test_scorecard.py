@@ -30,7 +30,7 @@ TEST_SCENE_NO_TARGET = "juliett_0001_01_debug.json"
 TEST_HISTORY_NO_TARGET = "test_eval_3-5_level2_baseline_juliett_0001_01.json"
 
 TEST_SCENE_RAMP = "ramps_eval_5_ex_1.json"
-TEST_HISTORY_RAMP_UP_DOWN = "ramps_eval_5_up_ramp_lower.json"
+TEST_HISTORY_RAMP_UP_DOWN = "ramps_test_all_combos.json"
 
 TEST_FOLDER = "./tests/test_data"
 
@@ -385,6 +385,3 @@ class TestMcsScorecard(unittest.TestCase):
         on_ramp_bool, ramp_id = scorecard.on_ramp(position)
         self.assertFalse(on_ramp_bool)
         self.assertEqual(ramp_id, "")
-
-        acts = scorecard.calc_ramp_actions()
-        logging.error(f"actions: {acts}")
