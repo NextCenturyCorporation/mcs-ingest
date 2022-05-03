@@ -161,6 +161,10 @@ def is_on_ramp(
 
     corners = get_corners_from_center_size_rotation(center, size, rotation)
     is_actually_on = is_point_in_polygon(pt, corners)
-    # is_near_base = is_point_near_base(pt, center, size, rotation, size_limit)
     return is_actually_on
-    # return is_actually_on or is_near_base
+
+    # It is not clear if the following is needed.  If it is, then
+    # add size_limit to the parameters and uncomment below.
+    #     is_near_base = is_point_near_base(pt, center, size, rotation,
+    #            size_limit)
+    #     return is_actually_on or is_near_base
