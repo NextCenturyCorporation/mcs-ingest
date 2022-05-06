@@ -47,10 +47,15 @@ STEPS_NOT_MOVED_TOWARD_LIMIT = 30
 
 # Amount of distance down that we will use as a limit of a fall.
 # If the AI drops that much between moves, then it counts as a fall.
+# Ramps have max angle of 45 degrees, so make this bigger than
+# the vertical distance going down step on a ramp.
 FALL_DISTANCE = -0.3
 STEP_CHECK_FALL_OFF = 5
 
-# Minimum amount of vertical change of a ramp
+# Minimum amount of vertical change of a ramp.  We need this because
+# (for some reason) Unity sometimes changes the vertical (y) value
+# even going on level ground, so cannot count y_2 > y_1 as having
+# gone up a ramp.
 RAMP_MIN_HEIGHT_CHANGE = 0.1
 
 # When we are this close to the ramp base, count it as on the base.
@@ -616,8 +621,6 @@ class Scorecard:
 
         for single_step in steps_list:
             step = single_step['step']
-            if step == 246:
-                print("")
             action = Action(single_step['action'])
             output = single_step['output']
             return_status = output['return_status']
@@ -759,14 +762,24 @@ class Scorecard:
     def fell_off_ramp(self,
                       old_position,
                       new_position) -> bool:
-        # If they dropped a lot, then must have fallen
+        # If they dropped a lot, then must have fallen.  This
+        # logic might not hold if, in the future, some other
+        # action causes them to go down.
         amount_down = new_position['y'] - old_position['y']
         if amount_down < FALL_DISTANCE:
             return True
 
-        # Might need to calculate whether went over the a side??
-        # Complicated because they might be 'cutting the corner'
-        # when going down ramp....
+        # If the above logic does not hold (i.e. other things
+        # can cause substantial vertical changes, we might need
+        # to calculate whether went over the side of a ramp and
+        # dropped.  We can use geometry to see if the movement
+        # old->new position intersects with the side of the ramp.
+        # However, the logic could be complicated because:
+        #   a. AI agent is affected by the ramp when the position is
+        #      not technically over the ramp any more
+        #   b. the AI agent might not be going straight down the ramp
+        #      so might go over the bottom corner of the ramp and
+        #      we probably don't want to count that as a 'fall'.
 
         return False
 

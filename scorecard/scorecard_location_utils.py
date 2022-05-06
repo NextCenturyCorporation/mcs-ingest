@@ -163,7 +163,14 @@ def is_on_ramp(
     is_actually_on = is_point_in_polygon(pt, corners)
     return is_actually_on
 
-    # It is not clear if the following is needed.  If it is, then
+    # It is not clear if the following is needed.  The calculation
+    # above calculates if the position (x,z) is within the area of the
+    # ramp.  However, the AI agent has physical size and so the
+    # vertical changes before being on the ramp going up, and does
+    # not change going down for a move or two.
+    #
+    # If the definition of 'on the ramp' requires that we include
+    # whether it is _affected_ by the ramp, then
     # add size_limit to the parameters and uncomment below.
     #     is_near_base = is_point_near_base(pt, center, size, rotation,
     #            size_limit)
