@@ -732,9 +732,9 @@ class Scorecard:
         logging.debug('Ending calculating ramp actions')
         return self.ramp_actions
 
-    def on_ramp(self, position) -> (bool, str):
+    def on_ramp(self, position) -> (bool, float, str):
         '''Determine if a position is in a ramp.  Return
-        a boolean and, if True, the ID'''
+        a boolean and, if True, ramp rotation and the ID'''
 
         for obj in self.scene['objects']:
             if obj['type'] != 'triangle':

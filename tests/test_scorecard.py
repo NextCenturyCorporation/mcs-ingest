@@ -376,11 +376,11 @@ class TestMcsScorecard(unittest.TestCase):
 
         # Lower ramp pos (1.5, 1), size (2,1)
         position = {'x': 1.51, 'z': 1.1}
-        on_ramp_bool, ramp_id = scorecard.on_ramp(position)
+        on_ramp_bool, rot, ramp_id = scorecard.on_ramp(position)
         self.assertTrue(on_ramp_bool)
         self.assertEqual(ramp_id, "ramp_lower")
 
         position = {'x': 3.51, 'z': 1.1}
-        on_ramp_bool, ramp_id = scorecard.on_ramp(position)
+        on_ramp_bool, rot, ramp_id = scorecard.on_ramp(position)
         self.assertFalse(on_ramp_bool)
         self.assertEqual(ramp_id, "")
