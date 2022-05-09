@@ -62,7 +62,12 @@ def is_point_in_polygon(
     return is_inside
 
 
-def rotate_x_z(x, z, center_x, center_z, rotation):
+def rotate_x_z(
+        x: float,
+        z: float,
+        center_x: float,
+        center_z: float,
+        rotation: float):
     '''Rotate a coordinate system by rot (measured CW)
     around a center point.  Calculate new point'''
     rot = deg2rad(-rotation)
@@ -85,7 +90,7 @@ def calc_dist_point_to_segment(
         E: Point2D,
         A: Point2D,
         B: Point2D) -> float:
-    '''find the distance between a line segment and a point.  See:
+    '''Find the distance between a line segment and a point.  See:
     https://www.geeksforgeeks.org/minimum-distance-from-a-\
     point-to-the-line-segment-using-vectors/'''
 
@@ -114,7 +119,12 @@ def calc_dist_point_to_segment(
     return abs(x1 * y2 - y1 * x2) / mod
 
 
-def is_point_near_base(pt, center, size, rotation, size_limit) -> bool:
+def is_point_near_base(
+        pt: Point2D,
+        center: Point2D,
+        size: Point2D,
+        rotation: float,
+        size_limit: float) -> bool:
     '''Determine if a point is within size_limit of the 'base' of a
     ramp.  The base is line segment connecting last two pts.'''
     pt2 = Point2D(center.x + (size.x / 2.), center.y - (size.y / 2.))
@@ -128,7 +138,12 @@ def is_point_near_base(pt, center, size, rotation, size_limit) -> bool:
     return False
 
 
-def up_ramp_or_down(A_x, A_z, B_x, B_z, rot):
+def up_ramp_or_down(
+        A_x: float,
+        A_z: float,
+        B_x: float,
+        B_z: float,
+        rot: float):
     '''Determine if we are moving in the direction of a ramp.'''
 
     # Vector from A to B
@@ -147,13 +162,13 @@ def up_ramp_or_down(A_x, A_z, B_x, B_z, rot):
 
 
 def is_on_ramp(
-        x,
-        z,
-        center_x,
-        center_z,
-        size_x,
-        size_z,
-        rotation) -> bool:
+        x: float,
+        z: float,
+        center_x: float,
+        center_z: float,
+        size_x: float,
+        size_z: float,
+        rotation: float) -> bool:
     '''Helper function to convert to Point2D and perform inside calc'''
     pt = Point2D(x, z)
     center = Point2D(center_x, center_z)
