@@ -52,6 +52,9 @@ def replace_short_hand(code):
 def interactive_cb(step_metadata, runner_script):
     '''  Rather than using a string to represent
     movements, get interactive input'''
+    step=step_metadata.step_number
+    pos=step_metadata.position
+    print(f"{step} {pos}")
     x = input()
     return key_to_movement(x)
 
@@ -77,41 +80,39 @@ class DataGenRunnerScript():
         self.scene_filepath = scene_filepath
 
     def run_scene(self):
+        scene = mcs.load_scene_json_file(self.scene_filepath)
+        dim = scene.get("roomDimensions", DEFAULT_ROOM_DIMENSIONS)
+        x_size = dim.get("x")
+        y_size = dim.get("y")
+        z_size = dim.get("z")
 
-        with open(self.scene_filepath) as scene_file:
-            scene = json.load(scene_file)
-            dim = scene.get("roomDimensions", DEFAULT_ROOM_DIMENSIONS)
-            x_size = dim.get("x")
-            y_size = dim.get("y")
-            z_size = dim.get("z")
+        plotter = PathPlotter(team="", scene_name=self.name,
+                              plot_width=600, plot_height=450,
+                              x_size=x_size, y_size=y_size,
+                              z_size=z_size)
 
-            plotter = PathPlotter(team="", scene_name=self.name,
-                                  plot_width=600, plot_height=450,
-                                  x_size=x_size, y_size=y_size,
-                                  z_size=z_size)
+        scene_data = mcs.load_scene_json_file(self.scene_filepath)
+        if not scene_data:
+            return
+        if isinstance(scene_data, tuple):
+            scene_data = scene_data[0]
+        scene_data['name'] = self.name
+        step_metadata = self.controller.start_scene(scene_data)
+        action, params = self.callback(step_metadata, self)
 
-            scene_data = mcs.load_scene_json_file(self.scene_filepath)
-            if not scene_data:
-                return
-            if isinstance(scene_data, tuple):
-                scene_data = scene_data[0]
-            scene_data['name'] = self.name
-            step_metadata = self.controller.start_scene(scene_data)
+        plotter.plot(step_metadata.__dict__, step_metadata.step_number)
+
+        while action is not None:
+            step_metadata = self.controller.step(action, **params)
+
+            logging.debug("return status of action:" +
+                          f"{step_metadata.return_status}")
+            plotter.plot(step_metadata.__dict__, step_metadata.step_number)
+            if step_metadata is None:
+                break
             action, params = self.callback(step_metadata, self)
 
-            plotter.plot(step_metadata.__dict__, step_metadata.step_number)
-
-            while action is not None:
-                step_metadata = self.controller.step(action, **params)
-
-                logging.debug("return status of action:" +
-                              f"{step_metadata.return_status}")
-                plotter.plot(step_metadata.__dict__, step_metadata.step_number)
-                if step_metadata is None:
-                    break
-                action, params = self.callback(step_metadata, self)
-
-            img = plotter.get_image()
-            img.save(self.name + "_path.gif")
-            self.controller.end_scene()
-            return scene_data['name']
+        img = plotter.get_image()
+        img.save(self.name + "_path.gif")
+        self.controller.end_scene()
+        return scene_data['name']

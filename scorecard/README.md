@@ -15,10 +15,12 @@ The actions that are counted (as of Eval 4 plan):
 * Repeating a failed action.
   * We will begin counting from the second attempt, since it cannot be a “failed” action until after the AI has received
   feedback from the first attempt. If the AI system attempts the same action from a new position, this will not be considered a repeated action.
+* Actions on ramps, including whether the agent successfully went up, abandonded going up 
+  or down, and fell off
 * Attempting physically impossible actions.  This is not implemented yet.
   * e.g., trying to pick up a sofa or another similarly large item; trying to interact with the floor or wall
   * Impossible actions will be counted from the first attempt.
-
+  
 Some of these are mathematically vague;  for example, the space that the agent moves in is continous,
 so 'revisit' needs to have a particular distance.  Below, we discuss the way to count them.
 
@@ -117,6 +119,30 @@ attempting to open an unopenable object will cause it to count in that category.
 This one will count if the agent tries to do it twice (or more times).  If the
 agent does it twice, then the unopenable object count will be 2 and the
 repeated failed actions will 1.
+
+## Ramp Actions 
+
+Keep track of all the things that could happen on a ramp.  They include:
+* Going up the ramp successfully
+* Starting to go up the ramp and then going back down
+* Going down a ramp successfully
+* Starting to go down a ramp, but then going back up
+* Falling off a ramp
+
+The calculations for ramp actions are complicated by the fact that the 
+base of the agent has physical size.  The result is that vertical height 
+of the agent starts to go up before the 'position' (center point) of the 
+agent is within the area of the ramp.  Similarly, the vertical position 
+of the agent does not go down until after the position has been on the 
+ramp for a couple of steps.  Finally, the agent is supported by the 
+ramp when the position of the agent is over the edge of the side of the 
+ramp.  
+
+For these reasons, the logic for the ramp actions is a little complicated,
+consisting of checking where the agent is (close to or over the ramp) and 
+what has been happening vertically.  In particular, 'falling' is defined 
+as having been on the ramp recently and the vertical distance suddenly 
+going down by an amount that could not happen otherwise. 
 
 
 ## Running the Scorecard

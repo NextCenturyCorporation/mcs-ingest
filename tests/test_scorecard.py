@@ -29,6 +29,9 @@ TEST_HISTORY_MOVING_TARGET_FAIL = "alpha_0001_03_test_fail.json"
 TEST_SCENE_NO_TARGET = "juliett_0001_01_debug.json"
 TEST_HISTORY_NO_TARGET = "test_eval_3-5_level2_baseline_juliett_0001_01.json"
 
+TEST_SCENE_RAMP = "ramps_eval_5_ex_1.json"
+TEST_HISTORY_RAMP_UP_DOWN = "ramps_test_all_combos.json"
+
 TEST_FOLDER = "./tests/test_data"
 
 # Hide all non-error log messages while running these unit tests.
@@ -363,3 +366,21 @@ class TestMcsScorecard(unittest.TestCase):
             )
         ])
         self.assertEqual(repeat_failed['total_repeat_failed'], 0)
+
+    def test_on_ramp(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_RAMP)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_RAMP_UP_DOWN)
+        scorecard = Scorecard(history_file, scene_file)
+
+        # Lower ramp pos (1.5, 1), size (2,1)
+        position = {'x': 1.51, 'z': 1.1}
+        on_ramp_bool, rot, ramp_id = scorecard.on_ramp(position)
+        self.assertTrue(on_ramp_bool)
+        self.assertEqual(ramp_id, "ramp_lower")
+
+        position = {'x': 3.51, 'z': 1.1}
+        on_ramp_bool, rot, ramp_id = scorecard.on_ramp(position)
+        self.assertFalse(on_ramp_bool)
+        self.assertEqual(ramp_id, "")
