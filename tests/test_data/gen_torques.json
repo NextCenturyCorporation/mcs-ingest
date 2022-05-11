@@ -1,0 +1,3773 @@
+{
+  "info": {
+    "evaluation_name": "",
+    "metadata": "oracle",
+    "team": "",
+    "name": "gen_torques",
+    "timestamp": "20220511-135535"
+  },
+  "steps": [
+    {
+      "step": 1,
+      "action": "LookDown",
+      "args": {},
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 10.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -5.5,
+          "y": 0.762,
+          "z": 1.46
+        },
+        "resolved_object": "",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.001,
+        "rotation": 70.0,
+        "step_number": 1,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 211.8831,
+      "target_visible": true
+    },
+    {
+      "step": 2,
+      "action": "LookDown",
+      "args": {},
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 20.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -5.5,
+          "y": 0.762,
+          "z": 1.46
+        },
+        "resolved_object": "",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.002,
+        "rotation": 70.0,
+        "step_number": 2,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 211.7132,
+      "target_visible": true
+    },
+    {
+      "step": 3,
+      "action": "MoveObject",
+      "args": {
+        "objectImageCoordsX": 320.0,
+        "objectImageCoordsY": 240.0
+      },
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 320,
+          "y": 159
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 20.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -5.5,
+          "y": 0.762,
+          "z": 1.46
+        },
+        "resolved_object": "tool",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.003,
+        "rotation": 70.0,
+        "step_number": 3,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 214.7158,
+      "target_visible": true
+    },
+    {
+      "step": 4,
+      "action": "MoveObject",
+      "args": {
+        "objectImageCoordsX": 320.0,
+        "objectImageCoordsY": 240.0
+      },
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 320,
+          "y": 159
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 20.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -5.5,
+          "y": 0.762,
+          "z": 1.46
+        },
+        "resolved_object": "tool",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.004,
+        "rotation": 70.0,
+        "step_number": 4,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 259.6933,
+      "target_visible": true
+    },
+    {
+      "step": 5,
+      "action": "MoveObject",
+      "args": {
+        "objectImageCoordsX": 320.0,
+        "objectImageCoordsY": 240.0
+      },
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 320,
+          "y": 159
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 20.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -5.5,
+          "y": 0.762,
+          "z": 1.46
+        },
+        "resolved_object": "tool",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.005,
+        "rotation": 70.0,
+        "step_number": 5,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 219.1612,
+      "target_visible": true
+    },
+    {
+      "step": 6,
+      "action": "MoveAhead",
+      "args": {},
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 20.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -5.406,
+          "y": 0.762,
+          "z": 1.4942
+        },
+        "resolved_object": "",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.006,
+        "rotation": 70.0,
+        "step_number": 6,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 222.7561,
+      "target_visible": true
+    },
+    {
+      "step": 7,
+      "action": "MoveAhead",
+      "args": {},
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 20.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -5.3121,
+          "y": 0.762,
+          "z": 1.5284
+        },
+        "resolved_object": "",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.007,
+        "rotation": 70.0,
+        "step_number": 7,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 234.3932,
+      "target_visible": true
+    },
+    {
+      "step": 8,
+      "action": "PushObject",
+      "args": {
+        "objectImageCoordsX": 320.0,
+        "objectImageCoordsY": 240.0
+      },
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.5,
+        "objectImageCoords": {
+          "x": 320,
+          "y": 159
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 20.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -5.3121,
+          "y": 0.762,
+          "z": 1.5284
+        },
+        "resolved_object": "tool",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.008,
+        "rotation": 70.0,
+        "step_number": 8,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 227.3923,
+      "target_visible": true
+    },
+    {
+      "step": 9,
+      "action": "PushObject",
+      "args": {
+        "objectImageCoordsX": 320.0,
+        "objectImageCoordsY": 240.0
+      },
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.5,
+        "objectImageCoords": {
+          "x": 320,
+          "y": 159
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 20.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -5.3121,
+          "y": 0.762,
+          "z": 1.5284
+        },
+        "resolved_object": "tool",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.009,
+        "rotation": 70.0,
+        "step_number": 9,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 278.1791,
+      "target_visible": true
+    },
+    {
+      "step": 10,
+      "action": "PullObject",
+      "args": {
+        "objectImageCoordsX": 320.0,
+        "objectImageCoordsY": 240.0
+      },
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.5,
+        "objectImageCoords": {
+          "x": 320,
+          "y": 159
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 20.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -5.3121,
+          "y": 0.762,
+          "z": 1.5284
+        },
+        "resolved_object": "tool",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.01,
+        "rotation": 70.0,
+        "step_number": 10,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 225.2146,
+      "target_visible": true
+    },
+    {
+      "step": 11,
+      "action": "PullObject",
+      "args": {
+        "objectImageCoordsX": 320.0,
+        "objectImageCoordsY": 240.0
+      },
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.5,
+        "objectImageCoords": {
+          "x": 320,
+          "y": 159
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 20.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -5.3121,
+          "y": 0.762,
+          "z": 1.5284
+        },
+        "resolved_object": "tool",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.011,
+        "rotation": 70.0,
+        "step_number": 11,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 227.6174,
+      "target_visible": true
+    },
+    {
+      "step": 12,
+      "action": "PullObject",
+      "args": {
+        "objectImageCoordsX": 320.0,
+        "objectImageCoordsY": 240.0
+      },
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.5,
+        "objectImageCoords": {
+          "x": 320,
+          "y": 159
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 20.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -5.3121,
+          "y": 0.762,
+          "z": 1.5284
+        },
+        "resolved_object": "tool",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.012,
+        "rotation": 70.0,
+        "step_number": 12,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 213.6113,
+      "target_visible": true
+    },
+    {
+      "step": 13,
+      "action": "TorqueObject",
+      "args": {
+        "objectImageCoordsX": 320.0,
+        "objectImageCoordsY": 240.0
+      },
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.5,
+        "objectImageCoords": {
+          "x": 320,
+          "y": 159
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 20.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -5.3121,
+          "y": 0.762,
+          "z": 1.5284
+        },
+        "resolved_object": "tool",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.013,
+        "rotation": 70.0,
+        "step_number": 13,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 222.3034,
+      "target_visible": true
+    },
+    {
+      "step": 14,
+      "action": "TorqueObject",
+      "args": {
+        "objectImageCoordsX": 320.0,
+        "objectImageCoordsY": 240.0
+      },
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.5,
+        "objectImageCoords": {
+          "x": 320,
+          "y": 159
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 20.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -5.3121,
+          "y": 0.762,
+          "z": 1.5284
+        },
+        "resolved_object": "tool",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.014,
+        "rotation": 70.0,
+        "step_number": 14,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 261.6958,
+      "target_visible": true
+    },
+    {
+      "step": 15,
+      "action": "TorqueObject",
+      "args": {
+        "objectImageCoordsX": 320.0,
+        "objectImageCoordsY": 240.0
+      },
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.5,
+        "objectImageCoords": {
+          "x": 320,
+          "y": 159
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 20.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -5.3121,
+          "y": 0.762,
+          "z": 1.5284
+        },
+        "resolved_object": "tool",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.015,
+        "rotation": 70.0,
+        "step_number": 15,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 227.6016,
+      "target_visible": true
+    },
+    {
+      "step": 16,
+      "action": "TorqueObject",
+      "args": {
+        "objectImageCoordsX": 320.0,
+        "objectImageCoordsY": 240.0
+      },
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.5,
+        "objectImageCoords": {
+          "x": 320,
+          "y": 159
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 20.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -5.3121,
+          "y": 0.762,
+          "z": 1.5284
+        },
+        "resolved_object": "tool",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.016,
+        "rotation": 70.0,
+        "step_number": 16,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 207.7286,
+      "target_visible": true
+    },
+    {
+      "step": 17,
+      "action": "MoveAhead",
+      "args": {},
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 20.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -5.2181,
+          "y": 0.762,
+          "z": 1.5626
+        },
+        "resolved_object": "",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.017,
+        "rotation": 70.0,
+        "step_number": 17,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 234.8356,
+      "target_visible": true
+    },
+    {
+      "step": 18,
+      "action": "MoveAhead",
+      "args": {},
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 20.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -5.1241,
+          "y": 0.762,
+          "z": 1.5968
+        },
+        "resolved_object": "",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.018,
+        "rotation": 70.0,
+        "step_number": 18,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 207.1607,
+      "target_visible": true
+    },
+    {
+      "step": 19,
+      "action": "MoveAhead",
+      "args": {},
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 20.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -5.0302,
+          "y": 0.762,
+          "z": 1.631
+        },
+        "resolved_object": "",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.019,
+        "rotation": 70.0,
+        "step_number": 19,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 223.7756,
+      "target_visible": true
+    },
+    {
+      "step": 20,
+      "action": "MoveAhead",
+      "args": {},
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 20.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -4.9362,
+          "y": 0.762,
+          "z": 1.6652
+        },
+        "resolved_object": "",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.02,
+        "rotation": 70.0,
+        "step_number": 20,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 270.0949,
+      "target_visible": true
+    },
+    {
+      "step": 21,
+      "action": "LookDown",
+      "args": {},
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 30.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -4.9362,
+          "y": 0.762,
+          "z": 1.6652
+        },
+        "resolved_object": "",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.021,
+        "rotation": 70.0,
+        "step_number": 21,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 210.968,
+      "target_visible": false
+    },
+    {
+      "step": 22,
+      "action": "MoveAhead",
+      "args": {},
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 30.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -4.8422,
+          "y": 0.762,
+          "z": 1.6994
+        },
+        "resolved_object": "",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.022,
+        "rotation": 70.0,
+        "step_number": 22,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 231.142,
+      "target_visible": false
+    },
+    {
+      "step": 23,
+      "action": "MoveAhead",
+      "args": {},
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 30.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -4.7482,
+          "y": 0.762,
+          "z": 1.7336
+        },
+        "resolved_object": "",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.023,
+        "rotation": 70.0,
+        "step_number": 23,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 217.8147,
+      "target_visible": false
+    },
+    {
+      "step": 24,
+      "action": "MoveAhead",
+      "args": {},
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 30.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -4.6543,
+          "y": 0.762,
+          "z": 1.7678
+        },
+        "resolved_object": "",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.024,
+        "rotation": 70.0,
+        "step_number": 24,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 228.4713,
+      "target_visible": false
+    },
+    {
+      "step": 25,
+      "action": "RotateObject",
+      "args": {
+        "objectImageCoordsX": 320.0,
+        "objectImageCoordsY": 240.0
+      },
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 320,
+          "y": 159
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 30.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -4.6543,
+          "y": 0.762,
+          "z": 1.7678
+        },
+        "resolved_object": "tool",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.025,
+        "rotation": 70.0,
+        "step_number": 25,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 267.233,
+      "target_visible": false
+    },
+    {
+      "step": 26,
+      "action": "MoveAhead",
+      "args": {},
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 30.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -4.5603,
+          "y": 0.762,
+          "z": 1.802
+        },
+        "resolved_object": "",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.026,
+        "rotation": 70.0,
+        "step_number": 26,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 239.2393,
+      "target_visible": false
+    },
+    {
+      "step": 27,
+      "action": "TorqueObject",
+      "args": {
+        "objectImageCoordsX": 320.0,
+        "objectImageCoordsY": 240.0
+      },
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.5,
+        "objectImageCoords": {
+          "x": 320,
+          "y": 159
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 30.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -4.5603,
+          "y": 0.762,
+          "z": 1.802
+        },
+        "resolved_object": "tool",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.027,
+        "rotation": 70.0,
+        "step_number": 27,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 221.2945,
+      "target_visible": false
+    },
+    {
+      "step": 28,
+      "action": "MoveAhead",
+      "args": {},
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 30.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -4.4663,
+          "y": 0.762,
+          "z": 1.8362
+        },
+        "resolved_object": "",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.028,
+        "rotation": 70.0,
+        "step_number": 28,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 233.364,
+      "target_visible": false
+    },
+    {
+      "step": 29,
+      "action": "RotateObject",
+      "args": {
+        "objectImageCoordsX": 320.0,
+        "objectImageCoordsY": 240.0
+      },
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 320,
+          "y": 159
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 30.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -4.4663,
+          "y": 0.762,
+          "z": 1.8362
+        },
+        "resolved_object": "tool",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.029,
+        "rotation": 70.0,
+        "step_number": 29,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 215.7503,
+      "target_visible": false
+    },
+    {
+      "step": 30,
+      "action": "RotateLeft",
+      "args": {},
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 30.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -4.4663,
+          "y": 0.762,
+          "z": 1.8362
+        },
+        "resolved_object": "",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.03,
+        "rotation": 60.0,
+        "step_number": 30,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 268.6992,
+      "target_visible": false
+    },
+    {
+      "step": 31,
+      "action": "RotateLeft",
+      "args": {},
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 30.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -4.4663,
+          "y": 0.762,
+          "z": 1.8362
+        },
+        "resolved_object": "",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.031,
+        "rotation": 50.0,
+        "step_number": 31,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 215.7251,
+      "target_visible": false
+    },
+    {
+      "step": 32,
+      "action": "RotateLeft",
+      "args": {},
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 30.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -4.4663,
+          "y": 0.762,
+          "z": 1.8362
+        },
+        "resolved_object": "",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.032,
+        "rotation": 40.0,
+        "step_number": 32,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 209.1225,
+      "target_visible": false
+    },
+    {
+      "step": 33,
+      "action": "RotateLeft",
+      "args": {},
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 30.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -4.4663,
+          "y": 0.762,
+          "z": 1.8362
+        },
+        "resolved_object": "",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.033,
+        "rotation": 30.0,
+        "step_number": 33,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 213.0634,
+      "target_visible": false
+    },
+    {
+      "step": 34,
+      "action": "RotateLeft",
+      "args": {},
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 30.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -4.4663,
+          "y": 0.762,
+          "z": 1.8362
+        },
+        "resolved_object": "",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.034,
+        "rotation": 20.0,
+        "step_number": 34,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 203.2362,
+      "target_visible": false
+    },
+    {
+      "step": 35,
+      "action": "RotateLeft",
+      "args": {},
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 30.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -4.4663,
+          "y": 0.762,
+          "z": 1.8362
+        },
+        "resolved_object": "",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.035,
+        "rotation": 10.0,
+        "step_number": 35,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 204.33,
+      "target_visible": false
+    },
+    {
+      "step": 36,
+      "action": "RotateLeft",
+      "args": {},
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 30.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -4.4663,
+          "y": 0.762,
+          "z": 1.8362
+        },
+        "resolved_object": "",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.036,
+        "rotation": 0.0,
+        "step_number": 36,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 240.3399,
+      "target_visible": false
+    },
+    {
+      "step": 37,
+      "action": "RotateLeft",
+      "args": {},
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 30.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -4.4663,
+          "y": 0.762,
+          "z": 1.8362
+        },
+        "resolved_object": "",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.037,
+        "rotation": 350.0,
+        "step_number": 37,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 205.1561,
+      "target_visible": false
+    },
+    {
+      "step": 38,
+      "action": "RotateLeft",
+      "args": {},
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 30.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -4.4663,
+          "y": 0.762,
+          "z": 1.8362
+        },
+        "resolved_object": "",
+        "resolved_receptacle": "",
+        "return_status": "SUCCESSFUL",
+        "reward": -0.038,
+        "rotation": 340.0,
+        "step_number": 38,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 190.3443,
+      "target_visible": false
+    },
+    {
+      "step": 39,
+      "action": "PullObject",
+      "args": {
+        "objectImageCoordsX": 320.0,
+        "objectImageCoordsY": 240.0
+      },
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.5,
+        "objectImageCoords": {
+          "x": 320,
+          "y": 159
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 30.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -4.4663,
+          "y": 0.762,
+          "z": 1.8362
+        },
+        "resolved_object": "floor190",
+        "resolved_receptacle": "",
+        "return_status": "NOT_MOVEABLE",
+        "reward": -0.039,
+        "rotation": 340.0,
+        "step_number": 39,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 194.6229,
+      "target_visible": false
+    },
+    {
+      "step": 40,
+      "action": "PushObject",
+      "args": {
+        "objectImageCoordsX": 320.0,
+        "objectImageCoordsY": 240.0
+      },
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.5,
+        "objectImageCoords": {
+          "x": 320,
+          "y": 159
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 30.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -4.4663,
+          "y": 0.762,
+          "z": 1.8362
+        },
+        "resolved_object": "floor190",
+        "resolved_receptacle": "",
+        "return_status": "NOT_MOVEABLE",
+        "reward": -0.04,
+        "rotation": 340.0,
+        "step_number": 40,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 202.6938,
+      "target_visible": false
+    },
+    {
+      "step": 41,
+      "action": "TorqueObject",
+      "args": {
+        "objectImageCoordsX": 320.0,
+        "objectImageCoordsY": 240.0
+      },
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.5,
+        "objectImageCoords": {
+          "x": 320,
+          "y": 159
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 30.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -4.4663,
+          "y": 0.762,
+          "z": 1.8362
+        },
+        "resolved_object": "floor190",
+        "resolved_receptacle": "",
+        "return_status": "NOT_MOVEABLE",
+        "reward": -0.041,
+        "rotation": 340.0,
+        "step_number": 41,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 254.9063,
+      "target_visible": false
+    },
+    {
+      "step": 42,
+      "action": "RotateObject",
+      "args": {
+        "objectImageCoordsX": 320.0,
+        "objectImageCoordsY": 240.0
+      },
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 320,
+          "y": 159
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 30.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -4.4663,
+          "y": 0.762,
+          "z": 1.8362
+        },
+        "resolved_object": "floor190",
+        "resolved_receptacle": "",
+        "return_status": "NOT_MOVEABLE",
+        "reward": -0.042,
+        "rotation": 340.0,
+        "step_number": 42,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 196.6371,
+      "target_visible": false
+    },
+    {
+      "step": 43,
+      "action": "MoveObject",
+      "args": {
+        "objectImageCoordsX": 320.0,
+        "objectImageCoordsY": 240.0
+      },
+      "params": {
+        "objectId": null,
+        "receptacleObjectId": null,
+        "rotation": {
+          "y": 0.0
+        },
+        "horizon": 0.0,
+        "teleportRotation": null,
+        "teleportPosition": null,
+        "moveMagnitude": 0.1,
+        "objectImageCoords": {
+          "x": 320,
+          "y": 159
+        },
+        "receptacleObjectImageCoords": {
+          "x": 0,
+          "y": 0
+        },
+        "clockwise": true,
+        "lateral": 0,
+        "straight": 1
+      },
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.01,
+          150.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.762,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "target",
+              "position": {
+                "x": 2.0,
+                "y": 0.22,
+                "z": 2.0
+              }
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "haptic_feedback": {
+          "on_lava": false
+        },
+        "head_tilt": 30.0,
+        "object_list": null,
+        "performer_radius": 0.251,
+        "performer_reach": 1.0,
+        "physics_frames_per_second": 20.0,
+        "position": {
+          "x": -4.4663,
+          "y": 0.762,
+          "z": 1.8362
+        },
+        "resolved_object": "floor190",
+        "resolved_receptacle": "",
+        "return_status": "NOT_MOVEABLE",
+        "reward": -0.043,
+        "rotation": 340.0,
+        "step_number": 43,
+        "steps_on_lava": 0,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 264.865,
+      "target_visible": false
+    }
+  ],
+  "score": {
+    "classification": null,
+    "confidence": "None"
+  }
+}

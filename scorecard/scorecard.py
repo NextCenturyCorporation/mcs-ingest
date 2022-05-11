@@ -279,12 +279,12 @@ class Scorecard:
 
     def score_all(self) -> dict:
         self.calc_repeat_failed()
-
         self.calc_open_unopenable()
         self.calc_relook()
         self.calc_revisiting()
         self.calc_not_moving_toward_object()
         self.calc_ramp_actions()
+        self.calc_torques()
 
         # To be implemented
         # self.calc_attempt_impossible()
@@ -296,6 +296,8 @@ class Scorecard:
             'container_relook': self.relooks,
             'not_moving_toward_object': self.not_moving_toward_object,
             'revisits': self.revisits,
+            'ramp_actions': self.ramp_actions,
+            'torques': self.torques
         }
 
     def get_revisits(self):
@@ -312,6 +314,9 @@ class Scorecard:
 
     def get_repeat_failed(self):
         return self.repeat_failed
+
+    def get_torques(self):
+        return self.torques
 
     def calc_revisiting(self):
 
@@ -790,6 +795,28 @@ class Scorecard:
         steps_list = self.history['steps']
         self.repeat_failed = calc_repeat_failed(steps_list)
         return self.repeat_failed
+
+    def calc_torques(self):
+        """Calculate the torques, push, pulls, moves."""
+        steps_list = self.history['steps']
+
+        torques = defaultdict(int)
+
+        for single_step in steps_list:
+            action = single_step['action']
+            return_status = single_step['output']['return_status']
+
+            if action in ['MoveObject', 'PushObject',
+                          'PullObject', 'RotateObject',
+                          'TorqueObject']:
+
+                if return_status == 'SUCCESSFUL':
+                    torques[action] += 1
+                else:
+                    torques['failed_torques'] += 1
+
+        self.torques = torques
+        return self.torques
 
     def calc_attempt_impossible(self):
         pass

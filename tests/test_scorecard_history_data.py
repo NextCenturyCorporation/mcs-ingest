@@ -39,6 +39,11 @@ class GT_Test:
     num_ramp_up_abandoned: int
     num_ramp_down_abandoned: int
     num_ramp_fell_off: int
+    num_torques: int
+    num_pushes: int
+    num_pulles: int
+    num_rotates: int
+    num_moves: int
 
 
 class TestMcsScorecard(unittest.TestCase):
@@ -71,6 +76,12 @@ class TestMcsScorecard(unittest.TestCase):
                 gt_ramp_down_abandoned = int(vals[10].strip())
                 gt_ramp_fell_off = int(vals[11].strip())
 
+                gt_torques = int(vals[12].strip())
+                gt_pushes = int(vals[13].strip())
+                gt_pulls = int(vals[14].strip())
+                gt_rotates = int(vals[15].strip())
+                gt_moves = int(vals[16].strip())
+
                 gt_test = GT_Test(scene_filepath,
                                   history_filepath,
                                   gt_revisits,
@@ -82,7 +93,12 @@ class TestMcsScorecard(unittest.TestCase):
                                   gt_ramp_down,
                                   gt_ramp_up_abandoned,
                                   gt_ramp_down_abandoned,
-                                  gt_ramp_fell_off)
+                                  gt_ramp_fell_off,
+                                  gt_torques,
+                                  gt_pushes,
+                                  gt_pulls,
+                                  gt_rotates,
+                                  gt_moves)
                 cls.gt_tests.append(gt_test)
 
     def test_move_toward(self):
@@ -142,17 +158,6 @@ class TestMcsScorecard(unittest.TestCase):
                              unopenable['total_unopenable_attempts'],
                              f"Unopenable error: {gt_test.history_file}")
 
-    def test_get_scorecard_dict(self):
-        scene_file = mcs_scene_ingest.load_json_file(
-            TEST_FOLDER, SCENE_FILE)
-        history_file = mcs_scene_ingest.load_json_file(
-            TEST_FOLDER, HIST_FILE)
-        s = Scorecard(history_file, scene_file)
-        scorecard_dict = s.score_all()
-        repeat = scorecard_dict['repeat_failed']
-        self.assertEqual(repeat['total_repeat_failed'], 1)
-        self.assertEqual(repeat['d06bc6e8-3ab2-4956-8dee-c46e4357c73b'], 1)
-
     def test_ramps(self):
         for gt_test in self.gt_tests:
             scene_file = mcs_scene_ingest.load_json_file(
@@ -171,3 +176,26 @@ class TestMcsScorecard(unittest.TestCase):
                              ramp_actions['went_down_abandoned'])
             self.assertEqual(gt_test.num_ramp_fell_off,
                              ramp_actions['ramp_fell_off'])
+
+    def test_torques(self):
+        for gt_test in self.gt_tests:
+            scene_file = mcs_scene_ingest.load_json_file(
+                TEST_FOLDER, gt_test.scene_file)
+            history_file = mcs_scene_ingest.load_json_file(
+                TEST_FOLDER, gt_test.history_file)
+            s = Scorecard(history_file, scene_file)
+            torque_data = s.calc_torques()
+            self.assertEqual(gt_test.num_torques,
+                             torque_data['TorqueObject'],
+                             f"Unopenable error: {gt_test.history_file}")
+
+    def test_get_scorecard_dict(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, SCENE_FILE)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, HIST_FILE)
+        s = Scorecard(history_file, scene_file)
+        scorecard_dict = s.score_all()
+        repeat = scorecard_dict['repeat_failed']
+        self.assertEqual(repeat['total_repeat_failed'], 1)
+        self.assertEqual(repeat['d06bc6e8-3ab2-4956-8dee-c46e4357c73b'], 1)

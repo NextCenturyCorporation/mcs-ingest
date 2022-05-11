@@ -6,5 +6,8 @@ flake8==3.8.4
 moto==2.3.0
 numpy==1.21.0
 pandas==1.2.3
+
+# For testing
 point2d
 pytest
+readchar

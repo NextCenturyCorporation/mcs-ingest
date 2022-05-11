@@ -1,19 +1,19 @@
-# Scene file               History file                     Revisits   Unopenable   ReLook  NotMoveTwd  RepeatFail  RampUp Down U-A D-A Fall
-india_0003_17_debug.json   gen_revisit_zero_1.json              0          0          0        1           0           0     0   0   0   0
-india_0003_17_debug.json   gen_revisit_one_1.json               1          0          0        1           0           0     0   0   0   0
-india_0003_17_debug.json   gen_revisit_one_2.json               1          0          0        1           0           0     0   0   0   0
-india_0003_17_debug.json   gen_revisit_one_3.json               1          0          0        0           0           0     0   0   0   0
+# Scene file               History file                     Revisits   Unopenable   ReLook  NotMoveTwd  RepeatFail  RampUp Down U-A D-A Fall Torque Push Pull Rotate Move
+india_0003_17_debug.json   gen_revisit_zero_1.json              0          0          0        1           0           0     0   0   0   0      0     0    0   0      0
+india_0003_17_debug.json   gen_revisit_one_1.json               1          0          0        1           0           0     0   0   0   0      0     0    0   0      0
+india_0003_17_debug.json   gen_revisit_one_2.json               1          0          0        1           0           0     0   0   0   0      0     0    0   0      0
+india_0003_17_debug.json   gen_revisit_one_3.json               1          0          0        0           0           0     0   0   0   0      0     0    0   0      0
 
-golf_0018_15_debug.json    gen_unopenable_two.json              0          2          0        0           0           0     0   0   0   0
+golf_0018_15_debug.json    gen_unopenable_two.json              0          2          0        0           0           0     0   0   0   0      0     0    0   0      0
 
-golf_0018_15_debug.json    gen_relook_zero_1.json               1          0          0        0           0           0     0   0   0   0
-golf_0018_15_debug.json    gen_relook_one_1.json                0          0          1        0           0           0     0   0   0   0
+golf_0018_15_debug.json    gen_relook_zero_1.json               1          0          0        0           0           0     0   0   0   0      0     0    0   0      0
+golf_0018_15_debug.json    gen_relook_one_1.json                0          0          1        0           0           0     0   0   0   0      0     0    0   0      0
 
-india_0003_17_debug.json   gen_not_moving_toward_zero_1.json    0          0          0        0           0           0     0   0   0   0
+india_0003_17_debug.json   gen_not_moving_toward_zero_1.json    0          0          0        0           0           0     0   0   0   0      0     0    0   0      0
 
-golf_0018_15_debug.json    gen_repeat_failed_zero.json          0          1          0        0           0           0     0   0   0   0
-golf_0018_15_debug.json    gen_repeat_failed_one.json           0          0          0        0           1           0     0   0   0   0
+golf_0018_15_debug.json    gen_repeat_failed_zero.json          0          1          0        0           0           0     0   0   0   0      0     0    0   0      0
+golf_0018_15_debug.json    gen_repeat_failed_one.json           0          0          0        0           1           0     0   0   0   0      0     0    0   0      0
 
-ramps_eval_5_ex_1.json     gen_ramps_all_moves.json             2          0          0        4           0           2     1   1   1   2
+ramps_eval_5_ex_1.json     gen_ramps_all_moves.json             2          0          0        4           0           2     1   1   1   2      0     0    0   0      0
 
-
+tool_use_eval_5_ex_1.json  gen_torques.json                     0          0          0        0           0           0     0   0   0   0      5     2    3   2      3
