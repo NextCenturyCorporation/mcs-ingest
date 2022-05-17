@@ -276,6 +276,7 @@ class Scorecard:
         self.open_unopenable = 0
         self.relooks = 0
         self.not_moving_toward_object = 0
+        self.tool_usage = 0
 
     def score_all(self) -> dict:
         self.calc_repeat_failed()
@@ -284,7 +285,7 @@ class Scorecard:
         self.calc_revisiting()
         self.calc_not_moving_toward_object()
         self.calc_ramp_actions()
-        self.calc_torques()
+        self.calc_tool_usage()
 
         # To be implemented
         # self.calc_attempt_impossible()
@@ -297,7 +298,7 @@ class Scorecard:
             'not_moving_toward_object': self.not_moving_toward_object,
             'revisits': self.revisits,
             'ramp_actions': self.ramp_actions,
-            'torques': self.torques
+            'tool_usage': self.tool_usage
         }
 
     def get_revisits(self):
@@ -315,8 +316,8 @@ class Scorecard:
     def get_repeat_failed(self):
         return self.repeat_failed
 
-    def get_torques(self):
-        return self.torques
+    def get_tool_usage(self):
+        return self.tool_usage
 
     def calc_revisiting(self):
 
@@ -796,27 +797,30 @@ class Scorecard:
         self.repeat_failed = calc_repeat_failed(steps_list)
         return self.repeat_failed
 
-    def calc_torques(self):
+    def calc_tool_usage(self):
         """Calculate the torques, push, pulls, moves."""
         steps_list = self.history['steps']
 
-        torques = defaultdict(int)
+        tool_usage = defaultdict(int)
 
         for single_step in steps_list:
             action = single_step['action']
             return_status = single_step['output']['return_status']
+            resolved_obj = single_step['output']['resolved_object']
 
             if action in ['MoveObject', 'PushObject',
                           'PullObject', 'RotateObject',
                           'TorqueObject']:
 
-                if return_status == 'SUCCESSFUL':
-                    torques[action] += 1
-                else:
-                    torques['failed_torques'] += 1
+                if resolved_obj == 'tool':
 
-        self.torques = torques
-        return self.torques
+                    if return_status == 'SUCCESSFUL':
+                        tool_usage[action] += 1
+                    else:
+                        tool_usage['failed_action'] += 1
+
+        self.tool_usage = tool_usage
+        return self.tool_usage
 
     def calc_attempt_impossible(self):
         pass

@@ -145,10 +145,10 @@ what has been happening vertically.  In particular, 'falling' is defined
 as having been on the ramp recently and the vertical distance suddenly 
 going down by an amount that could not happen otherwise. 
 
-#### Torque Actions
+#### Tool Actions
 
-Could the number of times that the agent performed manipulation actions on 
-an object.  This is intended for tool tests, where the agent has to use an 
+Count the number of times that the agent performed manipulation actions on 
+a tool.  This is intended for tool tests, where the agent has to use an 
 object to achieve a goal.  This counts the different types of manipulation,
 inlcuding pushing, pulling, rotating, torquing, and moving. It also counts 
 the number of times that they attempted to do so and failed.

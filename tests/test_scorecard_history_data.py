@@ -41,7 +41,7 @@ class GT_Test:
     num_ramp_fell_off: int
     num_torques: int
     num_pushes: int
-    num_pulles: int
+    num_pulls: int
     num_rotates: int
     num_moves: int
 
@@ -184,9 +184,9 @@ class TestMcsScorecard(unittest.TestCase):
             history_file = mcs_scene_ingest.load_json_file(
                 TEST_FOLDER, gt_test.history_file)
             s = Scorecard(history_file, scene_file)
-            torque_data = s.calc_torques()
-            self.assertEqual(gt_test.num_torques,
-                             torque_data['TorqueObject'],
+            tool_usage_data = s.calc_tool_usage()
+            self.assertEqual(gt_test.torques,
+                             tool_usage_data['TorqueObject'],
                              f"Unopenable error: {gt_test.history_file}")
 
     def test_get_scorecard_dict(self):

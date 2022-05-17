@@ -47,8 +47,6 @@ def key_to_movement(key):
                 }
             return val, {}
 
-
-
     logging.warning(f"Unrecognized: {key}")
     return 'Pass', {}
 
@@ -118,7 +116,8 @@ class DataGenRunnerScript():
 
         while action is not None:
             step_metadata = self.controller.step(action, **params)
-            print(f"action: {action} Return status: {step_metadata.return_status}")
+            print(f"Action: {action} " +
+                  f"Return status: {step_metadata.return_status}")
 
             logging.debug("return status of action:" +
                           f"{step_metadata.return_status}")
