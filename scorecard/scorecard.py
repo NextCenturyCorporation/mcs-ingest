@@ -213,7 +213,7 @@ def find_target_loc_by_step(scene, step):
         x, y, z = itemgetter('x', 'y', 'z')(target_pos)
         return target_id, x, z
     except Exception:
-        logging.error(f"No target by step data for scene {scene['name']}")
+        logging.warning(f"No target by step data for scene {scene['name']}")
 
     return None, 0, 0
 
@@ -805,13 +805,13 @@ class Scorecard:
 
         for single_step in steps_list:
             action = single_step['action']
-            return_status = single_step['output']['return_status']
-            resolved_obj = single_step['output']['resolved_object']
+            output = single_step['output']
+            return_status = output['return_status']
 
             if action in ['MoveObject', 'PushObject',
                           'PullObject', 'RotateObject',
                           'TorqueObject']:
-
+                resolved_obj = get_relevant_object(output)
                 if resolved_obj == 'tool' and return_status == 'SUCCESSFUL':
                     tool_usage[action] += 1
                 else:

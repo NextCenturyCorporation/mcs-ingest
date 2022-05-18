@@ -65,7 +65,7 @@
     },
     {
       "scene_file": "tool_use_eval_5_ex_1.json",
-      "history_file": "gen_torques.json",
+      "history_file": "gen_tool_usage.json",
       "TorqueObject": 5,
       "PushObject": 2,
       "PullObject": 3,
