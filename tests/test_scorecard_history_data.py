@@ -134,6 +134,19 @@ class TestMcsScorecard(unittest.TestCase):
                     f"Tool usage error: {tool_key} " +
                     f"{gt_test.get('history_file')}")
 
+    def test_platform_side(self):
+        for gt_test in self.gt_tests:
+            scene_file = mcs_scene_ingest.load_json_file(
+                TEST_FOLDER, gt_test.get('scene_file'))
+            history_file = mcs_scene_ingest.load_json_file(
+                TEST_FOLDER, gt_test.get('history_file'))
+            s = Scorecard(history_file, scene_file)
+            platform_side = s.calc_correct_platform_side()
+            self.assertEqual(
+                gt_test.get('platform_side', None),
+                platform_side.get('platform_side'),
+                f"{gt_test.get('history_file')}")
+
     def test_get_scorecard_dict(self):
         scene_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, SCENE_FILE)

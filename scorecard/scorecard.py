@@ -277,6 +277,7 @@ class Scorecard:
         self.relooks = 0
         self.not_moving_toward_object = 0
         self.tool_usage = 0
+        self.correct_platform_side = 0
 
     def score_all(self) -> dict:
         self.calc_repeat_failed()
@@ -286,6 +287,7 @@ class Scorecard:
         self.calc_not_moving_toward_object()
         self.calc_ramp_actions()
         self.calc_tool_usage()
+        self.correct_platform_side = self.calc_correct_platform_side()
 
         # To be implemented
         # self.calc_attempt_impossible()
@@ -819,6 +821,36 @@ class Scorecard:
 
         self.tool_usage = tool_usage
         return self.tool_usage
+
+    def calc_correct_platform_side(self):
+        '''Determine if the ai agent went on the correct side of the platform.'''
+
+        # Does this scene have a targetSide? If not, return empty dict.
+        goal = self.scene.get('goal')
+        if 'sceneInfo' in goal and 'targetSide' in goal['sceneInfo']:
+            target_side = goal['sceneInfo']['targetSide']
+        else:
+            return {}
+
+        self.correct_platform_side = defaultdict(bool)
+        steps_list = self.history['steps']
+        output = steps_list[0]['output']
+        old_y = output['position']['y']
+        for single_step in steps_list:
+            output = single_step['output']
+            new_y = output['position']['y']
+            if new_y < (old_y - 0.5):
+                x = output['position']['x']
+                if x < 0 and target_side == 'left':
+                    self.correct_platform_side['correct_side'] = True
+                else:
+                    self.correct_platform_side['correct_side'] = False
+                if x > 0 and target_side == 'right':
+                    self.correct_platform_side['correct_side'] = True
+                else:
+                    self.correct_platform_side['correct_side'] = False
+            old_y = new_y
+        return self.correct_platform_side
 
     def calc_attempt_impossible(self):
         pass
