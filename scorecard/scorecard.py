@@ -625,7 +625,7 @@ class Scorecard:
                         'ramp_fell_off': 0}
         last_ramp_action_step = 0
         last_ramp_action_position = old_position
-        last_ramp_action = 'None'
+        last_ramp_action = None
 
         for single_step in steps_list:
             step = single_step['step']
@@ -652,7 +652,8 @@ class Scorecard:
             # realize it at the time.  This can occur when the AI goes
             # up the ramp, then goes mostly over the side, but the size
             # of the AI base is such that it didn't drop.
-            if (not now_on_ramp) and \
+            if last_ramp_action is not None and \
+                    (not now_on_ramp) and \
                     (step - last_ramp_action_step) < STEP_CHECK_FALL_OFF:
                 if self.fell_off_ramp(last_ramp_action_position, position):
                     ramp_actions[last_ramp_action] -= 1
@@ -823,7 +824,8 @@ class Scorecard:
         return self.tool_usage
 
     def calc_correct_platform_side(self):
-        '''Determine if the ai agent went on the correct side of the platform.'''
+        '''Determine if the ai agent went on the correct
+        side of the platform.'''
 
         # Does this scene have a targetSide? If not, return empty dict.
         goal = self.scene.get('goal')
