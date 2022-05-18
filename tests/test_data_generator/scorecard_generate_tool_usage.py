@@ -2,12 +2,16 @@
 #  Generate data for testing counting of torques / push / pull / move / rotate
 #
 #  Usage:
-#     python scorecard_generate_ramp.py  scene_file
-#
+#     python scorecard_generate_tool_usage.py  scene_file
 #    (For scene_file, use test_data/ramps_eval_5_ex_1.json)
-#
-#    Normal movement: wasd,   turns: jl,   up/down: ik.  Open is 3
-#    Group movement:  90 turn is L or R;  W is 10 steps fwd
+
+#   Move Object: 0
+#   Pull: 5
+#   Push: 6
+#   Torque: 8
+#   Rotate: 9
+
+
 import argparse
 import logging
 import os
@@ -20,6 +24,10 @@ from data_gen_runner import (
 
 def ramp_up_down_abandon_fall(step_metadata, runner_script):
     step = step_metadata.step_number
+
+    # Create some failures
+    part0 = 'R 05689 L'
+
     # Look down and 'Move' 3 times
     part1 = "kk 000 ww"
 
@@ -32,14 +40,14 @@ def ramp_up_down_abandon_fall(step_metadata, runner_script):
     # Above are all successful.  Make some unsuccessful
     part4 = "L 56890"
 
-    moves = part1 + part2 + part3 + part4
+    moves = part0 + part1 + part2 + part3 + part4
 
     return decode_moves(step, moves)
 
 
 def main(scene_filepath):
     DataGenRunnerScript(scene_filepath,
-                        'gen_torques',
+                        'gen_tool_usage',
                         ramp_up_down_abandon_fall).run_scene()
 
 

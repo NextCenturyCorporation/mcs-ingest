@@ -812,12 +812,10 @@ class Scorecard:
                           'PullObject', 'RotateObject',
                           'TorqueObject']:
 
-                if resolved_obj == 'tool':
-
-                    if return_status == 'SUCCESSFUL':
-                        tool_usage[action] += 1
-                    else:
-                        tool_usage['failed_action'] += 1
+                if resolved_obj == 'tool' and return_status == 'SUCCESSFUL':
+                    tool_usage[action] += 1
+                else:
+                    tool_usage[action + '_failed'] += 1
 
         self.tool_usage = tool_usage
         return self.tool_usage
