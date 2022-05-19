@@ -17,6 +17,7 @@ The actions that are counted (as of Eval 4 plan):
   feedback from the first attempt. If the AI system attempts the same action from a new position, this will not be considered a repeated action.
 * Actions on ramps, including whether the agent successfully went up, abandonded going up 
   or down, and fell off
+* Moving, rotating, torquing interactions with objects
 * Attempting physically impossible actions.  This is not implemented yet.
   * e.g., trying to pick up a sofa or another similarly large item; trying to interact with the floor or wall
   * Impossible actions will be counted from the first attempt.
@@ -120,7 +121,7 @@ This one will count if the agent tries to do it twice (or more times).  If the
 agent does it twice, then the unopenable object count will be 2 and the
 repeated failed actions will 1.
 
-## Ramp Actions 
+#### Ramp Actions 
 
 Keep track of all the things that could happen on a ramp.  They include:
 * Going up the ramp successfully
@@ -144,6 +145,13 @@ what has been happening vertically.  In particular, 'falling' is defined
 as having been on the ramp recently and the vertical distance suddenly 
 going down by an amount that could not happen otherwise. 
 
+#### Tool Actions
+
+Count the number of times that the agent performed manipulation actions on 
+a tool.  This is intended for tool tests, where the agent has to use an 
+object to achieve a goal.  This counts the different types of manipulation,
+inlcuding pushing, pulling, rotating, torquing, and moving. It also counts 
+the number of times that they attempted to do so and failed.
 
 ## Running the Scorecard
 

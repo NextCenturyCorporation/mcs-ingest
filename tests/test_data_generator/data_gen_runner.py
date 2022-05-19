@@ -2,14 +2,14 @@
 # Class that runs a scripted movement around the room
 #
 
-import json
 import logging
 
 import machine_common_sense as mcs
 from machine_common_sense import Action
+from machine_common_sense.action import OBJECT_IMAGE_ACTIONS
+from readchar import readchar
 
 from path_plotter import PathPlotter
-
 
 DEFAULT_ROOM_DIMENSIONS = {'x': 10, 'y': 3, 'z': 10}
 
@@ -17,23 +17,35 @@ DEFAULT_ROOM_DIMENSIONS = {'x': 10, 'y': 3, 'z': 10}
 def key_to_movement(key):
     """Convert a character key to an instruction that the controller
     understands.  See Action to see the keys.  """
+
+    # Special interactive keys
+    if key == 'X':
+        _ = input("waiting")
+        return 'Pass', {}
+
+    if key == 'q':
+        # This ends the program
+        return None, {}
+
+    if key == ' ':
+        return 'Pass', {}
+
     for action in Action:
+
+        # Temp fix for INITIALIZE and MOVE_OBJECT both being 0.
+        if action._value_ == "Initialize":
+            continue
+
         if key == action._key:
             val = action._value_
             logging.debug(f"action {val}")
 
-            if val == 'OpenObject' or \
-                    val == 'CloseObject' or \
-                    val == 'PickupObject':
+            if action in OBJECT_IMAGE_ACTIONS:
                 return val, {
                     'objectImageCoordsX': 320.,
                     'objectImageCoordsY': 240.
                 }
             return val, {}
-
-    if key == 'X':
-        _ = input("waiting")
-        return 'Pass', {}
 
     logging.warning(f"Unrecognized: {key}")
     return 'Pass', {}
@@ -52,10 +64,10 @@ def replace_short_hand(code):
 def interactive_cb(step_metadata, runner_script):
     '''  Rather than using a string to represent
     movements, get interactive input'''
-    step=step_metadata.step_number
-    pos=step_metadata.position
-    print(f"{step} {pos}")
-    x = input()
+    step = step_metadata.step_number
+    pos = step_metadata.position
+    x = readchar()
+    print(f"{step} {pos}.  New move:  {x}")
     return key_to_movement(x)
 
 
@@ -104,6 +116,8 @@ class DataGenRunnerScript():
 
         while action is not None:
             step_metadata = self.controller.step(action, **params)
+            print(f"Action: {action} " +
+                  f"Return status: {step_metadata.return_status}")
 
             logging.debug("return status of action:" +
                           f"{step_metadata.return_status}")
