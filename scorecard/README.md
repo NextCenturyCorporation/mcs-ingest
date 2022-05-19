@@ -4,7 +4,7 @@
 Given an output json from a run, create a 'scorecard' which evaluates the motion of the
 agent in several dimensions.
 
-The actions that are counted (as of Eval 4 plan):
+The actions that are counted (as of Eval 5):
 
 * Revisiting parts of the room that have not changed
 * Attempting to open an un-openable object.
@@ -18,6 +18,7 @@ The actions that are counted (as of Eval 4 plan):
 * Actions on ramps, including whether the agent successfully went up, abandonded going up 
   or down, and fell off
 * Moving, rotating, torquing interactions with objects
+* Determine which side of the platform the agent went to (correct or incorrect)
 * Attempting physically impossible actions.  This is not implemented yet.
   * e.g., trying to pick up a sofa or another similarly large item; trying to interact with the floor or wall
   * Impossible actions will be counted from the first attempt.
@@ -152,6 +153,14 @@ a tool.  This is intended for tool tests, where the agent has to use an
 object to achieve a goal.  This counts the different types of manipulation,
 inlcuding pushing, pulling, rotating, torquing, and moving. It also counts 
 the number of times that they attempted to do so and failed.
+
+#### Platform Side Correctness
+
+For several task types, Agent Identification, Spatial Elimination, Interactive 
+Object Permanence, the agent needs to move off of the platform to one side or 
+the other.  This element of the scorecard determines whether the agent moved to
+the correct side.  
+
 
 ## Running the Scorecard
 
