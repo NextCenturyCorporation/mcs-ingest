@@ -346,6 +346,7 @@ def build_history_item(
         history_item["test_num"] = scene["test_num"]
 
         history_item["scene_goal_id"] = scene["goal"]["sceneInfo"]["id"][0]
+        history_item["slices"] = scene["goal"]["sceneInfo"]["slices"]
         history_item["test_type"] = scene["goal"]["sceneInfo"]["secondaryType"]
         history_item["category"] = scene["goal"]["sceneInfo"]["primaryType"]
 
