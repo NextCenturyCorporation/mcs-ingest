@@ -278,6 +278,7 @@ class Scorecard:
         self.not_moving_toward_object = 0
         self.tool_usage = 0
         self.correct_platform_side = 0
+        self.correct_door_opened = 0
 
     def score_all(self) -> dict:
         self.calc_repeat_failed()
@@ -287,7 +288,8 @@ class Scorecard:
         self.calc_not_moving_toward_object()
         self.calc_ramp_actions()
         self.calc_tool_usage()
-        self.correct_platform_side = self.calc_correct_platform_side()
+        self.calc_correct_platform_side()
+        self.calc_correct_door_opened()
 
         # To be implemented
         # self.calc_attempt_impossible()
@@ -295,6 +297,8 @@ class Scorecard:
         return {
             'repeat_failed': self.repeat_failed,
             'attempt_impossible': self.attempt_impossible,
+            'correct_door_opened': self.correct_door_opened,
+            'correct_platform_side': self.correct_platform_side,
             'open_unopenable': self.open_unopenable,
             'container_relook': self.relooks,
             'not_moving_toward_object': self.not_moving_toward_object,
@@ -853,6 +857,46 @@ class Scorecard:
                     self.correct_platform_side['correct_side'] = False
             old_y = new_y
         return self.correct_platform_side
+
+    def calc_correct_door_opened(self):
+        '''Determine if the ai agent went through the correct door'''
+
+        # Does this scene have a correctDoor? If not, return empty dict.
+        goal = self.scene.get('goal')
+        if 'sceneInfo' in goal and 'correctDoor' in goal['sceneInfo']:
+            correct_door = goal['sceneInfo']['correctDoor']
+        else:
+            return {}
+
+        self.correct_door_opened = defaultdict(bool)
+        steps_list = self.history['steps']
+        output = steps_list[0]['output']
+
+        for single_step in steps_list:
+            action = single_step['action']
+            output = single_step['output']
+            return_status = output['return_status']
+
+            if action in ['OpenObject']:
+                obj_id = get_relevant_object(output)
+
+                if 'door_' in obj_id and return_status == 'SUCCESSFUL':
+                    for obj in self.scene['objects']:
+                        if obj['id'] == obj_id:
+                            break
+
+                    if 'shows' in obj and len(obj['shows']) > 0:
+                        door_x_pos = obj['shows'][0]['position']['x']
+                        if door_x_pos == 0 and correct_door == 'center':
+                            self.correct_door_opened['correct_door'] = True
+                        elif door_x_pos < 0 and correct_door == 'left':
+                            self.correct_door_opened['correct_door'] = True
+                        elif door_x_pos > 0 and correct_door == 'right':
+                            self.correct_door_opened['correct_door'] = True
+                        else:
+                            self.correct_door_opened['correct_door'] = False
+
+        return self.correct_door_opened
 
     def calc_attempt_impossible(self):
         pass
