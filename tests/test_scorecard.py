@@ -32,6 +32,10 @@ TEST_HISTORY_NO_TARGET = "test_eval_3-5_level2_baseline_juliett_0001_01.json"
 TEST_SCENE_RAMP = "ramps_eval_5_ex_1.json"
 TEST_HISTORY_RAMP_UP_DOWN = "ramps_test_all_combos.json"
 
+TEST_SCENE_SIDE = "prefix_0001_01_C4_debug.json"
+TEST_HISTORY_SIDE_1 = "gen_platform_side_1.json"
+TEST_HISTORY_SIDE_2 = "gen_platform_side_2.json"
+
 TEST_FOLDER = "./tests/test_data"
 
 # Hide all non-error log messages while running these unit tests.
@@ -384,3 +388,24 @@ class TestMcsScorecard(unittest.TestCase):
         on_ramp_bool, rot, ramp_id = scorecard.on_ramp(position)
         self.assertFalse(on_ramp_bool)
         self.assertEqual(ramp_id, "")
+
+    def test_platform_side(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SIDE)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SIDE_1)
+        scorecard = Scorecard(history_file, scene_file)
+
+        side = scorecard.calc_correct_platform_side()
+        correct_side = side['correct_side']
+        self.assertTrue(correct_side)
+
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SIDE)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SIDE_2)
+        scorecard = Scorecard(history_file, scene_file)
+
+        side = scorecard.calc_correct_platform_side()
+        correct_side = side['correct_side']
+        self.assertFalse(correct_side)

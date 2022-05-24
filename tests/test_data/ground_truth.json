@@ -76,6 +76,16 @@
       "PullObject_failed": 2,
       "RotateObject_failed": 2,
       "MoveObject_failed": 2
+    },
+    {
+      "scene_file": "prefix_0001_01_C4_debug.json",
+      "history_file": "gen_platform_side_1.json",
+      "correct_side": true
+    },
+    {
+      "scene_file": "prefix_0001_01_C4_debug.json",
+      "history_file": "gen_platform_side_2.json",
+      "correct_side": false
     }
   ]
 }

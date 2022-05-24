@@ -277,6 +277,7 @@ class Scorecard:
         self.relooks = 0
         self.not_moving_toward_object = 0
         self.tool_usage = 0
+        self.correct_platform_side = 0
 
     def score_all(self) -> dict:
         self.calc_repeat_failed()
@@ -286,6 +287,7 @@ class Scorecard:
         self.calc_not_moving_toward_object()
         self.calc_ramp_actions()
         self.calc_tool_usage()
+        self.correct_platform_side = self.calc_correct_platform_side()
 
         # To be implemented
         # self.calc_attempt_impossible()
@@ -623,7 +625,7 @@ class Scorecard:
                         'ramp_fell_off': 0}
         last_ramp_action_step = 0
         last_ramp_action_position = old_position
-        last_ramp_action = 'None'
+        last_ramp_action = None
 
         for single_step in steps_list:
             step = single_step['step']
@@ -650,7 +652,8 @@ class Scorecard:
             # realize it at the time.  This can occur when the AI goes
             # up the ramp, then goes mostly over the side, but the size
             # of the AI base is such that it didn't drop.
-            if (not now_on_ramp) and \
+            if last_ramp_action is not None and \
+                    (not now_on_ramp) and \
                     (step - last_ramp_action_step) < STEP_CHECK_FALL_OFF:
                 if self.fell_off_ramp(last_ramp_action_position, position):
                     ramp_actions[last_ramp_action] -= 1
@@ -819,6 +822,37 @@ class Scorecard:
 
         self.tool_usage = tool_usage
         return self.tool_usage
+
+    def calc_correct_platform_side(self):
+        '''Determine if the ai agent went on the correct
+        side of the platform.'''
+
+        # Does this scene have a targetSide? If not, return empty dict.
+        goal = self.scene.get('goal')
+        if 'sceneInfo' in goal and 'targetSide' in goal['sceneInfo']:
+            target_side = goal['sceneInfo']['targetSide']
+        else:
+            return {}
+
+        self.correct_platform_side = defaultdict(bool)
+        steps_list = self.history['steps']
+        output = steps_list[0]['output']
+        old_y = output['position']['y']
+        for single_step in steps_list:
+            output = single_step['output']
+            new_y = output['position']['y']
+            if new_y < (old_y - 0.5):
+                x = output['position']['x']
+                if x < 0 and target_side == 'left':
+                    self.correct_platform_side['correct_side'] = True
+                else:
+                    self.correct_platform_side['correct_side'] = False
+                if x > 0 and target_side == 'right':
+                    self.correct_platform_side['correct_side'] = True
+                else:
+                    self.correct_platform_side['correct_side'] = False
+            old_y = new_y
+        return self.correct_platform_side
 
     def calc_attempt_impossible(self):
         pass
