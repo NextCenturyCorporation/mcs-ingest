@@ -5,9 +5,12 @@
 import logging
 import math
 from operator import itemgetter
+from typing import Dict, List
 
 import numpy as np
 import pandas
+
+from shapely.geometry import Point, LineString
 
 # Grid Dimension determines how big our grid is for revisiting
 GRID_DIMENSION = 0.5
@@ -38,6 +41,9 @@ SEEN_COUNT_MIN = 4
 # this gives it time to turn move to the side (about 15 steps), turn (9),
 # and move towards it (15).  So about 30 steps.
 STEPS_NOT_MOVED_TOWARD_LIMIT = 30
+
+PATH_KEY='path'
+ALTERNATE_PATH_KEY='slowPath'
 
 DEFAULT_ROOM_DIMENSIONS = {'x': 10, 'y': 3, 'z': 10}
 
@@ -240,6 +246,7 @@ class Scorecard:
         self.open_unopenable = 0
         self.relooks = 0
         self.not_moving_toward_object = 0
+        self.is_fastest_path = None
 
     def score_all(self) -> dict:
         self.calc_repeat_failed()
@@ -248,6 +255,7 @@ class Scorecard:
         self.calc_relook()
         self.calc_revisiting()
         self.calc_not_moving_toward_object()
+        self.calc_fastest_path()
 
         return {
             'repeat_failed': self.repeat_failed,
@@ -256,6 +264,7 @@ class Scorecard:
             'multiple_container_look': self.relooks,
             'not_moving_toward_object': self.not_moving_toward_object,
             'revisits': self.revisits,
+            'fastest_path': self.is_fastest_path,
         }
 
     def get_revisits(self):
@@ -558,3 +567,66 @@ class Scorecard:
 
     def set_revisit_grid_size(self, grid_size):
         self.grid_size = grid_size
+
+    def calc_fastest_path(self):
+        debug = self.scene['debug']
+        if not debug.get(PATH_KEY) or not debug.get(ALTERNATE_PATH_KEY):
+            return
+        paths = [debug[PATH_KEY], debug[ALTERNATE_PATH_KEY]]
+        steps_list = self.history['steps']
+        
+        distances=[]
+        
+        start_pos = self.scene['performerStart']['position']
+        
+        for path in paths:
+            distance=0
+            for idx, single_step in enumerate(steps_list):
+                position=single_step['output']['position']
+                single_dist = self.get_distance_from_path(start_pos, position, path)
+                distance+=single_dist
+            distances.append(distance)
+        
+        self.is_fastest_path = distances[0] == min(distances)
+            
+    def get_distance_from_path(self, start_pos: Dict[str, float],position: Dict[str, float], path: List[Dict[str, float]]):
+        p1 = start_pos
+        p1 = Point((start_pos['x'], start_pos['z']))
+        pos = Point((position['x'], position['z']))
+        dist = 10000000
+        for pnt in path:
+            p2 = Point((pnt['x'], pnt['z']))
+            
+            line = LineString([p1, p2])
+            
+            dist=min(pos.distance(line),dist)
+            p1 = p2
+        return dist
+            
+    def get_distance_from_path1(self, start_pos: Dict[str, float],position:Dict[str, float], path:List[Dict[str, float]]):
+        p1 = start_pos
+        for p2 in path:
+            x0=position['x']
+            z0=position['z']
+            
+            lx1=p1['x']
+            lz1=p1['z']
+            
+            lx2=p2['x']
+            lz2=p2['z']
+            # compute line using formula
+            # (x- p1X) / (p2X - p1X) = (y - p1Y) / (p2Y - p1Y) 
+            
+            
+            # for line in form ax + by + c = 0, the distance to that line is
+            # d = |ax0 + by0 +c | / sqrt(a * a + b * b)
+            d = abs(a * position['x'] + b * position['z'] + c)/ math.sqrt(a*a+b*b)
+            
+            # the above formula computes distance for
+            d1_max=math.dist()
+            d2_max=math.dist()
+            
+            # set next p1 as current p2 for next line segment
+            p1 = p2
+        
+                
