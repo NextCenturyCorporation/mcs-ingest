@@ -156,10 +156,12 @@ the number of times that they attempted to do so and failed.
 
 #### Platform Side Correctness
 
-For several task types, Agent Identification, Spatial Elimination, Interactive 
-Object Permanence, the agent needs to move off of the platform to one side or 
-the other.  This element of the scorecard determines whether the agent moved to
+For several task types that force a binary choice, such as Agent 
+Identification, Spatial Elimination, Interactive Object Permanence, the 
+agent needs to move off of the platform to one side or the other.  
+This element of the scorecard determines whether the agent moved to
 the correct side.  
+
 
 
 ## Running the Scorecard
