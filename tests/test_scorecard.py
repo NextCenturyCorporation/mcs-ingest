@@ -36,6 +36,10 @@ TEST_SCENE_SIDE = "prefix_0001_01_C4_debug.json"
 TEST_HISTORY_SIDE_1 = "gen_platform_side_1.json"
 TEST_HISTORY_SIDE_2 = "gen_platform_side_2.json"
 
+TEST_SCENE_DOOR = "prefix_0001_02_I1_debug.json"
+TEST_HISTORY_DOOR_CORRECT = "gen_correct_door_ex.json"
+TEST_HISTORY_DOOR_INCORRECT = "gen_incorrect_door_ex.json"
+
 TEST_FOLDER = "./tests/test_data"
 
 # Hide all non-error log messages while running these unit tests.
@@ -409,3 +413,24 @@ class TestMcsScorecard(unittest.TestCase):
         side = scorecard.calc_correct_platform_side()
         correct_side = side['correct_side']
         self.assertFalse(correct_side)
+
+    def test_which_door(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_DOOR)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_DOOR_CORRECT)
+        scorecard = Scorecard(history_file, scene_file)
+
+        door = scorecard.calc_correct_door_opened()
+        correct_door = door['correct_door']
+        self.assertTrue(correct_door)
+
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_DOOR)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_DOOR_INCORRECT)
+        scorecard = Scorecard(history_file, scene_file)
+
+        door = scorecard.calc_correct_door_opened()
+        correct_door = door['correct_door']
+        self.assertFalse(correct_door)

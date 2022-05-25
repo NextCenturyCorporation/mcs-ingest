@@ -86,6 +86,16 @@
       "scene_file": "prefix_0001_01_C4_debug.json",
       "history_file": "gen_platform_side_2.json",
       "correct_side": false
+    },
+    {
+      "scene_file": "prefix_0001_02_I1_debug.json",
+      "history_file": "gen_correct_door_ex.json",
+      "correct_door": true
+    },
+    {
+      "scene_file": "prefix_0001_02_I1_debug.json",
+      "history_file": "gen_incorrect_door_ex.json",
+      "correct_door": false
     }
   ]
 }
