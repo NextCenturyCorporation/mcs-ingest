@@ -277,8 +277,8 @@ class Scorecard:
         self.relooks = 0
         self.not_moving_toward_object = 0
         self.tool_usage = 0
-        self.correct_platform_side = 0
-        self.correct_door_opened = 0
+        self.correct_platform_side = {}
+        self.correct_door_opened = {}
 
     def score_all(self) -> dict:
         self.calc_repeat_failed()
@@ -836,7 +836,7 @@ class Scorecard:
         if 'sceneInfo' in goal and 'targetSide' in goal['sceneInfo']:
             target_side = goal['sceneInfo']['targetSide']
         else:
-            return {}
+            return
 
         self.correct_platform_side = defaultdict(bool)
         steps_list = self.history['steps']
@@ -866,7 +866,7 @@ class Scorecard:
         if 'sceneInfo' in goal and 'correctDoor' in goal['sceneInfo']:
             correct_door = goal['sceneInfo']['correctDoor']
         else:
-            return {}
+            return
 
         self.correct_door_opened = defaultdict(bool)
         steps_list = self.history['steps']
