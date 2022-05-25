@@ -12,7 +12,7 @@ import argparse
 import logging
 import os
 
-from test_data_generator.data_gen_runner import (
+from data_gen_runner import (
     DataGenRunnerScript,
     decode_moves
 )
@@ -60,17 +60,18 @@ def pickup_fail_twice(step_metadata, runner_script):
     return decode_moves(step, code)
 
 
-def main(mcs_unity_filepath, scene_filepath):
-    DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
-                        'repeat_failed_zero', open_different_ways).run_scene()
+def main(scene_filepath):
+    DataGenRunnerScript(scene_filepath,
+                        'gen_repeat_failed_zero',
+                        open_different_ways).run_scene()
 
-    DataGenRunnerScript(mcs_unity_filepath, scene_filepath,
-                        'repeat_failed_one', pickup_fail_twice).run_scene()
+    DataGenRunnerScript(scene_filepath,
+                        'gen_repeat_failed_one',
+                        pickup_fail_twice).run_scene()
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('mcs_unity_filepath')
     parser.add_argument('scene_filepath')
     return parser.parse_args()
 
@@ -82,11 +83,8 @@ if __name__ == "__main__":
         level=logging.INFO,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-    if not os.path.exists(args.mcs_unity_filepath):
-        logging.warning(f"File {args.mcs_unity_filepath} does not exist")
-        exit(1)
     if not os.path.exists(args.scene_filepath):
-        logging.warning(f"File {args.scene_filepath} does not exist")
+        logging.error(f"File {args.scene_filepath} does not exist")
         exit(1)
 
-    main(args.mcs_unity_filepath, args.scene_filepath)
+    main(args.scene_filepath)

@@ -1,3 +1,7 @@
+#
+# Scorecard tests on individual functions, passing in locally generated
+# data.
+#
 import logging
 import unittest
 
@@ -8,7 +12,7 @@ from scorecard import (
     Scorecard,
     calc_repeat_failed,
     find_closest_container,
-    find_target_location,
+    find_target_loc_by_step,
     get_lookpoint,
 )
 
@@ -18,9 +22,21 @@ TEST_HISTORY_FILE_NAME = "india_0003_baseline_level1.json"
 TEST_SCENE_CONTAINER = "golf_0018_15_debug.json"
 TEST_HISTORY_CONTAINER = "golf_0018_15_baseline.json"
 
-TEST_SCENE_NO_TARGET = "juliett_0001_01_debug.json"
+TEST_SCENE_MOVING_TARGET = "alpha_0001_03_debug.json"
+TEST_HISTORY_MOVING_TARGET_PASS = "alpha_0001_03_test_pass.json"
+TEST_HISTORY_MOVING_TARGET_FAIL = "alpha_0001_03_test_fail.json"
 
-TEST_FOLDER = "tests"
+TEST_SCENE_NO_TARGET = "juliett_0001_01_debug.json"
+TEST_HISTORY_NO_TARGET = "test_eval_3-5_level2_baseline_juliett_0001_01.json"
+
+TEST_SCENE_RAMP = "ramps_eval_5_ex_1.json"
+TEST_HISTORY_RAMP_UP_DOWN = "ramps_test_all_combos.json"
+
+TEST_SCENE_SIDE = "prefix_0001_01_C4_debug.json"
+TEST_HISTORY_SIDE_1 = "gen_platform_side_1.json"
+TEST_HISTORY_SIDE_2 = "gen_platform_side_2.json"
+
+TEST_FOLDER = "./tests/test_data"
 
 # Hide all non-error log messages while running these unit tests.
 logging.basicConfig(
@@ -30,19 +46,23 @@ logging.basicConfig(
 
 
 def create_mock_step(
-    action: str = 'Pass',
-    object_coords: dict = None,
-    position: dict = None,
-    receptacle_coords: dict = None,
-    return_status: str = 'SUCCESSFUL',
-    rotation: int = 0
+        action: str = 'Pass',
+        object_coords: dict = None,
+        position: dict = None,
+        resolved_object=None,
+        resolved_receptacle=None,
+        receptacle_coords: dict = None,
+        return_status: str = 'SUCCESSFUL',
+        rotation: int = 0
 ) -> dict:
     return {
         'action': action,
         'output': {
             'position': position or {'x': 0, 'y': 0, 'z': 0},
             'return_status': return_status,
-            'rotation': rotation
+            'rotation': rotation,
+            'resolved_object': resolved_object,
+            'resolved_receptacle': resolved_receptacle
         },
         'params': {
             'objectImageCoords': object_coords or {'x': 0, 'y': 0},
@@ -54,6 +74,7 @@ def create_mock_step(
 
 
 class TestMcsScorecard(unittest.TestCase):
+    gt_tests = None
 
     def test_get_grid_by_location(self):
         scene_file = mcs_scene_ingest.load_json_file(
@@ -62,12 +83,9 @@ class TestMcsScorecard(unittest.TestCase):
             TEST_FOLDER, TEST_HISTORY_FILE_NAME)
         scorecard = Scorecard(history_file, scene_file)
 
-        gx, gz = scorecard.get_grid_by_location(0, 0)
-
         x1 = -2.006410598754883
         z1 = 0.6039760112762451
         gx1, gz1 = scorecard.get_grid_by_location(x1, z1)
-        # print(f"Grid location 1:  {gx} {gz}")
 
         x2 = -2.4064102172851562
         z2 = 0.6039760112762451
@@ -94,7 +112,7 @@ class TestMcsScorecard(unittest.TestCase):
         container = find_closest_container(x, z, scene_file)
         self.assertEqual(container['type'], 'case_3')
         logging.info(f"Closest:  {container}")
-    
+
     def test_find_closest_container_but_none(self):
         scene_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, TEST_SCENE_FILE_NAME)
@@ -111,9 +129,10 @@ class TestMcsScorecard(unittest.TestCase):
             TEST_FOLDER, TEST_HISTORY_FILE_NAME)
         scorecard = Scorecard(history_file, scene_file)
         scorecard_vals = scorecard.score_all()
-        self.assertEqual(scorecard_vals["repeat_failed"], 0)
+        repeats = scorecard_vals["repeat_failed"]['total_repeat_failed']
+        self.assertEqual(repeats, 0)
         self.assertEqual(scorecard_vals["revisits"], 1)
-        logging.info(f"{scorecard_vals}")
+        logging.debug(f"{scorecard_vals}")
 
     def test_get_lookpoint(self):
         import numpy as np
@@ -149,41 +168,59 @@ class TestMcsScorecard(unittest.TestCase):
         '''Test trying to find a target, when there is not one'''
         scene_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, TEST_SCENE_NO_TARGET)
-        target_id, x, z = find_target_location(scene_file)
+        hist_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_NO_TARGET)
+        target_id, x, z = find_target_loc_by_step(scene_file,
+                                                  hist_file["steps"][0])
         self.assertFalse(target_id, "Target should not exist, " +
                          f"but it does {x} {z}")
 
     def test_find_target_location_with_target(self):
         '''Test trying to find a target, when there is not one'''
         scene_file = mcs_scene_ingest.load_json_file(
-            TEST_FOLDER, TEST_SCENE_CONTAINER)
-        target_id, x, z = find_target_location(scene_file)
+            TEST_FOLDER, TEST_SCENE_MOVING_TARGET)
+        hist_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_MOVING_TARGET_PASS)
+        target_id, x, z = find_target_loc_by_step(scene_file,
+                                                  hist_file["steps"][0])
         if target_id is None:
             self.fail("Target not found")
-        np.testing.assert_almost_equal(x, 0.0, err_msg="x location is wrong")
-        np.testing.assert_almost_equal(z, -0.15, err_msg="Z location is wrong")
+        np.testing.assert_almost_equal(x, -3.654195547103882,
+                                       err_msg="x location is wrong")
+        np.testing.assert_almost_equal(z, 3.75,
+                                       err_msg="Z location is wrong")
 
-    def test_calc_not_moving_toward_object(self):
+    def test_calc_not_moving_toward_object_zero(self):
         scene_file = mcs_scene_ingest.load_json_file(
-            TEST_FOLDER, TEST_SCENE_CONTAINER)
+            TEST_FOLDER, TEST_SCENE_MOVING_TARGET)
         history_file = mcs_scene_ingest.load_json_file(
-            TEST_FOLDER, TEST_HISTORY_CONTAINER)
+            TEST_FOLDER, TEST_HISTORY_MOVING_TARGET_PASS)
         scorecard = Scorecard(history_file, scene_file)
         not_moving = scorecard.calc_not_moving_toward_object()
+        self.assertEqual(not_moving, 0)
+
+    def test_calc_not_moving_toward_object_greater_than_zero(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_MOVING_TARGET)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_MOVING_TARGET_FAIL)
+        scorecard = Scorecard(history_file, scene_file)
+        not_moving = scorecard.calc_not_moving_toward_object()
+        self.assertGreater(not_moving, 0)
 
     def test_calc_repeat_failed_ignore_failed(self):
         repeat_failed = calc_repeat_failed([
             create_mock_step(action='MoveAhead', return_status='FAILED'),
             create_mock_step(action='MoveAhead', return_status='FAILED')
         ])
-        self.assertEqual(repeat_failed, 0)
+        self.assertEqual(repeat_failed['total_repeat_failed'], 0)
 
     def test_calc_repeat_failed_ignore_obstructed(self):
         repeat_failed = calc_repeat_failed([
             create_mock_step(action='MoveAhead', return_status='OBSTRUCTED'),
             create_mock_step(action='MoveAhead', return_status='OBSTRUCTED')
         ])
-        self.assertEqual(repeat_failed, 0)
+        self.assertEqual(repeat_failed['total_repeat_failed'], 0)
 
     def test_calc_repeat_failed_one_success(self):
         repeat_failed = calc_repeat_failed([
@@ -192,7 +229,7 @@ class TestMcsScorecard(unittest.TestCase):
                 object_coords={'x': 300, 'y': 200}
             )
         ])
-        self.assertEqual(repeat_failed, 0)
+        self.assertEqual(repeat_failed['total_repeat_failed'], 0)
 
     def test_calc_repeat_failed_one_failure(self):
         repeat_failed = calc_repeat_failed([
@@ -202,7 +239,7 @@ class TestMcsScorecard(unittest.TestCase):
                 return_status='OUT_OF_REACH'
             )
         ])
-        self.assertEqual(repeat_failed, 0)
+        self.assertEqual(repeat_failed['total_repeat_failed'], 0)
 
     def test_calc_repeat_failed_two_failures(self):
         repeat_failed = calc_repeat_failed([
@@ -217,7 +254,7 @@ class TestMcsScorecard(unittest.TestCase):
                 return_status='OUT_OF_REACH'
             )
         ])
-        self.assertEqual(repeat_failed, 1)
+        self.assertEqual(repeat_failed['total_repeat_failed'], 1)
 
     def test_calc_repeat_failed_three_failures(self):
         repeat_failed = calc_repeat_failed([
@@ -237,7 +274,7 @@ class TestMcsScorecard(unittest.TestCase):
                 return_status='OUT_OF_REACH'
             )
         ])
-        self.assertEqual(repeat_failed, 2)
+        self.assertEqual(repeat_failed['total_repeat_failed'], 2)
 
     def test_calc_repeat_failed_two_failures_with_pause_in_between(self):
         repeat_failed = calc_repeat_failed([
@@ -253,7 +290,7 @@ class TestMcsScorecard(unittest.TestCase):
                 return_status='OUT_OF_REACH'
             )
         ])
-        self.assertEqual(repeat_failed, 1)
+        self.assertEqual(repeat_failed['total_repeat_failed'], 1)
 
     def test_calc_repeat_failed_two_failures_different_action(self):
         repeat_failed = calc_repeat_failed([
@@ -268,22 +305,22 @@ class TestMcsScorecard(unittest.TestCase):
                 return_status='OUT_OF_REACH'
             )
         ])
-        self.assertEqual(repeat_failed, 0)
+        self.assertEqual(repeat_failed['total_repeat_failed'], 0)
 
     def test_calc_repeat_failed_two_failures_different_params(self):
         repeat_failed = calc_repeat_failed([
             create_mock_step(
                 action='PickupObject',
-                object_coords={'x': 300, 'y': 200},
+                resolved_object='wall_back',
                 return_status='OUT_OF_REACH'
             ),
             create_mock_step(
                 action='PickupObject',
-                object_coords={'x': 0, 'y': 0},
+                resolved_object='wall_left',
                 return_status='OUT_OF_REACH'
             )
         ])
-        self.assertEqual(repeat_failed, 0)
+        self.assertEqual(repeat_failed['total_repeat_failed'], 0)
 
     def test_calc_repeat_failed_two_failures_different_position(self):
         repeat_failed = calc_repeat_failed([
@@ -300,7 +337,7 @@ class TestMcsScorecard(unittest.TestCase):
                 return_status='OUT_OF_REACH'
             )
         ])
-        self.assertEqual(repeat_failed, 0)
+        self.assertEqual(repeat_failed['total_repeat_failed'], 0)
 
     def test_calc_repeat_failed_two_failures_different_rotation(self):
         repeat_failed = calc_repeat_failed([
@@ -317,7 +354,7 @@ class TestMcsScorecard(unittest.TestCase):
                 rotation=10
             )
         ])
-        self.assertEqual(repeat_failed, 0)
+        self.assertEqual(repeat_failed['total_repeat_failed'], 0)
 
     def test_calc_repeat_failed_two_failures_different_status(self):
         repeat_failed = calc_repeat_failed([
@@ -332,4 +369,43 @@ class TestMcsScorecard(unittest.TestCase):
                 return_status='NOT_OBJECT'
             )
         ])
-        self.assertEqual(repeat_failed, 0)
+        self.assertEqual(repeat_failed['total_repeat_failed'], 0)
+
+    def test_on_ramp(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_RAMP)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_RAMP_UP_DOWN)
+        scorecard = Scorecard(history_file, scene_file)
+
+        # Lower ramp pos (1.5, 1), size (2,1)
+        position = {'x': 1.51, 'z': 1.1}
+        on_ramp_bool, rot, ramp_id = scorecard.on_ramp(position)
+        self.assertTrue(on_ramp_bool)
+        self.assertEqual(ramp_id, "ramp_lower")
+
+        position = {'x': 3.51, 'z': 1.1}
+        on_ramp_bool, rot, ramp_id = scorecard.on_ramp(position)
+        self.assertFalse(on_ramp_bool)
+        self.assertEqual(ramp_id, "")
+
+    def test_platform_side(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SIDE)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SIDE_1)
+        scorecard = Scorecard(history_file, scene_file)
+
+        side = scorecard.calc_correct_platform_side()
+        correct_side = side['correct_side']
+        self.assertTrue(correct_side)
+
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SIDE)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SIDE_2)
+        scorecard = Scorecard(history_file, scene_file)
+
+        side = scorecard.calc_correct_platform_side()
+        correct_side = side['correct_side']
+        self.assertFalse(correct_side)

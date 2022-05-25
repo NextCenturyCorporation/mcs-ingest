@@ -1,0 +1,91 @@
+{
+  "ground_truth": [
+    {
+      "scene_file": "india_0003_17_debug.json",
+      "history_file": "gen_revisit_zero_1.json",
+      "not_moving_toward": 1
+    },
+    {
+      "scene_file": "india_0003_17_debug.json",
+      "history_file": "gen_revisit_one_1.json",
+      "not_moving_toward": 1,
+      "revisits": 1
+    },
+    {
+      "scene_file": "india_0003_17_debug.json",
+      "history_file": "gen_revisit_one_2.json",
+      "not_moving_toward": 1,
+      "revisits": 1
+    },
+    {
+      "scene_file": "india_0003_17_debug.json",
+      "history_file": "gen_revisit_one_3.json",
+      "revisits": 1
+    },
+    {
+      "scene_file": "golf_0018_15_debug.json",
+      "history_file": "gen_unopenable_two.json",
+      "unopenable": 2
+    },
+    {
+      "scene_file": "golf_0018_15_debug.json",
+      "history_file": "gen_relook_zero_1.json",
+      "revisits": 1
+    },
+    {
+      "scene_file": "golf_0018_15_debug.json",
+      "history_file": "gen_relook_one_1.json",
+      "relook": 1
+    },
+    {
+      "scene_file": "india_0003_17_debug.json",
+      "history_file": "gen_not_moving_toward_zero_1.json",
+      "not_moving_toward": 0
+    },
+    {
+      "scene_file": "golf_0018_15_debug.json",
+      "history_file": "gen_repeat_failed_zero.json",
+      "unopenable": 1
+    },
+    {
+      "scene_file": "golf_0018_15_debug.json",
+      "history_file": "gen_repeat_failed_one.json",
+      "repeat_failed": 1
+    },
+    {
+      "scene_file": "ramps_eval_5_ex_1.json",
+      "history_file": "gen_ramps_all_moves.json",
+      "revisits": 2,
+      "not_moving_toward": 4,
+      "ramp_up": 2,
+      "ramp_down": 1,
+      "ramp_up_abandoned": 1,
+      "ramp_down_abandoned": 1,
+      "ramp_fall": 2
+    },
+    {
+      "scene_file": "tool_use_eval_5_ex_1.json",
+      "history_file": "gen_tool_usage.json",
+      "TorqueObject": 5,
+      "PushObject": 2,
+      "PullObject": 3,
+      "RotateObject": 2,
+      "MoveObject": 3,
+      "TorqueObject_failed": 2,
+      "PushObject_failed": 2,
+      "PullObject_failed": 2,
+      "RotateObject_failed": 2,
+      "MoveObject_failed": 2
+    },
+    {
+      "scene_file": "prefix_0001_01_C4_debug.json",
+      "history_file": "gen_platform_side_1.json",
+      "correct_side": true
+    },
+    {
+      "scene_file": "prefix_0001_01_C4_debug.json",
+      "history_file": "gen_platform_side_2.json",
+      "correct_side": false
+    }
+  ]
+}

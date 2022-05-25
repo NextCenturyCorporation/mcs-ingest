@@ -146,18 +146,18 @@ class PathPlotter():
 
     def _create_robot(self, robot_metadata: Dict) -> Robot:
         '''Extract robot position and rotation information from the metadata'''
+        x = 0
+        y = 0
+        z = 0
         position = robot_metadata.get('position', None)
         if position is not None:
             x = position.get('x', None)
             y = position.get('y', None)
             z = position.get('z', None)
-        else:
-            x = 0.0
-            y = 0.0
-            z = 0.0
 
         rotation_y = robot_metadata.get('rotation', None)
-
+        if rotation_y is None:
+            rotation_y = 0.
         return Robot(x, y, z, rotation_y)
 
     def _convert_color(self, color: str) -> str:

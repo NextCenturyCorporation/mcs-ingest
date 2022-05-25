@@ -18,8 +18,34 @@ KEYS_TO_DELETE = [
     'debug'
 ]
 
-SCENE_INDEX = "mcs_scenes"
+SCENE_MAPPING_INDEX = "scenes_mapping"
 SCENE_DEBUG_EXTENSION = "_debug.json"
+
+
+def get_scene_collection(
+        db_string: str,
+        client: MongoClient,
+        eval_name: str) -> str:
+    mongoDB = client[db_string]
+    collection = mongoDB[SCENE_MAPPING_INDEX]
+    mapping = collection.find_one(
+        {
+            "name": eval_name
+        }
+    )
+
+    if mapping is None:
+        eval_number_str = re.sub("[^0-9.]", "", eval_name)
+        if "." in eval_number_str:
+            eval_number = float(eval_number_str)
+        else:
+            eval_number = int(eval_number_str)
+
+        collection_name = "eval_" + (str(eval_number)).replace(".", "_") + "_scenes"
+        collection.insert_one({"name": eval_name, "collection": collection_name})
+        return collection_name
+    else:
+        return mapping["collection"]
 
 
 def automated_scene_ingest_file(
@@ -31,8 +57,9 @@ def automated_scene_ingest_file(
     #    from the AWS Queue, singular scene file
     mongoDB = client[db_string]
 
-    scene_item = build_scene_item(file_name, folder, None)
-    collection = mongoDB[SCENE_INDEX]
+    scene_item = build_scene_item(file_name, folder)
+    collection_name = get_scene_collection(db_string, client, scene_item["eval"])
+    collection = mongoDB[collection_name]
     count = collection.count_documents(
         {
             "name": scene_item["name"],
@@ -50,20 +77,21 @@ def automated_scene_ingest_file(
     if create_collection_keys.check_collection_has_key(
             scene_item["eval"], mongoDB) is None:
         create_collection_keys.find_collection_keys(
-            SCENE_INDEX, scene_item["eval"], mongoDB)
+            collection_name, scene_item["eval"], mongoDB)
 
 
-def build_scene_item(file_name: str, folder: str, eval_name: str) -> dict:
+def build_scene_item(file_name: str, folder: str) -> dict:
     logging.info(f"Ingest scene file: {file_name}")
     scene = load_json_file(folder, file_name)
 
-    if eval_name is None:
-        scene["eval"] = scene["debug"]["evaluation"]
-        eval_name = scene["debug"]["evaluation"]
-    else:
-        scene["eval"] = eval_name
+    scene["eval"] = scene["debug"]["evaluation"]
 
-    scene["evalNumber"] = int(re.sub("[^0-9]", "", scene["eval"]))
+    eval_number_str = re.sub("[^0-9.]", "", scene["eval"])
+    if "." in eval_number_str:
+        scene["evalNumber"] = float(eval_number_str)
+    else:
+        scene["evalNumber"] = int(eval_number_str)
+
     scene["scene_num"] = scene["debug"]["sceneNumber"]
     if "sequenceNumber" in scene["debug"]:
         scene["test_num"] = scene["debug"]["sequenceNumber"]
@@ -101,70 +129,3 @@ def delete_keys_from_scene(scene, keys) -> dict:
         for key, value in scene.items()
         if key not in set(keys)
     }
-
-
-def ingest_scene_files(folder: str, eval_name: str) -> None:
-    # Legacy way of adding scene files from a folder, leaving code
-    #   in case automated ingestion has issues in future, bulk ingest
-    scene_files = find_scene_files(folder)
-    ingest_scenes = []
-
-    for file in scene_files:
-        scene = build_scene_item(file, folder, eval_name)
-        ingest_scenes.append(scene)
-    # We might want to move mongo user/pass to new file
-    client = MongoClient(
-        'mongodb://mongomcs:mongomcspassword@localhost:27017/mcs')
-    mongoDB = client['mcs']
-
-    ingest_to_mongo(SCENE_INDEX, ingest_scenes, client)
-
-    create_collection_keys.find_collection_keys(
-        SCENE_INDEX, eval_name, mongoDB)
-
-
-def find_scene_files(folder: str) -> dict:
-    scene_files = [
-        f for f in os.listdir(
-            folder) if str(f).endswith(SCENE_DEBUG_EXTENSION)]
-    scene_files.sort()
-    return scene_files
-
-
-def ingest_to_mongo(index: str, ingest_files: dict, client: MongoClient):
-    mongoDB = client['mcs']
-    collection = mongoDB[index]
-    result = collection.insert_many(ingest_files)
-    logging.info(f"Inserted {len(result.inserted_ids)} out of " +
-                 f"{len(ingest_files)}. Result: {result}")
-
-
-def main() -> None:
-    parser = argparse.ArgumentParser(
-        description='Ingest MCS Scene JSON files into database')
-    parser.add_argument(
-        '--folder',
-        required=True,
-        help='Folder location of files to important')
-    parser.add_argument(
-        '--eval_name',
-        required=True,
-        help='Name for this eval')
-    parser.add_argument(
-        '--performer',
-        required=False,
-        help='Associate this ingest with a performer')
-    parser.add_argument(
-        '--scene_folder',
-        required=False,
-        help='Path to folder to link scene history with scene')
-
-    args = parser.parse_args()
-    ingest_scene_files(args.folder, args.eval_name)
-
-
-if __name__ == '__main__':
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    main()

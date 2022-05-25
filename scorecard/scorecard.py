@@ -4,6 +4,7 @@
 #
 import logging
 import math
+from collections import defaultdict
 from operator import itemgetter
 from typing import Dict, List
 
@@ -13,6 +14,10 @@ import pandas
 from shapely.geometry import Point, LineString
 
 # Grid Dimension determines how big our grid is for revisiting
+from machine_common_sense.action import MOVE_ACTIONS, Action
+
+from scorecard.scorecard_location_utils import is_on_ramp, up_ramp_or_down
+
 GRID_DIMENSION = 0.5
 
 # Direction limit:  Degrees difference that we allow before we count actors
@@ -20,8 +25,10 @@ GRID_DIMENSION = 0.5
 DIRECTION_LIMIT = 11
 
 # Minimum timesteps between looking in a container and looking again before
-# we count again
-STEPS_BETWEEN_RELOOKS = 10
+# we count again.  We start counting when AI opens the container, but it
+# could be unable to see into the container (on back side), so give it time to
+# go around the front
+STEPS_BETWEEN_RELOOKS = 15
 
 # Min distance between 'look' locations such that we count them as looking
 # in the same container
@@ -44,21 +51,54 @@ STEPS_NOT_MOVED_TOWARD_LIMIT = 30
 
 PATH_KEY='path'
 ALTERNATE_PATH_KEY='slowPath'
+# Amount of distance down that we will use as a limit of a fall.
+# If the AI drops that much between moves, then it counts as a fall.
+# Ramps have max angle of 45 degrees, so make this bigger than
+# the vertical distance going down step on a ramp.
+FALL_DISTANCE = -0.3
+STEP_CHECK_FALL_OFF = 5
+
+# Minimum amount of vertical change of a ramp.  We need this because
+# (for some reason) Unity sometimes changes the vertical (y) value
+# even going on level ground, so cannot count y_2 > y_1 as having
+# gone up a ramp.
+RAMP_MIN_HEIGHT_CHANGE = 0.1
+
+# When we are this close to the ramp base, count it as on the base.
+DIST_LIMIT_FROM_BASE = 0.1
 
 DEFAULT_ROOM_DIMENSIONS = {'x': 10, 'y': 3, 'z': 10}
 
 
-def calc_repeat_failed(steps_list: list) -> int:
+def get_relevant_object(output) -> str:
+    """See if there is an object for the current action output"""
+    resolved_obj = output.get('resolved_object')
+    if resolved_obj is not None and len(resolved_obj) > 0:
+        return resolved_obj
+
+    resolved_recept = output.get('resolved_receptacle')
+    if resolved_recept is not None and len(resolved_recept) > 0:
+        return resolved_recept
+
+    object_id = output.get('objectId')
+    if object_id is not None and len(object_id) > 0:
+        return object_id
+
+    return ""
+
+
+def calc_repeat_failed(steps_list: list) -> dict:
     """Calculate repeated failures, so keep track of first
     time a failure occurs, then increment after that.  """
 
     previously_failed = []
     repeat_failed = 0
+    failed_objects = defaultdict(int)
 
     for step_num, single_step in enumerate(steps_list):
         action = single_step['action']
-        params = single_step['params']
-        return_status = single_step['output']['return_status']
+        output = single_step['output']
+        return_status = output['return_status']
         logging.debug(f"{step_num}  {action}  {return_status}")
 
         if return_status == 'SUCCESSFUL':
@@ -73,16 +113,13 @@ def calc_repeat_failed(steps_list: list) -> int:
             continue
 
         # Round floats so we have more accurate key string comparisons.
-        position = single_step['output']['position']
-        # TODO MCS-978 Rather than using the image coords, use the ID for the
-        #      object that Unity has detected at the image coords, once Unity
-        #      returns that info and we save it in the scene history files.
-        object_coords = params.get('objectImageCoords', {})
-        receptacle_coords = params.get('receptacleObjectImageCoords', {})
-        for variable in [position, object_coords, receptacle_coords]:
-            for axis in ['x', 'y', 'z']:
-                if axis in variable:
-                    variable[axis] = round(variable[axis], 2)
+        position = output['position']
+        for axis in ['x', 'y', 'z']:
+            if axis in position:
+                position[axis] = round(position[axis], 2)
+
+        # Get the id of the object that was used, if any
+        obj_id = get_relevant_object(output)
 
         # Create a unique string identifier for the action and status. This
         # includes the performer's position and rotation (because, if the
@@ -95,22 +132,23 @@ def calc_repeat_failed(steps_list: list) -> int:
             return_status,
             str(position),
             str(single_step['output']['rotation']),
-            str(params.get('objectId')),
-            str(object_coords),
-            str(params.get('receptacleObjectId')),
-            str(receptacle_coords)
+            str(obj_id)
         ])
 
         # If already failed, then count; otherwise keep track that
         # it failed a first time.
         if key in previously_failed:
             repeat_failed += 1
+            failed_objects[str(obj_id)] += 1
             logging.debug(f"Repeated failure {key} : {repeat_failed}")
         else:
             previously_failed.append(key)
             logging.debug(f"First failure: {key} : {repeat_failed}")
 
-    return repeat_failed
+    failed_dict = {}
+    failed_dict['total_repeat_failed'] = repeat_failed
+    failed_dict.update(failed_objects)
+    return failed_dict
 
 
 def minAngDist(a, b):
@@ -170,20 +208,18 @@ def find_closest_container(x, z, scene):
     return locs[dists.index(min(dists))] if dists else []
 
 
-def find_target_location(scene):
-    '''Get the x,z of the target, if any.  If it exists, return
-    True and the location;  otherwise, return False'''
+def find_target_loc_by_step(scene, step):
+    '''Get the x,z of the target in the step information, if any.
+    If it exists, return True and the location;  otherwise,
+    return False'''
     try:
-        target_id = scene["goal"]["metadata"]["target"]["id"]
-        for possible_target in scene["objects"]:
-            test_id = possible_target["id"]
-            if test_id == target_id:
-                pos = possible_target['shows'][0]['position']
-                x, y, z = itemgetter('x', 'y', 'z')(pos)
-                return target_id, x, z
-        logging.warning(f"Target is supposed to be {target_id} but not found!")
+        target_info = step["output"]["goal"]["metadata"]["target"]
+        target_id = target_info["id"]
+        target_pos = target_info["position"]
+        x, y, z = itemgetter('x', 'y', 'z')(target_pos)
+        return target_id, x, z
     except Exception:
-        logging.debug(f"No target in scene {scene['name']}")
+        logging.warning(f"No target by step data for scene {scene['name']}")
 
     return None, 0, 0
 
@@ -247,24 +283,33 @@ class Scorecard:
         self.relooks = 0
         self.not_moving_toward_object = 0
         self.is_fastest_path = None
+        self.tool_usage = 0
+        self.correct_platform_side = 0
 
     def score_all(self) -> dict:
         self.calc_repeat_failed()
-        self.calc_attempt_impossible()
         self.calc_open_unopenable()
         self.calc_relook()
         self.calc_revisiting()
         self.calc_not_moving_toward_object()
         self.calc_fastest_path()
+        self.calc_ramp_actions()
+        self.calc_tool_usage()
+        self.correct_platform_side = self.calc_correct_platform_side()
+
+        # To be implemented
+        # self.calc_attempt_impossible()
 
         return {
             'repeat_failed': self.repeat_failed,
             'attempt_impossible': self.attempt_impossible,
             'open_unopenable': self.open_unopenable,
-            'multiple_container_look': self.relooks,
+            'container_relook': self.relooks,
             'not_moving_toward_object': self.not_moving_toward_object,
             'revisits': self.revisits,
             'fastest_path': self.is_fastest_path,
+            'ramp_actions': self.ramp_actions,
+            'tool_usage': self.tool_usage
         }
 
     def get_revisits(self):
@@ -281,6 +326,9 @@ class Scorecard:
 
     def get_repeat_failed(self):
         return self.repeat_failed
+
+    def get_tool_usage(self):
+        return self.tool_usage
 
     def calc_revisiting(self):
 
@@ -352,9 +400,8 @@ class Scorecard:
         self.revisits = int(self.grid_counts.sum())
 
         # Debug printing
-        # logging.debug_grid()
+        # logging.print_grid()
         logging.debug(f"Total number of revisits: {self.revisits}")
-
         return self.revisits
 
     def get_grid_by_location(self, x, z):
@@ -383,22 +430,35 @@ class Scorecard:
     def calc_open_unopenable(self):
         ''' Determine the number of times that the agent tried to
         open an unopenable object.  '''
+        logging.debug('Starting calculating unopenable')
         steps_list = self.history['steps']
 
-        self.open_unopenable = 0
+        unopenable = 0
+        failed_objects = defaultdict(int)
 
         for single_step in steps_list:
+            step = single_step['step']
             action = single_step['action']
-            if action == 'MCSOpenObject':
-                return_status = single_step['output']['return_status']
+            output = single_step['output']
+            if action == 'OpenObject':
+                return_status = output['return_status']
                 if return_status in ["SUCCESSFUL",
                                      "IS_OPENED_COMPLETELY",
                                      'OUT_OF_REACH']:
-                    logging.debug("Successful opening of container")
+                    logging.debug(
+                        f"Successful opening of container. Step {step}")
                 else:
-                    logging.debug("Unsuccessful opening of container")
-                    self.open_unopenable += 1
+                    obj_id = get_relevant_object(output)
+                    if obj_id != "":
+                        failed_objects[obj_id] += 1
+                    logging.debug("Unsuccessful opening of object {obj_id} " +
+                                  f"Step {step} Status: {return_status}")
+                    unopenable += 1
 
+        self.open_unopenable = {}
+        self.open_unopenable['total_unopenable_attempts'] = unopenable
+        self.open_unopenable.update(failed_objects)
+        logging.debug('Ending calculating unopenable')
         return self.open_unopenable
 
     def calc_relook(self):
@@ -430,7 +490,7 @@ class Scorecard:
             return_status = single_step['output']['return_status']
             x, z = calc_viewpoint(single_step)
 
-            if action == 'MCSOpenObject':
+            if action == 'OpenObject':
                 logging.debug("tried to open container")
                 container = find_closest_container(x, z, self.scene)
 
@@ -480,11 +540,6 @@ class Scorecard:
 
         self.not_moving_toward_object = 0
 
-        target_id, target_x, target_z = find_target_location(self.scene)
-        logging.debug(f"Target location:  {target_x}  {target_z}")
-        if target_id is None:
-            return self.not_moving_toward_object
-
         seen_count = -1
         steps_not_moving_towards = 0
         min_dist = float('inf')
@@ -497,6 +552,13 @@ class Scorecard:
             if action not in ['MoveAhead', 'MoveBack',
                               'MoveLeft', 'MoveRight']:
                 continue
+
+            target_id, target_x, target_z = \
+                find_target_loc_by_step(self.scene, single_step)
+            logging.debug("Target location at step " +
+                          f"{step_num}:  {target_x}  {target_z}")
+            if target_id is None:
+                return self.not_moving_toward_object
 
             visible = single_step.get('target_visible')
             pos = single_step['output']['position']
@@ -554,6 +616,191 @@ class Scorecard:
 
         return self.not_moving_toward_object
 
+    def calc_ramp_actions(self):
+        '''Calculate the number of times that the AI went
+        up ramps, failed to go up/down a ramp (went other way),
+        and fell off.'''
+        logging.debug('Starting calculating ramp actions')
+        steps_list = self.history['steps']
+
+        old_position = steps_list[0]['output']['position']
+        was_on_ramp = False
+        headed_up = False
+        orig_y = 0.0
+        ramp_actions = {'went_up': 0,
+                        'went_down': 0,
+                        'went_up_abandoned': 0,
+                        'went_down_abandoned': 0,
+                        'ramp_fell_off': 0}
+        last_ramp_action_step = 0
+        last_ramp_action_position = old_position
+        last_ramp_action = None
+
+        for single_step in steps_list:
+            step = single_step['step']
+            action = Action(single_step['action'])
+            output = single_step['output']
+            return_status = output['return_status']
+            logging.debug(f"On step: {step}")
+
+            # Can only go up/down a ramp when actually moving
+            if action not in MOVE_ACTIONS:
+                logging.debug(f"Not a move {action}")
+                continue
+
+            if return_status != "SUCCESSFUL":
+                logging.debug(f"Not successful {return_status}")
+                continue
+
+            position = output['position']
+            now_on_ramp, ramp_rot, ramp_name = self.on_ramp(position)
+            logging.debug(f"Whether on ramp:   {now_on_ramp} {ramp_name}")
+
+            # Special case:  We previously thought that we had reached the top
+            # or bottom, but we really went over the side and just didn't
+            # realize it at the time.  This can occur when the AI goes
+            # up the ramp, then goes mostly over the side, but the size
+            # of the AI base is such that it didn't drop.
+            if last_ramp_action is not None and \
+                    (not now_on_ramp) and \
+                    (step - last_ramp_action_step) < STEP_CHECK_FALL_OFF:
+                if self.fell_off_ramp(last_ramp_action_position, position):
+                    ramp_actions[last_ramp_action] -= 1
+                    ramp_actions['ramp_fell_off'] += 1
+                    last_ramp_action_step = 0
+                    continue
+
+            # Case 1:  Unchanged (either on ramp or off ramp)
+            if was_on_ramp == now_on_ramp:
+                logging.debug("No ramp change")
+                old_position = position
+                continue
+
+            # Case 2:  started a ramp.
+            if now_on_ramp and not was_on_ramp:
+                orig_y = old_position['y']
+                was_on_ramp = now_on_ramp
+                headed_up = up_ramp_or_down(
+                    old_position['x'],
+                    old_position['z'],
+                    position['x'],
+                    position['z'],
+                    ramp_rot)
+                old_position = position
+                logging.debug(f"Starting ramp {step} Up:" +
+                              f"{headed_up}. Y orig {orig_y}")
+                continue
+
+            # Case 3: Exited a ramp!
+            # This is the interesting one.  Figure out if
+            # we went up, went down, or fell off
+            logging.debug("Now off ramp!")
+            was_on_ramp = False
+
+            height_change = position['y'] - orig_y
+
+            # See if we successfully completed a ramp going up
+            if headed_up and height_change > RAMP_MIN_HEIGHT_CHANGE:
+                ramp_actions['went_up'] += 1
+                logging.debug("were headed up, now off ramp on top " +
+                              f"{step} {ramp_actions['went_up']}")
+                old_position = position
+                last_ramp_action = 'went_up'
+                last_ramp_action_step = step
+                last_ramp_action_position = position
+                continue
+
+            # If we were going up but didn't end up higher, then we
+            # either turned around or fell off
+            if headed_up:
+                ramp_actions['went_up_abandoned'] += 1
+                logging.debug(f"were headed up, abandoned {step}" +
+                              f"{ramp_actions['went_up_abandoned']}")
+                old_position = position
+                continue
+
+            # At this point we know we were going down.  Handle these cases.
+
+            # See if the drop was a lot, meaning fell off
+            if self.fell_off_ramp(old_position, position):
+                ramp_actions['fell_off_going_down'] += 1
+                logging.debug(f"fell off going down {step} " +
+                              f"{ramp_actions['ramp_fell_off']}")
+                old_position = position
+                continue
+
+            # If didn't fall off, but overall height change was a lot,
+            # then success
+            if height_change < -RAMP_MIN_HEIGHT_CHANGE:
+                ramp_actions['went_down'] += 1
+                logging.debug("were headed down, now off ramp on bottom " +
+                              f"{step} {ramp_actions['went_down']}")
+                old_position = position
+                last_ramp_action = 'went_down'
+                last_ramp_action_step = step
+                last_ramp_action_position = position
+                continue
+
+            # Last case is they went down, but turned around
+            ramp_actions['went_down_abandoned'] += 1
+            logging.debug("were headed down, but went back up " +
+                          f"{step} {ramp_actions['went_down_abandoned']}")
+            old_position = position
+            continue
+
+        self.ramp_actions = {}
+        self.ramp_actions.update(ramp_actions)
+        logging.debug('Ending calculating ramp actions')
+        return self.ramp_actions
+
+    def on_ramp(self, position) -> (bool, float, str):
+        '''Determine if a position is in a ramp.  Return
+        a boolean and, if True, ramp rotation and the ID'''
+
+        for obj in self.scene['objects']:
+            if obj['type'] != 'triangle':
+                continue
+
+            x = position['x']
+            z = position['z']
+            if 'shows' in obj and len(obj['shows']) > 0:
+                sh = obj['shows'][0]
+                pos = sh['position']
+                size = sh['scale']
+                rot = sh['rotation']['y']
+                on_obj = is_on_ramp(
+                    x, z,
+                    pos['x'], pos['z'],
+                    size['x'], size['z'],
+                    rot)
+                if on_obj:
+                    return True, rot, obj['id']
+        return False, 0, ""
+
+    def fell_off_ramp(self,
+                      old_position,
+                      new_position) -> bool:
+        # If they dropped a lot, then must have fallen.  This
+        # logic might not hold if, in the future, some other
+        # action causes them to go down.
+        amount_down = new_position['y'] - old_position['y']
+        if amount_down < FALL_DISTANCE:
+            return True
+
+        # If the above logic does not hold (i.e. other things
+        # can cause substantial vertical changes, we might need
+        # to calculate whether went over the side of a ramp and
+        # dropped.  We can use geometry to see if the movement
+        # old->new position intersects with the side of the ramp.
+        # However, the logic could be complicated because:
+        #   a. AI agent is affected by the ramp when the position is
+        #      not technically over the ramp any more
+        #   b. the AI agent might not be going straight down the ramp
+        #      so might go over the bottom corner of the ramp and
+        #      we probably don't want to count that as a 'fall'.
+
+        return False
+
     def calc_repeat_failed(self):
         """Calculate repeated failures, so keep track of first
         time a failure occurs, then increment after that.  """
@@ -561,6 +808,60 @@ class Scorecard:
         steps_list = self.history['steps']
         self.repeat_failed = calc_repeat_failed(steps_list)
         return self.repeat_failed
+
+    def calc_tool_usage(self):
+        """Calculate the torques, push, pulls, moves."""
+        steps_list = self.history['steps']
+
+        tool_usage = defaultdict(int)
+
+        for single_step in steps_list:
+            action = single_step['action']
+            output = single_step['output']
+            return_status = output['return_status']
+
+            if action in ['MoveObject', 'PushObject',
+                          'PullObject', 'RotateObject',
+                          'TorqueObject']:
+                resolved_obj = get_relevant_object(output)
+                if resolved_obj == 'tool' and return_status == 'SUCCESSFUL':
+                    tool_usage[action] += 1
+                else:
+                    tool_usage[action + '_failed'] += 1
+
+        self.tool_usage = tool_usage
+        return self.tool_usage
+
+    def calc_correct_platform_side(self):
+        '''Determine if the ai agent went on the correct
+        side of the platform.'''
+
+        # Does this scene have a targetSide? If not, return empty dict.
+        goal = self.scene.get('goal')
+        if 'sceneInfo' in goal and 'targetSide' in goal['sceneInfo']:
+            target_side = goal['sceneInfo']['targetSide']
+        else:
+            return {}
+
+        self.correct_platform_side = defaultdict(bool)
+        steps_list = self.history['steps']
+        output = steps_list[0]['output']
+        old_y = output['position']['y']
+        for single_step in steps_list:
+            output = single_step['output']
+            new_y = output['position']['y']
+            if new_y < (old_y - 0.5):
+                x = output['position']['x']
+                if x < 0 and target_side == 'left':
+                    self.correct_platform_side['correct_side'] = True
+                else:
+                    self.correct_platform_side['correct_side'] = False
+                if x > 0 and target_side == 'right':
+                    self.correct_platform_side['correct_side'] = True
+                else:
+                    self.correct_platform_side['correct_side'] = False
+            old_y = new_y
+        return self.correct_platform_side
 
     def calc_attempt_impossible(self):
         pass

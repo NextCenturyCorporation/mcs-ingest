@@ -14,8 +14,8 @@ import create_collection_keys
 from scorecard import Scorecard
 
 
-HISTORY_INDEX = "mcs_history"
-SCENE_INDEX = "mcs_scenes"
+HISTORY_MAPPING_INDEX = "history_mapping"
+SCENE_MAPPING_INDEX = "scenes_mapping"
 SCENE_DEBUG_EXTENSION = "_debug.json"
 
 # Convert names used in config to 'pretty' names for UI
@@ -69,6 +69,47 @@ REORIENTATION_CORNERS = {
 }
 
 
+def get_history_collection(
+        db_string: str,
+        client: MongoClient,
+        eval_name: str) -> str:
+    mongoDB = client[db_string]
+    collection = mongoDB[HISTORY_MAPPING_INDEX]
+    mapping = collection.find_one(
+        {
+            "name": eval_name
+        }
+    )
+
+    if mapping is None:
+        eval_number_str = re.sub("[^0-9.]", "", eval_name)
+        if "." in eval_number_str:
+            eval_number = float(eval_number_str)
+        else:
+            eval_number = int(eval_number_str)
+
+        collection_name = "eval_" + (str(eval_number)).replace(".", "_") + "_results"
+        collection.insert_one({"name": eval_name, "collection": collection_name})
+        return collection_name
+    else:
+        return mapping["collection"]
+
+
+def get_scene_collection(
+        db_string: str,
+        client: MongoClient,
+        eval_name: str) -> str:
+    mongoDB = client[db_string]
+    collection = mongoDB[SCENE_MAPPING_INDEX]
+    mapping = collection.find_one(
+        {
+            "name": eval_name
+        }
+    )
+
+    return mapping["collection"]
+
+
 def load_json_file(folder: str, file_name: str) -> dict:
     """Read in a json file and decode into a dict.  Can
     be used for history, scene, or other json files."""
@@ -81,17 +122,12 @@ def load_json_file(folder: str, file_name: str) -> dict:
 
 
 def determine_evaluation_hist_name(
-        eval_name: str, history_eval_name: str) -> str:
-    eval_str = ""
-    if eval_name is None:
-        return (
-            EVAL_HIST_MAPPING_DICT[history_eval_name]
-            if history_eval_name in EVAL_HIST_MAPPING_DICT
-            else history_eval_name
-        )
-
-    else:
-        return eval_name
+        history_eval_name: str) -> str:
+    return (
+        EVAL_HIST_MAPPING_DICT[history_eval_name]
+        if history_eval_name in EVAL_HIST_MAPPING_DICT
+        else history_eval_name
+    )
 
 
 def return_agency_paired_history_item(
@@ -99,7 +135,8 @@ def return_agency_paired_history_item(
         db_string: str,
         history_item: dict) -> dict:
     mongoDB = client[db_string]
-    collection = mongoDB[HISTORY_INDEX]
+    collection_name = get_history_collection(db_string, client, history_item["eval"])
+    collection = mongoDB[collection_name]
     return collection.find_one({
         "eval": history_item["eval"],
         "category_type": history_item["category_type"],
@@ -115,7 +152,8 @@ def update_agency_paired_history_item(
         db_string: str,
         history_item: dict) -> None:
     mongoDB = client[db_string]
-    collection = mongoDB[HISTORY_INDEX]
+    collection_name = get_history_collection(db_string, client, history_item["eval"])
+    collection = mongoDB[collection_name]
     logging.info(f"Updating Agency Pair {history_item['name']}")
     collection.replace_one({"_id": history_item["_id"]}, history_item)
 
@@ -223,21 +261,9 @@ def determine_team_mapping_name(info_team: str) -> str:
         return info_team.upper()
 
 
-def ingest_to_mongo(index: str, ingest_files: dict, client: MongoClient):
-    mongoDB = client['mcs']
-    collection = mongoDB[index]
-    result = collection.insert_many(ingest_files)
-    logging.info(f"Inserted {len(result.inserted_ids)} out of " +
-                 f"{len(ingest_files)}. Result: {result}")
-
-
 def build_history_item(
     history_file: str,
     folder: str,
-    eval_name: str,
-    performer: str,
-    scene_folder: str,
-    extension: str,
     client: MongoClient,
     db_string: str
 ) -> dict:
@@ -249,7 +275,7 @@ def build_history_item(
 
     history_item = {
         'eval': determine_evaluation_hist_name(
-            eval_name, history["info"]["evaluation_name"]
+            history["info"]["evaluation_name"]
         )
     }
 
@@ -262,18 +288,14 @@ def build_history_item(
     history_item["fileTimestamp"] = history["info"]["timestamp"]
     history_item["score"] = history["score"]
 
-    # Load Scene from Database or File
-    scene = None
-    if scene_folder is None:
-        collection = mongoDB[SCENE_INDEX]
-        scene_rec_name = determine_evaluation_scene_name(
-            history["info"]["evaluation_name"]
-        )
-        scene = collection.find_one(
-            {"name": history_item["name"], "eval": scene_rec_name})
-    else:
-        scene = load_json_file(
-            scene_folder, history_item["name"] + SCENE_DEBUG_EXTENSION)
+    # Load Scene from Database
+    scene_rec_name = determine_evaluation_scene_name(
+        history["info"]["evaluation_name"]
+    )
+    collection_name = get_scene_collection(db_string, client, scene_rec_name)
+    collection = mongoDB[collection_name]
+    scene = collection.find_one(
+        {"name": history_item["name"], "eval": scene_rec_name})
 
     # This variable will override any rewards for a reorientation task
     #    should the agent visit a corner it should not be at
@@ -320,12 +342,8 @@ def build_history_item(
     if scene:
         # Add some basic scene information into history object to make
         #    UI load times faster then having to query scene every time
-        if scene_folder is None:
-            history_item["scene_num"] = scene["scene_num"]
-            history_item["test_num"] = scene["test_num"]
-        else:
-            history_item["scene_num"] = scene["debug"]["sceneNumber"]
-            history_item["test_num"] = scene["debug"]["hypercubeNumber"]
+        history_item["scene_num"] = scene["scene_num"]
+        history_item["test_num"] = scene["test_num"]
 
         history_item["scene_goal_id"] = scene["goal"]["sceneInfo"]["id"][0]
         history_item["test_type"] = scene["goal"]["sceneInfo"]["secondaryType"]
@@ -349,13 +367,6 @@ def build_history_item(
             calc_scorecard(history, scene)
             if history_item['category'] == 'interactive' else None
         )
-
-        # Add Keys when a list of keys doesn't exist
-        if create_collection_keys.check_collection_has_key(
-                scene["eval"], mongoDB) is None:
-            print("Add Scene Keys")
-            create_collection_keys.find_collection_keys(
-                SCENE_INDEX, scene["eval"], mongoDB)
 
         return history_item
 
@@ -456,6 +467,16 @@ def build_new_step_obj(
         interactive_reward = output["reward"]
         if interactive_reward >= 0 - ((number_steps - 1) * 0.001) + 1:
             interactive_goal_achieved = 1
+
+        if "target_visible" in step:
+            new_step["target_visible"] = step["target_visible"]
+
+        target_keys = ['target', 'target_1', 'target_2']
+
+        for target in target_keys:
+            if target in step["output"]["goal"]["metadata"]:
+                output[target] = step["output"]["goal"]["metadata"][target]
+
     new_step["output"] = output
 
     return (
@@ -492,8 +513,10 @@ def automated_history_ingest_file(
     mongoDB = client[db_string]
 
     history_item = build_history_item(
-        history_file, folder, None, None, None, "json", client, db_string)
-    collection = mongoDB[HISTORY_INDEX]
+        history_file, folder, client, db_string)
+    collection_name = get_history_collection(db_string, client, history_item["eval"])
+
+    collection = mongoDB[collection_name]
     check_exists = collection.find(
         {
             "name": history_item["name"],
@@ -503,11 +526,13 @@ def automated_history_ingest_file(
         }
     )
 
-    if check_exists.count() == 0:
+    matched_files = list(check_exists)
+
+    if len(matched_files) == 0:
         logging.info(f"Inserting {history_item['name']}")
         collection.insert_one(history_item)
     else:
-        for item in check_exists:
+        for item in matched_files:
             if history_item["fileTimestamp"] > item["fileTimestamp"]:
                 logging.info(f"Updating {history_item['name']}")
                 collection.replace_one({"_id": item["_id"]}, history_item)
@@ -516,58 +541,7 @@ def automated_history_ingest_file(
     if create_collection_keys.check_collection_has_key(
             history_item["eval"], mongoDB) is None:
         create_collection_keys.find_collection_keys(
-            HISTORY_INDEX, history_item["eval"], mongoDB)
-
-
-def find_history_files(folder: str, extension: str) -> dict:
-    history_files = [
-        f for f in os.listdir(
-            folder) if str(f).endswith("." + extension)]
-    history_files.sort()
-    return history_files
-
-
-def ingest_history_files(
-        folder: str,
-        eval_name: str,
-        performer: str,
-        scene_folder: str,
-        extension: str) -> None:
-    client = MongoClient(
-        'mongodb://mongomcs:mongomcspassword@localhost:27017/mcs')
-    mongoDB = client['mcs']
-
-    history_files = find_history_files(folder, extension)
-    ingest_history = []
-
-    for file in history_files:
-        history_item = build_history_item(
-            file,
-            folder,
-            eval_name,
-            performer,
-            scene_folder,
-            extension,
-            client,
-            'mcs')
-
-        replacementIndex = -1
-        for index, item in enumerate(ingest_history):
-            if (
-                item["fullFilename"] == history_item["fullFilename"]
-                and history_item["fileTimestamp"] > item["fileTimestamp"]
-            ):
-                replacementIndex = index
-
-        if replacementIndex == -1:
-            ingest_history.append(history_item)
-        else:
-            ingest_history[replacementIndex] = history_item
-
-    ingest_to_mongo(HISTORY_INDEX, ingest_history, client)
-
-    create_collection_keys.find_collection_keys(
-        HISTORY_INDEX, eval_name, mongoDB)
+            collection_name, history_item["eval"], mongoDB)
 
 
 def calc_scorecard(history_item: dict, scene: dict) -> dict:
@@ -697,44 +671,3 @@ def reorientation_calculate_corners(scene: dict) -> List[dict]:
     return (incorrect_corners, correct_corners)
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(
-        description='Ingest MCS History JSON files into Elasticsearch')
-    parser.add_argument(
-        '--folder',
-        required=True,
-        help='Folder location of files to important')
-    parser.add_argument(
-        '--eval_name',
-        required=True,
-        help='Name for this eval')
-    parser.add_argument(
-        '--performer',
-        required=False,
-        help='Associate this ingest with a performer')
-    parser.add_argument(
-        '--scene_folder',
-        required=False,
-        help='Path to folder to link scene history with scene')
-    parser.add_argument(
-        '--extension',
-        required=False,
-        default="json",
-        help='History file extension for legacy ingest')
-
-    args = parser.parse_args()
-
-    ingest_history_files(
-        args.folder,
-        args.eval_name,
-        args.performer,
-        args.scene_folder,
-        args.extension
-    )
-
-
-if __name__ == '__main__':
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    main()

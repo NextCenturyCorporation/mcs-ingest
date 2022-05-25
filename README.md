@@ -26,37 +26,30 @@ python -m pip install --upgrade pip setuptools wheel
 python -m pip install -r requirements.txt
 ```
 
-### Without virtual environment
-
-```bash
-python -m pip install -r requirements.txt
-```
-
 ## Create Files
 
 * See scene generator to create scene files
 * In MCS project, use scripts/run_human_input.py or scripts/run_scene_with_command_file.py to create history files
   * history files are normally located in SCENE_HISTORY
 
-## Ingest Sample Commands
+## Ingest Sample Commands (for testing locally)
 
 ### Ingest scene file
 ```
-python mcs_scene_ingest.py --folder ../genScenes/  --eval_name eval-test
+python local_scene_ingest.py --folder ../genScenes/
 ```
 
 ### Ingest history file (requires scenes already ingested)
 
 ```
-python mcs_history_ingest.py --folder ../MCS/SCENE_HISTORY/  --eval_name eval-test --performer "baseline"
+python local_history_ingest.py --folder ../MCS/SCENE_HISTORY/
 ```
 
 ## Recommendations When Testing
 
 * When creating scenes, ingest the debug files (move them to their own directory)
-* When testing, use an eval name that is unique, doesn't look like a real eval, and is easy to notice.
-* Make sure you use same eval name for scenes and history when ingesting
-* Verify info.team is set in history json (normally set in config when running eval)
+* Verify info.evaluation_name and info.team is set in history json (normally set in config when running eval)
+* When testing, use an evaluation name that follows the current naming convention so that everything is mapped correctly (i.e. "Evaluation 4 Scenes" in the scene file, "eval_4" in the history file).
 * Create files with a metadata level of oracle unless you have a reason to do otherwise
 
 ## Unit Tests

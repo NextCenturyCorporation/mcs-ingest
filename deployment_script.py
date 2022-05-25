@@ -1,12 +1,12 @@
 from pymongo import MongoClient
-from scripts._0_4_7_3_more_no_inaccessible_goals import update_score_worth
+from scripts._0_5_2_performance_indexes import create_new_performance_indexes
 
 # We might want to move mongo user/pass to new file
 VERSION_COLLECTION = "mcs_version"
 
 # Change this version if running a new deploy script
 # Make sure the first two numbers match the current MCS API Release
-db_version = "0.4.7.3"
+db_version = "0.5.2"
 
 
 def check_version(mongoDB):
@@ -30,7 +30,7 @@ def main():
     if(check_version(mongoDB)):
         print("New db version, execute scripts")
         # Place scripts here to run
-        update_score_worth(mongoDB)
+        create_new_performance_indexes(mongoDB)
 
         # Now update db version
         update_db_version(mongoDB)
@@ -43,7 +43,7 @@ def main():
     if(check_version(mongoDB)):
         print("New db version, execute scripts")
         # Place scripts here to run
-        update_score_worth(mongoDB)
+        create_new_performance_indexes(mongoDB)
 
         # Now update db version
         update_db_version(mongoDB)

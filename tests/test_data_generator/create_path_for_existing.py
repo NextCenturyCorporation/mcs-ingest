@@ -8,7 +8,7 @@ import json
 import logging
 import os
 
-from test_data_generator.path_plotter import PathPlotter
+from tests.test_data_generator.path_plotter import PathPlotter
 
 
 DEFAULT_ROOM_DIMENSIONS = {'x': 10, 'y': 3, 'z': 10}
