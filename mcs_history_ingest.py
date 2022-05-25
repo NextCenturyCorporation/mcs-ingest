@@ -338,6 +338,13 @@ def build_history_item(
     history_item["steps"] = steps
     history_item["step_counter"] = number_steps
     history_item["corner_visit_order"] = corner_visit_order
+    # To get target_is_visible_at_start we need to get it off of step[1],
+    #   so there needs to be at least two items in the step array
+    if len(history_item["steps"]) > 2:
+        if "target_is_visible_at_start" in history_item["steps"][1]:
+            history_item["target_is_visible_at_start"] = (
+                history_item["steps"][1]["target_is_visible_at_start"]
+            )
 
     if scene:
         # Add some basic scene information into history object to make
@@ -437,6 +444,9 @@ def build_new_step_obj(
     # TODO: Added if check because key error in 3.75 and earlier
     if "delta_time_millis" in step:
         new_step["delta_time_millis"] = step["delta_time_millis"]
+    
+    if "target_is_visible_at_start" in step:
+        new_step["target_is_visible_at_start"] = step["target_is_visible_at_start"]
 
     # If too many items in violations_xy_list, take the first 50
     if (step["violations_xy_list"] and isinstance(

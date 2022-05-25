@@ -8,6 +8,81 @@
   },
   "steps": [
     {
+      "step": 0,
+      "action": "Initialize",
+      "args": {},
+      "params": null,
+      "classification": null,
+      "confidence": null,
+      "violations_xy_list": null,
+      "internal_state": null,
+      "output": {
+        "action_list": null,
+        "camera_aspect_ratio": [
+          600,
+          400
+        ],
+        "camera_clipping_planes": [
+          0.009999999776482582,
+          15.0
+        ],
+        "camera_field_of_view": 42.5,
+        "camera_height": 0.7620000243186951,
+        "goal": {
+          "action_list": null,
+          "category": "retrieval",
+          "description": "Find and pick up the tiny light black white rubber ball.",
+          "last_preview_phase_step": 0,
+          "last_step": 2500,
+          "metadata": {
+            "target": {
+              "id": "99e8e36c-1025-46b6-97b3-a9a147e639dd",
+              "info": [
+                "tiny",
+                "light",
+                "black",
+                "white",
+                "rubber",
+                "ball",
+                "black white",
+                "tiny light",
+                "tiny rubber",
+                "tiny black white",
+                "tiny ball",
+                "light rubber",
+                "light black white",
+                "light ball",
+                "rubber black white",
+                "rubber ball",
+                "black white ball",
+                "tiny light black white rubber ball",
+                "target"
+              ]
+            },
+            "category": "retrieval"
+          }
+        },
+        "habituation_trial": null,
+        "head_tilt": -0.0,
+        "object_list": null,
+        "performer_radius": null,
+        "performer_reach": null,
+        "physics_frames_per_second": null,
+        "pose": "STANDING",
+        "position": {
+          "x": -3.950000286102295,
+          "y": 0.7620000243186951,
+          "z": -2.2300000190734863
+        },
+        "return_status": "SUCCESSFUL",
+        "reward": -0.001,
+        "rotation": 90.0,
+        "step_number": 1,
+        "structural_object_list": null
+      },
+      "delta_time_millis": 0
+    },
+    {
       "step": 1,
       "action": "MoveAhead",
       "args": {},
@@ -98,7 +173,8 @@
         "step_number": 1,
         "structural_object_list": null
       },
-      "delta_time_millis": 51.83321404457092
+      "delta_time_millis": 51.83321404457092,
+      "target_is_visible_at_start": true
     },
     {
       "step": 2,

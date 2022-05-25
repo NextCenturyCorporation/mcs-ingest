@@ -105,6 +105,7 @@ class TestMcsHistoryIngestMongo(unittest.TestCase):
             TEST_INTERACTIVE_HISTORY_FILE_NAME, TEST_FOLDER,
             self.mongo_client, "mcs")
         self.assertIsNotNone(history_item)
+        self.assertTrue(history_item["target_is_visible_at_start"])
 
 
 class TestMcsHistoryIngest(unittest.TestCase):
