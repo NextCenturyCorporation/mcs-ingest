@@ -19,6 +19,7 @@ The actions that are counted (as of Eval 5):
   or down, and fell off
 * Moving, rotating, torquing interactions with objects
 * Determine which side of the platform the agent went to (correct or incorrect)
+* Determine if the agent took the fastest path when two paths are present (True or False)
 * Attempting physically impossible actions.  This is not implemented yet.
   * e.g., trying to pick up a sofa or another similarly large item; trying to interact with the floor or wall
   * Impossible actions will be counted from the first attempt.
@@ -162,7 +163,14 @@ agent needs to move off of the platform to one side or the other.
 This element of the scorecard determines whether the agent moved to
 the correct side.  
 
+#### Fastest Path Taken
 
+For several tasks (namely Lava and Holes), there are two possible paths
+the agent can take to the target - one long, one short.  This element
+of the scorecard determines if the agent used the shorter or longer path
+by calculating the distance from each step to the ideal path of each.  
+The path with the smaller culmulative distance is assumed to be the path
+the agent chose.
 
 ## Running the Scorecard
 
