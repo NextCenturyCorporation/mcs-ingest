@@ -904,30 +904,5 @@ class Scorecard:
             p1 = p2
         return dist
             
-    def get_distance_from_path1(self, start_pos: Dict[str, float],position:Dict[str, float], path:List[Dict[str, float]]):
-        p1 = start_pos
-        for p2 in path:
-            x0=position['x']
-            z0=position['z']
-            
-            lx1=p1['x']
-            lz1=p1['z']
-            
-            lx2=p2['x']
-            lz2=p2['z']
-            # compute line using formula
-            # (x- p1X) / (p2X - p1X) = (y - p1Y) / (p2Y - p1Y) 
-            
-            
-            # for line in form ax + by + c = 0, the distance to that line is
-            # d = |ax0 + by0 +c | / sqrt(a * a + b * b)
-            d = abs(a * position['x'] + b * position['z'] + c)/ math.sqrt(a*a+b*b)
-            
-            # the above formula computes distance for
-            d1_max=math.dist()
-            d2_max=math.dist()
-            
-            # set next p1 as current p2 for next line segment
-            p1 = p2
         
                 
