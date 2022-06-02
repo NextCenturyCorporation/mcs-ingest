@@ -6,7 +6,7 @@ import math
 import os
 import re
 
-from typing import List
+from typing import List, Union
 
 from pymongo import MongoClient
 import create_collection_keys
@@ -486,22 +486,27 @@ def build_new_step_obj(
         corner_visit_order)
 
 
+def calculate_weighted_confidence(history_item: dict, multiplier: int) -> Union[float,None]:
+    confidence = history_item["score"].get("confidence")
+    if confidence == "None" or confidence is None:
+        return None
+    else:
+        return float(confidence) * multiplier
+
+
 def add_weighted_cube_scoring(history_item: dict, scene: dict) -> tuple:
     if "goal" in scene and "sceneInfo" in scene["goal"]:
         if scene["goal"]["sceneInfo"]["tertiaryType"] == "shape constancy":
             if history_item["scene_goal_id"] in \
                     SHAPE_CONSTANCY_DUPLICATE_CUBE:
-                return (history_item["score"]["score"] * 2, 2, float(
-                    history_item["score"]["confidence"]) * 2)
+                return (history_item["score"]["score"] * 2, 2, calculate_weighted_confidence(history_item, 2))
             elif history_item["scene_goal_id"] in SHAPE_CONSTANCY_8X_CUBE:
-                return (history_item["score"]["score"] * 8, 8, float(
-                    history_item["score"]["confidence"]) * 8)
+                return (history_item["score"]["score"] * 8, 8, calculate_weighted_confidence(history_item, 8))
         elif scene["goal"]["sceneInfo"]["tertiaryType"] == "spatial elimination":
             if history_item["scene_goal_id"] in \
                     SPATIAL_ELIMINATION_IGNORED:
                 return (0,0,0)
-        return (history_item["score"]["score"], 1, float(
-            history_item["score"]["confidence"]))
+        return (history_item["score"]["score"], 1, calculate_weighted_confidence(history_item, 1))
     return (0,0,0)
 
   
