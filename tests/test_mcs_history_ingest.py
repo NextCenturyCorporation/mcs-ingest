@@ -1,3 +1,4 @@
+from enum import auto
 import time
 import unittest
 import warnings
@@ -97,6 +98,7 @@ class TestMcsHistoryIngestMongo(unittest.TestCase):
             TEST_HISTORY_FILE_NAME, TEST_FOLDER,
             self.mongo_client, "mcs")
         self.assertIsNotNone(history_item)
+        self.assertIsNotNone(history_item["slices"])
 
     def test_build_interactive_history_item(self):
         '''Generates history item for an interactive, which follows
