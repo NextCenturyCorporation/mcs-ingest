@@ -841,7 +841,8 @@ class Scorecard:
               negative X being "left" and positive X being "right"
         '''
 
-        # Does this scene have a targetSide? If not, return empty dict.
+        # Does this scene have a targetSide? If not, return
+        # correct_platform_side (currently set to None).
         goal = self.scene.get('goal')
         if 'sceneInfo' in goal and 'targetSide' in goal['sceneInfo']:
             target_side = goal['sceneInfo']['targetSide']
@@ -881,7 +882,8 @@ class Scorecard:
 
         """
 
-        # Does this scene have a correctDoor? If not, return empty dict.
+        # Does this scene have a correctDoor? If not, return
+        # correct_door_opened (currently set to None).
         goal = self.scene.get('goal')
         if 'sceneInfo' in goal and 'correctDoor' in goal['sceneInfo']:
             correct_door = goal['sceneInfo']['correctDoor']
