@@ -277,8 +277,8 @@ class Scorecard:
         self.relooks = 0
         self.not_moving_toward_object = 0
         self.tool_usage = 0
-        self.correct_platform_side = {}
-        self.correct_door_opened = {}
+        self.correct_platform_side = None
+        self.correct_door_opened = None
 
     def score_all(self) -> dict:
         self.calc_repeat_failed()
@@ -829,16 +829,25 @@ class Scorecard:
 
     def calc_correct_platform_side(self):
         '''Determine if the ai agent went on the correct
-        side of the platform.'''
+        side of the platform.
+
+        Assumptions for calculating the correct platform side:
+            - performer position Y drops by a value greater than 0.5 when
+              platform is chosen
+            - scene has "targetSide" tag set to either "left" or "right" (the
+              case where targetSide is "center" isn't covered here/is typically
+              handled instead by correct_door_opened)
+            - correct performer position X should match targetSide, with
+              negative X being "left" and positive X being "right"
+        '''
 
         # Does this scene have a targetSide? If not, return empty dict.
         goal = self.scene.get('goal')
         if 'sceneInfo' in goal and 'targetSide' in goal['sceneInfo']:
             target_side = goal['sceneInfo']['targetSide']
         else:
-            return
+            return self.correct_platform_side
 
-        self.correct_platform_side = defaultdict(bool)
         steps_list = self.history['steps']
         output = steps_list[0]['output']
         old_y = output['position']['y']
@@ -848,27 +857,37 @@ class Scorecard:
             if new_y < (old_y - 0.5):
                 x = output['position']['x']
                 if x < 0 and target_side == 'left':
-                    self.correct_platform_side['correct_side'] = True
+                    self.correct_platform_side = True
                 else:
-                    self.correct_platform_side['correct_side'] = False
+                    self.correct_platform_side = False
                 if x > 0 and target_side == 'right':
-                    self.correct_platform_side['correct_side'] = True
+                    self.correct_platform_side = True
                 else:
-                    self.correct_platform_side['correct_side'] = False
+                    self.correct_platform_side = False
             old_y = new_y
         return self.correct_platform_side
 
+
     def calc_correct_door_opened(self):
-        '''Determine if the ai agent went through the correct door'''
+        """
+        Determine if the ai agent went through the correct door
+
+        Assumptions for calculating the correct door:
+            - OpenObject was called successfully on a door object
+            - door object IDs begin with "door_"
+            - door positions are either positive X, negative X, or zero
+            - scene has "correctDoor" tag set to either "left", "right", or 
+              "center"
+
+        """
 
         # Does this scene have a correctDoor? If not, return empty dict.
         goal = self.scene.get('goal')
         if 'sceneInfo' in goal and 'correctDoor' in goal['sceneInfo']:
             correct_door = goal['sceneInfo']['correctDoor']
         else:
-            return
+            return self.correct_door_opened
 
-        self.correct_door_opened = defaultdict(bool)
         steps_list = self.history['steps']
         output = steps_list[0]['output']
 
@@ -888,13 +907,13 @@ class Scorecard:
                     if 'shows' in obj and len(obj['shows']) > 0:
                         door_x_pos = obj['shows'][0]['position']['x']
                         if door_x_pos == 0 and correct_door == 'center':
-                            self.correct_door_opened['correct_door'] = True
+                            self.correct_door_opened = True
                         elif door_x_pos < 0 and correct_door == 'left':
-                            self.correct_door_opened['correct_door'] = True
+                            self.correct_door_opened = True
                         elif door_x_pos > 0 and correct_door == 'right':
-                            self.correct_door_opened['correct_door'] = True
+                            self.correct_door_opened = True
                         else:
-                            self.correct_door_opened['correct_door'] = False
+                            self.correct_door_opened = False
 
         return self.correct_door_opened
 

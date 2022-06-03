@@ -138,6 +138,26 @@ class TestMcsScorecard(unittest.TestCase):
         self.assertEqual(scorecard_vals["revisits"], 1)
         logging.debug(f"{scorecard_vals}")
 
+    def test_score_all_keys(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_FILE_NAME)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_FILE_NAME)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard_vals = scorecard.score_all()
+        self.assertEqual(list(scorecard_vals.keys()), [
+            'repeat_failed',
+            'attempt_impossible',
+            'correct_door_opened',
+            'correct_platform_side',
+            'open_unopenable',
+            'container_relook',
+            'not_moving_toward_object',
+            'revisits',
+            'ramp_actions',
+            'tool_usage']
+        )
+
     def test_get_lookpoint(self):
         import numpy as np
         import math
@@ -400,8 +420,7 @@ class TestMcsScorecard(unittest.TestCase):
             TEST_FOLDER, TEST_HISTORY_SIDE_1)
         scorecard = Scorecard(history_file, scene_file)
 
-        side = scorecard.calc_correct_platform_side()
-        correct_side = side['correct_side']
+        correct_side = scorecard.calc_correct_platform_side()
         self.assertTrue(correct_side)
 
         scene_file = mcs_scene_ingest.load_json_file(
@@ -410,8 +429,7 @@ class TestMcsScorecard(unittest.TestCase):
             TEST_FOLDER, TEST_HISTORY_SIDE_2)
         scorecard = Scorecard(history_file, scene_file)
 
-        side = scorecard.calc_correct_platform_side()
-        correct_side = side['correct_side']
+        correct_side = scorecard.calc_correct_platform_side()
         self.assertFalse(correct_side)
 
     def test_which_door(self):
@@ -421,8 +439,7 @@ class TestMcsScorecard(unittest.TestCase):
             TEST_FOLDER, TEST_HISTORY_DOOR_CORRECT)
         scorecard = Scorecard(history_file, scene_file)
 
-        door = scorecard.calc_correct_door_opened()
-        correct_door = door['correct_door']
+        correct_door = scorecard.calc_correct_door_opened()
         self.assertTrue(correct_door)
 
         scene_file = mcs_scene_ingest.load_json_file(
@@ -431,6 +448,5 @@ class TestMcsScorecard(unittest.TestCase):
             TEST_FOLDER, TEST_HISTORY_DOOR_INCORRECT)
         scorecard = Scorecard(history_file, scene_file)
 
-        door = scorecard.calc_correct_door_opened()
-        correct_door = door['correct_door']
+        correct_door = scorecard.calc_correct_door_opened()
         self.assertFalse(correct_door)
