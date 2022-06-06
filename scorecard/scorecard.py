@@ -6,9 +6,13 @@ import logging
 import math
 from collections import defaultdict
 from operator import itemgetter
+from typing import Dict, List
 
 import numpy as np
 import pandas
+
+from shapely.geometry import Point, LineString
+
 # Grid Dimension determines how big our grid is for revisiting
 from machine_common_sense.action import MOVE_ACTIONS, Action
 
@@ -45,6 +49,8 @@ SEEN_COUNT_MIN = 4
 # and move towards it (15).  So about 30 steps.
 STEPS_NOT_MOVED_TOWARD_LIMIT = 30
 
+PATH_KEY='path'
+ALTERNATE_PATH_KEY='slowPath'
 # Amount of distance down that we will use as a limit of a fall.
 # If the AI drops that much between moves, then it counts as a fall.
 # Ramps have max angle of 45 degrees, so make this bigger than
@@ -276,6 +282,7 @@ class Scorecard:
         self.open_unopenable = 0
         self.relooks = 0
         self.not_moving_toward_object = 0
+        self.is_fastest_path = None
         self.tool_usage = 0
         self.correct_platform_side = 0
 
@@ -285,6 +292,7 @@ class Scorecard:
         self.calc_relook()
         self.calc_revisiting()
         self.calc_not_moving_toward_object()
+        self.calc_fastest_path()
         self.calc_ramp_actions()
         self.calc_tool_usage()
         self.correct_platform_side = self.calc_correct_platform_side()
@@ -299,6 +307,7 @@ class Scorecard:
             'container_relook': self.relooks,
             'not_moving_toward_object': self.not_moving_toward_object,
             'revisits': self.revisits,
+            'fastest_path': self.is_fastest_path,
             'ramp_actions': self.ramp_actions,
             'tool_usage': self.tool_usage
         }
@@ -859,3 +868,41 @@ class Scorecard:
 
     def set_revisit_grid_size(self, grid_size):
         self.grid_size = grid_size
+
+    def calc_fastest_path(self):
+        debug = self.scene.get('debug', {})
+        if not debug.get(PATH_KEY) or not debug.get(ALTERNATE_PATH_KEY):
+            return
+        paths = [debug[PATH_KEY], debug[ALTERNATE_PATH_KEY]]
+        steps_list = self.history['steps']
+        
+        distances=[]
+        
+        start_pos = self.scene['performerStart']['position']
+        
+        for path in paths:
+            distance=0
+            for idx, single_step in enumerate(steps_list):
+                position=single_step['output']['position']
+                single_dist = self.get_distance_from_path(start_pos, position, path)
+                distance+=single_dist
+            distances.append(distance)
+        
+        self.is_fastest_path = distances[0] == min(distances)
+            
+    def get_distance_from_path(self, start_pos: Dict[str, float],position: Dict[str, float], path: List[Dict[str, float]]):
+        p1 = start_pos
+        p1 = Point((start_pos['x'], start_pos['z']))
+        pos = Point((position['x'], position['z']))
+        dist = 10000000
+        for pnt in path:
+            p2 = Point((pnt['x'], pnt['z']))
+            
+            line = LineString([p1, p2])
+            
+            dist=min(pos.distance(line),dist)
+            p1 = p2
+        return dist
+            
+        
+                
