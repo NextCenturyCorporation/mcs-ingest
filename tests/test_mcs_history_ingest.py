@@ -350,16 +350,14 @@ class TestMcsHistoryIngest(unittest.TestCase):
             "goal": {
                 "sceneInfo": {
                     "tertiaryType": "spatial elimination"
-                },
-                'answer': {
-                    'choice': 'plausible'
                 }
             }
         }
 
         history_item = {
-            'category': 'passive',
-            'test_type': 'spatial elimination',
+            'category': 'interactive',
+            'test_type': 'retrieval',
+            'category_type': 'spatial elimination',
             'scene_goal_id': 'A3',
             'score': {
                 'classification': '1',
@@ -378,8 +376,9 @@ class TestMcsHistoryIngest(unittest.TestCase):
         self.assertEqual(history_item['score']['weighted_confidence'], 0)
 
         history_item = {
-            'category': 'passive',
-            'test_type': 'spatial elimination',
+            'category': 'interactive',
+            'test_type': 'retrieval',
+            'category_type': 'spatial elimination',
             'scene_goal_id': 'C4',
             'score': {
                 'classification': '1',
@@ -398,8 +397,9 @@ class TestMcsHistoryIngest(unittest.TestCase):
         self.assertEqual(history_item['score']['weighted_confidence'], 0)
 
         history_item = {
-            'category': 'passive',
-            'test_type': 'spatial elimination',
+            'category': 'interactive',
+            'test_type': 'retrieval',
+            'category_type': 'spatial elimination',
             'scene_goal_id': 'C2',
             'score': {
                 'classification': '1',
@@ -416,6 +416,175 @@ class TestMcsHistoryIngest(unittest.TestCase):
         self.assertEqual(history_item['score']['weighted_score'], 1)
         self.assertEqual(history_item['score']['weighted_score_worth'], 1)
         self.assertEqual(history_item['score']['weighted_confidence'], 1)
+
+
+    def test_other_weighted_cube_scoring(self):
+        test_scene = {
+            "goal": {
+                "sceneInfo": {
+                    "tertiaryType": "shape constancy"
+                },
+                'answer': {
+                    'choice': 'plausible'
+                }
+            }
+        }
+
+        history_item = {
+            'category': 'passive',
+            'category_type': 'shape constancy',
+            'test_type': 'intuitive physics',
+            'scene_goal_id': 'A1',
+            'score': {
+                'classification': '1',
+                'score': 1,
+                'weighted_score': 1,
+                'weighted_score_worth': 1,
+                'confidence': 1,
+                'weighted_confidence': 1
+            }
+        }
+        history_item["score"] = mcs_history_ingest.process_score(
+            history_item, test_scene, True, False, None, False, None, None)
+        self.assertEqual(history_item['score']['score'], 1)
+        self.assertEqual(history_item['score']['weighted_score'], 2)
+        self.assertEqual(history_item['score']['weighted_score_worth'], 2)
+        self.assertEqual(history_item['score']['weighted_confidence'], 2)
+
+        history_item = {
+            'category': 'passive',
+            'category_type': 'shape constancy',
+            'test_type': 'intuitive physics',
+            'scene_goal_id': 'A2',
+            'score': {
+                'classification': '1',
+                'score': 1,
+                'weighted_score': 1,
+                'weighted_score_worth': 1,
+                'confidence': 1,
+                'weighted_confidence': 1
+            }
+        }
+        history_item["score"] = mcs_history_ingest.process_score(
+            history_item, test_scene, True, False, None, False, None, None)
+        self.assertEqual(history_item['score']['score'], 1)
+        self.assertEqual(history_item['score']['weighted_score'], 8)
+        self.assertEqual(history_item['score']['weighted_score_worth'], 8)
+        self.assertEqual(history_item['score']['weighted_confidence'], 8)
+
+        test_scene = {
+            "goal": {
+                "sceneInfo": {
+                    "tertiaryType": "support relations"
+                }
+            }
+        }
+
+        history_item = {
+            'category': 'interactive',
+            'test_type': 'retrieval',
+            'category_type': 'support relations',
+            'scene_goal_id': 'A1',
+            'score': {
+                'classification': '1',
+                'score': 1,
+                'weighted_score': 0,
+                'weighted_score_worth': 0,
+                'confidence': 1,
+                'weighted_confidence': 0
+            }
+        }
+        history_item["score"] = mcs_history_ingest.process_score(
+            history_item, test_scene, 1, 1, None, False, None, None)
+        self.assertEqual(history_item['score']['score'], 1)
+        self.assertEqual(history_item['score']['weighted_score'], 1)
+        self.assertEqual(history_item['score']['weighted_score_worth'], 1)
+        self.assertEqual(history_item['score']['weighted_confidence'], 1)
+
+
+    def test_weighted_cube_scoring_confidence_none(self):
+        test_scene = {
+            "goal": {
+                "sceneInfo": {
+                    "tertiaryType": "shape constancy"
+                },
+                'answer': {
+                    'choice': 'plausible'
+                }
+            }
+        }
+
+        history_item = {
+            'category': 'passive',
+            'category_type': 'shape constancy',
+            'test_type': 'intuitive physics',
+            'scene_goal_id': 'A1',
+            'score': {
+                'classification': '1',
+                'score': 1,
+                'weighted_score': 1,
+                'weighted_score_worth': 1,
+                'confidence': "None",
+                'weighted_confidence': 1
+            }
+        }
+        history_item["score"] = mcs_history_ingest.process_score(
+            history_item, test_scene, True, False, None, False, None, None)
+        self.assertEqual(history_item['score']['score'], 1)
+        self.assertEqual(history_item['score']['weighted_score'], 2)
+        self.assertEqual(history_item['score']['weighted_score_worth'], 2)
+        self.assertIsNone(history_item['score']['weighted_confidence'])
+
+        history_item = {
+            'category': 'passive',
+            'category_type': 'shape constancy',
+            'test_type': 'intuitive physics',
+            'scene_goal_id': 'A2',
+            'score': {
+                'classification': '1',
+                'score': 1,
+                'weighted_score': 1,
+                'weighted_score_worth': 1,
+                'confidence': "None",
+                'weighted_confidence': 1
+            }
+        }
+        history_item["score"] = mcs_history_ingest.process_score(
+            history_item, test_scene, True, False, None, False, None, None)
+        self.assertEqual(history_item['score']['score'], 1)
+        self.assertEqual(history_item['score']['weighted_score'], 8)
+        self.assertEqual(history_item['score']['weighted_score_worth'], 8)
+        self.assertIsNone(history_item['score']['weighted_confidence'])
+
+        test_scene = {
+            "goal": {
+                "sceneInfo": {
+                    "tertiaryType": "support relations"
+                }
+            }
+        }
+
+        history_item = {
+            'category': 'interactive',
+            'test_type': 'retrieval',
+            'category_type': 'support relations',
+            'scene_goal_id': 'A1',
+            'score': {
+                'classification': '1',
+                'score': 1,
+                'weighted_score': 0,
+                'weighted_score_worth': 0,
+                'confidence': "None",
+                'weighted_confidence': 0
+            }
+        }
+        history_item["score"] = mcs_history_ingest.process_score(
+            history_item, test_scene, 1, 1, None, False, None, None)
+        self.assertEqual(history_item['score']['score'], 1)
+        self.assertEqual(history_item['score']['weighted_score'], 1)
+        self.assertEqual(history_item['score']['weighted_score_worth'], 1)
+        self.assertIsNone(history_item['score']['weighted_confidence'])
+
 
     def test_build_new_step_obj_interactive(self):
         step = {
