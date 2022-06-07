@@ -450,3 +450,63 @@ class TestMcsScorecard(unittest.TestCase):
 
         correct_door = scorecard.calc_correct_door_opened()
         self.assertFalse(correct_door)
+
+    def test_calc_fastest_path(self):
+        history = {'steps':[
+             {'output':{'position': {'x':-4, 'z':-4}}},
+             {'output':{'position': {'x':-3.2, 'z':-3}}},
+             {'output':{'position': {'x':-2.2, 'z':-2}}},
+             {'output':{'position': {'x':-1.2, 'z':-1}}},
+             {'output':{'position': {'x':-0.2, 'z':0}}},
+             {'output':{'position': {'x':1, 'z':1}}}
+        ]}
+        
+        history_slow = {'steps':[
+             {'output':{'position': {'x':-4, 'z':-4}}},
+             {'output':{'position': {'x':-4, 'z':-3.5}}},
+             {'output':{'position': {'x':-4, 'z':-2.5}}},
+             {'output':{'position': {'x':-4, 'z':-1.5}}},
+             {'output':{'position': {'x':-4, 'z':-0.5}}},
+             {'output':{'position': {'x':-4, 'z':0.5}}},
+             {'output':{'position': {'x':-3.5, 'z':1}}},
+             {'output':{'position': {'x':-2.5, 'z':1}}},
+             {'output':{'position': {'x':-1.5, 'z':1}}},
+             {'output':{'position': {'x':-0.5, 'z':1}}},
+             {'output':{'position': {'x':0.5, 'z':1}}},
+             {'output':{'position': {'x':1, 'z':1}}}
+        ]}
+        scene = {
+             'performerStart': {'position':{'x':-4, 'z':-4}},
+             'debug':{
+                 'slowPath': [{'x':-4,'z':-4},
+                          {'x':-4,'z':-3},
+                          {'x':-4,'z':-2},
+                          {'x':-4,'z':-1},
+                          {'x':-4,'z':0},
+                          {'x':-4,'z':1},
+                          {'x':-3,'z':1},
+                          {'x':-2,'z':1},
+                          {'x':-1,'z':1},
+                          {'x':0,'z':1}],
+                 'path': [{'x':2, 'z':2},
+                              {'x':-3,'z':-3},
+                              {'x':-2,'z':-2},
+                              {'x':-1,'z':-1},
+                              {'x':0,'z':0},
+                              {'x':1,'z':1}
+                              ]
+             }
+        }
+        sc=Scorecard(history, scene)
+        sc.calc_fastest_path()
+        assert sc.is_fastest_path
+        
+        sc=Scorecard(history_slow, scene)
+        sc.calc_fastest_path()
+        assert not sc.is_fastest_path
+        
+        scene['debug'].pop('slowPath')
+        sc=Scorecard(history_slow, scene)
+        sc.calc_fastest_path()
+        assert sc.is_fastest_path is None
+
