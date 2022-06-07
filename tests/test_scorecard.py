@@ -36,6 +36,10 @@ TEST_SCENE_SIDE = "prefix_0001_01_C4_debug.json"
 TEST_HISTORY_SIDE_1 = "gen_platform_side_1.json"
 TEST_HISTORY_SIDE_2 = "gen_platform_side_2.json"
 
+TEST_SCENE_DOOR = "prefix_0001_02_I1_debug.json"
+TEST_HISTORY_DOOR_CORRECT = "gen_correct_door_ex.json"
+TEST_HISTORY_DOOR_INCORRECT = "gen_incorrect_door_ex.json"
+
 TEST_FOLDER = "./tests/test_data"
 
 # Hide all non-error log messages while running these unit tests.
@@ -133,6 +137,27 @@ class TestMcsScorecard(unittest.TestCase):
         self.assertEqual(repeats, 0)
         self.assertEqual(scorecard_vals["revisits"], 1)
         logging.debug(f"{scorecard_vals}")
+
+    def test_score_all_keys(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_FILE_NAME)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_FILE_NAME)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard_vals = scorecard.score_all()
+        self.assertEqual(list(scorecard_vals.keys()), [
+            'repeat_failed',
+            'attempt_impossible',
+            'correct_door_opened',
+            'correct_platform_side',
+            'open_unopenable',
+            'container_relook',
+            'not_moving_toward_object',
+            'revisits',
+            'fastest_path',
+            'ramp_actions',
+            'tool_usage']
+        )
 
     def test_get_lookpoint(self):
         import numpy as np
@@ -396,8 +421,7 @@ class TestMcsScorecard(unittest.TestCase):
             TEST_FOLDER, TEST_HISTORY_SIDE_1)
         scorecard = Scorecard(history_file, scene_file)
 
-        side = scorecard.calc_correct_platform_side()
-        correct_side = side['correct_side']
+        correct_side = scorecard.calc_correct_platform_side()
         self.assertTrue(correct_side)
 
         scene_file = mcs_scene_ingest.load_json_file(
@@ -406,9 +430,27 @@ class TestMcsScorecard(unittest.TestCase):
             TEST_FOLDER, TEST_HISTORY_SIDE_2)
         scorecard = Scorecard(history_file, scene_file)
 
-        side = scorecard.calc_correct_platform_side()
-        correct_side = side['correct_side']
+        correct_side = scorecard.calc_correct_platform_side()
         self.assertFalse(correct_side)
+
+    def test_which_door(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_DOOR)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_DOOR_CORRECT)
+        scorecard = Scorecard(history_file, scene_file)
+
+        correct_door = scorecard.calc_correct_door_opened()
+        self.assertTrue(correct_door)
+
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_DOOR)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_DOOR_INCORRECT)
+        scorecard = Scorecard(history_file, scene_file)
+
+        correct_door = scorecard.calc_correct_door_opened()
+        self.assertFalse(correct_door)
 
     def test_calc_fastest_path(self):
         history = {'steps':[
@@ -468,3 +510,4 @@ class TestMcsScorecard(unittest.TestCase):
         sc=Scorecard(history_slow, scene)
         sc.calc_fastest_path()
         assert sc.is_fastest_path is None
+

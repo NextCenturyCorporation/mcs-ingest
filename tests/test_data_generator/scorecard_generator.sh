@@ -16,6 +16,7 @@ python scorecard_generate_unopenable_data.py ../test_data/golf_0018_15_debug.jso
 python scorecard_generate_ramp.py ../test_data/ramps_eval_5_ex_1.json
 python scorecard_generate_tool_usage.py ../test_data/tool_use_eval_5_ex_1.json
 python scorecard_generate_platform_side.py ../test_data/prefix_0001_01_C4_debug.json
+python scorecard_generate_door_opened.py ../test_data/prefix_0001_02_I1_debug.json
 
 # Replace the data in the test_data directory
 rm ../test_data/gen_*.json || true

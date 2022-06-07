@@ -19,6 +19,7 @@ The actions that are counted (as of Eval 5):
   or down, and fell off
 * Moving, rotating, torquing interactions with objects
 * Determine which side of the platform the agent went to (correct or incorrect)
+* Determine which door the agent went to (correct or incorrect)
 * Determine if the agent took the fastest path when two paths are present (True or False)
 * Attempting physically impossible actions.  This is not implemented yet.
   * e.g., trying to pick up a sofa or another similarly large item; trying to interact with the floor or wall
@@ -162,6 +163,13 @@ Identification, Spatial Elimination, Interactive Object Permanence, the
 agent needs to move off of the platform to one side or the other.  
 This element of the scorecard determines whether the agent moved to
 the correct side.  
+
+#### Door Choice Correctness
+
+For "doorcluder" task types, such as Interactive Solidity and
+Interactive Support, the agent needs to choose to open one of three doors. 
+This element of the scorecard determines whether the agent opened the
+correct door.
 
 #### Fastest Path Taken
 

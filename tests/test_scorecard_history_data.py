@@ -141,10 +141,23 @@ class TestMcsScorecard(unittest.TestCase):
             history_file = mcs_scene_ingest.load_json_file(
                 TEST_FOLDER, gt_test.get('history_file'))
             s = Scorecard(history_file, scene_file)
-            platform_side = s.calc_correct_platform_side()
+            correct_platform_side = s.calc_correct_platform_side()
             self.assertEqual(
-                gt_test.get('platform_side', None),
-                platform_side.get('platform_side'),
+                gt_test.get('correct_platform_side', None),
+                correct_platform_side,
+                f"{gt_test.get('history_file')}")
+
+    def test_which_door(self):
+        for gt_test in self.gt_tests:
+            scene_file = mcs_scene_ingest.load_json_file(
+                TEST_FOLDER, gt_test.get('scene_file'))
+            history_file = mcs_scene_ingest.load_json_file(
+                TEST_FOLDER, gt_test.get('history_file'))
+            s = Scorecard(history_file, scene_file)
+            correct_door_opened = s.calc_correct_door_opened()
+            self.assertEqual(
+                gt_test.get('correct_door_opened', None),
+                correct_door_opened,
                 f"{gt_test.get('history_file')}")
 
     def test_get_scorecard_dict(self):
