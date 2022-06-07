@@ -154,6 +154,7 @@ class TestMcsScorecard(unittest.TestCase):
             'container_relook',
             'not_moving_toward_object',
             'revisits',
+            'fastest_path',
             'ramp_actions',
             'tool_usage']
         )
