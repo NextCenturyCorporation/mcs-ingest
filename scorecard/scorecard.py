@@ -286,6 +286,7 @@ class Scorecard:
         self.tool_usage = 0
         self.correct_platform_side = None
         self.correct_door_opened = None
+        self.pickup_not_pickupable = 0
 
     def score_all(self) -> dict:
         self.calc_repeat_failed()
@@ -298,6 +299,7 @@ class Scorecard:
         self.calc_tool_usage()
         self.calc_correct_platform_side()
         self.calc_correct_door_opened()
+        self.get_not_pickupable()
 
         # To be implemented
         # self.calc_attempt_impossible()
@@ -313,14 +315,15 @@ class Scorecard:
             'revisits': self.revisits,
             'fastest_path': self.is_fastest_path,
             'ramp_actions': self.ramp_actions,
-            'tool_usage': self.tool_usage
+            'tool_usage': self.tool_usage,
+            'pickup_not_pickupable': self.pickup_not_pickupable
         }
 
     def get_revisits(self):
         return self.revisits
 
     def get_unopenable(self):
-        return self.open_unopenable
+        return self.pickup_not_pickupable
 
     def get_relooks(self):
         return self.relooks
@@ -968,6 +971,40 @@ class Scorecard:
             dist=min(pos.distance(line),dist)
             p1 = p2
         return dist
-            
+    
+    def get_not_pickupable(self):
+        ''' 
+        Determine the number of times that the performer tried to
+        pickup an object than cannot be picked up:
+        Agents, Blobs, Floors, Walls, Platforms, Platform Lips, Ramps,
+        Static objects (sofas, chairs, etc..), Tools, Walls
+        '''
+        logging.debug('Starting calculating unpickupable')
+        steps_list = self.history['steps']
+
+        not_pickupable = 0
+        failed_objects = defaultdict(int)
+
+        for single_step in steps_list:
+            step = single_step['step']
+            action = single_step['action']
+            output = single_step['output']
+            if action == 'PickupObject':
+                return_status = output['return_status']
+                if return_status in ["SUCCESSFUL"]:
+                    obj_id = get_relevant_object(output)
+                    logging.debug(
+                        f"Successful pickup. Step {obj_id}")
+                elif return_status == "NOT_PICKUPABLE":
+                    obj_id = get_relevant_object(output)
+                    if obj_id != "":
+                        failed_objects[obj_id] += 1
+                    logging.debug("Unsuccessful pickup of object {obj_id} " +
+                                  f"Step {step} Status: {return_status}")
+                    not_pickupable += 1
+
+        self.pickup_not_pickupable = not_pickupable
+        logging.debug('Ending calculating not pickupable')
+        return self.pickup_not_pickupable
         
                 
