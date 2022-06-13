@@ -516,11 +516,11 @@ class TestMcsScorecard(unittest.TestCase):
         sc.calc_fastest_path()
         assert sc.is_fastest_path is None
 
-    def test_not_pickupable(self):
+    def test_calc_pickup_not_pickupable(self):
         scene_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, TEST_SCENE_NOT_PICKUPABLE)
         history_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, TEST_HISTORY_NOT_PICKUPABLE)
         scorecard = Scorecard(history_file, scene_file)
-        scorecard.get_not_pickupable()
-        assert scorecard.pickup_not_pickupable == 19
+        scorecard.calc_pickup_not_pickupable()
+        assert scorecard.get_pickup_not_pickupable() == 19

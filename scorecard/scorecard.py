@@ -299,7 +299,7 @@ class Scorecard:
         self.calc_tool_usage()
         self.calc_correct_platform_side()
         self.calc_correct_door_opened()
-        self.get_not_pickupable()
+        self.calc_pickup_not_pickupable()
 
         # To be implemented
         # self.calc_attempt_impossible()
@@ -323,7 +323,7 @@ class Scorecard:
         return self.revisits
 
     def get_unopenable(self):
-        return self.pickup_not_pickupable
+        return self.open_unopenable
 
     def get_relooks(self):
         return self.relooks
@@ -336,6 +336,9 @@ class Scorecard:
 
     def get_tool_usage(self):
         return self.tool_usage
+
+    def get_pickup_not_pickupable(self):
+        return self.pickup_not_pickupable
 
     def calc_revisiting(self):
 
@@ -972,7 +975,7 @@ class Scorecard:
             p1 = p2
         return dist
     
-    def get_not_pickupable(self):
+    def calc_pickup_not_pickupable(self):
         ''' 
         Determine the number of times that the performer tried to
         pickup an object than cannot be picked up:
