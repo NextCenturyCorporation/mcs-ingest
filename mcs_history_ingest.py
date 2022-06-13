@@ -53,7 +53,34 @@ EVAL_HIST_MAPPING_DICT = {
 #   because there aren't as many as the implausible ones
 SHAPE_CONSTANCY_DUPLICATE_CUBE = ["A1", "B1"]
 SHAPE_CONSTANCY_8X_CUBE = ["A2", "B2", "C2", "D2"]
+
+#CHECK IF WE NEED THIS SPATIAL ELIMIN
 SPATIAL_ELIMINATION_IGNORED = ["A3", "C3", "A4", "C4"]
+
+PASSIVE_OBJ_PERM_DUPLICATE_CUBE = ["G3", "H3", "I3"]
+
+# Passing Weighting, everything besides these cube IDs will
+#  be set to zero in the weight scoring.  This should all be 
+#  moved to the scoring module when we refactor ingest
+#  Support Relations and Solidity use all cube ids
+
+AGENT_IDENTIFICATION_PASSING = ["A1", "B1", "C1", "E1", "F1",
+                                "G1", "A2", "B2", "C2", "E2",
+                                "F2", "G2"]
+SPATIAL_ELIMINATION_PASSING = ["A1", "A2"]
+MOVING_TARGET_PRED_PASSING = ["A1", "B1", "E1", "F1", "I1", "J1"]
+HOLES_PASSING = ["B1", "C1"]
+LAVA_PASSING = ["B1", "C1"]
+RAMPS_PASSING = ["B1", "C1", "E1", "F1", "H1", "I1", "K1", "L1"]
+TOOL_USE_PASSING = ["A1", "C1", "E1", "G1"]
+INTERACTIVE_OBJ_PERM_PASSING = ["A1", "C1"]
+CONTAINER_PASSING = ["A1", "A2", "G1", "G2", "M1", "M2"]
+OBSTACLE_PASSING = ["A1", "C1", "A2", "C2"]
+OCCLUDER_PASSING = ["A1", "A2", "C1", "C2", "E1", "E2", "G1",
+                    "G2", "I1", "I2", "K1", "K2"]
+GRAVITY_PASSING = ["A1", "B1", "C1", "D1", "I1", "J1", "K1", "L1",
+                   "M1", "N1", "O1", "P1", "S1", "T1", "W1", "X1",
+                   "Y1", "Z1", "AA1", "CC1", "SS1", "TT1"]
 
 MAX_XY_VIOLATIONS = 50
 
