@@ -286,6 +286,8 @@ class Scorecard:
         self.tool_usage = 0
         self.correct_platform_side = None
         self.correct_door_opened = None
+        self.interact_with_non_agent = 0
+
 
     def score_all(self) -> dict:
         self.calc_repeat_failed()
@@ -298,6 +300,7 @@ class Scorecard:
         self.calc_tool_usage()
         self.calc_correct_platform_side()
         self.calc_correct_door_opened()
+        self.calc_interact_with_non_agent()
 
         # To be implemented
         # self.calc_attempt_impossible()
@@ -313,7 +316,8 @@ class Scorecard:
             'revisits': self.revisits,
             'fastest_path': self.is_fastest_path,
             'ramp_actions': self.ramp_actions,
-            'tool_usage': self.tool_usage
+            'tool_usage': self.tool_usage,
+            'interact_with_non_agent': self.interact_with_non_agent
         }
 
     def get_revisits(self):
@@ -333,6 +337,9 @@ class Scorecard:
 
     def get_tool_usage(self):
         return self.tool_usage
+
+    def get_interact_with_non_agent(self):
+        return self.interact_with_non_agent
 
     def calc_revisiting(self):
 
@@ -971,3 +978,22 @@ class Scorecard:
             
         
                 
+    def calc_interact_with_non_agent(self):
+        ''' 
+        Determine the number of times that the performer tried to
+        interact with a non agent when in distance of the object.
+        '''
+        steps_list = self.history['steps']
+        interact_with_non_agent = 0
+        agents = [obj['id'] for obj in self.scene['objects']
+            if 'agent' in obj['type']]
+        for single_step in steps_list:
+            action = single_step['action']
+            output = single_step['output']
+            if (action == 'InteractWithAgent'):
+                resolved_obj = output['resolved_object']
+                if resolved_obj != '' and resolved_obj not in agents:
+                    interact_with_non_agent += 1
+
+        self.interact_with_non_agent = interact_with_non_agent
+        return self.interact_with_non_agent
