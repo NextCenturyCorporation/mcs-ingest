@@ -982,32 +982,16 @@ class Scorecard:
         Agents, Blobs, Floors, Walls, Platforms, Platform Lips, Ramps,
         Static objects (sofas, chairs, etc..), Tools, Walls
         '''
-        logging.debug('Starting calculating unpickupable')
         steps_list = self.history['steps']
-
         not_pickupable = 0
-        failed_objects = defaultdict(int)
-
         for single_step in steps_list:
-            step = single_step['step']
             action = single_step['action']
             output = single_step['output']
-            if action == 'PickupObject':
-                return_status = output['return_status']
-                if return_status in ["SUCCESSFUL"]:
-                    obj_id = get_relevant_object(output)
-                    logging.debug(
-                        f"Successful pickup. Step {obj_id}")
-                elif return_status == "NOT_PICKUPABLE":
-                    obj_id = get_relevant_object(output)
-                    if obj_id != "":
-                        failed_objects[obj_id] += 1
-                    logging.debug("Unsuccessful pickup of object {obj_id} " +
-                                  f"Step {step} Status: {return_status}")
-                    not_pickupable += 1
+            if action == 'PickupObject' and \
+                output['return_status'] == "NOT_PICKUPABLE":
+                not_pickupable += 1
 
         self.pickup_not_pickupable = not_pickupable
-        logging.debug('Ending calculating not pickupable')
         return self.pickup_not_pickupable
         
                 
