@@ -986,7 +986,7 @@ class Scorecard:
         steps_list = self.history['steps']
         interact_with_non_agent = 0
         agents = [obj['id'] for obj in self.scene['objects']
-            if 'agent' in obj['type']]
+            if obj['type'].startswith('agent_')]
         for single_step in steps_list:
             action = single_step['action']
             output = single_step['output']
