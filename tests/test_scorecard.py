@@ -41,6 +41,8 @@ TEST_SCENE_DOOR = "prefix_0001_02_I1_debug.json"
 TEST_HISTORY_DOOR_CORRECT = "gen_correct_door_ex.json"
 TEST_HISTORY_DOOR_INCORRECT = "gen_incorrect_door_ex.json"
 
+TEST_SCENE_INTERACT_WITH_NON_AGENT = "non_agent_scene.json"
+TEST_HISTORY_INTERACT_WITH_NON_AGENT = "non_agent_history.json"
 TEST_SCENE_NOT_PICKUPABLE = "not_pickupable.json"
 TEST_HISTORY_NOT_PICKUPABLE = "not_pickupable_scene_history.json"
 
@@ -161,7 +163,8 @@ class TestMcsScorecard(unittest.TestCase):
             'fastest_path',
             'ramp_actions',
             'tool_usage',
-            'pickup_not_pickupable']
+            'pickup_not_pickupable',
+            'interact_with_non_agent']
         )
 
     def test_get_lookpoint(self):
@@ -515,6 +518,15 @@ class TestMcsScorecard(unittest.TestCase):
         sc=Scorecard(history_slow, scene)
         sc.calc_fastest_path()
         assert sc.is_fastest_path is None
+    
+    def test_calc_interact_with_non_agent(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_INTERACT_WITH_NON_AGENT)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_INTERACT_WITH_NON_AGENT)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_interact_with_non_agent()
+        assert scorecard.get_interact_with_non_agent() == 20
 
     def test_calc_pickup_not_pickupable(self):
         scene_file = mcs_scene_ingest.load_json_file(
