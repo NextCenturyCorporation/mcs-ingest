@@ -286,6 +286,7 @@ class Scorecard:
         self.tool_usage = 0
         self.correct_platform_side = None
         self.correct_door_opened = None
+        self.pickup_not_pickupable = 0
 
     def score_all(self) -> dict:
         self.calc_repeat_failed()
@@ -298,6 +299,7 @@ class Scorecard:
         self.calc_tool_usage()
         self.calc_correct_platform_side()
         self.calc_correct_door_opened()
+        self.calc_pickup_not_pickupable()
 
         # To be implemented
         # self.calc_attempt_impossible()
@@ -313,7 +315,8 @@ class Scorecard:
             'revisits': self.revisits,
             'fastest_path': self.is_fastest_path,
             'ramp_actions': self.ramp_actions,
-            'tool_usage': self.tool_usage
+            'tool_usage': self.tool_usage,
+            'pickup_not_pickupable': self.pickup_not_pickupable
         }
 
     def get_revisits(self):
@@ -333,6 +336,9 @@ class Scorecard:
 
     def get_tool_usage(self):
         return self.tool_usage
+
+    def get_pickup_not_pickupable(self):
+        return self.pickup_not_pickupable
 
     def calc_revisiting(self):
 
@@ -968,6 +974,24 @@ class Scorecard:
             dist=min(pos.distance(line),dist)
             p1 = p2
         return dist
-            
+    
+    def calc_pickup_not_pickupable(self):
+        ''' 
+        Determine the number of times that the performer tried to
+        pickup an object than cannot be picked up:
+        Agents, Blobs, Floors, Walls, Platforms, Platform Lips, Ramps,
+        Static objects (sofas, chairs, etc..), Tools, Walls
+        '''
+        steps_list = self.history['steps']
+        not_pickupable = 0
+        for single_step in steps_list:
+            action = single_step['action']
+            output = single_step['output']
+            if action == 'PickupObject' and \
+                output['return_status'] == "NOT_PICKUPABLE":
+                not_pickupable += 1
+
+        self.pickup_not_pickupable = not_pickupable
+        return self.pickup_not_pickupable
         
                 
