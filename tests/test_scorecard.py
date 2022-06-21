@@ -15,6 +15,7 @@ from scorecard import (
     find_target_loc_by_step,
     get_lookpoint,
 )
+import scorecard
 
 TEST_SCENE_FILE_NAME = "occluders_0001_17_I1_debug.json"
 TEST_HISTORY_FILE_NAME = "india_0003_baseline_level1.json"
@@ -42,6 +43,8 @@ TEST_HISTORY_DOOR_INCORRECT = "gen_incorrect_door_ex.json"
 
 TEST_SCENE_INTERACT_WITH_NON_AGENT = "non_agent_scene.json"
 TEST_HISTORY_INTERACT_WITH_NON_AGENT = "non_agent_history.json"
+TEST_SCENE_NOT_PICKUPABLE = "not_pickupable.json"
+TEST_HISTORY_NOT_PICKUPABLE = "not_pickupable_scene_history.json"
 
 TEST_FOLDER = "./tests/test_data"
 
@@ -160,6 +163,7 @@ class TestMcsScorecard(unittest.TestCase):
             'fastest_path',
             'ramp_actions',
             'tool_usage',
+            'pickup_not_pickupable',
             'interact_with_non_agent']
         )
 
@@ -524,3 +528,11 @@ class TestMcsScorecard(unittest.TestCase):
         scorecard.calc_interact_with_non_agent()
         assert scorecard.get_interact_with_non_agent() == 20
 
+    def test_calc_pickup_not_pickupable(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_NOT_PICKUPABLE)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_NOT_PICKUPABLE)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_pickup_not_pickupable()
+        assert scorecard.get_pickup_not_pickupable() == 19
