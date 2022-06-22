@@ -400,7 +400,7 @@ class TestMcsHistoryIngest(unittest.TestCase):
             'category': 'interactive',
             'test_type': 'retrieval',
             'category_type': 'spatial elimination',
-            'scene_goal_id': 'C2',
+            'scene_goal_id': 'A2',
             'score': {
                 'classification': '1',
                 'score': 1,
@@ -416,6 +416,71 @@ class TestMcsHistoryIngest(unittest.TestCase):
         self.assertEqual(history_item['score']['weighted_score'], 1)
         self.assertEqual(history_item['score']['weighted_score_worth'], 1)
         self.assertEqual(history_item['score']['weighted_confidence'], 1)
+
+
+    def test_passing_score_in_weighting(self):
+        test_scene = {
+            "goal": {
+                "sceneInfo": {
+                    "tertiaryType": "moving target prediction"
+                }
+            }
+        }
+
+        score_reset = {
+            'classification': '1',
+            'score': 1,
+            'weighted_score': 1,
+            'weighted_score_worth': 1,
+            'confidence': 1,
+            'weighted_confidence': 1
+        }
+
+        history_item = {
+            'category': 'interactive',
+            'test_type': 'retrieval',
+            'category_type': 'moving target prediction',
+            'scene_goal_id': 'A3',
+            'score': score_reset
+        }
+
+        history_item["score"] = mcs_history_ingest.process_score(
+            history_item, test_scene, True, False, None, False, None, None)
+        self.assertEqual(history_item['score']['score'], 1)
+        self.assertEqual(history_item['score']['weighted_score'], 0)
+
+        history_item['scene_goal_id'] = 'A1'
+        history_item['score'] = score_reset
+
+        history_item["score"] = mcs_history_ingest.process_score(
+            history_item, test_scene, True, False, None, False, None, None)
+        self.assertEqual(history_item['score']['score'], 1)
+        self.assertEqual(history_item['score']['weighted_score'], 1)
+
+        test_scene = {
+            "goal": {
+                "sceneInfo": {
+                    "tertiaryType": "holes"
+                }
+            }
+        }
+
+        history_item["category_type"] = "holes"
+        history_item['scene_goal_id'] = 'A1'
+        history_item['score'] = score_reset
+
+        history_item["score"] = mcs_history_ingest.process_score(
+            history_item, test_scene, True, False, None, False, None, None)
+        self.assertEqual(history_item['score']['score'], 1)
+        self.assertEqual(history_item['score']['weighted_score'], 0)
+
+        history_item['scene_goal_id'] = 'B1'
+        history_item['score'] = score_reset
+
+        history_item["score"] = mcs_history_ingest.process_score(
+            history_item, test_scene, True, False, None, False, None, None)
+        self.assertEqual(history_item['score']['score'], 1)
+        self.assertEqual(history_item['score']['weighted_score'], 1)
 
 
     def test_other_weighted_cube_scoring(self):
