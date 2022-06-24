@@ -11,7 +11,7 @@ from typing import Dict, List
 import numpy as np
 import pandas
 
-from shapely.geometry import Point, LineString
+from shapely.geometry import Point, LineString, Polygon
 
 # Grid Dimension determines how big our grid is for revisiting
 from machine_common_sense.action import MOVE_ACTIONS, Action
@@ -999,8 +999,7 @@ class Scorecard:
 
         self.pickup_not_pickupable = not_pickupable
         return self.pickup_not_pickupable
-        
-                
+
     def calc_interact_with_non_agent(self):
         ''' 
         Determine the number of times that the performer tried to
@@ -1020,3 +1019,79 @@ class Scorecard:
 
         self.interact_with_non_agent = interact_with_non_agent
         return self.interact_with_non_agent
+
+    def get_min_max_coords(self, bounding_box, key):
+        minimum = bounding_box[0][key]
+        maximum = bounding_box[0][key]
+        for i in range(1, len(bounding_box)):
+            value = bounding_box[i][key]
+            minimum = value if value < minimum else minimum
+            maximum = value if value > maximum else maximum
+        return (minimum, maximum)
+
+    def point_is_inside_bounding_box(self, position, bounding_box, id):
+        minimum_y, maximum_y = self.get_min_max_coords(bounding_box, 'y')
+        inside_y = minimum_y <= position['y'] <= maximum_y
+        if inside_y:
+            minimum_x, maximum_x = self.get_min_max_coords(bounding_box, 'x')
+            minimum_z, maximum_z = self.get_min_max_coords(bounding_box, 'z')
+            performer_center = Point(position['x'], position['z'])
+            performer_bounds = performer_center.buffer(0.25 / 2)
+            box = [(minimum_x, minimum_z), (minimum_x, maximum_z),
+                    (maximum_x, maximum_z), (maximum_x, minimum_z)]
+            bb = Polygon(box)
+            within = performer_bounds.within(bb)
+            if (within):
+                return within
+            
+        return False
+
+    def get_performer_target_point_based_on_movement_and_direction(
+        self, position, rotation, action, step):
+        move_magnitude = 0.1
+
+        x_vector = math.cos(rotation) * move_magnitude
+        z_vector = math.sin(rotation) * move_magnitude
+
+        target_x = position['x'] + x_vector
+        target_z = position['z'] + z_vector
+        return {'x': target_x, 'y': position['y'], 'z': target_z}
+
+    def calc_walked_into_structures(self):
+        ''' 
+        Determine the number of times that the performer walked into
+        walls, platform wall, ramp sides, and occluders.
+        '''
+        objects = self.scene['objects']
+        steps_list = self.history['steps']
+        walked_into_structures = 0
+        
+        move_actions = ['MoveAhead', 'MoveBack', 'MoveLeft', 'MoveRight']
+
+
+        structures = [obj for obj in self.scene['objects']
+            if obj.get('structure') is True]
+        
+        boundingBoxes = [
+            {'id': struct['id'], 'boundingBox': struct['shows'][0]['boundingBox']}
+            for struct in structures]
+
+        id = None
+        obstructions = []
+        for single_step in steps_list:
+            action = single_step['action']
+            output = single_step['output']
+            if action in move_actions and output['return_status'] == 'OBSTRUCTED':
+                performers_target_point = (
+                    self.get_performer_target_point_based_on_movement_and_direction(
+                        output['position'], output['rotation'], action, output['step_number']))
+                for bb in boundingBoxes:
+                    if (self.point_is_inside_bounding_box(
+                        performers_target_point, bb['boundingBox'], bb['id'])):
+                        obstructions.append(bb['id'])
+                        walked_into_structures += 1
+                        break
+            
+        self.walked_into_structures = walked_into_structures
+        return self.walked_into_structures 
+                

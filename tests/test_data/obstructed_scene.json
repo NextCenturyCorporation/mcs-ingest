@@ -1,0 +1,2311 @@
+{
+  "debug": {
+    "sceneNumber": 9,
+    "training": true,
+    "ceilingColors": [
+      "white"
+    ],
+    "floorColors": [
+      "yellow"
+    ],
+    "wallColors": [
+      "purple",
+      "magenta"
+    ]
+  },
+  "goal": {
+    "metadata": {
+      "target": {
+        "id": "8958a135-3f91-4f1c-9ff3-b9450de6ac80"
+      }
+    },
+    "category": "retrieval",
+    "description": "Find and pick up the tiny light black white rubber ball"
+  },
+  "holes": [],
+  "isometric": false,
+  "lava": [],
+  "name": "obstructed",
+  "objects": [
+    {
+      "id": "agent_0a19ce61-e5ba-4cde-a630-d44f3238482f",
+      "type": "agent_female_04",
+      "debug": {
+        "color": [],
+        "info": [],
+        "dimensions": {
+          "x": 0.3,
+          "y": 0.96,
+          "z": 0.3
+        },
+        "offset": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "positionY": 0,
+        "random_position": true
+      },
+      "mass": null,
+      "agentSettings": {
+        "chest": 1,
+        "chestMaterial": 0,
+        "eyes": 1,
+        "feet": 1,
+        "feetMaterial": 11,
+        "glasses": 9,
+        "hair": 9,
+        "hairMaterial": 0,
+        "hatMaterial": 1,
+        "hideHair": false,
+        "isElder": true,
+        "jacket": 0,
+        "jacketMaterial": 0,
+        "legs": 2,
+        "legsMaterial": 5,
+        "showBeard": false,
+        "showGlasses": false,
+        "showJacket": false,
+        "showTie": false,
+        "skin": 2,
+        "tie": 2,
+        "tieMaterial": 7
+      },
+      "actions": [],
+      "shows": [
+        {
+          "stepBegin": 0,
+          "position": {
+            "x": -5.552,
+            "y": 0.0,
+            "z": 4.1073
+          },
+          "rotation": {
+            "x": 0,
+            "y": 255,
+            "z": 0
+          },
+          "scale": {
+            "x": 1,
+            "y": 1,
+            "z": 1
+          },
+          "boundingBox": [
+            {
+              "x": -5.7357,
+              "y": 0.0,
+              "z": 4.2134
+            },
+            {
+              "x": -5.4459,
+              "y": 0.0,
+              "z": 4.291
+            },
+            {
+              "x": -5.3683,
+              "y": 0.0,
+              "z": 4.0012
+            },
+            {
+              "x": -5.6581,
+              "y": 0.0,
+              "z": 3.9236
+            },
+            {
+              "x": -5.7357,
+              "y": 0.96,
+              "z": 4.2134
+            },
+            {
+              "x": -5.4459,
+              "y": 0.96,
+              "z": 4.291
+            },
+            {
+              "x": -5.3683,
+              "y": 0.96,
+              "z": 4.0012
+            },
+            {
+              "x": -5.6581,
+              "y": 0.96,
+              "z": 3.9236
+            }
+          ]
+        }
+      ],
+      "agentMovement": {
+        "repeat": false,
+        "stepBegin": 5,
+        "sequence": [
+          {
+            "animation": "TPM_run",
+            "endPoint": {
+              "x": 2.1423,
+              "z": -6.4765
+            }
+          },
+          {
+            "animation": "TPM_run",
+            "endPoint": {
+              "x": 6.8227,
+              "z": 2.1587
+            }
+          },
+          {
+            "animation": "TPM_run",
+            "endPoint": {
+              "x": -2.3766,
+              "z": 5.0151
+            }
+          },
+          {
+            "animation": "TPM_run",
+            "endPoint": {
+              "x": 0.1619,
+              "z": 6.2724
+            }
+          },
+          {
+            "animation": "TPM_run",
+            "endPoint": {
+              "x": 2.2063,
+              "z": 6.0915
+            }
+          },
+          {
+            "animation": "TPM_run",
+            "endPoint": {
+              "x": 1.0844,
+              "z": 1.0131
+            }
+          },
+          {
+            "animation": "TPM_run",
+            "endPoint": {
+              "x": 2.5931,
+              "z": -2.9775
+            }
+          },
+          {
+            "animation": "TPM_run",
+            "endPoint": {
+              "x": 2.2955,
+              "z": -0.1993
+            }
+          },
+          {
+            "animation": "TPM_run",
+            "endPoint": {
+              "x": -1.0287,
+              "z": -1.9727
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "8958a135-3f91-4f1c-9ff3-b9450de6ac80",
+      "type": "soccer_ball",
+      "mass": 1.0,
+      "salientMaterials": ["rubber"],
+      "debug": {
+        "dimensions": {
+          "x": 0.22,
+          "y": 0.22,
+          "z": 0.22
+        },
+        "info": [
+          "tiny",
+          "light",
+          "black",
+          "white",
+          "rubber",
+          "ball",
+          "black white",
+          "tiny light",
+          "tiny rubber",
+          "tiny black white",
+          "tiny ball",
+          "light rubber",
+          "light black white",
+          "light ball",
+          "rubber black white",
+          "rubber ball",
+          "black white ball",
+          "tiny light black white rubber ball"
+        ],
+        "positionY": 0.11,
+        "role": "",
+        "shape": [
+          "ball"
+        ],
+        "size": "tiny",
+        "untrainedCategory": false,
+        "untrainedColor": false,
+        "untrainedCombination": false,
+        "untrainedShape": false,
+        "untrainedSize": false,
+        "offset": {
+          "x": 0.0,
+          "y": 0.11,
+          "z": 0.0
+        },
+        "originalRotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "materialCategory": [],
+        "color": [
+          "black",
+          "white"
+        ],
+        "weight": "light",
+        "goalString": "tiny light black white rubber ball",
+        "salientMaterials": [
+          "rubber"
+        ],
+        "enclosedAreas": [],
+        "final_position": true,
+        "random_position": true
+      },
+      "moveable": true,
+      "pickupable": true,
+      "shows": [
+        {
+          "position": {
+            "x": -5.552,
+            "y": 0.0,
+            "z": 4.1073
+          },
+          "rotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "boundingBox": [
+            {
+              "x": -5.552,
+              "y": 0,
+              "z": 4.1073
+            },
+            {
+              "x": -5.552,
+              "y": 0,
+              "z": 4.1073
+            },
+            {
+              "x": -5.552,
+              "y": 0,
+              "z": 4.1073
+            },
+            {
+              "x": -5.552,
+              "y": 0,
+              "z": 4.1073
+            },
+            {
+              "x": -5.552,
+              "y": 0,
+              "z": 4.1073
+            },
+            {
+              "x": -5.552,
+              "y": 0,
+              "z": 4.1073
+            },
+            {
+              "x": -5.552,
+              "y": 0,
+              "z": 4.1073
+            },
+            {
+              "x": -5.552,
+              "y": 0,
+              "z": 4.1073
+            }
+          ]
+        }
+      ],
+      "materials": [],
+      "associatedWithAgent": "agent_0a19ce61-e5ba-4cde-a630-d44f3238482f"
+    },
+    {
+      "id": "platform_144b61b1-e42f-489f-b27d-730c7a940550",
+      "type": "cube",
+      "debug": {
+        "color": [
+          "brown"
+        ],
+        "info": [
+          "brown",
+          "platform",
+          "brown platform"
+        ],
+        "dimensions": {
+          "x": 0.7709,
+          "y": 0.7709,
+          "z": 0.7709
+        },
+        "random_position": true,
+        "labels": [
+          "platforms",
+          "connected_to_ramp"
+        ],
+        "gaps": {
+          "left": [
+            {
+              "high": 0.9996,
+              "low": 0.0182
+            }
+          ]
+        }
+      },
+      "mass": 57,
+      "materials": ["AI2-THOR/Materials/Wood/LightWoodCounters3"],
+      "kinematic": true,
+      "structure": true,
+      "lips": {
+        "front": true,
+        "back": true,
+        "left": true,
+        "right": true,
+        "gaps": {
+          "left": [
+            {
+              "high": 0.9996,
+              "low": 0.0182
+            }
+          ]
+        }
+      },
+      "shows": [
+        {
+          "stepBegin": 0,
+          "position": {
+            "x": -5.567,
+            "y": 1.9725,
+            "z": -6.3475
+          },
+          "rotation": {
+            "x": 0,
+            "y": 90,
+            "z": 0
+          },
+          "scale": {
+            "x": 0.7709,
+            "y": 0.7709,
+            "z": 0.7709
+          },
+          "boundingBox": [
+            {
+              "x": -5.1815,
+              "y": 1.587,
+              "z": -6.7329
+            },
+            {
+              "x": -5.9524,
+              "y": 1.587,
+              "z": -6.7329
+            },
+            {
+              "x": -5.9524,
+              "y": 1.587,
+              "z": -5.962
+            },
+            {
+              "x": -5.1815,
+              "y": 1.587,
+              "z": -5.962
+            },
+            {
+              "x": -5.1815,
+              "y": 2.3579,
+              "z": -6.7329
+            },
+            {
+              "x": -5.9524,
+              "y": 2.3579,
+              "z": -6.7329
+            },
+            {
+              "x": -5.9524,
+              "y": 2.3579,
+              "z": -5.962
+            },
+            {
+              "x": -5.1815,
+              "y": 2.3579,
+              "z": -5.962
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "platform_99b9dec2-6c12-48c1-80aa-27db14b6d1a7",
+      "type": "cube",
+      "debug": {
+        "color": [
+          "brown"
+        ],
+        "info": [
+          "brown",
+          "platform",
+          "brown platform"
+        ],
+        "dimensions": {
+          "x": 3.1554,
+          "y": 1.587,
+          "z": 5.0513
+        },
+        "random_position": true,
+        "labels": [
+          "platforms",
+          "connected_to_ramp"
+        ],
+        "gaps": {
+          "left": [
+            {
+              "high": 0.4371,
+              "low": 0.1674
+            }
+          ],
+          "back": [
+            {
+              "high": 0.9372,
+              "low": 0.5694
+            }
+          ]
+        }
+      },
+      "mass": 3162,
+      "materials": ["AI2-THOR/Materials/Ceramics/BrownMarbleFake 1"],
+      "kinematic": true,
+      "structure": true,
+      "lips": {
+        "front": true,
+        "back": true,
+        "left": true,
+        "right": true,
+        "gaps": {
+          "left": [
+            {
+              "high": 0.4371,
+              "low": 0.1674
+            }
+          ],
+          "back": [
+            {
+              "high": 0.9372,
+              "low": 0.5694
+            }
+          ]
+        }
+      },
+      "shows": [
+        {
+          "stepBegin": 0,
+          "position": {
+            "x": -4.4286,
+            "y": 0.7935,
+            "z": -5.3955
+          },
+          "rotation": {
+            "x": 0,
+            "y": 90,
+            "z": 0
+          },
+          "scale": {
+            "x": 3.1554,
+            "y": 1.587,
+            "z": 5.0513
+          },
+          "boundingBox": [
+            {
+              "x": -1.9029,
+              "y": 0.0,
+              "z": -6.9732
+            },
+            {
+              "x": -6.9542,
+              "y": 0.0,
+              "z": -6.9732
+            },
+            {
+              "x": -6.9542,
+              "y": 0.0,
+              "z": -3.8178
+            },
+            {
+              "x": -1.9029,
+              "y": 0.0,
+              "z": -3.8178
+            },
+            {
+              "x": -1.9029,
+              "y": 1.587,
+              "z": -6.9732
+            },
+            {
+              "x": -6.9542,
+              "y": 1.587,
+              "z": -6.9732
+            },
+            {
+              "x": -6.9542,
+              "y": 1.587,
+              "z": -3.8178
+            },
+            {
+              "x": -1.9029,
+              "y": 1.587,
+              "z": -3.8178
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ramp_83a4eda6-26c1-41c9-9ca0-fef51a7dde0c",
+      "type": "triangle",
+      "debug": {
+        "color": [
+          "brown"
+        ],
+        "info": [
+          "brown",
+          "ramp",
+          "ramp_38.69536594236853_degree",
+          "brown ramp",
+          "brown ramp_38.69536594236853_degree"
+        ],
+        "dimensions": {
+          "x": 0.7566,
+          "y": 0.7709,
+          "z": 0.9624
+        },
+        "random_position": true,
+        "labels": [
+          "ramps",
+          "bidirectional"
+        ]
+      },
+      "mass": 70,
+      "materials": ["AI2-THOR/Materials/Wood/LightWoodCounters3"],
+      "kinematic": true,
+      "structure": true,
+      "shows": [
+        {
+          "stepBegin": 0,
+          "position": {
+            "x": -5.5601,
+            "y": 1.9725,
+            "z": -5.4809
+          },
+          "rotation": {
+            "x": 0,
+            "y": 180,
+            "z": 0
+          },
+          "scale": {
+            "x": 0.7566,
+            "y": 0.7709,
+            "z": 0.9624
+          },
+          "boundingBox": [
+            {
+              "x": -5.9384,
+              "y": 1.587,
+              "z": -5.962
+            },
+            {
+              "x": -5.9384,
+              "y": 1.587,
+              "z": -4.9996
+            },
+            {
+              "x": -5.1818,
+              "y": 1.587,
+              "z": -4.9996
+            },
+            {
+              "x": -5.1818,
+              "y": 1.587,
+              "z": -5.962
+            },
+            {
+              "x": -5.9384,
+              "y": 2.3579,
+              "z": -5.962
+            },
+            {
+              "x": -5.9384,
+              "y": 2.3579,
+              "z": -4.9996
+            },
+            {
+              "x": -5.1818,
+              "y": 2.3579,
+              "z": -4.9996
+            },
+            {
+              "x": -5.1818,
+              "y": 2.3579,
+              "z": -5.962
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ramp_0af7166c-27fb-4e2a-9822-c28836575ead",
+      "type": "triangle",
+      "debug": {
+        "color": [
+          "brown"
+        ],
+        "info": [
+          "brown",
+          "ramp",
+          "ramp_28.962908108009554_degree",
+          "brown ramp",
+          "brown ramp_28.962908108009554_degree"
+        ],
+        "dimensions": {
+          "x": 1.3624,
+          "y": 1.587,
+          "z": 2.8674
+        },
+        "random_position": true,
+        "labels": [
+          "ramps",
+          "bidirectional"
+        ]
+      },
+      "mass": 775,
+      "materials": ["AI2-THOR/Materials/Ceramics/BrownMarbleFake 1"],
+      "kinematic": true,
+      "structure": true,
+      "shows": [
+        {
+          "stepBegin": 0,
+          "position": {
+            "x": -5.4273,
+            "y": 0.7935,
+            "z": -2.3841
+          },
+          "rotation": {
+            "x": 0,
+            "y": 180,
+            "z": 0
+          },
+          "scale": {
+            "x": 1.3624,
+            "y": 1.587,
+            "z": 2.8674
+          },
+          "boundingBox": [
+            {
+              "x": -6.1085,
+              "y": 0.0,
+              "z": -3.8178
+            },
+            {
+              "x": -6.1085,
+              "y": 0.0,
+              "z": -0.9504
+            },
+            {
+              "x": -4.7461,
+              "y": 0.0,
+              "z": -0.9504
+            },
+            {
+              "x": -4.7461,
+              "y": 0.0,
+              "z": -3.8178
+            },
+            {
+              "x": -6.1085,
+              "y": 1.587,
+              "z": -3.8178
+            },
+            {
+              "x": -6.1085,
+              "y": 1.587,
+              "z": -0.9504
+            },
+            {
+              "x": -4.7461,
+              "y": 1.587,
+              "z": -0.9504
+            },
+            {
+              "x": -4.7461,
+              "y": 1.587,
+              "z": -3.8178
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ramp_10763282-0057-498d-b941-75f31ff0460b",
+      "type": "triangle",
+      "debug": {
+        "color": [
+          "brown"
+        ],
+        "info": [
+          "brown",
+          "ramp",
+          "ramp_34.670993553818754_degree",
+          "brown ramp",
+          "brown ramp_34.670993553818754_degree"
+        ],
+        "dimensions": {
+          "x": 1.1606,
+          "y": 1.587,
+          "z": 2.2944
+        },
+        "random_position": true,
+        "labels": [
+          "ramps",
+          "bidirectional"
+        ]
+      },
+      "mass": 528,
+      "materials": ["AI2-THOR/Materials/Ceramics/BrownMarbleFake 1"],
+      "kinematic": true,
+      "structure": true,
+      "shows": [
+        {
+          "stepBegin": 0,
+          "position": {
+            "x": -0.7557,
+            "y": 0.7935,
+            "z": -6.1948
+          },
+          "rotation": {
+            "x": 0,
+            "y": 270,
+            "z": 0
+          },
+          "scale": {
+            "x": 1.1606,
+            "y": 1.587,
+            "z": 2.2944
+          },
+          "boundingBox": [
+            {
+              "x": -1.9029,
+              "y": 0.0,
+              "z": -5.6145
+            },
+            {
+              "x": 0.3915,
+              "y": 0.0,
+              "z": -5.6145
+            },
+            {
+              "x": 0.3915,
+              "y": 0.0,
+              "z": -6.7751
+            },
+            {
+              "x": -1.9029,
+              "y": 0.0,
+              "z": -6.7751
+            },
+            {
+              "x": -1.9029,
+              "y": 1.587,
+              "z": -5.6145
+            },
+            {
+              "x": 0.3915,
+              "y": 1.587,
+              "z": -5.6145
+            },
+            {
+              "x": 0.3915,
+              "y": 1.587,
+              "z": -6.7751
+            },
+            {
+              "x": -1.9029,
+              "y": 1.587,
+              "z": -6.7751
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "platform_7e166817-29d4-4bb6-97af-c1f83bd642af",
+      "type": "cube",
+      "debug": {
+        "color": [
+          "azure",
+          "blue"
+        ],
+        "info": [
+          "azure",
+          "blue",
+          "platform",
+          "azure platform",
+          "blue platform",
+          "azure blue platform"
+        ],
+        "dimensions": {
+          "x": 0.6453,
+          "y": 0.6453,
+          "z": 0.6453
+        },
+        "random_position": true,
+        "labels": [
+          "platforms",
+          "connected_to_ramp"
+        ],
+        "gaps": {
+          "right": [
+            {
+              "high": 0.8192,
+              "low": 0.0265
+            }
+          ],
+          "front": [
+            {
+              "high": 0.9789,
+              "low": 0.0088
+            }
+          ]
+        }
+      },
+      "mass": 34,
+      "materials": ["Custom/Materials/AzureDrywallMCS"],
+      "kinematic": true,
+      "structure": true,
+      "lips": {
+        "front": true,
+        "back": true,
+        "left": true,
+        "right": true,
+        "gaps": {
+          "right": [
+            {
+              "high": 0.8192,
+              "low": 0.0265
+            }
+          ],
+          "front": [
+            {
+              "high": 0.9789,
+              "low": 0.0088
+            }
+          ]
+        }
+      },
+      "shows": [
+        {
+          "stepBegin": 0,
+          "position": {
+            "x": -3.6498,
+            "y": 1.4529,
+            "z": 1.1285
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "scale": {
+            "x": 0.6453,
+            "y": 0.6453,
+            "z": 0.6453
+          },
+          "boundingBox": [
+            {
+              "x": -3.3272,
+              "y": 1.1302,
+              "z": 1.4511
+            },
+            {
+              "x": -3.3272,
+              "y": 1.1302,
+              "z": 0.8058
+            },
+            {
+              "x": -3.9724,
+              "y": 1.1302,
+              "z": 0.8058
+            },
+            {
+              "x": -3.9724,
+              "y": 1.1302,
+              "z": 1.4511
+            },
+            {
+              "x": -3.3272,
+              "y": 1.7755,
+              "z": 1.4511
+            },
+            {
+              "x": -3.3272,
+              "y": 1.7755,
+              "z": 0.8058
+            },
+            {
+              "x": -3.9724,
+              "y": 1.7755,
+              "z": 0.8058
+            },
+            {
+              "x": -3.9724,
+              "y": 1.7755,
+              "z": 1.4511
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "platform_334a7efc-35fe-4d61-b126-41784d28212d",
+      "type": "cube",
+      "debug": {
+        "color": [
+          "brown"
+        ],
+        "info": [
+          "brown",
+          "platform",
+          "brown platform"
+        ],
+        "dimensions": {
+          "x": 5.1648,
+          "y": 1.1302,
+          "z": 5.1299
+        },
+        "random_position": true,
+        "labels": [
+          "platforms",
+          "connected_to_ramp"
+        ],
+        "gaps": {
+          "back": [
+            {
+              "high": 0.4673,
+              "low": 0.3427
+            }
+          ],
+          "right": [
+            {
+              "high": 0.6642,
+              "low": 0.55
+            }
+          ]
+        }
+      },
+      "mass": 3743,
+      "materials": ["AI2-THOR/Materials/Wood/LightWoodCounters3"],
+      "kinematic": true,
+      "structure": true,
+      "lips": {
+        "front": true,
+        "back": true,
+        "left": true,
+        "right": true,
+        "gaps": {
+          "back": [
+            {
+              "high": 0.4673,
+              "low": 0.3427
+            }
+          ],
+          "right": [
+            {
+              "high": 0.6642,
+              "low": 0.55
+            }
+          ]
+        }
+      },
+      "shows": [
+        {
+          "stepBegin": 0,
+          "position": {
+            "x": -1.836,
+            "y": 0.5651,
+            "z": -0.0003
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "scale": {
+            "x": 5.1648,
+            "y": 1.1302,
+            "z": 5.1299
+          },
+          "boundingBox": [
+            {
+              "x": 0.7464,
+              "y": 0.0,
+              "z": 2.5646
+            },
+            {
+              "x": 0.7464,
+              "y": 0.0,
+              "z": -2.5653
+            },
+            {
+              "x": -4.4184,
+              "y": 0.0,
+              "z": -2.5653
+            },
+            {
+              "x": -4.4184,
+              "y": 0.0,
+              "z": 2.5646
+            },
+            {
+              "x": 0.7464,
+              "y": 1.1302,
+              "z": 2.5646
+            },
+            {
+              "x": 0.7464,
+              "y": 1.1302,
+              "z": -2.5653
+            },
+            {
+              "x": -4.4184,
+              "y": 1.1302,
+              "z": -2.5653
+            },
+            {
+              "x": -4.4184,
+              "y": 1.1302,
+              "z": 2.5646
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ramp_52167deb-a7c1-43f5-bd2c-dced643d9c61",
+      "type": "triangle",
+      "debug": {
+        "color": [
+          "azure",
+          "blue"
+        ],
+        "info": [
+          "azure",
+          "blue",
+          "ramp",
+          "ramp_41.08163836672401_degree",
+          "azure ramp",
+          "blue ramp",
+          "azure blue ramp",
+          "azure ramp_41.08163836672401_degree",
+          "blue ramp_41.08163836672401_degree",
+          "azure blue ramp_41.08163836672401_degree"
+        ],
+        "dimensions": {
+          "x": 0.5115,
+          "y": 0.6453,
+          "z": 0.7402
+        },
+        "random_position": true,
+        "labels": [
+          "ramps",
+          "bidirectional"
+        ]
+      },
+      "mass": 31,
+      "materials": ["Custom/Materials/AzureDrywallMCS"],
+      "kinematic": true,
+      "structure": true,
+      "shows": [
+        {
+          "stepBegin": 0,
+          "position": {
+            "x": -2.957,
+            "y": 1.4529,
+            "z": 1.0787
+          },
+          "rotation": {
+            "x": 0,
+            "y": 270,
+            "z": 0
+          },
+          "scale": {
+            "x": 0.5115,
+            "y": 0.6453,
+            "z": 0.7402
+          },
+          "boundingBox": [
+            {
+              "x": -3.3272,
+              "y": 1.1302,
+              "z": 1.3345
+            },
+            {
+              "x": -2.5869,
+              "y": 1.1302,
+              "z": 1.3345
+            },
+            {
+              "x": -2.5869,
+              "y": 1.1302,
+              "z": 0.823
+            },
+            {
+              "x": -3.3272,
+              "y": 1.1302,
+              "z": 0.823
+            },
+            {
+              "x": -3.3272,
+              "y": 1.7755,
+              "z": 1.3345
+            },
+            {
+              "x": -2.5869,
+              "y": 1.7755,
+              "z": 1.3345
+            },
+            {
+              "x": -2.5869,
+              "y": 1.7755,
+              "z": 0.823
+            },
+            {
+              "x": -3.3272,
+              "y": 1.7755,
+              "z": 0.823
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ramp_cb0cbe88-9c45-4e9a-a026-4fe00d6ef45d",
+      "type": "triangle",
+      "debug": {
+        "color": [
+          "azure",
+          "blue"
+        ],
+        "info": [
+          "azure",
+          "blue",
+          "ramp",
+          "ramp_14.006534663702297_degree",
+          "azure ramp",
+          "blue ramp",
+          "azure blue ramp",
+          "azure ramp_14.006534663702297_degree",
+          "blue ramp_14.006534663702297_degree",
+          "azure blue ramp_14.006534663702297_degree"
+        ],
+        "dimensions": {
+          "x": 0.626,
+          "y": 0.6453,
+          "z": 2.5869
+        },
+        "random_position": true,
+        "labels": [
+          "ramps",
+          "bidirectional"
+        ]
+      },
+      "mass": 131,
+      "materials": ["Custom/Materials/AzureDrywallMCS"],
+      "kinematic": true,
+      "structure": true,
+      "shows": [
+        {
+          "stepBegin": 0,
+          "position": {
+            "x": -3.6538,
+            "y": 1.4529,
+            "z": -0.4876
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "scale": {
+            "x": 0.626,
+            "y": 0.6453,
+            "z": 2.5869
+          },
+          "boundingBox": [
+            {
+              "x": -3.3408,
+              "y": 1.1302,
+              "z": 0.8058
+            },
+            {
+              "x": -3.3408,
+              "y": 1.1302,
+              "z": -1.7811
+            },
+            {
+              "x": -3.9668,
+              "y": 1.1302,
+              "z": -1.7811
+            },
+            {
+              "x": -3.9668,
+              "y": 1.1302,
+              "z": 0.8058
+            },
+            {
+              "x": -3.3408,
+              "y": 1.7755,
+              "z": 0.8058
+            },
+            {
+              "x": -3.3408,
+              "y": 1.7755,
+              "z": -1.7811
+            },
+            {
+              "x": -3.9668,
+              "y": 1.7755,
+              "z": -1.7811
+            },
+            {
+              "x": -3.9668,
+              "y": 1.7755,
+              "z": 0.8058
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ramp_3ff6b984-037f-48b8-a3ed-09653768bbd3",
+      "type": "triangle",
+      "debug": {
+        "color": [
+          "brown"
+        ],
+        "info": [
+          "brown",
+          "ramp",
+          "ramp_21.318163529946045_degree",
+          "brown ramp",
+          "brown ramp_21.318163529946045_degree"
+        ],
+        "dimensions": {
+          "x": 0.6432,
+          "y": 1.1302,
+          "z": 2.8961
+        },
+        "random_position": true,
+        "labels": [
+          "ramps",
+          "bidirectional"
+        ]
+      },
+      "mass": 263,
+      "materials": ["AI2-THOR/Materials/Wood/LightWoodCounters3"],
+      "kinematic": true,
+      "structure": true,
+      "shows": [
+        {
+          "stepBegin": 0,
+          "position": {
+            "x": -2.3266,
+            "y": 0.5651,
+            "z": 4.0127
+          },
+          "rotation": {
+            "x": 0,
+            "y": 180,
+            "z": 0
+          },
+          "scale": {
+            "x": 0.6432,
+            "y": 1.1302,
+            "z": 2.8961
+          },
+          "boundingBox": [
+            {
+              "x": -2.6482,
+              "y": 0.0,
+              "z": 2.5646
+            },
+            {
+              "x": -2.6482,
+              "y": 0.0,
+              "z": 5.4607
+            },
+            {
+              "x": -2.005,
+              "y": 0.0,
+              "z": 5.4607
+            },
+            {
+              "x": -2.005,
+              "y": 0.0,
+              "z": 2.5646
+            },
+            {
+              "x": -2.6482,
+              "y": 1.1302,
+              "z": 2.5646
+            },
+            {
+              "x": -2.6482,
+              "y": 1.1302,
+              "z": 5.4607
+            },
+            {
+              "x": -2.005,
+              "y": 1.1302,
+              "z": 5.4607
+            },
+            {
+              "x": -2.005,
+              "y": 1.1302,
+              "z": 2.5646
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ramp_b5576db5-a404-4d51-9e6e-b9ee2e0e5e8f",
+      "type": "triangle",
+      "debug": {
+        "color": [
+          "brown"
+        ],
+        "info": [
+          "brown",
+          "ramp",
+          "ramp_22.599484271236566_degree",
+          "brown ramp",
+          "brown ramp_22.599484271236566_degree"
+        ],
+        "dimensions": {
+          "x": 0.5861,
+          "y": 1.1302,
+          "z": 2.7152
+        },
+        "random_position": true,
+        "labels": [
+          "ramps",
+          "bidirectional"
+        ]
+      },
+      "mass": 225,
+      "materials": ["AI2-THOR/Materials/Wood/LightWoodCounters3"],
+      "kinematic": true,
+      "structure": true,
+      "shows": [
+        {
+          "stepBegin": 0,
+          "position": {
+            "x": 2.104,
+            "y": 0.5651,
+            "z": 0.5491
+          },
+          "rotation": {
+            "x": 0,
+            "y": 270,
+            "z": 0
+          },
+          "scale": {
+            "x": 0.5861,
+            "y": 1.1302,
+            "z": 2.7152
+          },
+          "boundingBox": [
+            {
+              "x": 0.7464,
+              "y": 0.0,
+              "z": 0.8421
+            },
+            {
+              "x": 3.4616,
+              "y": 0.0,
+              "z": 0.8421
+            },
+            {
+              "x": 3.4616,
+              "y": 0.0,
+              "z": 0.256
+            },
+            {
+              "x": 0.7464,
+              "y": 0.0,
+              "z": 0.256
+            },
+            {
+              "x": 0.7464,
+              "y": 1.1302,
+              "z": 0.8421
+            },
+            {
+              "x": 3.4616,
+              "y": 1.1302,
+              "z": 0.8421
+            },
+            {
+              "x": 3.4616,
+              "y": 1.1302,
+              "z": 0.256
+            },
+            {
+              "x": 0.7464,
+              "y": 1.1302,
+              "z": 0.256
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dropping_device_7a412ba6-a81f-457c-961c-c9d9b36acf4f",
+      "type": "tube_wide",
+      "mass": 55,
+      "materials": ["Custom/Materials/Grey"],
+      "kinematic": true,
+      "structure": true,
+      "shows": [
+        {
+          "stepBegin": 0,
+          "position": {
+            "x": -0.5418,
+            "y": 6.805,
+            "z": -2.9326
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "scale": {
+            "x": 1.06,
+            "y": 0.39,
+            "z": 1.06
+          },
+          "boundingBox": [
+            {
+              "x": -0.0118,
+              "y": 6.61,
+              "z": -2.4026
+            },
+            {
+              "x": -0.0118,
+              "y": 6.61,
+              "z": -3.4626
+            },
+            {
+              "x": -1.0718,
+              "y": 6.61,
+              "z": -3.4626
+            },
+            {
+              "x": -1.0718,
+              "y": 6.61,
+              "z": -2.4026
+            },
+            {
+              "x": -0.0118,
+              "y": 7.0,
+              "z": -2.4026
+            },
+            {
+              "x": -0.0118,
+              "y": 7.0,
+              "z": -3.4626
+            },
+            {
+              "x": -1.0718,
+              "y": 7.0,
+              "z": -3.4626
+            },
+            {
+              "x": -1.0718,
+              "y": 7.0,
+              "z": -2.4026
+            }
+          ]
+        }
+      ],
+      "debug": {
+        "color": [
+          "grey"
+        ],
+        "info": [
+          "grey",
+          "dropper",
+          "device",
+          "grey dropper",
+          "grey device"
+        ],
+        "dimensions": {
+          "x": 1.06,
+          "y": 0.39,
+          "z": 1.06
+        },
+        "random_position": true
+      },
+      "states": [["held"],["held"],["held"],["held"],["held"],["released"]]
+    },
+    {
+      "id": "9f265119-bbe7-476a-8658-c70c0e89cdd1",
+      "type": "dog_on_wheels",
+      "mass": 4.68,
+      "salientMaterials": [],
+      "debug": {
+        "dimensions": {
+          "x": 0.1661,
+          "y": 0.3136,
+          "z": 0.8307
+        },
+        "info": [
+          "small",
+          "light",
+          "black",
+          "dog",
+          "small light",
+          "small black",
+          "small dog",
+          "light black",
+          "light dog",
+          "black dog",
+          "small light black dog",
+          "untrained shape",
+          "untrained small light black dog"
+        ],
+        "positionY": 0.0117,
+        "role": "",
+        "shape": [
+          "dog"
+        ],
+        "size": "small",
+        "untrainedCategory": false,
+        "untrainedColor": false,
+        "untrainedCombination": false,
+        "untrainedShape": true,
+        "untrainedSize": false,
+        "offset": {
+          "x": 0.0,
+          "y": 0.1568,
+          "z": 0.0
+        },
+        "originalRotation": {
+          "x": 0.0,
+          "y": 90.0,
+          "z": 0.0
+        },
+        "materialCategory": [],
+        "color": [
+          "black"
+        ],
+        "weight": "light",
+        "goalString": "small light black dog",
+        "salientMaterials": [],
+        "enclosedAreas": [],
+        "random_position": true,
+        "positionedBy": "mechanism",
+        "final_position": true
+      },
+      "moveable": true,
+      "pickupable": true,
+      "shows": [
+        {
+          "position": {
+            "x": -0.5418,
+            "y": 6.805,
+            "z": -2.9326
+          },
+          "rotation": {
+            "x": 0.0,
+            "y": 90.0,
+            "z": 0.0
+          },
+          "boundingBox": [
+            {
+              "x": -0.1264,
+              "y": 6.7933,
+              "z": -3.0157
+            },
+            {
+              "x": -0.9571,
+              "y": 6.7933,
+              "z": -3.0157
+            },
+            {
+              "x": -0.9571,
+              "y": 6.7933,
+              "z": -2.8496
+            },
+            {
+              "x": -0.1264,
+              "y": 6.7933,
+              "z": -2.8496
+            },
+            {
+              "x": -0.1264,
+              "y": 7.1069,
+              "z": -3.0157
+            },
+            {
+              "x": -0.9571,
+              "y": 7.1069,
+              "z": -3.0157
+            },
+            {
+              "x": -0.9571,
+              "y": 7.1069,
+              "z": -2.8496
+            },
+            {
+              "x": -0.1264,
+              "y": 7.1069,
+              "z": -2.8496
+            }
+          ],
+          "stepBegin": 0,
+          "scale": {
+            "x": 2.34,
+            "y": 2.34,
+            "z": 2.34
+          }
+        }
+      ],
+      "materials": ["AI2-THOR/Materials/Wood/BlackWood"],
+      "kinematic": true,
+      "togglePhysics": [
+        {
+          "stepBegin": 6
+        }
+      ]
+    },
+    {
+      "id": "occluder_wall_fe08f6de-d8f6-4c10-a653-990469ed7f4f",
+      "type": "cube",
+      "debug": {
+        "shape": [
+          "wall"
+        ],
+        "size": "huge",
+        "color": [
+          "magenta",
+          "purple"
+        ],
+        "dimensions": {
+          "x": 1.2397,
+          "y": 1.9808,
+          "z": 0.1
+        },
+        "info": [
+          "magenta",
+          "purple"
+        ],
+        "random_position": true,
+        "labels": [
+          "moving_occluders"
+        ]
+      },
+      "kinematic": true,
+      "structure": true,
+      "mass": 100,
+      "materials": ["Custom/Materials/MagentaWoodMCS"],
+      "shows": [
+        {
+          "stepBegin": 0,
+          "position": {
+            "x": -4.2256,
+            "y": 0.99,
+            "z": 4.9392
+          },
+          "rotation": {
+            "x": 0,
+            "y": 43.8215,
+            "z": 0
+          },
+          "scale": {
+            "x": 1.2397,
+            "y": 1.9808,
+            "z": 0.1
+          },
+          "boundingBox": [
+            {
+              "x": -3.7437,
+              "y": 0,
+              "z": 4.5461
+            },
+            {
+              "x": -3.813,
+              "y": 0,
+              "z": 4.4739
+            },
+            {
+              "x": -4.7074,
+              "y": 0,
+              "z": 5.3323
+            },
+            {
+              "x": -4.6382,
+              "y": 0,
+              "z": 5.4045
+            },
+            {
+              "x": -3.7437,
+              "y": 1.9804,
+              "z": 4.5461
+            },
+            {
+              "x": -3.813,
+              "y": 1.9804,
+              "z": 4.4739
+            },
+            {
+              "x": -4.7074,
+              "y": 1.9804,
+              "z": 5.3323
+            },
+            {
+              "x": -4.6382,
+              "y": 1.9804,
+              "z": 5.4045
+            }
+          ]
+        }
+      ],
+      "moves": [
+        {
+          "stepBegin": 1,
+          "stepEnd": 6,
+          "vector": {
+            "x": 0,
+            "y": 0.25,
+            "z": 0
+          }
+        },
+        {
+          "stepBegin": 23,
+          "stepEnd": 28,
+          "vector": {
+            "x": 0,
+            "y": -0.25,
+            "z": 0
+          }
+        }
+      ],
+      "rotates": [
+        {
+          "stepBegin": 7,
+          "stepEnd": 12,
+          "vector": {
+            "x": 0,
+            "y": 15,
+            "z": 0
+          }
+        },
+        {
+          "stepBegin": 17,
+          "stepEnd": 22,
+          "vector": {
+            "x": 0,
+            "y": -15,
+            "z": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "occluder_pole_fe08f6de-d8f6-4c10-a653-990469ed7f4f",
+      "type": "cylinder",
+      "debug": {
+        "shape": [
+          "pole"
+        ],
+        "size": "medium",
+        "color": [
+          "grey"
+        ],
+        "dimensions": {
+          "x": 0.095,
+          "y": 2.51,
+          "z": 0.095
+        },
+        "info": [
+          "grey"
+        ],
+        "random_position": true,
+        "labels": [
+          "moving_occluders"
+        ]
+      },
+      "kinematic": true,
+      "structure": true,
+      "mass": 100,
+      "materials": ["AI2-THOR/Materials/Metals/GenericStainlessSteel"],
+      "shows": [
+        {
+          "stepBegin": 0,
+          "position": {
+            "x": -4.2256,
+            "y": 4.491,
+            "z": 4.9392
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "scale": {
+            "x": 0.095,
+            "y": 2.51,
+            "z": 0.095
+          },
+          "boundingBox": [
+            {
+              "x": -4.1781,
+              "y": 0,
+              "z": 4.9867
+            },
+            {
+              "x": -4.1781,
+              "y": 0,
+              "z": 4.8917
+            },
+            {
+              "x": -4.2731,
+              "y": 0,
+              "z": 4.8917
+            },
+            {
+              "x": -4.2731,
+              "y": 0,
+              "z": 4.9867
+            },
+            {
+              "x": -4.1781,
+              "y": 7.001,
+              "z": 4.9867
+            },
+            {
+              "x": -4.1781,
+              "y": 7.001,
+              "z": 4.8917
+            },
+            {
+              "x": -4.2731,
+              "y": 7.001,
+              "z": 4.8917
+            },
+            {
+              "x": -4.2731,
+              "y": 7.001,
+              "z": 4.9867
+            }
+          ]
+        }
+      ],
+      "moves": [
+        {
+          "stepBegin": 1,
+          "stepEnd": 6,
+          "vector": {
+            "x": 0,
+            "y": 0.25,
+            "z": 0
+          }
+        },
+        {
+          "stepBegin": 23,
+          "stepEnd": 28,
+          "vector": {
+            "x": 0,
+            "y": -0.25,
+            "z": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "occluder_front_a2eb54e5-ad1c-440c-baec-ba187f3b6580",
+      "type": "cube",
+      "debug": {
+        "color": [
+          "maroon",
+          "red"
+        ],
+        "info": [
+          "maroon",
+          "red",
+          "occluder",
+          "maroon occluder",
+          "red occluder",
+          "maroon red occluder"
+        ],
+        "dimensions": {
+          "x": 0.8241,
+          "y": 1.1807,
+          "z": 1.3523
+        },
+        "random_position": true,
+        "labels": [
+          "l_occluders"
+        ]
+      },
+      "mass": 164,
+      "materials": ["Custom/Materials/MaroonDrywallMCS"],
+      "kinematic": true,
+      "structure": true,
+      "shows": [
+        {
+          "stepBegin": 0,
+          "position": {
+            "x": 0.9495,
+            "y": 0.5904,
+            "z": 4.9192
+          },
+          "rotation": {
+            "x": 0,
+            "y": 270,
+            "z": 0
+          },
+          "scale": {
+            "x": 0.8241,
+            "y": 1.1807,
+            "z": 1.3523
+          },
+          "boundingBox": [
+            {
+              "x": 0.2733,
+              "y": 0.0,
+              "z": 5.3312
+            },
+            {
+              "x": 1.6257,
+              "y": 0.0,
+              "z": 5.3312
+            },
+            {
+              "x": 1.6257,
+              "y": 0.0,
+              "z": 4.5072
+            },
+            {
+              "x": 0.2733,
+              "y": 0.0,
+              "z": 4.5072
+            },
+            {
+              "x": 0.2733,
+              "y": 1.1807,
+              "z": 5.3312
+            },
+            {
+              "x": 1.6257,
+              "y": 1.1807,
+              "z": 5.3312
+            },
+            {
+              "x": 1.6257,
+              "y": 1.1807,
+              "z": 4.5072
+            },
+            {
+              "x": 0.2733,
+              "y": 1.1807,
+              "z": 4.5072
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "occluder_side_a2eb54e5-ad1c-440c-baec-ba187f3b6580",
+      "type": "cube",
+      "debug": {
+        "color": [
+          "maroon",
+          "red"
+        ],
+        "info": [
+          "maroon",
+          "red",
+          "occluder",
+          "maroon occluder",
+          "red occluder",
+          "maroon red occluder"
+        ],
+        "dimensions": {
+          "x": 0.8673,
+          "y": 1.1807,
+          "z": 1.2904
+        },
+        "random_position": true,
+        "labels": [
+          "l_occluders"
+        ]
+      },
+      "mass": 165,
+      "materials": ["Custom/Materials/MaroonDrywallMCS"],
+      "kinematic": true,
+      "structure": true,
+      "shows": [
+        {
+          "stepBegin": 0,
+          "position": {
+            "x": -0.3718,
+            "y": 0.5904,
+            "z": 4.8976
+          },
+          "rotation": {
+            "x": 0,
+            "y": 270,
+            "z": 0
+          },
+          "scale": {
+            "x": 0.8673,
+            "y": 1.1807,
+            "z": 1.2904
+          },
+          "boundingBox": [
+            {
+              "x": -1.0171,
+              "y": 0.0,
+              "z": 5.3312
+            },
+            {
+              "x": 0.2733,
+              "y": 0.0,
+              "z": 5.3312
+            },
+            {
+              "x": 0.2733,
+              "y": 0.0,
+              "z": 4.4639
+            },
+            {
+              "x": -1.0171,
+              "y": 0.0,
+              "z": 4.4639
+            },
+            {
+              "x": -1.0171,
+              "y": 1.1807,
+              "z": 5.3312
+            },
+            {
+              "x": 0.2733,
+              "y": 1.1807,
+              "z": 5.3312
+            },
+            {
+              "x": 0.2733,
+              "y": 1.1807,
+              "z": 4.4639
+            },
+            {
+              "x": -1.0171,
+              "y": 1.1807,
+              "z": 4.4639
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "0278a066-ef35-4259-8b9c-adb2dcee3e41",
+      "type": "shelf_1",
+      "mass": 12.0,
+      "salientMaterials": ["metal"],
+      "debug": {
+        "dimensions": {
+          "x": 1.17,
+          "y": 1.155,
+          "z": 0.4
+        },
+        "info": [
+          "medium",
+          "massive",
+          "blue",
+          "metal",
+          "shelf",
+          "medium massive",
+          "medium metal",
+          "medium blue",
+          "medium shelf",
+          "massive metal",
+          "massive blue",
+          "massive shelf",
+          "metal blue",
+          "metal shelf",
+          "blue shelf",
+          "medium massive blue metal shelf",
+          "static object"
+        ],
+        "positionY": 0.0,
+        "role": "static object",
+        "shape": [
+          "shelf"
+        ],
+        "size": "medium",
+        "untrainedCategory": false,
+        "untrainedColor": false,
+        "untrainedCombination": false,
+        "untrainedShape": false,
+        "untrainedSize": false,
+        "offset": {
+          "x": 0.0,
+          "y": 0.5775,
+          "z": 0.0
+        },
+        "originalRotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "materialCategory": [
+          "metal"
+        ],
+        "color": [
+          "blue"
+        ],
+        "weight": "massive",
+        "goalString": "medium massive blue metal shelf",
+        "salientMaterials": [
+          "metal"
+        ],
+        "enclosedAreas": [],
+        "isAgent": false,
+        "isBlob": false,
+        "isConfusor": false,
+        "isContainer": false,
+        "isContext": false,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isStaticObject": true,
+        "isStructural": false,
+        "isTarget": false,
+        "isTool": false,
+        "isWall": false,
+        "isGuiderail": false
+      },
+      "receptacle": true,
+      "shows": [
+        {
+          "position": {
+            "x": 1.46,
+            "y": 0,
+            "z": 2.2
+          },
+          "rotation": {
+            "x": 0.0,
+            "y": 79,
+            "z": 0.0
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 1.5,
+            "y": 1.5,
+            "z": 1.0
+          },
+          "boundingBox": [
+            {
+              "x": 2.045,
+              "y": 0.0,
+              "z": 2.4
+            },
+            {
+              "x": 2.045,
+              "y": 0.0,
+              "z": 2.0
+            },
+            {
+              "x": 0.875,
+              "y": 0.0,
+              "z": 2.0
+            },
+            {
+              "x": 0.875,
+              "y": 0.0,
+              "z": 2.4
+            },
+            {
+              "x": 2.045,
+              "y": 1.155,
+              "z": 2.4
+            },
+            {
+              "x": 2.045,
+              "y": 1.155,
+              "z": 2.0
+            },
+            {
+              "x": 0.875,
+              "y": 1.155,
+              "z": 2.0
+            },
+            {
+              "x": 0.875,
+              "y": 1.155,
+              "z": 2.4
+            }
+          ]
+        }
+      ],
+      "materials": ["AI2-THOR/Materials/Metals/BrushedAluminum_Blue"]
+    }
+  ],
+  "screenshot": false,
+  "version": 2,
+  "ceilingMaterial": "AI2-THOR/Materials/Walls/Drywall",
+  "floorMaterial": "UnityAssetStore/Kindergarten_Interior/Models/Materials/color wood 4",
+  "floorTextures": [],
+  "intuitivePhysics": false,
+  "performerStart": {
+    "position": {
+      "x": 2.9737,
+      "y": 0.0,
+      "z": 1.7501
+    },
+    "rotation": {
+      "x": 0.0,
+      "y": 135.0,
+      "z": 0.0
+    }
+  },
+  "restrictOpenDoors": false,
+  "roomDimensions": {
+    "x": 14.0,
+    "y": 7.0,
+    "z": 15.0
+  },
+  "roomMaterials": {
+    "back": "Custom/Materials/MagentaWoodMCS",
+    "front": "Custom/Materials/MagentaWoodMCS",
+    "left": "Custom/Materials/MagentaWoodMCS",
+    "right": "Custom/Materials/MagentaWoodMCS"
+  }
+}
