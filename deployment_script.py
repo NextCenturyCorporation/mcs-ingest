@@ -1,12 +1,12 @@
 from pymongo import MongoClient
-from scripts._0_5_5_add_slice_to_history import add_slice_to_history_items
+from scripts._0_5_6_update_scorecard_fields import update_scorecard_fields
 
 # We might want to move mongo user/pass to new file
 VERSION_COLLECTION = "mcs_version"
 
 # Change this version if running a new deploy script
 # Make sure the first two numbers match the current MCS API Release
-db_version = "0.5.4"
+db_version = "0.5.6"
 
 
 def check_version(mongoDB):
@@ -30,7 +30,7 @@ def main():
     if(check_version(mongoDB)):
         print("New db version, execute scripts")
         # Place scripts here to run
-        add_slice_to_history_items(mongoDB)
+        update_scorecard_fields(mongoDB)
 
         # Now update db version
         update_db_version(mongoDB)
@@ -43,7 +43,7 @@ def main():
     if(check_version(mongoDB)):
         print("New db version, execute scripts")
         # Place scripts here to run
-        add_slice_to_history_items(mongoDB)
+        update_scorecard_fields(mongoDB)
 
         # Now update db version
         update_db_version(mongoDB)
