@@ -353,7 +353,10 @@ def build_history_item(
         history_item["test_num"] = scene["test_num"]
 
         history_item["scene_goal_id"] = scene["goal"]["sceneInfo"]["id"][0]
-        history_item["slices"] = scene["goal"]["sceneInfo"]["slices"]
+        if "slices" in scene["goal"]["sceneInfo"]:
+            history_item["slices"] = scene["goal"]["sceneInfo"]["slices"]
+        else:
+            history_item["slices"] = None 
         history_item["test_type"] = scene["goal"]["sceneInfo"]["secondaryType"]
         history_item["category"] = scene["goal"]["sceneInfo"]["primaryType"]
 
