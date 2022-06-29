@@ -69,6 +69,9 @@ DIST_LIMIT_FROM_BASE = 0.1
 
 DEFAULT_ROOM_DIMENSIONS = {'x': 10, 'y': 3, 'z': 10}
 
+PERFORMER_WIDTH = 0.25
+PERFORMER_HEIGHT = 0.762
+
 
 def get_relevant_object(output) -> str:
     """See if there is an object for the current action output"""
@@ -302,6 +305,7 @@ class Scorecard:
         self.calc_correct_door_opened()
         self.calc_pickup_not_pickupable()
         self.calc_interact_with_non_agent()
+        self.calc_walked_into_structures()
 
         # To be implemented
         # self.calc_attempt_impossible()
@@ -319,7 +323,8 @@ class Scorecard:
             'ramp_actions': self.ramp_actions,
             'tool_usage': self.tool_usage,
             'pickup_not_pickupable': self.pickup_not_pickupable,
-            'interact_with_non_agent': self.interact_with_non_agent
+            'interact_with_non_agent': self.interact_with_non_agent,
+            'walked_into_structures': self.walked_into_structures
         }
 
     def get_revisits(self):
@@ -345,6 +350,9 @@ class Scorecard:
     
     def get_pickup_not_pickupable(self):
         return self.pickup_not_pickupable
+
+    def get_walked_into_structures(self):
+        return self.walked_into_structures
 
     def calc_revisiting(self):
 
@@ -1020,7 +1028,7 @@ class Scorecard:
         self.interact_with_non_agent = interact_with_non_agent
         return self.interact_with_non_agent
 
-    def get_min_max_coords(self, bounding_box, key):
+    def get_min_max_bounding_box_coords(self, bounding_box, key):
         minimum = bounding_box[0][key]
         maximum = bounding_box[0][key]
         for i in range(1, len(bounding_box)):
@@ -1029,30 +1037,51 @@ class Scorecard:
             maximum = value if value > maximum else maximum
         return (minimum, maximum)
 
-    def point_is_inside_bounding_box(self, position, bounding_box, id):
-        minimum_y, maximum_y = self.get_min_max_coords(bounding_box, 'y')
-        inside_y = minimum_y <= position['y'] <= maximum_y
-        if inside_y:
-            minimum_x, maximum_x = self.get_min_max_coords(bounding_box, 'x')
-            minimum_z, maximum_z = self.get_min_max_coords(bounding_box, 'z')
+    def point_is_inside_bounding_box(self, position, bounding_box):
+        minimum_y, maximum_y = self.get_min_max_bounding_box_coords(bounding_box, 'y')
+        """
+        Small buffer otherwise the performer will be detected
+        inside the object it's standing on.
+        """
+        buffer = 0.01
+        above = position['y'] - PERFORMER_HEIGHT + buffer > maximum_y
+        below = position['y'] - buffer < minimum_y
+        if not above and not below:
+            minimum_x, maximum_x = self.get_min_max_bounding_box_coords(bounding_box, 'x')
+            minimum_z, maximum_z = self.get_min_max_bounding_box_coords(bounding_box, 'z')
             performer_center = Point(position['x'], position['z'])
-            performer_bounds = performer_center.buffer(0.25 / 2)
+            performer_bounds = performer_center.buffer(PERFORMER_WIDTH)
             box = [(minimum_x, minimum_z), (minimum_x, maximum_z),
                     (maximum_x, maximum_z), (maximum_x, minimum_z)]
             bb = Polygon(box)
-            within = performer_bounds.within(bb)
-            if (within):
-                return within
-            
+            obstructed_by_this_object = performer_bounds.intersects(bb)
+            if obstructed_by_this_object:
+                return obstructed_by_this_object
         return False
 
-    def get_performer_target_point_based_on_movement_and_direction(
-        self, position, rotation, action, step):
+    def point_is_outside_room_dimensions(self, position, room_dimensions):
+        x_room_half_width = room_dimensions['x'] / 2
+        z_room_half_width = room_dimensions['z'] / 2
+        x = position['x']
+        z = position['z']
+        beyond_max_x = x + PERFORMER_WIDTH >= x_room_half_width
+        beyond_min_x = x - PERFORMER_WIDTH <= -x_room_half_width
+        beyond_max_z = z + PERFORMER_WIDTH >= z_room_half_width
+        beyond_min_z = z - PERFORMER_WIDTH <= -z_room_half_width
+        obs = beyond_max_x or beyond_min_x or beyond_max_z or beyond_min_z
+        id = ('room_wall_x+' if beyond_max_x else
+                'room_wall_x-' if beyond_min_x else
+                'room_wall_z+' if beyond_max_z else
+                'room_wall_z-')
+        return obs, id
+
+    def get_performer_target_point_based_on_direction(
+        self, position, rotation, action):
         move_magnitude = 0.1
-
-        x_vector = math.cos(rotation) * move_magnitude
-        z_vector = math.sin(rotation) * move_magnitude
-
+        direction = (-90 if action == "MoveLeft" else 90 if action == "MoveRight" 
+                    else 180 if action == "MoveBack" else 0)
+        x_vector = math.sin(math.radians(rotation + direction)) * move_magnitude
+        z_vector = math.cos(math.radians(rotation + direction)) * move_magnitude
         target_x = position['x'] + x_vector
         target_z = position['z'] + z_vector
         return {'x': target_x, 'y': position['y'], 'z': target_z}
@@ -1060,38 +1089,59 @@ class Scorecard:
     def calc_walked_into_structures(self):
         ''' 
         Determine the number of times that the performer walked into
-        walls, platform wall, ramp sides, and occluders.
+        walls, platform walls, ramp sides, and occluders.
+        Platform lips are exluded.
         '''
-        objects = self.scene['objects']
         steps_list = self.history['steps']
         walked_into_structures = 0
-        
-        move_actions = ['MoveAhead', 'MoveBack', 'MoveLeft', 'MoveRight']
-
-
         structures = [obj for obj in self.scene['objects']
             if obj.get('structure') is True]
-        
-        boundingBoxes = [
-            {'id': struct['id'], 'boundingBox': struct['shows'][0]['boundingBox']}
+        bounding_boxes = [
+            {'id': struct['id'], 'bounding_box': struct['shows'][0]['boundingBox']}
             for struct in structures]
-
-        id = None
+        ramp_bounding_boxes = [
+            {'id': struct['id'], 'bounding_box': struct['shows'][0]['boundingBox']}
+            for struct in structures if struct['id'].startswith('ramp')]
+        room_dimensions = self.scene['roomDimensions']
+        
+        # Keeps track of obstruction ids, this is not being used now but may be useful
         obstructions = []
+        
+        move_actions = ['MoveAhead', 'MoveBack', 'MoveLeft', 'MoveRight']
         for single_step in steps_list:
             action = single_step['action']
             output = single_step['output']
             if action in move_actions and output['return_status'] == 'OBSTRUCTED':
                 performers_target_point = (
-                    self.get_performer_target_point_based_on_movement_and_direction(
-                        output['position'], output['rotation'], action, output['step_number']))
-                for bb in boundingBoxes:
-                    if (self.point_is_inside_bounding_box(
-                        performers_target_point, bb['boundingBox'], bb['id'])):
+                    self.get_performer_target_point_based_on_direction(
+                        output['position'], output['rotation'], action))
+                obstructed_by_wall, id = (self.point_is_outside_room_dimensions(
+                    performers_target_point, room_dimensions))
+                if obstructed_by_wall:
+                    walked_into_structures += 1
+                    obstructions.append(id)
+                    continue
+                for bb in bounding_boxes:
+                    inside = self.point_is_inside_bounding_box(
+                        performers_target_point, bb['bounding_box'])
+                    """
+                    Check if the obstruction is a platform lip
+                    with the edge case of walking up a ramp 
+                    and hitting the side or outside of the lip while still
+                    on the ramp and not on top of the platform
+                    """
+                    if inside and bb['id'].startswith('platform'):
+                        is_on_ramp = False
+                        for bb_ramp_check in ramp_bounding_boxes:
+                            if (self.point_is_inside_bounding_box(
+                                output['position'], bb_ramp_check['bounding_box'])):
+                                is_on_ramp = True
+                                break
+                        if is_on_ramp:
+                            break
+                    if inside:
                         obstructions.append(bb['id'])
                         walked_into_structures += 1
                         break
-            
         self.walked_into_structures = walked_into_structures
-        return self.walked_into_structures 
-                
+        return self.walked_into_structures
