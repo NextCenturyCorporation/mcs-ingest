@@ -53,7 +53,31 @@ EVAL_HIST_MAPPING_DICT = {
 #   because there aren't as many as the implausible ones
 SHAPE_CONSTANCY_DUPLICATE_CUBE = ["A1", "B1"]
 SHAPE_CONSTANCY_8X_CUBE = ["A2", "B2", "C2", "D2"]
-SPATIAL_ELIMINATION_IGNORED = ["A3", "C3", "A4", "C4"]
+PASSIVE_OBJ_PERM_DUPLICATE_CUBE = ["G3", "H3", "I3"]
+
+# Passing Weighting, everything besides these cube IDs will
+#  be set to zero in the weight scoring.  This should all be 
+#  moved to the scoring module when we refactor ingest
+#  Support Relations and Solidity use all cube ids
+PASSING_CELLS = {
+    "agent identification": ["A1", "B1", "C1", "E1", "F1",
+                             "G1", "A2", "B2", "C2", "E2",
+                             "F2", "G2"],
+    "spatial elimination": ["A1", "A2"],
+    "moving target prediction": ["A1", "B1", "E1", "F1", "I1", "J1"],
+    "holes": ["B1", "C1"],
+    "lava": ["B1", "C1"],
+    "ramp": ["B1", "C1", "E1", "F1", "H1", "I1", "K1", "L1"],
+    "tool use": ["A1", "C1", "E1", "G1"],
+    "interactive object permanence": ["A1", "C1"],
+    "container": ["A1", "A2", "G1", "G2", "M1", "M2"],
+    "obstacle": ["A1", "C1", "A2", "C2"],
+    "occluder": ["A1", "A2", "C1", "C2", "E1", "E2", "G1",
+                 "G2", "I1", "I2", "K1", "K2"],
+    "gravity support": ["A1", "B1", "C1", "D1", "I1", "J1", "K1", "L1",
+                        "M1", "N1", "O1", "P1", "S1", "T1", "W1", "X1",
+                        "Y1", "Z1", "AA1", "CC1", "SS1", "TT1"]
+}
 
 MAX_XY_VIOLATIONS = 50
 
@@ -511,14 +535,15 @@ def calculate_weighted_confidence(history_item: dict, multiplier: int) -> Union[
 def add_weighted_cube_scoring(history_item: dict, scene: dict) -> tuple:
     if "goal" in scene and "sceneInfo" in scene["goal"]:
         if scene["goal"]["sceneInfo"]["tertiaryType"] == "shape constancy":
-            if history_item["scene_goal_id"] in \
-                    SHAPE_CONSTANCY_DUPLICATE_CUBE:
+            if history_item["scene_goal_id"] in SHAPE_CONSTANCY_DUPLICATE_CUBE:
                 return (history_item["score"]["score"] * 2, 2, calculate_weighted_confidence(history_item, 2))
             elif history_item["scene_goal_id"] in SHAPE_CONSTANCY_8X_CUBE:
                 return (history_item["score"]["score"] * 8, 8, calculate_weighted_confidence(history_item, 8))
-        elif scene["goal"]["sceneInfo"]["tertiaryType"] == "spatial elimination":
-            if history_item["scene_goal_id"] in \
-                    SPATIAL_ELIMINATION_IGNORED:
+        elif scene["goal"]["sceneInfo"]["tertiaryType"] == "object permanence":
+            if history_item["scene_goal_id"] in PASSIVE_OBJ_PERM_DUPLICATE_CUBE:
+                return (history_item["score"]["score"] * 2, 2, calculate_weighted_confidence(history_item, 2))
+        elif scene["goal"]["sceneInfo"]["tertiaryType"] in PASSING_CELLS.keys():
+            if history_item["scene_goal_id"] not in PASSING_CELLS[scene["goal"]["sceneInfo"]["tertiaryType"]]:
                 return (0,0,0)
         return (history_item["score"]["score"], 1, calculate_weighted_confidence(history_item, 1))
     return (0,0,0)
