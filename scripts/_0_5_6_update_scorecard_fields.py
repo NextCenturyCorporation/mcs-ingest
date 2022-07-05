@@ -31,7 +31,7 @@ def update_scorecard_fields(mongoDB):
     # field for $rename must not be on the same path" error
     result = results_collection.update_many(
     {
-        "score.scorecard.repeat_failed": {"$exists": True}
+        "score.scorecard.open_unopenable": {"$exists": True}
     }, {
         "$rename": {'score.scorecard.open_unopenable': 'temp_unopen'}
     }, False)
