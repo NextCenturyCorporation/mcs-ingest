@@ -283,7 +283,8 @@ class Scorecard:
         self.relooks = 0
         self.not_moving_toward_object = 0
         self.is_fastest_path = None
-        self.tool_usage = 0
+        self.ramp_actions = None
+        self.tool_usage = None
         self.correct_platform_side = None
         self.correct_door_opened = None
         self.pickup_not_pickupable = 0
