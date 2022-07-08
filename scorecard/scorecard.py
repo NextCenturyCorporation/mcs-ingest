@@ -1033,8 +1033,8 @@ class Scorecard:
         maximum = bounding_box[0][key]
         for i in range(1, len(bounding_box)):
             value = bounding_box[i][key]
-            minimum = value if value < minimum else minimum
-            maximum = value if value > maximum else maximum
+            minimum = min(value, minimum)
+            maximum = max(value, maximum)
         return (minimum, maximum)
 
     def point_is_inside_bounding_box(self, position, bounding_box):
@@ -1102,7 +1102,8 @@ class Scorecard:
         ramp_bounding_boxes = [
             {'id': struct['id'], 'bounding_box': struct['shows'][0]['boundingBox']}
             for struct in structures if struct['id'].startswith('ramp')]
-        room_dimensions = self.scene['roomDimensions']
+        default_room_dimensions = {'x': 10, 'y': 3, 'z': 10}
+        room_dimensions = self.scene.get('roomDimensions', default_room_dimensions)
         
         # Keeps track of obstruction ids, this is not being used now but may be useful
         obstructions = []
