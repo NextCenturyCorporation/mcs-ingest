@@ -45,6 +45,9 @@ TEST_SCENE_INTERACT_WITH_NON_AGENT = "non_agent_scene.json"
 TEST_HISTORY_INTERACT_WITH_NON_AGENT = "non_agent_history.json"
 TEST_SCENE_NOT_PICKUPABLE = "not_pickupable.json"
 TEST_HISTORY_NOT_PICKUPABLE = "not_pickupable_scene_history.json"
+TEST_SCENE_OBSTRUCTED = "obstructed_scene.json"
+TEST_HISTORY_OBSTRUCTED = "obstructed_history.json"
+TEST_HISTORY_OBSTRUCTED_PLAFTORM_LIPS = "obstructed_history_just_plaform_lips.json"
 
 TEST_FOLDER = "./tests/test_data"
 
@@ -164,7 +167,8 @@ class TestMcsScorecard(unittest.TestCase):
             'ramp_actions',
             'tool_usage',
             'pickup_not_pickupable',
-            'interact_with_non_agent']
+            'interact_with_non_agent',
+            'walked_into_structures']
         )
 
     def test_get_lookpoint(self):
@@ -536,3 +540,22 @@ class TestMcsScorecard(unittest.TestCase):
         scorecard = Scorecard(history_file, scene_file)
         scorecard.calc_pickup_not_pickupable()
         assert scorecard.get_pickup_not_pickupable() == 19
+
+    def test_number_of_times_walked_into_walls(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_OBSTRUCTED)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_OBSTRUCTED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_walked_into_structures()
+        assert scorecard.get_walked_into_structures() == 29
+
+    def test_number_of_times_walked_into_platform_lips(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_OBSTRUCTED)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_OBSTRUCTED_PLAFTORM_LIPS)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_walked_into_structures()
+        # should be zero because this structure is not tracked
+        assert scorecard.get_walked_into_structures() == 0
