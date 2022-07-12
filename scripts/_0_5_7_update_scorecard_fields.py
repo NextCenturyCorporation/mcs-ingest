@@ -15,7 +15,8 @@ def update_scorecard_fields(mongoDB):
     # field for $rename must not be on the same path" error
     result = results_collection.update_many(
     {
-        "score.scorecard.repeat_failed": {"$exists": True}
+        "score.scorecard.repeat_failed": {"$exists": True},
+        "score.scorecard.repeat_failed.total_repeat_failed": {"$exists": False}
     }, {
         "$rename": {'score.scorecard.repeat_failed': 'temp_repeat'}
     }, False)
@@ -27,11 +28,15 @@ def update_scorecard_fields(mongoDB):
         "$rename": {'temp_repeat': 'score.scorecard.repeat_failed.total_repeat_failed'}
     }, False)
 
+    print("update_many performed on " + str(
+        result.matched_count) + " documents")
+
     # need to rename temporarily first to avoid "The source and target 
     # field for $rename must not be on the same path" error
     result = results_collection.update_many(
     {
-        "score.scorecard.open_unopenable": {"$exists": True}
+        "score.scorecard.open_unopenable": {"$exists": True},
+        "score.scorecard.open_unopenable.total_unopenable_attempts": {"$exists": False}
     }, {
         "$rename": {'score.scorecard.open_unopenable': 'temp_unopen'}
     }, False)
