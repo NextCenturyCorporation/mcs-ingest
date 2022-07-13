@@ -286,7 +286,8 @@ class Scorecard:
         self.relooks = 0
         self.not_moving_toward_object = 0
         self.is_fastest_path = None
-        self.tool_usage = 0
+        self.ramp_actions = None
+        self.tool_usage = None
         self.correct_platform_side = None
         self.correct_door_opened = None
         self.pickup_not_pickupable = 0
@@ -848,7 +849,7 @@ class Scorecard:
                           'PullObject', 'RotateObject',
                           'TorqueObject']:
                 resolved_obj = get_relevant_object(output)
-                if resolved_obj == 'tool' and return_status == 'SUCCESSFUL':
+                if resolved_obj.startswith('tool') and return_status == 'SUCCESSFUL':
                     tool_usage[action] += 1
                 else:
                     tool_usage[action + '_failed'] += 1
