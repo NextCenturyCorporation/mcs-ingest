@@ -862,7 +862,7 @@ class Scorecard:
         side of the platform.
 
         Assumptions for calculating the correct platform side:
-            - performer position Y drops by a value greater than 0.5 when
+            - performer position Y drops by a value greater than 0.4 when
               platform is chosen
             - scene has "targetSide" tag set to either "left" or "right" (the
               case where targetSide is "center" isn't covered here/is typically
@@ -879,21 +879,24 @@ class Scorecard:
         else:
             return self.correct_platform_side
 
+        # If they never leave the platform, mark it as failed.
+        self.correct_platform_side = False
+
         steps_list = self.history['steps']
         output = steps_list[0]['output']
         old_y = output['position']['y']
         for single_step in steps_list:
             output = single_step['output']
             new_y = output['position']['y']
-            if new_y < (old_y - 0.5):
+            # This could also be "new_y == PERFORMER_HEIGHT" but the current
+            # code seems more flexible to avoid floating point errors.
+            # This number represents the height of the platform.
+            if new_y < (old_y - 0.4):
                 x = output['position']['x']
                 if x < 0:
                     self.correct_platform_side = (target_side == 'left')
                 elif x > 0:
                     self.correct_platform_side = (target_side == 'right')
-                else:
-                    # This shouldn't be able to happen
-                    self.correct_platform_side = False
             old_y = new_y
         return self.correct_platform_side
 
