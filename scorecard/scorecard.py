@@ -891,7 +891,7 @@ class Scorecard:
             # This could probably also be "new_y == PERFORMER_HEIGHT" but the
             # current code seems better at avoiding floating point errors.
             # This number represents the height of the platform.
-            if new_y < (old_y - 0.4):
+            if new_y <= (old_y - 0.4):
                 x = output['position']['x']
                 if x < 0:
                     self.correct_platform_side = (target_side == 'left')
