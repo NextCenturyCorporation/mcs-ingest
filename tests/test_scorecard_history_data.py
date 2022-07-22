@@ -141,9 +141,13 @@ class TestMcsScorecard(unittest.TestCase):
             history_file = mcs_scene_ingest.load_json_file(
                 TEST_FOLDER, gt_test.get('history_file'))
             s = Scorecard(history_file, scene_file)
+            target_side = s.scene.get('goal', {}).get('sceneInfo', {}).get(
+                'targetSide'
+            )
+            output = None if target_side is None else False
             correct_platform_side = s.calc_correct_platform_side()
             self.assertEqual(
-                gt_test.get('correct_platform_side', None),
+                gt_test.get('correct_platform_side', output),
                 correct_platform_side,
                 f"{gt_test.get('history_file')}")
 
