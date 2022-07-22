@@ -887,13 +887,12 @@ class Scorecard:
             new_y = output['position']['y']
             if new_y < (old_y - 0.5):
                 x = output['position']['x']
-                if x < 0 and target_side == 'left':
-                    self.correct_platform_side = True
+                if x < 0:
+                    self.correct_platform_side = (target_side == 'left')
+                elif x > 0:
+                    self.correct_platform_side = (target_side == 'right')
                 else:
-                    self.correct_platform_side = False
-                if x > 0 and target_side == 'right':
-                    self.correct_platform_side = True
-                else:
+                    # This shouldn't be able to happen
                     self.correct_platform_side = False
             old_y = new_y
         return self.correct_platform_side
