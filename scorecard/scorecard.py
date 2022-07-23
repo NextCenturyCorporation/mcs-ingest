@@ -748,7 +748,7 @@ class Scorecard:
 
             # See if the drop was a lot, meaning fell off
             if self.fell_off_ramp(old_position, position):
-                ramp_actions['fell_off_going_down'] += 1
+                ramp_actions['ramp_fell_off'] += 1
                 logging.debug(f"fell off going down {step} " +
                               f"{ramp_actions['ramp_fell_off']}")
                 old_position = position
