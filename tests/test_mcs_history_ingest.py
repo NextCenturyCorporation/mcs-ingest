@@ -661,6 +661,7 @@ class TestMcsHistoryIngest(unittest.TestCase):
             "violations_xy_list": None,
             "internal_state": None,
             "output": {
+                "head_tilt": 15.0,
                 "goal": {
                     "metadata": {
                         "target": {
@@ -674,9 +675,15 @@ class TestMcsHistoryIngest(unittest.TestCase):
                         "category": "retrieval"
                     }
                 },
+                "position": {
+                    "x": 2.2,
+                    "y": 1.0,
+                    "z": 2.2
+                },
                 "physics_frames_per_second": 20,
                 "return_status": "SUCCESSFUL",
-                "reward": -0.001
+                "reward": -0.001,
+                "rotation": 90.0
             },
             "delta_time_millis": 12464.299655999997,
             "target_visible": True
@@ -710,9 +717,12 @@ class TestMcsHistoryIngest(unittest.TestCase):
         self.assertIsNone(new_step["internal_state"])
         self.assertEqual(new_step["delta_time_millis"], step["delta_time_millis"])
         self.assertIsNone(new_step["violations_xy_list"], step["violations_xy_list"])
+        self.assertEqual(new_step["output"]["head_tilt"], step["output"]["head_tilt"])
+        self.assertEqual(new_step["output"]["position"], step["output"]["position"])
         self.assertEqual(new_step["output"]["physics_frames_per_second"], step["output"]["physics_frames_per_second"])
         self.assertEqual(new_step["output"]["return_status"], step["output"]["return_status"])
         self.assertEqual(new_step["output"]["reward"], step["output"]["reward"])
+        self.assertEqual(new_step["output"]["rotation"], step["output"]["rotation"])
         self.assertEqual(new_step["target_visible"], step["target_visible"])
         self.assertEqual(new_step["output"]["target"], step["output"]["goal"]["metadata"]["target"])
 
