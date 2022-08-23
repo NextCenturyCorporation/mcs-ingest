@@ -496,8 +496,11 @@ def build_new_step_obj(
                 correct_corners,
                 corner_visit_order)
 
+        output["head_tilt"] = step["output"]["head_tilt"]
+        output["position"] = step["output"]["position"]
         output["return_status"] = step["output"]["return_status"]
         output["reward"] = step["output"]["reward"]
+        output["rotation"] = step["output"]["rotation"]
         # TODO: Added if check because key error in 3.75 and earlier
         if "physics_frames_per_second" in step["output"]:
             output["physics_frames_per_second"] = step[
