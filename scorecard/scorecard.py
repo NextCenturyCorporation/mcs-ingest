@@ -292,6 +292,7 @@ class Scorecard:
         self.correct_door_opened = None
         self.pickup_not_pickupable = 0
         self.interact_with_non_agent = 0
+        self.interact_with_agent = 0
 
     def score_all(self) -> dict:
         self.calc_repeat_failed()
@@ -305,7 +306,7 @@ class Scorecard:
         self.calc_correct_platform_side()
         self.calc_correct_door_opened()
         self.calc_pickup_not_pickupable()
-        self.calc_interact_with_non_agent()
+        self.calc_agent_interactions()
         self.calc_walked_into_structures()
 
         # To be implemented
@@ -325,7 +326,8 @@ class Scorecard:
             'tool_usage': self.tool_usage,
             'pickup_not_pickupable': self.pickup_not_pickupable,
             'interact_with_non_agent': self.interact_with_non_agent,
-            'walked_into_structures': self.walked_into_structures
+            'walked_into_structures': self.walked_into_structures,
+            'interact_with_agent': self.interact_with_agent
         }
 
     def get_revisits(self):
@@ -348,6 +350,9 @@ class Scorecard:
 
     def get_interact_with_non_agent(self):
         return self.interact_with_non_agent
+
+    def get_interact_with_agent(self):
+        return self.interact_with_agent
     
     def get_pickup_not_pickupable(self):
         return self.pickup_not_pickupable
@@ -1012,13 +1017,15 @@ class Scorecard:
         self.pickup_not_pickupable = not_pickupable
         return self.pickup_not_pickupable
 
-    def calc_interact_with_non_agent(self):
+    def calc_agent_interactions(self):
         ''' 
         Determine the number of times that the performer tried to
         interact with a non agent when in distance of the object.
         '''
         steps_list = self.history['steps']
         interact_with_non_agent = 0
+        interact_with_agent = 0
+
         agents = [obj['id'] for obj in self.scene['objects']
             if obj['type'].startswith('agent_')]
         for single_step in steps_list:
@@ -1028,8 +1035,12 @@ class Scorecard:
                 resolved_obj = output['resolved_object']
                 if resolved_obj != '' and resolved_obj not in agents:
                     interact_with_non_agent += 1
+                if resolved_obj != '' and resolved_obj in agents and (
+                        output['return_status'] == "SUCCESSFUL"):
+                    interact_with_agent += 1
 
         self.interact_with_non_agent = interact_with_non_agent
+        self.interact_with_agent = interact_with_agent
         return self.interact_with_non_agent
 
     def get_min_max_bounding_box_coords(self, bounding_box, key):
