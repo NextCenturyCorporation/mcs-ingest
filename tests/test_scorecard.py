@@ -168,7 +168,8 @@ class TestMcsScorecard(unittest.TestCase):
             'tool_usage',
             'pickup_not_pickupable',
             'interact_with_non_agent',
-            'walked_into_structures']
+            'walked_into_structures',
+            'interact_with_agent']
         )
 
     def test_get_lookpoint(self):
@@ -529,8 +530,9 @@ class TestMcsScorecard(unittest.TestCase):
         history_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, TEST_HISTORY_INTERACT_WITH_NON_AGENT)
         scorecard = Scorecard(history_file, scene_file)
-        scorecard.calc_interact_with_non_agent()
+        scorecard.calc_agent_interactions()
         assert scorecard.get_interact_with_non_agent() == 20
+        assert scorecard.get_interact_with_agent() == 2
 
     def test_calc_pickup_not_pickupable(self):
         scene_file = mcs_scene_ingest.load_json_file(
