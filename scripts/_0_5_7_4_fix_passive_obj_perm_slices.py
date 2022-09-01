@@ -18,8 +18,6 @@ def update_slice_info_passive_obj_perm(mongoDB):
             }
         )
 
-        print("Removed from slice array for scenes.", result) 
-
         # Push the correct slice description onto scene records
         result = eval_5_scenes.update_many(
             {
@@ -27,19 +25,34 @@ def update_slice_info_passive_obj_perm(mongoDB):
                 "goal.sceneInfo.id": [slice_id]
             }, {
                 "$push": {
-                    "goal.sceneInfo.slices": "setup falls behind an occluder"
+                    "goal.sceneInfo.slices": {
+                        "$each": ["setup falls behind an occluder"],
+                        "$position": 0
+                    }
                 }
             }
         )
 
-        print("Added to slice array for scenes.", result)    
+        # Update setup tag
+        result = eval_5_scenes.update_many(
+            {
+                "goal.sceneInfo.tertiaryType": "object permanence",
+                "goal.sceneInfo.id": [slice_id]
+            }, [{
+                "$set": {
+                   "goal.sceneInfo.setup": "falls behind an occluder"
+                }
+            }]
+        )
+
+        print("Updated slices/tags for object permanence scenes " + str(slice_id) + ".", result)
 
         # Pull the incorrect slice description out of result records
         # Mongo does not allow for push and pull on same update
         result = eval_5_results.update_many(
             {
                 "category_type": "object permanence",
-                "scene_goal_id": [slice_id]
+                "scene_goal_id": slice_id
             }, {
                 "$pull": {
                     "slices": "setup move across whole scene"
@@ -47,18 +60,19 @@ def update_slice_info_passive_obj_perm(mongoDB):
             }
         )
 
-        print("Removed from slice array for results.", result) 
-
         # Push the correct slice description onto result records
         result = eval_5_results.update_many(
             {
                 "category_type": "object permanence",
-                "scene_goal_id": [slice_id]
+                "scene_goal_id": slice_id
             }, {
                 "$push": {
-                    "slices": "setup falls behind an occluder"
+                    "slices": {
+                        "$each": ["setup falls behind an occluder"],
+                        "$position": 0
+                    }
                 }
             }
         )
 
-        print("Added to slice array for results.", result)    
+        print("Updated slices/tags for object permanence results " + str(slice_id) + ".", result)
