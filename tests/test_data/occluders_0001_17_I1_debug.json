@@ -1,6 +1,6 @@
 {
   "name": "occluders_0001_17",
-  "eval": "Evaluation 3.5 Scenes",
+  "eval": "Evaluation 3 Scenes",
   "version": "2",
   "ceilingMaterial": "UnityAssetStore/Kindergarten_Interior/Models/Materials/color wood 2",
   "floorMaterial": "UnityAssetStore/Kindergarten_Interior/Models/Materials/color wood 2",
@@ -2034,7 +2034,7 @@
     "evaluationOnly": false,
     "hypercubeNumber": 1,
     "sceneNumber": 17,
-    "evaluation": "Evaluation 3.5 Scenes",
+    "evaluation": "Evaluation 3 Scenes",
     "training": false
   }
 }

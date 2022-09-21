@@ -30,6 +30,7 @@ TEAM_MAPPING_DICT = {
 
 # Convert Eval names used to 'pretty' scene record names for UI
 EVAL_SCENE_MAPPING_DICT = {
+    "eval_3": "Evaluation 3 Scenes",
     "eval_3-5": "Evaluation 3.5 Scenes",
     "eval_3-75": "Evaluation 3.75 Scenes",
     "eval_4": "Evaluation 4 Scenes",
@@ -40,6 +41,7 @@ EVAL_SCENE_MAPPING_DICT = {
 }
 # Convert Eval names used to 'pretty' history record names for UI
 EVAL_HIST_MAPPING_DICT = {
+    "eval_3": "Evaluation 3 Results",
     "eval_3-5": "Evaluation 3.5 Results",
     "eval_3-75": "Evaluation 3.75 Results",
     "eval_4": "Evaluation 4 Results",
@@ -91,6 +93,31 @@ REORIENTATION_CORNERS = {
     'back_right': {'x': 6, 'z': -4},
     'back_left': {'x': -6, 'z': -4}
 }
+
+
+def copy_indexes(db_string: str,
+        client: MongoClient,
+        new_collection_name: str) -> None:
+    mongoDB = client[db_string]
+
+    # Look in mapping collection for last item added
+    # Then using the collection tag pull up the collection that is the last eval
+    # Using sort -1, will get newest item by _id, using 1 would be oldest
+    mapping_collection = mongoDB[SCENE_MAPPING_INDEX]
+    last_eval_mapping = mapping_collection.find_one({}, sort=[('_id', -1)])
+    found_mappings = list(last_eval_mapping)
+    if len(found_mappings) > 1:
+        old_collection = mongoDB[found_mappings[1]["collection"]]
+    else: 
+        return
+
+    # Get the collection for the current eval using new name
+    # Copy the indexes one by one to new collection from last eval
+    new_results_collection = mongoDB[new_collection_name]
+    scene_indexes = old_collection.index_information()
+    for key in scene_indexes:
+        index_tuple = scene_indexes[key]["key"][0]
+        new_results_collection.create_index([(index_tuple[0], int(index_tuple[1]))])
 
 
 def get_history_collection(
@@ -564,6 +591,10 @@ def automated_history_ingest_file(
     collection_name = get_history_collection(db_string, client, history_item["eval"])
 
     collection = mongoDB[collection_name]
+    total_documents = collection.count_documents({})
+    if total_documents == 1:
+        copy_indexes(db_string, client, collection_name)
+
     check_exists = collection.find(
         {
             "name": history_item["name"],

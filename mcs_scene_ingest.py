@@ -22,6 +22,31 @@ SCENE_MAPPING_INDEX = "scenes_mapping"
 SCENE_DEBUG_EXTENSION = "_debug.json"
 
 
+def copy_indexes(db_string: str,
+        client: MongoClient,
+        new_collection_name: str) -> None:
+    mongoDB = client[db_string]
+    print("copy indexes")
+    # Look in mapping collection for last item added
+    # Then using the collection tag pull up the collection that is the last eval
+    # Using sort -1, will get newest item by _id, using 1 would be oldest
+    mapping_collection = mongoDB[SCENE_MAPPING_INDEX]
+    eval_mapping = mapping_collection.find({}, sort=[('_id', -1)])
+    found_mappings = list(eval_mapping)
+    if len(found_mappings) > 1:
+        old_collection = mongoDB[found_mappings[1]["collection"]]
+    else:
+        return
+
+    # Get the collection for the current eval using new name
+    # Copy the indexes one by one to new collection from last eval
+    new_scenes_collection = mongoDB[new_collection_name]
+    scene_indexes = old_collection.index_information()
+    for key in scene_indexes:
+        index_tuple = scene_indexes[key]["key"][0]
+        new_scenes_collection.create_index([(index_tuple[0], int(index_tuple[1]))])
+
+
 def get_scene_collection(
         db_string: str,
         client: MongoClient,
@@ -60,6 +85,9 @@ def automated_scene_ingest_file(
     scene_item = build_scene_item(file_name, folder)
     collection_name = get_scene_collection(db_string, client, scene_item["eval"])
     collection = mongoDB[collection_name]
+    total_documents = collection.count_documents({})
+    if total_documents == 1:
+        copy_indexes(db_string, client, collection_name)
     count = collection.count_documents(
         {
             "name": scene_item["name"],

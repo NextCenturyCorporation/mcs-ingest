@@ -10,7 +10,7 @@ import create_collection_keys
 from pymongo import MongoClient
 
 TEST_SCENE_FILE_NAME = "test_data/test_juliett_0001_01_debug.json"
-# TEST_INTERACTIVE_SCENE_FILE_NAME = "occluders_0001_17_I1_debug.json"
+TEST_INTERACTIVE_SCENE_FILE_NAME = "test_data/occluders_0001_17_I1_debug.json"
 TEST_FOLDER = "tests"
 
 class TestMcsSceneIngestMongo(unittest.TestCase):
@@ -66,6 +66,11 @@ class TestMcsSceneIngestMongo(unittest.TestCase):
         '''Create the client and insert a single document'''
         warnings.simplefilter('ignore', category=ResourceWarning)
         self.mongo_client = MongoClient(host='localhost', port=self.mongo_host_port)
+        mcs_scene_ingest.automated_scene_ingest_file(
+            file_name=TEST_INTERACTIVE_SCENE_FILE_NAME,
+            folder=TEST_FOLDER,
+            db_string="mcs",
+            client=self.mongo_client)     
         mcs_scene_ingest.automated_scene_ingest_file(
             file_name=TEST_SCENE_FILE_NAME,
             folder=TEST_FOLDER,
