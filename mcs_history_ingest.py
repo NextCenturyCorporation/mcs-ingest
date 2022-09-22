@@ -12,7 +12,7 @@ from pymongo import MongoClient
 import create_collection_keys
 
 from scorecard import Scorecard
-
+from mcs_ingest import copy_indexes, load_json_file, get_scene_collection
 
 HISTORY_MAPPING_INDEX = "history_mapping"
 SCENE_MAPPING_INDEX = "scenes_mapping"
@@ -95,31 +95,6 @@ REORIENTATION_CORNERS = {
 }
 
 
-def copy_indexes(db_string: str,
-        client: MongoClient,
-        new_collection_name: str) -> None:
-    mongoDB = client[db_string]
-
-    # Look in mapping collection for last item added
-    # Then using the collection tag pull up the collection that is the last eval
-    # Using sort -1, will get newest item by _id, using 1 would be oldest
-    mapping_collection = mongoDB[SCENE_MAPPING_INDEX]
-    last_eval_mapping = mapping_collection.find_one({}, sort=[('_id', -1)])
-    found_mappings = list(last_eval_mapping)
-    if len(found_mappings) > 1:
-        old_collection = mongoDB[found_mappings[1]["collection"]]
-    else: 
-        return
-
-    # Get the collection for the current eval using new name
-    # Copy the indexes one by one to new collection from last eval
-    new_results_collection = mongoDB[new_collection_name]
-    scene_indexes = old_collection.index_information()
-    for key in scene_indexes:
-        index_tuple = scene_indexes[key]["key"][0]
-        new_results_collection.create_index([(index_tuple[0], int(index_tuple[1]))])
-
-
 def get_history_collection(
         db_string: str,
         client: MongoClient,
@@ -144,32 +119,6 @@ def get_history_collection(
         return collection_name
     else:
         return mapping["collection"]
-
-
-def get_scene_collection(
-        db_string: str,
-        client: MongoClient,
-        eval_name: str) -> str:
-    mongoDB = client[db_string]
-    collection = mongoDB[SCENE_MAPPING_INDEX]
-    mapping = collection.find_one(
-        {
-            "name": eval_name
-        }
-    )
-
-    return mapping["collection"]
-
-
-def load_json_file(folder: str, file_name: str) -> dict:
-    """Read in a json file and decode into a dict.  Can
-    be used for history, scene, or other json files."""
-    with io.open(
-            os.path.join(
-                folder, file_name),
-            mode='r',
-            encoding='utf-8-sig') as json_file:
-        return json.loads(json_file.read())
 
 
 def determine_evaluation_hist_name(
@@ -593,7 +542,7 @@ def automated_history_ingest_file(
     collection = mongoDB[collection_name]
     total_documents = collection.count_documents({})
     if total_documents == 1:
-        copy_indexes(db_string, client, collection_name)
+        copy_indexes(db_string, client, collection_name, HISTORY_MAPPING_INDEX)
 
     check_exists = collection.find(
         {
