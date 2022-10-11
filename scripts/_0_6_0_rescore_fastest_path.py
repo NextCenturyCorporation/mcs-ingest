@@ -38,7 +38,8 @@ def store_path_properties(mongoDB):
 
         scene_item = load_json_file(scene_basename)
         scene_record["path"] = scene_item["debug"]["path"]
-        scene_record["slowPath"] = scene_item["debug"]["slowPath"]
+        if("slowPath" in scene_item["debug"]):
+            scene_record["slowPath"] = scene_item["debug"]["slowPath"]
         scenes_collection.replace_one({"_id": scene_record["_id"]}, scene_record)
         os.remove(scene_basename)
 
