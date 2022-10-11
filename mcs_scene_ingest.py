@@ -1,12 +1,9 @@
-import argparse
-import io
-import json
 import logging
-import os
 import re
 from collections.abc import MutableMapping
 
 from pymongo import MongoClient
+from mcs_ingest import copy_indexes, load_json_file, get_scene_collection
 
 import create_collection_keys
 
@@ -22,32 +19,6 @@ SCENE_MAPPING_INDEX = "scenes_mapping"
 SCENE_DEBUG_EXTENSION = "_debug.json"
 
 
-def get_scene_collection(
-        db_string: str,
-        client: MongoClient,
-        eval_name: str) -> str:
-    mongoDB = client[db_string]
-    collection = mongoDB[SCENE_MAPPING_INDEX]
-    mapping = collection.find_one(
-        {
-            "name": eval_name
-        }
-    )
-
-    if mapping is None:
-        eval_number_str = re.sub("[^0-9.]", "", eval_name)
-        if "." in eval_number_str:
-            eval_number = float(eval_number_str)
-        else:
-            eval_number = int(eval_number_str)
-
-        collection_name = "eval_" + (str(eval_number)).replace(".", "_") + "_scenes"
-        collection.insert_one({"name": eval_name, "collection": collection_name})
-        return collection_name
-    else:
-        return mapping["collection"]
-
-
 def automated_scene_ingest_file(
         file_name: str,
         folder: str,
@@ -60,6 +31,9 @@ def automated_scene_ingest_file(
     scene_item = build_scene_item(file_name, folder)
     collection_name = get_scene_collection(db_string, client, scene_item["eval"])
     collection = mongoDB[collection_name]
+    total_documents = collection.count_documents({})
+    if total_documents == 1:
+        copy_indexes(db_string, client, collection_name, SCENE_MAPPING_INDEX)
     count = collection.count_documents(
         {
             "name": scene_item["name"],
@@ -112,17 +86,6 @@ def build_scene_item(file_name: str, folder: str) -> dict:
     scene = delete_keys_from_scene(scene, KEYS_TO_DELETE)
 
     return scene
-
-
-def load_json_file(folder: str, file_name: str) -> dict:
-    """Read in a json file and decode into a dict.  Can
-    be used for history, scene, or other json files."""
-    with io.open(
-            os.path.join(
-                folder, file_name),
-            mode='r',
-            encoding='utf-8-sig') as json_file:
-        return json.loads(json_file.read())
 
 
 def delete_keys_from_scene(scene, keys) -> dict:

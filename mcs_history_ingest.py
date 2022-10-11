@@ -12,7 +12,7 @@ from pymongo import MongoClient
 import create_collection_keys
 
 from scorecard import Scorecard
-
+from mcs_ingest import copy_indexes, load_json_file, get_scene_collection
 
 HISTORY_MAPPING_INDEX = "history_mapping"
 SCENE_MAPPING_INDEX = "scenes_mapping"
@@ -30,6 +30,7 @@ TEAM_MAPPING_DICT = {
 
 # Convert Eval names used to 'pretty' scene record names for UI
 EVAL_SCENE_MAPPING_DICT = {
+    "eval_3": "Evaluation 3 Scenes",
     "eval_3-5": "Evaluation 3.5 Scenes",
     "eval_3-75": "Evaluation 3.75 Scenes",
     "eval_4": "Evaluation 4 Scenes",
@@ -40,6 +41,7 @@ EVAL_SCENE_MAPPING_DICT = {
 }
 # Convert Eval names used to 'pretty' history record names for UI
 EVAL_HIST_MAPPING_DICT = {
+    "eval_3": "Evaluation 3 Results",
     "eval_3-5": "Evaluation 3.5 Results",
     "eval_3-75": "Evaluation 3.75 Results",
     "eval_4": "Evaluation 4 Results",
@@ -117,32 +119,6 @@ def get_history_collection(
         return collection_name
     else:
         return mapping["collection"]
-
-
-def get_scene_collection(
-        db_string: str,
-        client: MongoClient,
-        eval_name: str) -> str:
-    mongoDB = client[db_string]
-    collection = mongoDB[SCENE_MAPPING_INDEX]
-    mapping = collection.find_one(
-        {
-            "name": eval_name
-        }
-    )
-
-    return mapping["collection"]
-
-
-def load_json_file(folder: str, file_name: str) -> dict:
-    """Read in a json file and decode into a dict.  Can
-    be used for history, scene, or other json files."""
-    with io.open(
-            os.path.join(
-                folder, file_name),
-            mode='r',
-            encoding='utf-8-sig') as json_file:
-        return json.loads(json_file.read())
 
 
 def determine_evaluation_hist_name(
@@ -564,6 +540,10 @@ def automated_history_ingest_file(
     collection_name = get_history_collection(db_string, client, history_item["eval"])
 
     collection = mongoDB[collection_name]
+    total_documents = collection.count_documents({})
+    if total_documents == 1:
+        copy_indexes(db_string, client, collection_name, HISTORY_MAPPING_INDEX)
+
     check_exists = collection.find(
         {
             "name": history_item["name"],
