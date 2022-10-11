@@ -491,25 +491,24 @@ class TestMcsScorecard(unittest.TestCase):
         ]}
         scene = {
              'performerStart': {'position':{'x':-4, 'z':-4}},
-             'debug':{
-                 'slowPath': [{'x':-4,'z':-4},
-                          {'x':-4,'z':-3},
-                          {'x':-4,'z':-2},
-                          {'x':-4,'z':-1},
-                          {'x':-4,'z':0},
-                          {'x':-4,'z':1},
-                          {'x':-3,'z':1},
-                          {'x':-2,'z':1},
-                          {'x':-1,'z':1},
-                          {'x':0,'z':1}],
-                 'path': [{'x':2, 'z':2},
-                              {'x':-3,'z':-3},
-                              {'x':-2,'z':-2},
-                              {'x':-1,'z':-1},
-                              {'x':0,'z':0},
-                              {'x':1,'z':1}
-                              ]
-             }
+             'slowPath': [{'x':-4,'z':-4},
+                    {'x':-4,'z':-3},
+                    {'x':-4,'z':-2},
+                    {'x':-4,'z':-1},
+                    {'x':-4,'z':0},
+                    {'x':-4,'z':1},
+                    {'x':-3,'z':1},
+                    {'x':-2,'z':1},
+                    {'x':-1,'z':1},
+                    {'x':0,'z':1}],
+             'path': [{'x':2, 'z':2},
+                        {'x':-3,'z':-3},
+                        {'x':-2,'z':-2},
+                        {'x':-1,'z':-1},
+                        {'x':0,'z':0},
+                        {'x':1,'z':1}
+                        ]
+
         }
         sc=Scorecard(history, scene)
         sc.calc_fastest_path()
@@ -519,7 +518,7 @@ class TestMcsScorecard(unittest.TestCase):
         sc.calc_fastest_path()
         assert not sc.is_fastest_path
         
-        scene['debug'].pop('slowPath')
+        scene.pop('slowPath')
         sc=Scorecard(history_slow, scene)
         sc.calc_fastest_path()
         assert sc.is_fastest_path is None

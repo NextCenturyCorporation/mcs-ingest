@@ -103,6 +103,12 @@ def build_scene_item(file_name: str, folder: str) -> dict:
             "sceneInfo"]["sequenceId"]
         del scene["goal"]["sceneInfo"]["sequenceId"]
 
+    if "path" in scene["debug"]:
+        scene["path"] = scene["debug"]["path"]
+
+    if "slowPath" in scene["debug"]:
+        scene["slowPath"] = scene["debug"]["slowPath"]
+
     scene = delete_keys_from_scene(scene, KEYS_TO_DELETE)
 
     return scene
