@@ -964,10 +964,9 @@ class Scorecard:
         self.grid_size = grid_size
 
     def calc_fastest_path(self):
-        debug = self.scene.get('debug', {})
-        if not debug.get(PATH_KEY) or not debug.get(ALTERNATE_PATH_KEY):
+        if not self.scene.get(PATH_KEY) or not self.scene.get(ALTERNATE_PATH_KEY):
             return
-        paths = [debug[PATH_KEY], debug[ALTERNATE_PATH_KEY]]
+        paths = [self.scene[PATH_KEY], self.scene[ALTERNATE_PATH_KEY]]
         steps_list = self.history['steps']
         
         distances=[]
