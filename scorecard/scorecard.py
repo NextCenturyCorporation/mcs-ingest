@@ -72,6 +72,8 @@ DEFAULT_ROOM_DIMENSIONS = {'x': 10, 'y': 3, 'z': 10}
 PERFORMER_WIDTH = 0.25
 PERFORMER_HEIGHT = 0.762
 
+MULTI_RETRIEVAL = "multi retrieval"
+
 
 def get_relevant_object(output) -> str:
     """See if there is an object for the current action output"""
@@ -569,6 +571,10 @@ class Scorecard:
         did not move toward the target"""
 
         self.not_moving_toward_object = 0
+
+        if(self.scene["goal"]["sceneInfo"]["secondaryType"] ==
+                MULTI_RETRIEVAL):
+            return self.not_moving_toward_object
 
         seen_count = -1
         steps_not_moving_towards = 0
