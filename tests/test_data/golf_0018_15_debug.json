@@ -394,7 +394,10 @@
       }
     },
     "description": "Find and pick up the small light grey metal trophy.",
-    "last_step": 10000
+    "last_step": 10000,
+    "sceneInfo": {
+      "secondaryType": "retrieval"
+    }
   },
   "evaluationOnly": true,
   "sequenceNumber": 18,

@@ -27,7 +27,10 @@
       }
     },
     "description": "Find and pick up the tiny light black white rubber ball.",
-    "last_step": 2500
+    "last_step": 2500,
+    "sceneInfo": {
+      "secondaryType": "retrieval"
+    }
   },
   "objects": [
     {
