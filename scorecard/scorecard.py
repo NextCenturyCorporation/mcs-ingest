@@ -570,11 +570,11 @@ class Scorecard:
         """Calculate number of times that the agent
         did not move toward the target"""
 
-        self.not_moving_toward_object = 0
-
         if(self.scene["goal"]["sceneInfo"]["secondaryType"] ==
                 MULTI_RETRIEVAL):
-            return self.not_moving_toward_object
+            return 0
+
+        self.not_moving_toward_object = 0
 
         seen_count = -1
         steps_not_moving_towards = 0
