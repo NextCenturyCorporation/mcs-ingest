@@ -1,11 +1,11 @@
 from pymongo import MongoClient
-from scripts._0_6_0_rescore_fastest_path import update_fastest_path
+from scripts._0_6_5_add_domain_type import add_domain_type_field
 # We might want to move mongo user/pass to new file
 VERSION_COLLECTION = "mcs_version"
 
 # Change this version if running a new deploy script
 # Make sure the first two numbers match the current MCS API Release
-db_version = "0.6.0"
+db_version = "0.6.5"
 
 
 def check_version(mongoDB):
@@ -29,7 +29,7 @@ def main():
     if(check_version(mongoDB)):
         print("New db version, execute scripts")
         # Place scripts here to run
-        update_fastest_path(mongoDB)
+        add_domain_type_field(mongoDB)
 
         # Now update db version
         update_db_version(mongoDB)
@@ -42,7 +42,7 @@ def main():
     if(check_version(mongoDB)):
         print("New db version, execute scripts")
         # Place scripts here to run
-        update_fastest_path(mongoDB)
+        add_domain_type_field(mongoDB)
 
         # Now update db version
         update_db_version(mongoDB)
