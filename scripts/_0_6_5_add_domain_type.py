@@ -76,3 +76,11 @@ def add_domain_type_field(mongoDB):
             results_collection.update_many({"category_type": item}, [{"$set": {"domain_type": "interactive"}}])
 
         print("Updated Domain Types for Eval " + str(eval_number) + ".")
+
+        results_collection.create_index([("domain_type", 1), ("category", 1)])
+        results_collection.create_index([("domain_type", 1), ("metadata", 1)])
+
+        scenes_collection = mongoDB["eval_" + eval_number + "_scenes"]
+        scenes_collection.create_index([("domain_type", 1), ("metadata", 1)])
+        
+        print("Created Domain Type Indexes for Eval " + str(eval_number) + ".")
