@@ -310,6 +310,7 @@ class Scorecard:
         self.calc_pickup_not_pickupable()
         self.calc_agent_interactions()
         self.calc_walked_into_structures()
+        self.calc_imitation_order_containers_are_opened_colors()
 
         # To be implemented
         # self.calc_attempt_impossible()
@@ -329,7 +330,8 @@ class Scorecard:
             'pickup_not_pickupable': self.pickup_not_pickupable,
             'interact_with_non_agent': self.interact_with_non_agent,
             'walked_into_structures': self.walked_into_structures,
-            'interact_with_agent': self.interact_with_agent
+            'interact_with_agent': self.interact_with_agent,
+            'order_containers_are_opened_colors': self.order_containers_are_opened_colors
         }
 
     def get_revisits(self):
