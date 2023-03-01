@@ -1211,9 +1211,11 @@ class Scorecard:
         '''
         steps_list = self.history['steps']
         set_rotation_container_opened = ''
+        set_rotation_lid_opened = ''
 
-        containers = [(obj['id'], obj['debug']['position']) for obj in self.scene['objects']
-            if obj['type'] == 'separate_container']
+        containers_and_lids = [[
+                obj['shows'][0]['position']['x'], obj['id'], obj['debug']['lidId']
+            ] for obj in self.scene['objects'] if obj['type'] == 'separate_container']
         found_container = False
         for single_step in steps_list:
             action = single_step['action']
@@ -1221,9 +1223,10 @@ class Scorecard:
             if (action == 'OpenObject'):
                 resolved_obj_id = output['resolved_object']
                 if output['return_status'] == "SUCCESSFUL":
-                    for c in containers:
-                         if resolved_obj_id == c[0]:
-                            set_rotation_container_opened = 123
+                    for cl in containers_and_lids:
+                         if resolved_obj_id == cl[1] or resolved_obj_id == cl[2]:
+                            set_rotation_container_opened = \
+                                'left' if cl[0] < 0 else 'middle' if cl[0] == 0 else 'right'
                             found_container = True
                             break
             if found_container:
@@ -1240,8 +1243,13 @@ class Scorecard:
         steps_list = self.history['steps']
         shell_game_container_opened = ''
 
-        containers = [(obj['id'], obj['debug']['position']) for obj in self.scene['objects']
-            if obj['type'] == 'separate_container']
+        containers_and_lids = [[
+                obj['shows'][0]['position']['x'],
+                obj['debug']['location'],
+                obj['id'],
+                obj['debug']['lidId'],
+            ]
+            for obj in self.scene['objects'] if obj['type'] == 'separate_container']
         found_container = False
         for single_step in steps_list:
             action = single_step['action']
@@ -1249,9 +1257,9 @@ class Scorecard:
             if (action == 'OpenObject'):
                 resolved_obj_id = output['resolved_object']
                 if output['return_status'] == "SUCCESSFUL":
-                    for c in containers:
-                         if resolved_obj_id == c[0]:
-                            shell_game_container_opened = 123
+                    for cl in containers_and_lids:
+                         if resolved_obj_id == cl[2] or resolved_obj_id == cl[3]:
+                            shell_game_container_opened = cl[1]
                             found_container = True
                             break
             if found_container:
