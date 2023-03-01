@@ -173,7 +173,8 @@ class TestMcsScorecard(unittest.TestCase):
             'pickup_not_pickupable',
             'interact_with_non_agent',
             'walked_into_structures',
-            'interact_with_agent']
+            'interact_with_agent',
+            'order_containers_are_opened_colors']
         )
 
     def test_get_lookpoint(self):
