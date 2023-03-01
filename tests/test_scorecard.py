@@ -52,6 +52,15 @@ TEST_HISTORY_OBSTRUCTED_PLAFTORM_LIPS = "obstructed_history_just_plaform_lips.js
 TEST_SCENE_IMITATION = "imitation_eval_5_ex_1.json"
 TEST_HISTORY_IMITATION = "imitation_eval_5_ex_1_history.json"
 
+TEST_SCENE_SHELL_GAME_CROSS = "shell_game_0001_10_J1_debug.json"
+TEST_SCENE_SHELL_GAME_LATERAL_SUBSTITUTION = "shell_game_0001_06_F1_debug.json"
+TEST_HISTORY_SHELL_GAME_CROSS = "shell_game_0001_06_history.json"
+TEST_HISTORY_SHELL_GAME_LATERAL_SUBSTITUTION = "shell_game_0001_10_history.json"
+
+TEST_SCENE_SET_ROTATION_TURNTABLE_MOVES_270_MIDDLE = "setrotation_0001_17_I1_debug.json"
+TEST_SCENE_SET_ROTATION_PERFORMER_MOVES_270_LEFT = "setrotation_0001_18_I2_debug.json"
+TEST_HISTORY_SET_ROTATION_TURNTABLE = "setrotation_0001_17_history.json"
+TEST_HISTORY_SET_ROTATION_PERFORMER = "setrotation_0001_18_history.json"
 
 TEST_FOLDER = "./tests/test_data"
 
@@ -574,3 +583,37 @@ class TestMcsScorecard(unittest.TestCase):
         scorecard.calc_imitation_order_containers_are_opened_colors()
         assert scorecard.get_imitation_order_containers_are_opened() == \
             [['orange'], ['blue']]
+
+    def test_calc_set_rotation(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SET_ROTATION_TURNTABLE_MOVES_270_MIDDLE)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_TURNTABLE)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation() == 123
+
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SET_ROTATION_PERFORMER_MOVES_270_LEFT)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_PERFORMER)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation() == 123
+
+    def test_calc_shell_game(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SHELL_GAME_CROSS)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SHELL_GAME_CROSS)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_shell_game()
+        assert scorecard.get_shell_game == 123
+
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SHELL_GAME_LATERAL_SUBSTITUTION)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SHELL_GAME_LATERAL_SUBSTITUTION)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_shell_game()
+        assert scorecard.get_shell_game() == 123

@@ -311,6 +311,8 @@ class Scorecard:
         self.calc_agent_interactions()
         self.calc_walked_into_structures()
         self.calc_imitation_order_containers_are_opened_colors()
+        self.calc_set_rotation()
+        self.calc_shell_game()
 
         # To be implemented
         # self.calc_attempt_impossible()
@@ -331,7 +333,9 @@ class Scorecard:
             'interact_with_non_agent': self.interact_with_non_agent,
             'walked_into_structures': self.walked_into_structures,
             'interact_with_agent': self.interact_with_agent,
-            'order_containers_are_opened_colors': self.order_containers_are_opened_colors
+            'order_containers_are_opened_colors': self.order_containers_are_opened_colors,
+            'set_rotation_container_opened': self.set_rotation_container_opened,
+            'shell_game_container_opened': self.shell_game_container_opened
         }
 
     def get_revisits(self):
@@ -366,6 +370,12 @@ class Scorecard:
 
     def get_imitation_order_containers_are_opened(self):
         return self.order_containers_are_opened_colors
+
+    def get_set_rotation(self):
+        return self.set_rotation_container_opened
+
+    def get_shell_game(self):
+        return self.shell_game_container_opened
 
     def calc_revisiting(self):
 
@@ -1174,7 +1184,7 @@ class Scorecard:
 
     def calc_imitation_order_containers_are_opened_colors(self):
         ''' 
-        Determine the order the performer opened containers by theree colors
+        Determine the order the performer opened containers by color
         '''
         steps_list = self.history['steps']
         order_containers_are_opened_colors = []
@@ -1194,3 +1204,58 @@ class Scorecard:
         self.order_containers_are_opened_colors = \
             order_containers_are_opened_colors
         return self.order_containers_are_opened_colors
+
+    def calc_set_rotation(self):
+        ''' 
+        Determine the container the performer opened in set rotation scenes
+        '''
+        steps_list = self.history['steps']
+        set_rotation_container_opened = ''
+
+        containers = [(obj['id'], obj['debug']['position']) for obj in self.scene['objects']
+            if obj['type'] == 'separate_container']
+        found_container = False
+        for single_step in steps_list:
+            action = single_step['action']
+            output = single_step['output']
+            if (action == 'OpenObject'):
+                resolved_obj_id = output['resolved_object']
+                if output['return_status'] == "SUCCESSFUL":
+                    for c in containers:
+                         if resolved_obj_id == c[0]:
+                            set_rotation_container_opened = 123
+                            found_container = True
+                            break
+            if found_container:
+                break
+
+        self.set_rotation_container_opened = set_rotation_container_opened
+        return self.set_rotation_container_opened
+
+
+    def calc_shell_game(self):
+        ''' 
+        Determine the container the performer opened in shell game scenes
+        '''
+        steps_list = self.history['steps']
+        shell_game_container_opened = ''
+
+        containers = [(obj['id'], obj['debug']['position']) for obj in self.scene['objects']
+            if obj['type'] == 'separate_container']
+        found_container = False
+        for single_step in steps_list:
+            action = single_step['action']
+            output = single_step['output']
+            if (action == 'OpenObject'):
+                resolved_obj_id = output['resolved_object']
+                if output['return_status'] == "SUCCESSFUL":
+                    for c in containers:
+                         if resolved_obj_id == c[0]:
+                            shell_game_container_opened = 123
+                            found_container = True
+                            break
+            if found_container:
+                break
+
+        self.shell_game_container_opened = shell_game_container_opened
+        return self.shell_game_container_opened
