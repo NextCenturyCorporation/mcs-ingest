@@ -1174,7 +1174,7 @@ class Scorecard:
 
     def calc_imitation_order_containers_are_opened_colors(self):
         ''' 
-        Determine the order the performer opened containers by theree colors
+        Determine the order the performer opened containers by color
         '''
         steps_list = self.history['steps']
         order_containers_are_opened_colors = []
