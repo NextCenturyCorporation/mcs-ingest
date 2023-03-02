@@ -228,6 +228,26 @@ def find_target_loc_by_step(scene, step):
 
     return None, 0, 0
 
+def is_obj_target(scene, obj_id):
+
+    # if not interactive, return
+    if scene["goal"]["sceneInfo"]["primaryType"] != "interactive":
+        return False
+
+    # TODO: MCS-1593: ambiguous scenes?
+
+    if(scene["goal"]["sceneInfo"]["secondaryType"] ==
+                MULTI_RETRIEVAL):
+        for target in scene["goal"]["metadata"]["targets"]:
+            if(target['id'] == obj_id):
+                return True
+    else:
+        target_obj = scene["goal"]["metadata"]["target"]
+        if(target_obj['id'] == obj_id):
+            return True
+
+
+    return False
 
 class GridHistory:
     """A history of the times a grid square has been visited"""
@@ -295,6 +315,7 @@ class Scorecard:
         self.pickup_not_pickupable = 0
         self.interact_with_non_agent = 0
         self.interact_with_agent = 0
+        self.number_of_rewards_achieved = None
 
     def score_all(self) -> dict:
         self.calc_repeat_failed()
@@ -310,6 +331,7 @@ class Scorecard:
         self.calc_pickup_not_pickupable()
         self.calc_agent_interactions()
         self.calc_walked_into_structures()
+        self.calc_num_rewards_achieved()
 
         # To be implemented
         # self.calc_attempt_impossible()
@@ -329,7 +351,8 @@ class Scorecard:
             'pickup_not_pickupable': self.pickup_not_pickupable,
             'interact_with_non_agent': self.interact_with_non_agent,
             'walked_into_structures': self.walked_into_structures,
-            'interact_with_agent': self.interact_with_agent
+            'interact_with_agent': self.interact_with_agent,
+            'number_of_rewards_achieved': self.number_of_rewards_achieved
         }
 
     def get_revisits(self):
@@ -361,6 +384,9 @@ class Scorecard:
 
     def get_walked_into_structures(self):
         return self.walked_into_structures
+
+    def get_number_of_rewards_achieved(self):
+        return self.number_of_rewards_achieved
 
     def calc_revisiting(self):
 
@@ -1166,3 +1192,42 @@ class Scorecard:
                         break
         self.walked_into_structures = walked_into_structures
         return self.walked_into_structures
+
+
+    def calc_num_rewards_achieved(self):
+        '''
+        Determine the number of reward soccer balls collected by
+        the performer.
+        '''
+        # Ignore passive scenes
+        if(self.scene["goal"]["category"] != "interactive"):
+            return None
+
+        steps_list = self.history['steps']
+
+        # track targets that are held
+        targets_picked_up = []
+
+        for single_step in steps_list:
+            action = single_step['action']
+            output = single_step['output']
+
+            if action == 'PickupObject' and output['return_status'] == 'SUCCESSFUL':
+                # Get the id of the object that was used, if any
+                obj_id = get_relevant_object(output)
+
+                if is_obj_target(self.scene, obj_id) and (obj_id not in targets_picked_up):
+                    targets_picked_up.append(obj_id)
+
+            if action == 'DropObject' and output['return_status'] == 'SUCCESSFUL':
+                # Get the id of the object that was used, if any
+                obj_id = get_relevant_object(output)
+
+                # remove if target was dropped
+                if is_obj_target(self.scene, obj_id) and (obj_id in targets_picked_up):
+                    targets_picked_up.remove(obj_id)
+
+        self.number_of_rewards_achieved = len(targets_picked_up)
+        logging.debug(f"Total number of rewards achieved: {self.number_of_rewards_achieved}")
+        return self.number_of_rewards_achieved
+
