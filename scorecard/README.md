@@ -24,6 +24,7 @@ The actions that are counted (as of Eval 5):
 * Attempting physically impossible actions.  This is not implemented yet.
   * e.g., trying to pick up a sofa or another similarly large item; trying to interact with the floor or wall
   * Impossible actions will be counted from the first attempt.
+* Determine what door the agent opened (left, middle, right)
   
 Some of these are mathematically vague;  for example, the space that the agent moves in is continous,
 so 'revisit' needs to have a particular distance.  Below, we discuss the way to count them.
@@ -179,6 +180,14 @@ of the scorecard determines if the agent used the shorter or longer path
 by calculating the distance from each step to the ideal path of each.  
 The path with the smaller culmulative distance is assumed to be the path
 the agent chose.
+
+#### Door Opened Side
+
+For "doorcluder" task types, such as Interactive Solidity
+Interactive Support Relations, Trajectory, Interactive Collisions
+the agent needs to choose to open one of two or three doors. 
+This element of the scorecard determines what door side opened
+by the performer opened (left, middle, right).
 
 ## Running the Scorecard
 
