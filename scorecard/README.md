@@ -180,6 +180,13 @@ by calculating the distance from each step to the ideal path of each.
 The path with the smaller culmulative distance is assumed to be the path
 the agent chose.
 
+#### Pickup Non Target
+
+Some tasks have multiple soccer balls, but not all of them are considered a
+"target object". For Tool Choice tasks, we expect the non-target soccer ball
+to always be inaccessible. This metric measures whether the non-target soccer
+ball was able to be accessed and picked-up anyway.
+
 ## Running the Scorecard
 
 
