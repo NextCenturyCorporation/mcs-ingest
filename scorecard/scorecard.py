@@ -1200,7 +1200,7 @@ class Scorecard:
         the performer.
         '''
         # Ignore passive scenes
-        if(self.scene["goal"]["category"] != "interactive"):
+        if(self.scene["goal"]["sceneInfo"]["primaryType"] != "interactive"):
             return None
 
         steps_list = self.history['steps']
