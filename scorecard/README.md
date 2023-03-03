@@ -184,7 +184,7 @@ the agent chose.
 
 #### Number of Rewards Achieved
 Will indicate how many reward balls are held by the end of the scene for
-retrieval tasks. Especially useful for multi retrieval tasks. If the scene
+interactive tasks. Especially useful for multi retrieval tasks. If the scene
 is a non-interactive scene, value will be None. 
 
 ## Running the Scorecard
