@@ -9,7 +9,7 @@
     "evaluationOnly": true,
     "hypercubeNumber": 1,
     "sceneNumber": 3,
-    "evaluation": null,
+    "evaluation": "Evaluation 6 Scenes",
     "training": false
   },
   "goal": {
