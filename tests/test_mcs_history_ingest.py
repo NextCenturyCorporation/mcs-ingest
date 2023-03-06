@@ -99,6 +99,7 @@ class TestMcsHistoryIngestMongo(unittest.TestCase):
             self.mongo_client, "mcs")
         self.assertIsNotNone(history_item)
         self.assertIsNotNone(history_item["slices"])
+        self.assertEqual(history_item["domain_type"], "passive objects")
 
     def test_build_interactive_history_item(self):
         '''Generates history item for an interactive, which follows

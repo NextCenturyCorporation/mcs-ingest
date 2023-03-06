@@ -364,6 +364,8 @@ def build_history_item(
             "goal"]["sceneInfo"]["untrained"]["any"]
         history_item["category_type"] = scene[
             "goal"]["sceneInfo"]["tertiaryType"]
+        history_item["domain_type"] = scene[
+            "goal"]["sceneInfo"]["domainType"]
 
         history_item["score"] = process_score(
             history_item,
