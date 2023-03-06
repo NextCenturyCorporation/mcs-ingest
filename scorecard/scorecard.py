@@ -234,13 +234,18 @@ def is_obj_target(scene, obj_id):
     if scene["goal"]["sceneInfo"]["primaryType"] != "interactive":
         return False
 
-    # TODO: MCS-1593: ambiguous scenes?
-
     if(scene["goal"]["sceneInfo"]["secondaryType"] ==
                 MULTI_RETRIEVAL):
-        for target in scene["goal"]["metadata"]["targets"]:
-            if(target['id'] == obj_id):
-                return True
+        # if ambiguous multi retrieval, simply check if
+        # the object is a soccer_ball
+        if(scene["goal"]["sceneInfo"]["ambiguous"] is True):
+            for objs in scene["objects"]:
+                if(objs['id'] == obj_id and objs['type'] == "soccer_ball"):
+                    return True
+        else:
+            for target in scene["goal"]["metadata"]["targets"]:
+                if(target['id'] == obj_id):
+                    return True
     else:
         target_obj = scene["goal"]["metadata"]["target"]
         if(target_obj['id'] == obj_id):

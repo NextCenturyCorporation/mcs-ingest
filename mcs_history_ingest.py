@@ -302,6 +302,17 @@ def build_history_item(
     reorientation_scoring_override = (
         scene["goal"]["sceneInfo"]["tertiaryType"] == "reorientation")
 
+    # Needed for ambiguous multi retrieval scenes
+    multi_retrieval_scoring_override = (
+        scene["goal"]["sceneInfo"]["secondaryType"] == "multi retrieval" and
+        scene["goal"]["sceneInfo"]["ambiguous"] is True
+    )
+
+    total_targets_multi_retrieval = None
+
+    if(multi_retrieval_scoring_override):
+        total_targets_multi_retrieval = len(scene["goal"]["metadata"]["targets"])
+
     # set all corners incorrect at beginning of scene
     (
         incorrect_corners,
@@ -317,13 +328,17 @@ def build_history_item(
     interactive_goal_achieved = 0
     interactive_reward = 0
 
+    # for multi retrieval
+    multi_retrieval_rewards_picked_up = 0
+
     for step in history["steps"]:
         number_steps += 1
         (
             new_step,
             interactive_reward,
             interactive_goal_achieved,
-            corner_visit_order
+            corner_visit_order,
+            multi_retrieval_rewards_picked_up
         ) = build_new_step_obj(
             step,
             interactive_reward,
@@ -332,7 +347,11 @@ def build_history_item(
             incorrect_corners,
             correct_corners,
             corner_visit_order,
-            reorientation_scoring_override)
+            reorientation_scoring_override,
+            multi_retrieval_scoring_override,
+            total_targets_multi_retrieval,
+            multi_retrieval_rewards_picked_up
+            )
         steps.append(new_step)
 
     history_item["steps"] = steps
@@ -437,7 +456,10 @@ def build_new_step_obj(
         incorrect_corners: List[dict],
         correct_corners: List[dict],
         corner_visit_order: List[dict],
-        reorientation_scoring_override: bool) -> tuple:
+        reorientation_scoring_override: bool,
+        multi_retrieval_scoring_override: bool,
+        total_targets_multi_retrieval: int,
+        multi_retrieval_rewards_picked_up: int) -> tuple:
     new_step = {
         'stepNumber': step["step"],
         'action': step["action"],
@@ -487,6 +509,19 @@ def build_new_step_obj(
         if interactive_reward >= 0 - ((number_steps - 1) * 0.001) + 1:
             interactive_goal_achieved = 1
 
+        # For now, simply check if objects were picked up or dropped, 
+        # since soccer_balls are the only thing pickupable
+        if(multi_retrieval_scoring_override):
+            if(new_step["action"] == "PickupObject" and 
+               output["return_status"] == "SUCCESSFUL"):
+                multi_retrieval_rewards_picked_up += 1
+            if(new_step["action"] == "DropObject" and
+               output["return_status"] == "SUCCESSFUL"):
+                multi_retrieval_rewards_picked_up -= 1
+
+            if(total_targets_multi_retrieval == multi_retrieval_rewards_picked_up and interactive_goal_achieved != 1):
+                interactive_goal_achieved = 1
+
         if "target_visible" in step:
             new_step["target_visible"] = step["target_visible"]
 
@@ -502,7 +537,8 @@ def build_new_step_obj(
         new_step,
         interactive_reward,
         interactive_goal_achieved,
-        corner_visit_order)
+        corner_visit_order,
+        multi_retrieval_rewards_picked_up)
 
 
 def calculate_weighted_confidence(history_item: dict, multiplier: int) -> Union[float,None]:
