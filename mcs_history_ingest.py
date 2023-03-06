@@ -299,9 +299,8 @@ def build_history_item(
 
     # This variable will override any rewards for a reorientation task
     #    should the agent visit a corner it should not be at
-    
-    reorientation_scoring_override = False #(
-        #scene["goal"]["sceneInfo"]["tertiaryType"] == "reorientation")
+    reorientation_scoring_override = (
+        scene["goal"]["sceneInfo"]["tertiaryType"] == "reorientation")
 
     # set all corners incorrect at beginning of scene
     (
