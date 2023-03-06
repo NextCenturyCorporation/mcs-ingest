@@ -1442,6 +1442,7 @@
       "secondaryType": "retrieval",
       "tertiaryType": "occluder",
       "quaternaryType": "action full",
+      "domainType": "interactive objects",
       "ambiguous": null,
       "corner": null,
       "direction": null,

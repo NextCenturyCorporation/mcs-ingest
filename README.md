@@ -62,6 +62,7 @@ To run the unit tests, run the command: `python -m unittest`
 
 - Some unit tests will start a MongoDB instance in a docker container, and then stop it once the tests are done. Each time you run the unit tests, python will automatically download the latest `mongo` docker image, if needed.
 - If you get a docker permissions or connection refused error, you might need to add yourself to the `docker` group; see the [instructions here](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user). Do NOT use [rootless docker](https://docs.docker.com/engine/security/rootless/) because it uses a different `docker.sock` file than the one we reference in the unit tests.
+- If you get a botocore "Unable to locate credentials" exception, you probably need to configure your AWS credentials: create a personal Access Key using the AWS web console (or use one you've already made), install the AWS CLI, then run `aws configure`.
 
 ## Running Deployment Scripts
 
