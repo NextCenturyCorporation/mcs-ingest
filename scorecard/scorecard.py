@@ -238,7 +238,7 @@ def is_obj_target(scene, obj_id):
                 MULTI_RETRIEVAL):
         # if ambiguous multi retrieval, simply check if
         # the object is a soccer_ball
-        if(scene["goal"]["sceneInfo"]["ambiguous"] is True):
+        if("ambiguous" in scene["goal"]["sceneInfo"] and scene["goal"]["sceneInfo"]["ambiguous"] is True):
             for objs in scene["objects"]:
                 if(objs['id'] == obj_id and objs['type'] == "soccer_ball"):
                     return True

@@ -1,0 +1,191 @@
+{
+  
+  "goal": {
+    "sceneInfo": {
+      "primaryType": "interactive",
+      "secondaryType": "multi retrieval",
+      "tertiaryType": "number comparison"
+    },
+    "category": "multi retrieval",
+    "metadata": {
+      "targets": [
+        {
+          "id": "f7fc4c29-ca2b-4cae-ad75-ed263078bd20",
+          "info": [
+            "small",
+            "light",
+            "black",
+            "white",
+            "rubber",
+            "ball",
+            "black white",
+            "small light",
+            "small rubber",
+            "small black white",
+            "small ball",
+            "light rubber",
+            "light black white",
+            "light ball",
+            "rubber black white",
+            "rubber ball",
+            "black white ball",
+            "small light black white rubber ball"
+          ]
+        }
+      ]
+    },
+    "description": "Find and pick up as many objects as possible of type: small light black white rubber ball.",
+    "last_step": 2500,
+    "action_list": []
+  },
+  "holes": [],
+  "isometric": false,
+  "lava": [],
+  "name": "numcomp_0001_05",
+  "objects": [
+    {
+      "id": "platform_a725e583-a7f0-4b1f-b543-5480dcd479ec",
+      "type": "cube",
+      "mass": 750,
+      "materials": ["Custom/Materials/GreyWoodMCS"],
+      "kinematic": true,
+      "structure": true,
+      "lips": {
+        "front": false,
+        "back": false,
+        "left": false,
+        "right": false
+      },
+      "shows": [
+        {
+          "stepBegin": 0,
+          "position": {
+            "x": 0,
+            "y": 0.5,
+            "z": 0
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "scale": {
+            "x": 0.5,
+            "y": 1,
+            "z": 12
+          }
+        }
+      ]
+    },
+    {
+      "id": "wall_d5bd7936-70fc-4c1d-ad92-bf6717da9cbf6e3ddd36-b28c-4423-bd8f-a53779207888",
+      "type": "cube",
+      "mass": 4,
+      "materials": ["Custom/Materials/Black"],
+      "kinematic": true,
+      "structure": true,
+      "shows": [
+        {
+          "stepBegin": 0,
+          "position": {
+            "x": 0,
+            "y": 1.125,
+            "z": -4.5
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "scale": {
+            "x": 0.5,
+            "y": 0.25,
+            "z": 0.25
+          }
+        }
+      ]
+    },
+    {
+      "id": "f7fc4c29-ca2b-4cae-ad75-ed263078bd20",
+      "type": "soccer_ball",
+      "mass": 2.0,
+      "salientMaterials": ["rubber"],
+      "moveable": true,
+      "pickupable": true,
+      "shows": [
+        {
+          "position": {
+            "x": -1.75,
+            "y": 0.22,
+            "z": 2.75
+          },
+          "rotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 2.0,
+            "y": 2.0,
+            "z": 2.0
+          }
+        }
+      ],
+      "materials": []
+    },
+    {
+      "id": "890ccbbd-4797-4e59-b18a-97d005f890b9",
+      "type": "soccer_ball",
+      "mass": 2.0,
+      "salientMaterials": ["rubber"],
+      "moveable": true,
+      "pickupable": true,
+      "shows": [
+        {
+          "position": {
+            "x": 1.75,
+            "y": 0.22,
+            "z": 2.75
+          },
+          "rotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 2.0,
+            "y": 2.0,
+            "z": 2.0
+          }
+        }
+      ],
+      "materials": []
+    }
+  ],
+  "screenshot": false,
+  "version": 2,
+  "ceilingMaterial": "AI2-THOR/Materials/Walls/DrywallBeige",
+  "floorMaterial": "AI2-THOR/Materials/Fabrics/CarpetDarkGreen",
+  "floorTextures": [],
+  "intuitivePhysics": false,
+  "performerStart": {
+    "position": {
+      "x": 0.0,
+      "y": 2.25,
+      "z": -5.5
+    },
+    "rotation": {
+      "x": 10.0,
+      "y": 0.0,
+      "z": 0.0
+    }
+  },
+  "roomDimensions": {
+    "x": 8.0,
+    "y": 8.0,
+    "z": 12.0
+  },
+  "wallMaterial": "Custom/Materials/GreyWoodMCS"
+}

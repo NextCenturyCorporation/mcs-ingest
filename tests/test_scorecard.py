@@ -50,9 +50,12 @@ TEST_HISTORY_OBSTRUCTED = "obstructed_history.json"
 TEST_HISTORY_OBSTRUCTED_PLAFTORM_LIPS = "obstructed_history_just_plaform_lips.json"
 
 TEST_SCENE_NUM_REWARDS = "arth_0001_13_ex.json"
+TEST_SCENE_NUM_REWARDS_AMB = "numcomp_0001_05_scene.json"
 TEST_HISTORY_NUM_REWARDS_ALL = "arth_0001_13_hist_all_targets.json"
 TEST_HISTORY_NUM_REWARDS_PARTIAL = "arth_0001_13_hist_partial_targets.json"
 TEST_HISTORY_NUM_REWARDS_INCORRECT = "arth_0001_13_hist_incorrect_target.json"
+TEST_HISTORY_NUM_REWARDS_AMB_L = "numcomp_0001_05_left.json"
+TEST_HISTORY_NUM_REWARDS_AMB_R = "numcomp_0001_05_right.json"
 
 TEST_FOLDER = "./tests/test_data"
 
@@ -597,6 +600,17 @@ class TestMcsScorecard(unittest.TestCase):
         # should be 1, since the ball retrieved was a foil
         assert scorecard.get_number_of_rewards_achieved() == 0
 
+    def test_number_of_rewards_achieved_retrieval(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_CONTAINER)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_CONTAINER)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_num_rewards_achieved()
+        # should be 0 since reward ball wasn't achieved
+        assert scorecard.get_number_of_rewards_achieved() == 0
+
+
     def test_number_of_rewards_achieved_non_interactive(self):
         scene_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, TEST_SCENE_NO_TARGET)
@@ -606,3 +620,23 @@ class TestMcsScorecard(unittest.TestCase):
         scorecard.calc_num_rewards_achieved()
         # not applicable, should be None
         assert scorecard.get_number_of_rewards_achieved() == None
+
+    def test_number_of_rewards_achieved_ambiguous_left(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_NUM_REWARDS_AMB)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_NUM_REWARDS_AMB_L)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_num_rewards_achieved()
+        # should be 1, since scene is ambiguous
+        assert scorecard.get_number_of_rewards_achieved() == 1
+
+    def test_number_of_rewards_achieved_ambiguous_right(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_NUM_REWARDS_AMB)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_NUM_REWARDS_AMB_R)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_num_rewards_achieved()
+        # should be 1, since scene is ambiguous
+        assert scorecard.get_number_of_rewards_achieved() == 0
