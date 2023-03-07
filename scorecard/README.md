@@ -30,6 +30,7 @@ The actions that are counted (as of Eval 5):
 * Determine number of times the agent walked into platform lips
 * Determine what order the agent opened the containers in an imitation task.
 Order is determined by color (green, blue, red, etc.)
+* Determine what door the agent opened (left, middle, right)
 
   
 Some of these are mathematically vague;  for example, the space that the agent moves in is continous,
@@ -187,7 +188,6 @@ by calculating the distance from each step to the ideal path of each.
 The path with the smaller culmulative distance is assumed to be the path
 the agent chose.
 
-#### Interact With Non-Agent
 
 For agent identification related task types the agent needs to interact
 with a simulation agent to retrieve the target.
@@ -212,6 +212,15 @@ For imitation task scenes the agent opens one or two containers in order.
 If they open a wrong one or in the wrong order then the scene ends.
 This element of the scorecard determines the order the agent opened
 the imitation containers by color.
+
+#### Door Opened Side
+
+For "doorcluder" task types, such as Interactive Solidity
+Interactive Support Relations, Trajectory, Interactive Collisions
+the agent needs to choose to open one of two or three doors. 
+This element of the scorecard determines what door side opened
+by the performer opened (left, middle, right).
+#### Interact With Non-Agent
 
 ## Running the Scorecard
 
