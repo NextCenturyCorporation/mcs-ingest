@@ -185,8 +185,10 @@ class TestMcsScorecard(unittest.TestCase):
             'walked_into_structures',
             'interact_with_agent',
             'order_containers_are_opened_colors',
-            'set_rotation_container_opened',
-            'shell_game_container_opened']
+            'set_rotation_opened_container_position_absolute',
+            'set_rotation_opened_container_position_relative_to_baited',
+            'shell_game_baited_container',
+            'shell_game_opened_container']
         )
 
     def test_get_lookpoint(self):
@@ -588,6 +590,7 @@ class TestMcsScorecard(unittest.TestCase):
         assert scorecard.get_imitation_order_containers_are_opened() == \
             [['orange'], ['blue']]
 
+#####################################################################################################################################Need to redo picking the wrong one
     def test_calc_set_rotation(self):
         scene_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, TEST_SCENE_SET_ROTATION_TURNTABLE_MOVES_270_MIDDLE)
@@ -605,6 +608,7 @@ class TestMcsScorecard(unittest.TestCase):
         scorecard.calc_set_rotation()
         assert scorecard.get_set_rotation() == 'left'
 
+#####################################################################################################################################Need to redo picking the wrong one
     def test_calc_shell_game(self):
         scene_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, TEST_SCENE_SHELL_GAME_CROSS)
@@ -612,7 +616,9 @@ class TestMcsScorecard(unittest.TestCase):
             TEST_FOLDER, TEST_HISTORY_SHELL_GAME_CROSS)
         scorecard = Scorecard(history_file, scene_file)
         scorecard.calc_shell_game()
-        assert scorecard.get_shell_game() == 'middle'
+        baited, opened = scorecard.get_shell_game()
+        assert baited == '3 to 1'
+        assert opened == '3 to 1'
 
         scene_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, TEST_SCENE_SHELL_GAME_LATERAL_SUBSTITUTION)
