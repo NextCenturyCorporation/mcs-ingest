@@ -1,5 +1,6 @@
 import docker
 import logging
+import os
 import time
 import unittest
 import warnings
@@ -45,11 +46,16 @@ class TestMcsSceneIngestMongo(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         '''Start the mongo docker container'''
+        # Get current context host value, attempt to set as DOCKER_HOST
+        docker_host = docker.context.ContextAPI.get_current_context().Host
+        if os.environ.get('DOCKER_HOST') is None:
+            os.environ["DOCKER_HOST"] = docker_host
+
         # connect to docker daemon
         cls.docker_client = docker.from_env()
         # create low-level API client for health checks
         cls.api_client = docker.APIClient(
-            base_url="unix://var/run/docker.sock")
+            base_url=docker_host)
         cls.mongo_container = cls.create_mongo_container(
             cls.docker_client,
             cls.api_client)
