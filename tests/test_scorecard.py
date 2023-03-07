@@ -57,6 +57,9 @@ TEST_HISTORY_NUM_REWARDS_INCORRECT = "arth_0001_13_hist_incorrect_target.json"
 TEST_HISTORY_NUM_REWARDS_AMB_L = "numcomp_0001_05_left.json"
 TEST_HISTORY_NUM_REWARDS_AMB_R = "numcomp_0001_05_right.json"
 
+TEST_SCENE_IMITATION = "imitation_eval_5_ex_1.json"
+TEST_HISTORY_IMITATION = "imitation_eval_5_ex_1_history.json"
+
 TEST_FOLDER = "./tests/test_data"
 
 # Hide all non-error log messages while running these unit tests.
@@ -178,7 +181,8 @@ class TestMcsScorecard(unittest.TestCase):
             'interact_with_non_agent',
             'walked_into_structures',
             'interact_with_agent' ,
-            'number_of_rewards_achieved']
+            'number_of_rewards_achieved',
+            'order_containers_are_opened_colors']
         )
 
     def test_get_lookpoint(self):
@@ -640,3 +644,14 @@ class TestMcsScorecard(unittest.TestCase):
         scorecard.calc_num_rewards_achieved()
         # should be 1, since scene is ambiguous
         assert scorecard.get_number_of_rewards_achieved() == 0
+
+    def test_calc_imitation_order_containers_are_opened(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_IMITATION)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_IMITATION)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_imitation_order_containers_are_opened_colors()
+        assert scorecard.get_imitation_order_containers_are_opened() == \
+            [['orange'], ['blue']]
+

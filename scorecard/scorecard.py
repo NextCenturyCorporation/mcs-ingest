@@ -337,6 +337,7 @@ class Scorecard:
         self.calc_agent_interactions()
         self.calc_walked_into_structures()
         self.calc_num_rewards_achieved()
+        self.calc_imitation_order_containers_are_opened_colors()
 
         # To be implemented
         # self.calc_attempt_impossible()
@@ -357,7 +358,8 @@ class Scorecard:
             'interact_with_non_agent': self.interact_with_non_agent,
             'walked_into_structures': self.walked_into_structures,
             'interact_with_agent': self.interact_with_agent,
-            'number_of_rewards_achieved': self.number_of_rewards_achieved
+            'number_of_rewards_achieved': self.number_of_rewards_achieved,
+            'order_containers_are_opened_colors': self.order_containers_are_opened_colors
         }
 
     def get_revisits(self):
@@ -392,6 +394,10 @@ class Scorecard:
 
     def get_number_of_rewards_achieved(self):
         return self.number_of_rewards_achieved
+
+    def get_imitation_order_containers_are_opened(self):
+        return self.order_containers_are_opened_colors
+
 
     def calc_revisiting(self):
 
@@ -1198,7 +1204,6 @@ class Scorecard:
         self.walked_into_structures = walked_into_structures
         return self.walked_into_structures
 
-
     def calc_num_rewards_achieved(self):
         '''
         Determine the number of reward soccer balls collected by
@@ -1235,4 +1240,27 @@ class Scorecard:
         self.number_of_rewards_achieved = len(targets_picked_up)
         logging.debug(f"Total number of rewards achieved: {self.number_of_rewards_achieved}")
         return self.number_of_rewards_achieved
+
+    def calc_imitation_order_containers_are_opened_colors(self):
+        ''' 
+        Determine the order the performer opened containers by color
+        '''
+        steps_list = self.history['steps']
+        order_containers_are_opened_colors = []
+
+        containers = [(obj['id'], obj['debug']['color']) for obj in self.scene['objects']
+            if obj['type'].startswith('chest')]
+        for single_step in steps_list:
+            action = single_step['action']
+            output = single_step['output']
+            if (action == 'OpenObject'):
+                resolved_obj_id = output['resolved_object']
+                if output['return_status'] == "SUCCESSFUL":
+                    for c in containers:
+                         if resolved_obj_id == c[0]:
+                            order_containers_are_opened_colors.append(c[1])
+
+        self.order_containers_are_opened_colors = \
+            order_containers_are_opened_colors
+        return self.order_containers_are_opened_colors
 

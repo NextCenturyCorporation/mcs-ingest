@@ -26,6 +26,12 @@ The actions that are counted (as of Eval 5):
   * Impossible actions will be counted from the first attempt.
 * Number of rewards achieved.
   * For interactive scenes, will indicate how many reward balls are held by the time the scene is over.
+* Determine number of times the agent interacted with a non-agent
+* Determine number of times the agent picked up a non pickupable object
+* Determine number of times the agent walked into walls
+* Determine number of times the agent walked into platform lips
+* Determine what order the agent opened the containers in an imitation task.
+Order is determined by color (green, blue, red, etc.)
 
 Some of these are mathematically vague;  for example, the space that the agent moves in is continous,
 so 'revisit' needs to have a particular distance.  Below, we discuss the way to count them.
@@ -182,10 +188,37 @@ by calculating the distance from each step to the ideal path of each.
 The path with the smaller culmulative distance is assumed to be the path
 the agent chose.
 
+#### Interact With Non-Agent
+
+For agent identification related task types the agent needs to interact
+with a simulation agent to retrieve the target.
+This element of the scorecard determines the number of times the agent
+interacted with anything other than an simulation agent
+
+#### Walked Into Walls
+
+For any interactive scene the agent can walk into walls.
+This element of the scorecard determines the number of times the agent
+walked into walls.
+
+#### Walked Into Platform Lips
+
+For ramp scenes the agent can walk into platform lips.
+This element of the scorecard determines the number of times the agent
+walked into platform lips.
+
+#### Imitation Containers Are Opened
+
+For imitation task scenes the agent opens one or two containers in order.
+If they open a wrong one or in the wrong order then the scene ends.
+This element of the scorecard determines the order the agent opened
+the imitation containers by color.
+
 #### Number of Rewards Achieved
 Will indicate how many reward balls are held by the end of the scene for
 interactive tasks. Especially useful for multi retrieval tasks. If the scene
 is a non-interactive scene, value will be None. 
+
 
 ## Running the Scorecard
 

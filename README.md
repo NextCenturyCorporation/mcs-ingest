@@ -35,6 +35,8 @@ python -m pip install -r requirements.txt
 ## Ingest Sample Commands (for testing locally)
 
 ### Ingest scene file
+
+Note that all ingested scene files must end with `_debug.json` and have the debug property contain `"evaluation": "Evaluation {num} Scenes"`
 ```
 python local_scene_ingest.py --folder ../genScenes/
 ```
