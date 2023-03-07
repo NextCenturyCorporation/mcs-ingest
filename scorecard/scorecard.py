@@ -327,6 +327,7 @@ class Scorecard:
         self.calc_imitation_order_containers_are_opened_colors()
         self.calc_set_rotation()
         self.calc_shell_game()
+        self.calc_door_opened_side()
 
         # To be implemented
         # self.calc_attempt_impossible()
@@ -351,7 +352,8 @@ class Scorecard:
             'set_rotation_opened_container_position_absolute': self.set_rotation_opened_container_position_absolute,
             'set_rotation_opened_container_position_relative_to_baited': self.set_rotation_opened_container_position_relative_to_baited,
             'shell_game_baited_container': self.shell_game_baited_container,
-            'shell_game_opened_container': self.shell_game_opened_container
+            'shell_game_opened_container': self.shell_game_opened_container,
+            'door_opened_side': self.door_opened_side
         }
 
     def get_revisits(self):
@@ -393,6 +395,9 @@ class Scorecard:
 
     def get_shell_game(self):
         return self.shell_game_baited_container, self.shell_game_opened_container
+
+    def get_door_opened_side(self):
+        return self.door_opened_side
 
     def calc_revisiting(self):
 
@@ -1348,3 +1353,38 @@ class Scorecard:
             pass
         finally:
             return self.shell_game_baited_container, self.shell_game_opened_container
+
+    def calc_door_opened_side(self):
+            ''' 
+            Determine the door the performer opened in the following scenes
+            with the options available:
+            Trajectory - Left, Right
+            InteractiveCollision - Left, Right
+            Solidity - Left, Middle, Right
+            SupportRelations - Left, Middle, Right
+            '''
+            steps_list = self.history['steps']
+            door_opened = ''
+
+            doors = [
+                [obj['id'], obj['shows'][0]['position']['x']]
+                for obj in self.scene['objects'] if obj['type'].startswith('door')]
+            found_door = False
+            for single_step in steps_list:
+                action = single_step['action']
+                output = single_step['output']
+                if (action == 'OpenObject'):
+                    resolved_obj_id = output['resolved_object']
+                    if output['return_status'] == "SUCCESSFUL":
+                        for door in doors:
+                            if resolved_obj_id == door[0]:
+                                door_opened = \
+                                    'left' if door[1] < 0 else \
+                                        'middle' if door[1] == 0 else 'right'
+                                found_door = True
+                                break
+                if found_door:
+                    break
+
+            self.door_opened_side = door_opened
+            return self.door_opened_side

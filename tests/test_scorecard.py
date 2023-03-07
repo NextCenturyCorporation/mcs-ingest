@@ -37,7 +37,7 @@ TEST_SCENE_SIDE = "prefix_0001_01_C4_debug.json"
 TEST_HISTORY_SIDE_1 = "gen_platform_side_1.json"
 TEST_HISTORY_SIDE_2 = "gen_platform_side_2.json"
 
-TEST_SCENE_DOOR = "prefix_0001_02_I1_debug.json"
+TEST_SCENE_DOOR_OPENED = "prefix_0001_02_I1_debug.json"
 TEST_HISTORY_DOOR_CORRECT = "gen_correct_door_ex.json"
 TEST_HISTORY_DOOR_INCORRECT = "gen_incorrect_door_ex.json"
 
@@ -61,6 +61,18 @@ TEST_SCENE_SHELL_GAME_CROSS = "shell_game_0001_10_J1_debug.json"
 TEST_SCENE_SHELL_GAME_LATERAL_SUBSTITUTION = "shell_game_0001_06_F1_debug.json"
 TEST_HISTORY_SHELL_GAME_CROSS = "shell_game_0001_06_history.json"
 TEST_HISTORY_SHELL_GAME_LATERAL_SUBSTITUTION = "shell_game_0001_10_history.json"
+
+TEST_SCENE_INTERACTIVE_COLLISION_DOOR_OPENED = "interactive_collision_0001_03_C1_debug.json"
+TEST_HISTORY_INTERACTIVE_COLLISION_DOOR_OPENED = "interactive_collision_0001_03_history.json"
+
+TEST_SCENE_TRAJECTORY_DOOR_OPENED = "trajectory_0001_03_C1_debug.json"
+TEST_HISTORY_TRAJECTORY_DOOR_OPENED = "trajectory_0001_03_history.json"
+
+TEST_SCENE_SOLIDITY_DOOR_OPENED = "solidity_0001_03_C1_debug.json"
+TEST_HISTORY_SOLIDITY_DOOR_OPENED = "solidity_0001_03_history.json"
+
+TEST_SCENE_SUPPORT_RELATIONS_DOOR_OPENED = "support_relations_0001_09_I1_debug.json"
+TEST_HISTORY_SUPPORT_RELATIONS_DOOR_OPENED = "support_relations_0001_history.json"
 
 
 TEST_FOLDER = "./tests/test_data"
@@ -188,7 +200,8 @@ class TestMcsScorecard(unittest.TestCase):
             'set_rotation_opened_container_position_absolute',
             'set_rotation_opened_container_position_relative_to_baited',
             'shell_game_baited_container',
-            'shell_game_opened_container']
+            'shell_game_opened_container',
+            'door_opened_side']
         )
 
     def test_get_lookpoint(self):
@@ -467,7 +480,7 @@ class TestMcsScorecard(unittest.TestCase):
 
     def test_which_door(self):
         scene_file = mcs_scene_ingest.load_json_file(
-            TEST_FOLDER, TEST_SCENE_DOOR)
+            TEST_FOLDER, TEST_SCENE_DOOR_OPENED)
         history_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, TEST_HISTORY_DOOR_CORRECT)
         scorecard = Scorecard(history_file, scene_file)
@@ -476,7 +489,7 @@ class TestMcsScorecard(unittest.TestCase):
         self.assertTrue(correct_door)
 
         scene_file = mcs_scene_ingest.load_json_file(
-            TEST_FOLDER, TEST_SCENE_DOOR)
+            TEST_FOLDER, TEST_SCENE_DOOR_OPENED)
         history_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, TEST_HISTORY_DOOR_INCORRECT)
         scorecard = Scorecard(history_file, scene_file)
@@ -627,3 +640,36 @@ class TestMcsScorecard(unittest.TestCase):
         scorecard = Scorecard(history_file, scene_file)
         scorecard.calc_shell_game()
         assert scorecard.get_shell_game() == 'middle'
+
+    def test_calc_door_opened_side(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_INTERACTIVE_COLLISION_DOOR_OPENED)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_INTERACTIVE_COLLISION_DOOR_OPENED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_door_opened_side()
+        assert scorecard.get_door_opened_side() == 'right'
+
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_TRAJECTORY_DOOR_OPENED)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_TRAJECTORY_DOOR_OPENED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_door_opened_side()
+        assert scorecard.get_door_opened_side() == 'left'
+
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SOLIDITY_DOOR_OPENED)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SOLIDITY_DOOR_OPENED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_door_opened_side()
+        assert scorecard.get_door_opened_side() == 'left'
+
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SUPPORT_RELATIONS_DOOR_OPENED)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SUPPORT_RELATIONS_DOOR_OPENED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_door_opened_side()
+        assert scorecard.get_door_opened_side() == 'middle'
