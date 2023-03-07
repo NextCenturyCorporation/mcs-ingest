@@ -510,7 +510,8 @@ def build_new_step_obj(
             interactive_goal_achieved = 1
 
         # For now, simply check if objects were picked up or dropped, 
-        # since soccer_balls are the only thing pickupable
+        # since soccer_balls are the only thing pickupable in these
+        # scenes
         if(multi_retrieval_scoring_override):
             if(new_step["action"] == "PickupObject" and 
                output["return_status"] == "SUCCESSFUL"):
