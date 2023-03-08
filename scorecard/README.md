@@ -188,6 +188,7 @@ by calculating the distance from each step to the ideal path of each.
 The path with the smaller culmulative distance is assumed to be the path
 the agent chose.
 
+#### Interact With Non-Agent
 
 For agent identification related task types the agent needs to interact
 with a simulation agent to retrieve the target.
@@ -220,7 +221,60 @@ Interactive Support Relations, Trajectory, Interactive Collisions
 the agent needs to choose to open one of two or three doors. 
 This element of the scorecard determines what door side opened
 by the performer opened (left, middle, right).
-#### Interact With Non-Agent
+
+### Set Rotation Opened Container Position Absolute
+
+For set rotation scenes the agent must open the correct container
+after the containers have been rotated around while on top of a turntable.
+This element of the scorecard determines what container was opened
+based on its absolute location on the turntable.
+* 1 = Far
+* 2 = Right
+* 3 = Near
+* 4 = Left
+* 5 = Center
+
+#### Set Rotation Opened Container Position Relative To Baited
+
+For set rotation scenes the agent must open the correct container
+after the containers have been rotated around while on top a turntable.
+This element of the scorecard determines what container was opened
+based on its relative position to the baited container.
+* For when the left or right container is picked
+  * Baited
+  * Middle
+  * Opposite
+* For when the middle container is picked. 
+  * Far
+  * Right
+  * Back
+  * Left
+
+#### Shell Game Baited Container
+
+For shell game scenes the agent needs to track containers
+that are moved horizontally. There are 5 lanes the containers can start
+and move to. This element of the scorecard determines what container was baited
+by calculating its start and end lanes.
+The lanes are labed 1 through 5 and correspond to a global x position.
+* 1 = -1.5 
+* 2 = -0.75
+* 3 = 0
+* 4 = 0.75
+* 5 = 1.5
+
+#### Shell Game Opened Container
+
+For shell game scenes the agent needs to track containers
+that are moved horizontally. There are 5 lanes the containers can start
+and move to. This element of the scorecard determines what container was opened
+by calculating its start and end lanes.
+The lanes are labed 1 through 5 and correspond to a global x position.
+* 1 = -1.5 
+* 2 = -0.75
+* 3 = 0
+* 4 = 0.75
+* 5 = 1.5
 
 ## Running the Scorecard
 
