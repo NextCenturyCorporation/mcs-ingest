@@ -49,7 +49,7 @@ TEST_SCENE_OBSTRUCTED = "obstructed_scene.json"
 TEST_HISTORY_OBSTRUCTED = "obstructed_history.json"
 TEST_HISTORY_OBSTRUCTED_PLAFTORM_LIPS = "obstructed_history_just_plaform_lips.json"
 
-TEST_SCENE_TOOL_CHOICE = "tool_choice.json"
+TEST_SCENE_TOOL_CHOICE = "tool_choice_scene_debug.json"
 TEST_HISTORY_TOOL_CHOICE_PICKUP_FAILED = (
     "tool_choice_pickup_failed_history.json"
 )
