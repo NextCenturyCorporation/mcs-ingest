@@ -232,11 +232,13 @@ def find_target_loc_by_step(scene, step):
 def find_shell_game_container_start_end(container):
     lanes = { -1.5: 1, -0.75: 2, 0: 3, 0.75: 4, 1.5: 5 }
     start = str(lanes[container['position_x']])
-    end = None
+    end = str(lanes[container['position_x']])
 
-    lateral_move = container['moves'][1]
-    move_per_step = lateral_move['vector']['x']
-    steps = lateral_move['stepEnd'] - lateral_move['stepBegin'] + 1
+    horizontal_move = container.get('moves')
+    if not horizontal_move:
+        return start + ' to ' + end
+    move_per_step = horizontal_move[1]['vector']['x']
+    steps = horizontal_move[1]['stepEnd'] - horizontal_move[1]['stepBegin'] + 1
     distance = move_per_step * steps
 
     end = str(lanes[container['position_x'] + distance])
@@ -389,12 +391,17 @@ class Scorecard:
     def get_imitation_order_containers_are_opened(self):
         return self.order_containers_are_opened_colors
 
-    def get_set_rotation(self): 
-        return (self.set_rotation_opened_container_position_absolute,
-                self.set_rotation_opened_container_position_relative_to_baited)
+    def get_set_rotation_opened_container_position_absolute(self): 
+        return self.set_rotation_opened_container_position_absolute
 
-    def get_shell_game(self):
-        return self.shell_game_baited_container, self.shell_game_opened_container
+    def get_set_rotation_opened_container_position_relative_to_baited(self): 
+        return self.set_rotation_opened_container_position_relative_to_baited
+
+    def get_shell_game_baited_container(self):
+        return self.shell_game_baited_container
+
+    def get_shell_game_opened_container(self):
+        return self.shell_game_opened_container
 
     def get_door_opened_side(self):
         return self.door_opened_side
@@ -1232,9 +1239,6 @@ class Scorecard:
         Determine the container the performer opened in set rotation scenes
         '''
         steps_list = self.history['steps']
-        relative_to_baited_on_left_or_right = ['baited', 'middle', 'opposite']
-        relative_to_baited_on_center = [
-            'relative front', 'relative right', 'relative back', 'relative left']
         """
         Absolute Container Position
              1
@@ -1262,7 +1266,7 @@ class Scorecard:
                     'id': obj['id'],
                     'lid': obj['debug']['lidId'],
                     'start_position_x': obj['shows'][0]['position']['x'],
-                    'start_position_z': obj['shows'][0]['position']['z'],   
+                    'start_position_z': obj['shows'][0]['position']['z'],
                     'absolute_pos_start': None,
                     'absolute_pos_end': None,
                     'relative_to_baited': None
@@ -1272,6 +1276,7 @@ class Scorecard:
             rotation = self.scene['goal']['sceneInfo']['degreesRotated']
             num_containers = self.scene['goal']['sceneInfo']['numberOfContainers']
 
+            # absolute
             for cl in containers_and_lids:
                 absolute_pos = [
                     k for k, v in absolute_positions.items() if
@@ -1286,6 +1291,25 @@ class Scorecard:
                 end_pos = edge_positions[
                     (edge_positions.index(absolute_pos) + increments) % len(edge_positions)]
                 cl['absolute_pos_end'] = end_pos
+
+            # relative
+            target_x = self.scene['objects'][0]['shows'][0]['position']['x']
+            isSideContainer = target_x != 0
+            if isSideContainer:
+                for cl in containers_and_lids:
+                    cl['relative_to_baited'] = (
+                        'baited' if cl['start_position_x'] == target_x else
+                        'middle' if cl['start_position_x'] == 0 else
+                        'opposite')
+            else:
+                absolute_pos_to_relative_dict = {1: 'far', 2: 'right', 3: 'near', 4: 'left'}
+                for cl in containers_and_lids:
+                    if cl['start_position_x'] == target_x:
+                        cl['relative_to_baited'] = 'baited'
+                    else:
+                        cl['relative_to_baited'] = \
+                            absolute_pos_to_relative_dict[cl['absolute_pos_end']]
+
             found_container = False
             for single_step in steps_list:
                 action = single_step['action']
@@ -1294,15 +1318,18 @@ class Scorecard:
                     resolved_obj_id = output['resolved_object']
                     if output['return_status'] == "SUCCESSFUL":
                         for cl in containers_and_lids:
-                            if resolved_obj_id == cl[1] or resolved_obj_id == cl[2]:
+                            if resolved_obj_id == cl['id'] or resolved_obj_id == cl['lid']:
                                 set_rotation_opened_container_position_absolute = \
-                                    cl['absolute_pos_start'] + ' to ' + cl['absolute_pos_end']
-                                set_rotation_opened_container_position_relative_to_baited = cl['relative_to_baited']
+                                    str(cl['absolute_pos_start']) + ' to ' + str(cl['absolute_pos_end'])
+                                set_rotation_opened_container_position_relative_to_baited = \
+                                    cl['relative_to_baited']
                                 break
                 if found_container:
                     break
-            self.set_rotation_opened_container_position_absolute = 
-            self.set_rotation_opened_container_position_relative_to_baited = a
+            self.set_rotation_opened_container_position_absolute = \
+                set_rotation_opened_container_position_absolute
+            self.set_rotation_opened_container_position_relative_to_baited = \
+                set_rotation_opened_container_position_relative_to_baited
         except:
             pass
         finally:
@@ -1314,9 +1341,8 @@ class Scorecard:
         Determine the container the performer opened in shell game scenes
         '''
         steps_list = self.history['steps']
-        shell_game_baited_container = ' to '
-        shell_game_opened_container = ' to '
-        lanes = { -1.5: 1, -0.75: 2, 0: 3, 0.75: 4, 1.5: 5 }
+        shell_game_baited_container = None
+        shell_game_opened_container = None
         containers_and_lids = [
             {
                 'id': obj['id'],
