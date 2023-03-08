@@ -2,7 +2,6 @@
 # Calculate the Scorecard for a particular MCS output JSON file
 #
 #
-import copy
 import logging
 import math
 from collections import defaultdict
