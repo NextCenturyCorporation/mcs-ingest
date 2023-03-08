@@ -312,6 +312,7 @@ class Scorecard:
         self.calc_pickup_not_pickupable()
         self.calc_agent_interactions()
         self.calc_walked_into_structures()
+        self.calc_imitation_order_containers_are_opened_colors()
 
         # To be implemented
         # self.calc_attempt_impossible()
@@ -332,7 +333,8 @@ class Scorecard:
             'pickup_not_pickupable': self.pickup_not_pickupable,
             'interact_with_non_agent': self.interact_with_non_agent,
             'walked_into_structures': self.walked_into_structures,
-            'interact_with_agent': self.interact_with_agent
+            'interact_with_agent': self.interact_with_agent,
+            'order_containers_are_opened_colors': self.order_containers_are_opened_colors
         }
 
     def get_revisits(self):
@@ -367,6 +369,9 @@ class Scorecard:
 
     def get_walked_into_structures(self):
         return self.walked_into_structures
+
+    def get_imitation_order_containers_are_opened(self):
+        return self.order_containers_are_opened_colors
 
     def calc_revisiting(self):
 
@@ -1214,3 +1219,26 @@ class Scorecard:
                         break
         self.walked_into_structures = walked_into_structures
         return self.walked_into_structures
+
+    def calc_imitation_order_containers_are_opened_colors(self):
+        ''' 
+        Determine the order the performer opened containers by color
+        '''
+        steps_list = self.history['steps']
+        order_containers_are_opened_colors = []
+
+        containers = [(obj['id'], obj['debug']['color']) for obj in self.scene['objects']
+            if obj['type'].startswith('chest')]
+        for single_step in steps_list:
+            action = single_step['action']
+            output = single_step['output']
+            if (action == 'OpenObject'):
+                resolved_obj_id = output['resolved_object']
+                if output['return_status'] == "SUCCESSFUL":
+                    for c in containers:
+                         if resolved_obj_id == c[0]:
+                            order_containers_are_opened_colors.append(c[1])
+
+        self.order_containers_are_opened_colors = \
+            order_containers_are_opened_colors
+        return self.order_containers_are_opened_colors

@@ -49,6 +49,9 @@ TEST_SCENE_OBSTRUCTED = "obstructed_scene.json"
 TEST_HISTORY_OBSTRUCTED = "obstructed_history.json"
 TEST_HISTORY_OBSTRUCTED_PLAFTORM_LIPS = "obstructed_history_just_plaform_lips.json"
 
+TEST_SCENE_IMITATION = "imitation_eval_5_ex_1.json"
+TEST_HISTORY_IMITATION = "imitation_eval_5_ex_1_history.json"
+
 TEST_SCENE_TOOL_CHOICE = "tool_choice_scene_debug.json"
 TEST_HISTORY_TOOL_CHOICE_PICKUP_FAILED = (
     "tool_choice_pickup_failed_history.json"
@@ -184,7 +187,8 @@ class TestMcsScorecard(unittest.TestCase):
             'pickup_not_pickupable',
             'interact_with_non_agent',
             'walked_into_structures',
-            'interact_with_agent']
+            'interact_with_agent',
+            'order_containers_are_opened_colors']
         )
 
     def test_get_lookpoint(self):
@@ -575,6 +579,16 @@ class TestMcsScorecard(unittest.TestCase):
         scorecard.calc_walked_into_structures()
         # should be zero because this structure is not tracked
         assert scorecard.get_walked_into_structures() == 0
+
+    def test_calc_imitation_order_containers_are_opened(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_IMITATION)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_IMITATION)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_imitation_order_containers_are_opened_colors()
+        assert scorecard.get_imitation_order_containers_are_opened() == \
+            [['orange'], ['blue']]
 
     def test_pickup_non_target_mock_false_because_no_pickup(self):
         history = {'steps': [{
