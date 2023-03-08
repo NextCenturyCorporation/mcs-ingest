@@ -100,14 +100,14 @@ TEST_HISTORY_SOLIDITY_DOOR_OPENED = "door_side/solidity_0001_03_history.json"
 TEST_SCENE_SUPPORT_RELATIONS_DOOR_OPENED = "door_side/support_relations_0001_09_I1_debug.json"
 TEST_HISTORY_SUPPORT_RELATIONS_DOOR_OPENED = "door_side/support_relations_0001_history.json"
 
-TEST_SCENE_INTERACTED_WITH_BLOB_FIRST_HOLES = "holes_0001_08_D2_debug.json"
-TEST_HISTORY_INTERACTED_WITH_BLOB_FIRST_HOLES = "holes_0001_history.json"
+TEST_SCENE_INTERACTED_WITH_BLOB_FIRST_HOLES = "interact_with_blob_first/holes_0001_08_D2_debug.json"
+TEST_HISTORY_INTERACTED_WITH_BLOB_FIRST_HOLES = "interact_with_blob_first/holes_0001_history.json"
 
-TEST_SCENE_INTERACTED_WITH_BLOB_FIRST_LAVA = "lava_0001_08_D2_debug.json"
-TEST_HISTORY_INTERACTED_WITH_BLOB_FIRST_LAVA = "lava_0001_history.json"
+TEST_SCENE_INTERACTED_WITH_BLOB_FIRST_LAVA = "interact_with_blob_first/lava_0001_08_D2_debug.json"
+TEST_HISTORY_INTERACTED_WITH_BLOB_FIRST_LAVA = "interact_with_blob_first/lava_0001_history.json"
 
-TEST_SCENE_INTERACTED_WITH_BLOB_FIRST_RAMPS = "ramps_0001_23_P2_debug.json"
-TEST_HISTORY_INTERACTED_WITH_BLOB_FIRST_RAMPS = "ramps_0001_history.json"
+TEST_SCENE_INTERACTED_WITH_BLOB_FIRST_RAMPS = "interact_with_blob_first/ramps_0001_23_P2_debug.json"
+TEST_HISTORY_INTERACTED_WITH_BLOB_FIRST_RAMPS = "interact_with_blob_first/ramps_0001_history.json"
 
 TEST_FOLDER = "./tests/test_data"
 
