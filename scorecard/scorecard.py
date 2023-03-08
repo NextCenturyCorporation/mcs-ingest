@@ -1012,8 +1012,13 @@ class Scorecard:
     def calc_pickup_non_target(self):
         """
         Calculate whether the performer agent picked up a non-target
-        soccer ball.
+        soccer ball. Will ignore ambiguous multi-retrieval scenes.
         """
+        if (
+            self.scene['goal']['category'] == MULTI_RETRIEVAL and
+            self.scene['goal'].get('sceneInfo', {}).get('ambiguous')
+        ):
+            return False
         pickup_non_target = False
         target_list = []
         if 'metadata' in self.scene['goal']:

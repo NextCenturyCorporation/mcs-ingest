@@ -185,7 +185,8 @@ the agent chose.
 Some tasks have multiple soccer balls, but not all of them are considered a
 "target object". For Tool Choice tasks, we expect the non-target soccer ball
 to always be inaccessible. This metric measures whether the non-target soccer
-ball was able to be accessed and picked-up anyway.
+ball was able to be accessed and picked-up anyway. This metric will ignore
+ambiguous multi-retrieval Arithmetic and Number Comparison scenes.
 
 ## Running the Scorecard
 
