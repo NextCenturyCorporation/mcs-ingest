@@ -14,7 +14,7 @@
     "evaluationOnly": true,
     "hypercubeNumber": 1,
     "sceneNumber": 9,
-    "evaluation": null,
+    "evaluation": "Evaluation 6 Scenes",
     "training": false
   },
   "goal": {

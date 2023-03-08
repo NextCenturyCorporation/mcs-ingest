@@ -1255,11 +1255,10 @@ class Scorecard:
             4: (-1.62, 1),
             5: (0, 1)
         }
-        self.set_rotation_opened_container_position_absolute = None
-        self.set_rotation_opened_container_position_relative_to_baited = None
-
         set_rotation_opened_container_position_absolute = ''
         set_rotation_opened_container_position_relative_to_baited = ''
+        self.set_rotation_opened_container_position_absolute = None
+        self.set_rotation_opened_container_position_relative_to_baited = None
         try:
             containers_and_lids = [
                 {
@@ -1274,7 +1273,6 @@ class Scorecard:
                 for obj in self.scene['objects'] if obj['type'] == 'separate_container']
             rotation_direction = self.scene['goal']['sceneInfo']['rotation']
             rotation = self.scene['goal']['sceneInfo']['degreesRotated']
-            num_containers = self.scene['goal']['sceneInfo']['numberOfContainers']
 
             # absolute
             for cl in containers_and_lids:
@@ -1343,18 +1341,18 @@ class Scorecard:
         steps_list = self.history['steps']
         shell_game_baited_container = None
         shell_game_opened_container = None
-        containers_and_lids = [
-            {
-                'id': obj['id'],
-                'lid': obj['debug']['lidId'],
-                'isTargetContainer': obj['debug']['isTargetContainer'],
-                'position_x': obj['shows'][0]['position']['x'],
-                'moves': obj.get('moves')
-            }
-            for obj in self.scene['objects'] if obj['type'] == 'separate_container']
-        self.shell_game_baited_container = None
-        self.shell_game_opened_container = None
+        self.shell_game_baited_container = shell_game_baited_container
+        self.shell_game_opened_container = shell_game_opened_container
         try:
+            containers_and_lids = [
+                {
+                    'id': obj['id'],
+                    'lid': obj['debug']['lidId'],
+                    'isTargetContainer': obj['debug']['isTargetContainer'],
+                    'position_x': obj['shows'][0]['position']['x'],
+                    'moves': obj.get('moves')
+                }
+                for obj in self.scene['objects'] if obj['type'] == 'separate_container']
             for cl in containers_and_lids:
                 if cl['isTargetContainer']:
                     shell_game_baited_container = find_shell_game_container_start_end(cl)
