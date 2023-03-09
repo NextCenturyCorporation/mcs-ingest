@@ -512,6 +512,8 @@ def build_new_step_obj(
         # For now, simply check if objects were picked up or dropped, 
         # since soccer_balls are the only thing pickupable in these
         # scenes
+        # TODO: MCS-1707 & MCS-1708: Move handling of ambiguous multi
+        # retrieval scenes to Python API + update multi retrieval scene files
         if(multi_retrieval_scoring_override):
             if(new_step["action"] == "PickupObject" and 
                output["return_status"] == "SUCCESSFUL"):

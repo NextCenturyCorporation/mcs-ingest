@@ -632,7 +632,8 @@ class TestMcsScorecard(unittest.TestCase):
             TEST_FOLDER, TEST_HISTORY_NUM_REWARDS_AMB_L)
         scorecard = Scorecard(history_file, scene_file)
         scorecard.calc_num_rewards_achieved()
-        # should be 1, since scene is ambiguous
+        # should be 1 regardless of which side was chosen,
+        # since a ball was picked up + scene is ambiguous
         assert scorecard.get_number_of_rewards_achieved() == 1
 
     def test_number_of_rewards_achieved_ambiguous_right(self):
@@ -642,8 +643,9 @@ class TestMcsScorecard(unittest.TestCase):
             TEST_FOLDER, TEST_HISTORY_NUM_REWARDS_AMB_R)
         scorecard = Scorecard(history_file, scene_file)
         scorecard.calc_num_rewards_achieved()
-        # should be 1, since scene is ambiguous
-        assert scorecard.get_number_of_rewards_achieved() == 0
+        # should be 1 regardless of which side was chosen,
+        # since a ball was picked up + scene is ambiguous
+        assert scorecard.get_number_of_rewards_achieved() == 1
 
     def test_calc_imitation_order_containers_are_opened(self):
         scene_file = mcs_scene_ingest.load_json_file(

@@ -2,6 +2,7 @@
   
   "goal": {
     "sceneInfo": {
+      "ambiguous": true,
       "primaryType": "interactive",
       "secondaryType": "multi retrieval",
       "tertiaryType": "number comparison"
