@@ -50,15 +50,17 @@ class TestMcsHistoryIngestMongo(unittest.TestCase):
     def setUpClass(cls):
         '''Start the mongo docker container'''
         # Get current context host value, attempt to set as DOCKER_HOST
-        docker_host = docker.context.ContextAPI.get_current_context().Host
+        docker_url = "unix://var/run/docker.sock"
         if os.environ.get('DOCKER_HOST') is None:
+            docker_host = docker.context.ContextAPI.get_current_context().Host
             os.environ["DOCKER_HOST"] = docker_host
+            docker_url = docker_host
 
         # connect to docker daemon
         cls.docker_client = docker.from_env()
         # create low-level API client for health checks
         cls.api_client = docker.APIClient(
-            base_url=docker_host)
+            base_url=docker_url)
         cls.mongo_container = cls.create_mongo_container(
             cls.docker_client,
             cls.api_client)
