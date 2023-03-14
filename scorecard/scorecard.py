@@ -1229,14 +1229,6 @@ class Scorecard:
                 if is_obj_target(self.scene, obj_id) and (obj_id not in targets_picked_up):
                     targets_picked_up.append(obj_id)
 
-            if action == 'DropObject' and output['return_status'] == 'SUCCESSFUL':
-                # Get the id of the object that was used, if any
-                obj_id = get_relevant_object(output)
-
-                # remove if target was dropped
-                if is_obj_target(self.scene, obj_id) and (obj_id in targets_picked_up):
-                    targets_picked_up.remove(obj_id)
-
         self.number_of_rewards_achieved = len(targets_picked_up)
         logging.debug(f"Total number of rewards achieved: {self.number_of_rewards_achieved}")
         return self.number_of_rewards_achieved

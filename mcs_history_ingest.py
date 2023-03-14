@@ -302,10 +302,9 @@ def build_history_item(
     reorientation_scoring_override = (
         scene["goal"]["sceneInfo"]["tertiaryType"] == "reorientation")
 
-    # Needed for ambiguous multi retrieval scenes
+    # Needed for ALL multi retrieval scenes
     multi_retrieval_scoring_override = (
-        scene["goal"]["sceneInfo"]["secondaryType"] == "multi retrieval" and
-        scene["goal"]["sceneInfo"]["ambiguous"] is True
+        scene["goal"]["sceneInfo"]["secondaryType"] == "multi retrieval"
     )
 
     total_targets_multi_retrieval = None
@@ -329,7 +328,7 @@ def build_history_item(
     interactive_reward = 0
 
     # for multi retrieval
-    multi_retrieval_rewards_picked_up = 0
+    multi_retrieval_rewards_picked_up = []
 
     for step in history["steps"]:
         number_steps += 1
@@ -459,7 +458,7 @@ def build_new_step_obj(
         reorientation_scoring_override: bool,
         multi_retrieval_scoring_override: bool,
         total_targets_multi_retrieval: int,
-        multi_retrieval_rewards_picked_up: int) -> tuple:
+        multi_retrieval_rewards_picked_up: List[str]) -> tuple:
     new_step = {
         'stepNumber': step["step"],
         'action': step["action"],
@@ -509,20 +508,19 @@ def build_new_step_obj(
         if interactive_reward >= 0 - ((number_steps - 1) * 0.001) + 1:
             interactive_goal_achieved = 1
 
-        # For now, simply check if objects were picked up or dropped, 
-        # since soccer_balls are the only thing pickupable in these
-        # scenes
-        # TODO: MCS-1707 & MCS-1708: Move handling of ambiguous multi
+        # For now, keep track of object ids that are picked up (ignoring drops).
+        # Soccer balls are the only thing pickupable in these scenes
+        # TODO: MCS-1707 & MCS-1708: Move handling of multi
         # retrieval scenes to Python API + update multi retrieval scene files
         if(multi_retrieval_scoring_override):
             if(new_step["action"] == "PickupObject" and 
                output["return_status"] == "SUCCESSFUL"):
-                multi_retrieval_rewards_picked_up += 1
-            if(new_step["action"] == "DropObject" and
-               output["return_status"] == "SUCCESSFUL"):
-                multi_retrieval_rewards_picked_up -= 1
+                resolved_obj = step["output"].get('resolved_object')
+                if(resolved_obj is not None and len(resolved_obj) > 0 and
+                   resolved_obj not in multi_retrieval_rewards_picked_up):
+                    multi_retrieval_rewards_picked_up.append(resolved_obj)
 
-            if(total_targets_multi_retrieval == multi_retrieval_rewards_picked_up and interactive_goal_achieved != 1):
+            if(total_targets_multi_retrieval == len(multi_retrieval_rewards_picked_up) and interactive_goal_achieved != 1):
                 interactive_goal_achieved = 1
 
         if "target_visible" in step:

@@ -693,7 +693,7 @@ class TestMcsHistoryIngest(unittest.TestCase):
         corner_visit_order = []
         interactive_goal_achieved = 0
         interactive_reward = 0
-        multi_retrieval_rewards_picked_up = 0
+        multi_retrieval_rewards_picked_up = []
 
         (
             new_step,
@@ -712,7 +712,7 @@ class TestMcsHistoryIngest(unittest.TestCase):
             False,
             False,
             None,
-            0)
+            [])
 
         self.assertIsNotNone(new_step)
         self.assertEqual(new_step["stepNumber"], 1)
@@ -734,7 +734,7 @@ class TestMcsHistoryIngest(unittest.TestCase):
         self.assertEqual(interactive_reward, -0.001)
         self.assertEqual(interactive_goal_achieved, 0)
         self.assertEqual(corner_visit_order, [])
-        self.assertEqual(multi_retrieval_rewards_picked_up, 0)
+        self.assertEqual(multi_retrieval_rewards_picked_up, [])
 
     def test_build_new_step_obj_ambiguous_multi_retrieval(self):
         step = {
@@ -765,6 +765,7 @@ class TestMcsHistoryIngest(unittest.TestCase):
                     "y": 1.0,
                     "z": 2.2
                 },
+                "resolved_object": "someid",
                 "physics_frames_per_second": 20,
                 "return_status": "SUCCESSFUL",
                 "reward": -0.001,
@@ -777,7 +778,7 @@ class TestMcsHistoryIngest(unittest.TestCase):
         corner_visit_order = []
         interactive_goal_achieved = 0
         interactive_reward = 0
-        multi_retrieval_rewards_picked_up = 0
+        multi_retrieval_rewards_picked_up = []
 
         (
             new_step,
@@ -796,7 +797,7 @@ class TestMcsHistoryIngest(unittest.TestCase):
             False,
             True,
             1,
-            0)
+            [])
 
         self.assertIsNotNone(new_step)
         self.assertEqual(new_step["stepNumber"], 1)
@@ -818,7 +819,7 @@ class TestMcsHistoryIngest(unittest.TestCase):
         self.assertEqual(interactive_reward, -0.001)
         self.assertEqual(interactive_goal_achieved, 1)
         self.assertEqual(corner_visit_order, [])
-        self.assertEqual(multi_retrieval_rewards_picked_up, 1)
+        self.assertEqual(multi_retrieval_rewards_picked_up, ['someid'])
 
 
 if __name__ == '__main__':
