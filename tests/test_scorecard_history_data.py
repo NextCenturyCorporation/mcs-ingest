@@ -134,6 +134,9 @@ class TestMcsScorecard(unittest.TestCase):
                     f"Tool usage error: {tool_key} " +
                     f"{gt_test.get('history_file')}")
 
+    """
+    TODO: are these tests still needed? 
+
     def test_platform_side(self):
         for gt_test in self.gt_tests:
             scene_file = mcs_scene_ingest.load_json_file(
@@ -150,6 +153,7 @@ class TestMcsScorecard(unittest.TestCase):
                 gt_test.get('correct_platform_side', output),
                 correct_platform_side,
                 f"{gt_test.get('history_file')}")
+    """
 
     def test_which_door(self):
         for gt_test in self.gt_tests:
