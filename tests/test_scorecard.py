@@ -49,6 +49,14 @@ TEST_SCENE_OBSTRUCTED = "obstructed_scene.json"
 TEST_HISTORY_OBSTRUCTED = "obstructed_history.json"
 TEST_HISTORY_OBSTRUCTED_PLAFTORM_LIPS = "obstructed_history_just_plaform_lips.json"
 
+TEST_SCENE_NUM_REWARDS = "arth_0001_13_ex.json"
+TEST_SCENE_NUM_REWARDS_AMB = "numcomp_0001_05_scene.json"
+TEST_HISTORY_NUM_REWARDS_ALL = "arth_0001_13_hist_all_targets.json"
+TEST_HISTORY_NUM_REWARDS_PARTIAL = "arth_0001_13_hist_partial_targets.json"
+TEST_HISTORY_NUM_REWARDS_INCORRECT = "arth_0001_13_hist_incorrect_target.json"
+TEST_HISTORY_NUM_REWARDS_AMB_L = "numcomp_0001_05_left.json"
+TEST_HISTORY_NUM_REWARDS_AMB_R = "numcomp_0001_05_right.json"
+
 TEST_SCENE_IMITATION = "imitation_eval_5_ex_1.json"
 TEST_HISTORY_IMITATION = "imitation_eval_5_ex_1_history.json"
 
@@ -108,6 +116,20 @@ TEST_HISTORY_INTERACTED_WITH_BLOB_FIRST_LAVA = "interact_with_blob_first/lava_00
 
 TEST_SCENE_INTERACTED_WITH_BLOB_FIRST_RAMPS = "interact_with_blob_first/ramps_0001_23_P2_debug.json"
 TEST_HISTORY_INTERACTED_WITH_BLOB_FIRST_RAMPS = "interact_with_blob_first/ramps_0001_history.json"
+
+TEST_SCENE_TOOL_CHOICE = "tool_choice_scene_debug.json"
+TEST_HISTORY_TOOL_CHOICE_PICKUP_FAILED = (
+    "tool_choice_pickup_failed_history.json"
+)
+TEST_HISTORY_TOOL_CHOICE_PICKUP_NON_TARGET = (
+    "tool_choice_pickup_non_target_history.json"
+)
+TEST_HISTORY_TOOL_CHOICE_PICKUP_NOTHING = (
+    "tool_choice_pickup_nothing_history.json"
+)
+TEST_HISTORY_TOOL_CHOICE_PICKUP_TARGET = (
+    "tool_choice_pickup_target_history.json"
+)
 
 TEST_FOLDER = "./tests/test_data"
 
@@ -226,10 +248,12 @@ class TestMcsScorecard(unittest.TestCase):
             'fastest_path',
             'ramp_actions',
             'tool_usage',
+            'pickup_non_target',
             'pickup_not_pickupable',
             'interact_with_non_agent',
             'walked_into_structures',
-            'interact_with_agent',
+            'interact_with_agent' ,
+            'number_of_rewards_achieved',
             'order_containers_are_opened_colors',
             'set_rotation_opened_container_position_absolute',
             'set_rotation_opened_container_position_relative_to_baited',
@@ -628,6 +652,79 @@ class TestMcsScorecard(unittest.TestCase):
         # should be zero because this structure is not tracked
         assert scorecard.get_walked_into_structures() == 0
 
+    def test_number_of_rewards_achieved_all(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_NUM_REWARDS)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_NUM_REWARDS_ALL)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_num_rewards_achieved()
+        # should be 3, which is the total rewards for this scene
+        assert scorecard.get_number_of_rewards_achieved() == 3
+
+    def test_number_of_rewards_achieved_partial(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_NUM_REWARDS)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_NUM_REWARDS_PARTIAL)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_num_rewards_achieved()
+        # should be 1, which isn't the total possible here
+        assert scorecard.get_number_of_rewards_achieved() == 1
+
+    def test_number_of_rewards_achieved_wrong(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_NUM_REWARDS)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_NUM_REWARDS_INCORRECT)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_num_rewards_achieved()
+        # should be 1, since the ball retrieved was a foil
+        assert scorecard.get_number_of_rewards_achieved() == 0
+
+    def test_number_of_rewards_achieved_retrieval(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_CONTAINER)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_CONTAINER)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_num_rewards_achieved()
+        # should be 0 since reward ball wasn't achieved
+        assert scorecard.get_number_of_rewards_achieved() == 0
+
+
+    def test_number_of_rewards_achieved_non_interactive(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_NO_TARGET)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_NO_TARGET)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_num_rewards_achieved()
+        # not applicable, should be None
+        assert scorecard.get_number_of_rewards_achieved() == None
+
+    def test_number_of_rewards_achieved_ambiguous_left(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_NUM_REWARDS_AMB)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_NUM_REWARDS_AMB_L)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_num_rewards_achieved()
+        # should be 1 regardless of which side was chosen,
+        # since a ball was picked up + scene is ambiguous
+        assert scorecard.get_number_of_rewards_achieved() == 1
+
+    def test_number_of_rewards_achieved_ambiguous_right(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_NUM_REWARDS_AMB)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_NUM_REWARDS_AMB_R)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_num_rewards_achieved()
+        # should be 1 regardless of which side was chosen,
+        # since a ball was picked up + scene is ambiguous
+        assert scorecard.get_number_of_rewards_achieved() == 1
+
     def test_calc_imitation_order_containers_are_opened(self):
         scene_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, TEST_SCENE_IMITATION)
@@ -817,3 +914,236 @@ class TestMcsScorecard(unittest.TestCase):
         scorecard = Scorecard(history_file, scene_file)
         scorecard.calc_interacted_with_blob_first()
         assert scorecard.get_interacted_with_blob_first() is True
+
+    def test_pickup_non_target_mock_false_because_no_pickup(self):
+        history = {'steps': [{
+            'action': 'MoveAhead',
+            'output': {
+                'return_status': 'SUCCESSFUL',
+                'resolved_object': None
+            }
+        }, {
+            'action': 'MoveAhead',
+            'output': {
+                'return_status': 'OBSTRUCTED',
+                'resolved_object': None
+            }
+        }]}
+        scene = {
+            'goal': {'category': 'retrieval', 'metadata': {'target': {'id': 'id_target'}}},
+            'objects': [
+                {'id': 'id_target', 'type': 'soccer_ball'},
+                {'id': 'id_non_target', 'type': 'soccer_ball'}
+            ]
+        }
+        scorecard = Scorecard(history, scene)
+        scorecard.calc_pickup_non_target()
+        assert scorecard.get_pickup_non_target() is False
+
+    def test_pickup_non_target_mock_false_because_pickup_target(self):
+        history = {'steps': [{
+            'action': 'MoveAhead',
+            'output': {
+                'return_status': 'SUCCESSFUL',
+                'resolved_object': None
+            }
+        }, {
+            'action': 'PickupObject',
+            'output': {
+                'return_status': 'SUCCESSFUL',
+                'resolved_object': 'id_target'
+            }
+        }]}
+        scene = {
+            'goal': {'category': 'retrieval', 'metadata': {'target': {'id': 'id_target'}}},
+            'objects': [
+                {'id': 'id_target', 'type': 'soccer_ball'},
+                {'id': 'id_non_target', 'type': 'soccer_ball'}
+            ]
+        }
+        scorecard = Scorecard(history, scene)
+        scorecard.calc_pickup_non_target()
+        assert scorecard.get_pickup_non_target() is False
+
+    def test_pickup_non_target_mock_false_because_pickup_failed(self):
+        history = {'steps': [{
+            'action': 'MoveAhead',
+            'output': {
+                'return_status': 'SUCCESSFUL',
+                'resolved_object': None
+            }
+        }, {
+            'action': 'PickupObject',
+            'output': {
+                'return_status': 'NOT_VISIBLE',
+                'resolved_object': 'id_non_target'
+            }
+        }]}
+        scene = {
+            'goal': {'category': 'retrieval', 'metadata': {'target': {'id': 'id_target'}}},
+            'objects': [
+                {'id': 'id_target', 'type': 'soccer_ball'},
+                {'id': 'id_non_target', 'type': 'soccer_ball'}
+            ]
+        }
+        scorecard = Scorecard(history, scene)
+        scorecard.calc_pickup_non_target()
+        assert scorecard.get_pickup_non_target() is False
+
+    def test_pickup_non_target_mock_true(self):
+        history = {'steps': [{
+            'action': 'MoveAhead',
+            'output': {
+                'return_status': 'SUCCESSFUL',
+                'resolved_object': None
+            }
+        }, {
+            'action': 'PickupObject',
+            'output': {
+                'return_status': 'SUCCESSFUL',
+                'resolved_object': 'id_non_target'
+            }
+        }]}
+        scene = {
+            'goal': {'category': 'retrieval', 'metadata': {'target': {'id': 'id_target'}}},
+            'objects': [
+                {'id': 'id_target', 'type': 'soccer_ball'},
+                {'id': 'id_non_target', 'type': 'soccer_ball'}
+            ]
+        }
+        scorecard = Scorecard(history, scene)
+        scorecard.calc_pickup_non_target()
+        assert scorecard.get_pickup_non_target() is True
+
+    def test_pickup_non_target_mock_multi_retrieval_false(self):
+        history = {'steps': [{
+            'action': 'PickupObject',
+            'output': {
+                'return_status': 'SUCCESSFUL',
+                'resolved_object': 'id_target_1'
+            }
+        }, {
+            'action': 'PickupObject',
+            'output': {
+                'return_status': 'SUCCESSFUL',
+                'resolved_object': 'id_target_2'
+            }
+        }]}
+        scene = {
+            'goal': {'category': 'multi retrieval', 'metadata': {'targets': [
+                {'id': 'id_target_1'}, {'id': 'id_target_2'}
+            ]}},
+            'objects': [
+                {'id': 'id_target_1', 'type': 'soccer_ball'},
+                {'id': 'id_target_2', 'type': 'soccer_ball'},
+                {'id': 'id_non_target', 'type': 'soccer_ball'}
+            ]
+        }
+        scorecard = Scorecard(history, scene)
+        scorecard.calc_pickup_non_target()
+        assert scorecard.get_pickup_non_target() is False
+
+    def test_pickup_non_target_mock_multi_retrieval_true(self):
+        history = {'steps': [{
+            'action': 'PickupObject',
+            'output': {
+                'return_status': 'SUCCESSFUL',
+                'resolved_object': 'id_non_target'
+            }
+        }]}
+        scene = {
+            'goal': {'category': 'multi retrieval', 'metadata': {'targets': [
+                {'id': 'id_target_1'}, {'id': 'id_target_2'}
+            ]}},
+            'objects': [
+                {'id': 'id_target_1', 'type': 'soccer_ball'},
+                {'id': 'id_target_2', 'type': 'soccer_ball'},
+                {'id': 'id_non_target', 'type': 'soccer_ball'}
+            ]
+        }
+        scorecard = Scorecard(history, scene)
+        scorecard.calc_pickup_non_target()
+        assert scorecard.get_pickup_non_target() is True
+
+    def test_pickup_non_target_mock_multi_retrieval_ambiguous(self):
+        history = {'steps': [{
+            'action': 'PickupObject',
+            'output': {
+                'return_status': 'SUCCESSFUL',
+                'resolved_object': 'non_id_target_1'
+            }
+        }, {
+            'action': 'PickupObject',
+            'output': {
+                'return_status': 'SUCCESSFUL',
+                'resolved_object': 'non_id_target_2'
+            }
+        }]}
+        scene = {
+            'goal': {'category': 'multi retrieval', 'metadata': {'targets': [
+                {'id': 'id_target_1'}, {'id': 'id_target_2'}
+            ]}},
+            'objects': [
+                {'id': 'id_target_1', 'type': 'soccer_ball'},
+                {'id': 'id_target_2', 'type': 'soccer_ball'},
+                {'id': 'id_non_target_1', 'type': 'soccer_ball'},
+                {'id': 'id_non_target_2', 'type': 'soccer_ball'}
+            ]
+        }
+        scorecard = Scorecard(history, scene)
+        scorecard.calc_pickup_non_target()
+        assert scorecard.get_pickup_non_target() is False
+
+    def test_pickup_non_target_mock_no_target(self):
+        history = {'steps': [{
+            'action': 'Pass',
+            'output': {
+                'return_status': 'SUCCESSFUL'
+            }
+        }]}
+        scene = {
+            'goal': {'category': 'passive'},
+            'objects': [
+                {'id': 'id_non_target_1', 'type': 'soccer_ball'},
+                {'id': 'id_non_target_2', 'type': 'soccer_ball'}
+            ]
+        }
+        scorecard = Scorecard(history, scene)
+        scorecard.calc_pickup_non_target()
+        assert scorecard.get_pickup_non_target() is False
+
+    def test_pickup_non_target_false_because_no_pickup(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_TOOL_CHOICE)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_TOOL_CHOICE_PICKUP_NOTHING)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_pickup_non_target()
+        assert scorecard.get_pickup_non_target() is False
+
+    def test_pickup_non_target_false_because_pickup_target(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_TOOL_CHOICE)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_TOOL_CHOICE_PICKUP_TARGET)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_pickup_non_target()
+        assert scorecard.get_pickup_non_target() is False
+
+    def test_pickup_non_target_false_because_pickup_failed(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_TOOL_CHOICE)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_TOOL_CHOICE_PICKUP_FAILED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_pickup_non_target()
+        assert scorecard.get_pickup_non_target() is False
+
+    def test_pickup_non_target_true(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_TOOL_CHOICE)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_TOOL_CHOICE_PICKUP_NON_TARGET)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_pickup_non_target()
+        assert scorecard.get_pickup_non_target() is True

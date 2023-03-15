@@ -693,12 +693,14 @@ class TestMcsHistoryIngest(unittest.TestCase):
         corner_visit_order = []
         interactive_goal_achieved = 0
         interactive_reward = 0
+        multi_retrieval_rewards_picked_up = []
 
         (
             new_step,
             interactive_reward,
             interactive_goal_achieved,
-            corner_visit_order
+            corner_visit_order,
+            multi_retrieval_rewards_picked_up
         ) = mcs_history_ingest.build_new_step_obj(
             step,
             interactive_reward,
@@ -707,7 +709,10 @@ class TestMcsHistoryIngest(unittest.TestCase):
             [],
             [],
             [],
-            False)
+            False,
+            False,
+            None,
+            [])
 
         self.assertIsNotNone(new_step)
         self.assertEqual(new_step["stepNumber"], 1)
@@ -726,6 +731,95 @@ class TestMcsHistoryIngest(unittest.TestCase):
         self.assertEqual(new_step["output"]["rotation"], step["output"]["rotation"])
         self.assertEqual(new_step["target_visible"], step["target_visible"])
         self.assertEqual(new_step["output"]["target"], step["output"]["goal"]["metadata"]["target"])
+        self.assertEqual(interactive_reward, -0.001)
+        self.assertEqual(interactive_goal_achieved, 0)
+        self.assertEqual(corner_visit_order, [])
+        self.assertEqual(multi_retrieval_rewards_picked_up, [])
+
+    def test_build_new_step_obj_ambiguous_multi_retrieval(self):
+        step = {
+            "step": 1,
+            "action": "PickupObject",
+            "args": {},
+            "classification": None,
+            "confidence": None,
+            "violations_xy_list": None,
+            "internal_state": None,
+            "output": {
+                "head_tilt": 15.0,
+                "goal": {
+                    "metadata": {
+                        "target": {
+                            "id": "9d31fa87-193f-4c08-bf6c-9eff9b30e341",
+                            "position": {
+                                "x": -3.654195547103882,
+                                "y": 3.2224996089935303,
+                                "z": 3.75
+                            }
+                        },
+                        "category": "multi retrieval"
+                    }
+                },
+                "position": {
+                    "x": 2.2,
+                    "y": 1.0,
+                    "z": 2.2
+                },
+                "resolved_object": "someid",
+                "physics_frames_per_second": 20,
+                "return_status": "SUCCESSFUL",
+                "reward": -0.001,
+                "rotation": 90.0
+            },
+            "delta_time_millis": 12464.299655999997,
+            "target_visible": True
+        }
+
+        corner_visit_order = []
+        interactive_goal_achieved = 0
+        interactive_reward = 0
+        multi_retrieval_rewards_picked_up = []
+
+        (
+            new_step,
+            interactive_reward,
+            interactive_goal_achieved,
+            corner_visit_order,
+            multi_retrieval_rewards_picked_up
+        ) = mcs_history_ingest.build_new_step_obj(
+            step,
+            interactive_reward,
+            interactive_goal_achieved,
+            1,
+            [],
+            [],
+            [],
+            False,
+            True,
+            1,
+            [])
+
+        self.assertIsNotNone(new_step)
+        self.assertEqual(new_step["stepNumber"], 1)
+        self.assertEqual(new_step["action"], "PickupObject")
+        self.assertEqual(new_step["args"], {})
+        self.assertIsNone(new_step["classification"])
+        self.assertIsNone(new_step["confidence"])
+        self.assertIsNone(new_step["internal_state"])
+        self.assertEqual(new_step["delta_time_millis"], step["delta_time_millis"])
+        self.assertIsNone(new_step["violations_xy_list"], step["violations_xy_list"])
+        self.assertEqual(new_step["output"]["head_tilt"], step["output"]["head_tilt"])
+        self.assertEqual(new_step["output"]["position"], step["output"]["position"])
+        self.assertEqual(new_step["output"]["physics_frames_per_second"], step["output"]["physics_frames_per_second"])
+        self.assertEqual(new_step["output"]["return_status"], step["output"]["return_status"])
+        self.assertEqual(new_step["output"]["reward"], step["output"]["reward"])
+        self.assertEqual(new_step["output"]["rotation"], step["output"]["rotation"])
+        self.assertEqual(new_step["target_visible"], step["target_visible"])
+        self.assertEqual(new_step["output"]["target"], step["output"]["goal"]["metadata"]["target"])
+        self.assertEqual(interactive_reward, -0.001)
+        self.assertEqual(interactive_goal_achieved, 1)
+        self.assertEqual(corner_visit_order, [])
+        self.assertEqual(multi_retrieval_rewards_picked_up, ['someid'])
 
 
 if __name__ == '__main__':

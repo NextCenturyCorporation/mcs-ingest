@@ -243,6 +243,31 @@ def find_shell_game_container_start_end(container):
     end = str(lanes[container['position_x'] + distance])
     return start + ' to ' + end
 
+def is_obj_target(scene, obj_id):
+
+    # if not interactive, return
+    if scene["goal"]["sceneInfo"]["primaryType"] != "interactive":
+        return False
+
+    if(scene["goal"]["sceneInfo"]["secondaryType"] ==
+                MULTI_RETRIEVAL):
+        # if ambiguous multi retrieval, simply check if
+        # the object is a soccer_ball
+        if("ambiguous" in scene["goal"]["sceneInfo"] and scene["goal"]["sceneInfo"]["ambiguous"] is True):
+            for objs in scene["objects"]:
+                if(objs['id'] == obj_id and objs['type'] == "soccer_ball"):
+                    return True
+        else:
+            for target in scene["goal"]["metadata"]["targets"]:
+                if(target['id'] == obj_id):
+                    return True
+    else:
+        target_obj = scene["goal"]["metadata"]["target"]
+        if(target_obj['id'] == obj_id):
+            return True
+
+
+    return False
 
 class GridHistory:
     """A history of the times a grid square has been visited"""
@@ -307,9 +332,11 @@ class Scorecard:
         self.tool_usage = None
         self.correct_platform_side = None
         self.correct_door_opened = None
+        self.pickup_non_target = False
         self.pickup_not_pickupable = 0
         self.interact_with_non_agent = 0
         self.interact_with_agent = 0
+        self.number_of_rewards_achieved = None
 
     def score_all(self) -> dict:
         self.calc_repeat_failed()
@@ -322,9 +349,11 @@ class Scorecard:
         self.calc_tool_usage()
         self.calc_correct_platform_side()
         self.calc_correct_door_opened()
+        self.calc_pickup_non_target()
         self.calc_pickup_not_pickupable()
         self.calc_agent_interactions()
         self.calc_walked_into_structures()
+        self.calc_num_rewards_achieved()
         self.calc_imitation_order_containers_are_opened_colors()
         self.calc_set_rotation()
         self.calc_shell_game()
@@ -346,10 +375,12 @@ class Scorecard:
             'fastest_path': self.is_fastest_path,
             'ramp_actions': self.ramp_actions,
             'tool_usage': self.tool_usage,
+            'pickup_non_target': self.pickup_non_target,
             'pickup_not_pickupable': self.pickup_not_pickupable,
             'interact_with_non_agent': self.interact_with_non_agent,
             'walked_into_structures': self.walked_into_structures,
             'interact_with_agent': self.interact_with_agent,
+            'number_of_rewards_achieved': self.number_of_rewards_achieved,
             'order_containers_are_opened_colors': self.order_containers_are_opened_colors,
             'set_rotation_opened_container_position_absolute': self.set_rotation_opened_container_position_absolute,
             'set_rotation_opened_container_position_relative_to_baited': self.set_rotation_opened_container_position_relative_to_baited,
@@ -383,11 +414,17 @@ class Scorecard:
     def get_interact_with_agent(self):
         return self.interact_with_agent
     
+    def get_pickup_non_target(self):
+        return self.pickup_non_target
+
     def get_pickup_not_pickupable(self):
         return self.pickup_not_pickupable
 
     def get_walked_into_structures(self):
         return self.walked_into_structures
+
+    def get_number_of_rewards_achieved(self):
+        return self.number_of_rewards_achieved
 
     def get_imitation_order_containers_are_opened(self):
         return self.order_containers_are_opened_colors
@@ -930,10 +967,11 @@ class Scorecard:
               negative X being "left" and positive X being "right"
         '''
 
-        # Does this scene have a targetSide? If not, return
+        # Does this scene have a clear targetSide? If not, return
         # correct_platform_side (currently set to None).
         goal = self.scene.get('goal')
-        if 'sceneInfo' in goal and 'targetSide' in goal['sceneInfo']:
+        if ('sceneInfo' in goal and 'targetSide' in goal['sceneInfo'] and
+                goal['sceneInfo']['targetSide'] in ['left', 'right']):
             target_side = goal['sceneInfo']['targetSide']
         else:
             return self.correct_platform_side
@@ -1051,6 +1089,48 @@ class Scorecard:
             p1 = p2
         return dist
     
+    def calc_pickup_non_target(self):
+        """
+        Calculate whether the performer agent picked up a non-target
+        soccer ball. Will ignore ambiguous multi-retrieval scenes.
+        """
+        if (
+            self.scene['goal']['category'] == MULTI_RETRIEVAL and
+            self.scene['goal'].get('sceneInfo', {}).get('ambiguous')
+        ):
+            return False
+        pickup_non_target = False
+        target_list = []
+        if 'metadata' in self.scene['goal']:
+            if 'target' in self.scene['goal']['metadata']:
+                target_list = [self.scene['goal']['metadata']['target']]
+            if 'targets' in self.scene['goal']['metadata']:
+                target_list = self.scene['goal']['metadata']['targets']
+        # Identify all the target ID(s) in the scene file
+        target_list = [target['id'] for target in target_list]
+        # Identify the soccer ball ID(s) in the scene file
+        soccer_ball_list = [
+            instance['id'] for instance in self.scene['objects']
+            if instance['type'] == 'soccer_ball'
+        ]
+        if target_list and soccer_ball_list:
+            for step_data in self.history['steps']:
+                # Identify a successful pickup
+                if (
+                    step_data['action'] == 'PickupObject' and
+                    step_data['output']['return_status'] == "SUCCESSFUL"
+                ):
+                    # Use "get" for backwards compatibility with old histories
+                    resolved_id = step_data['output'].get('resolved_object')
+                    if (
+                        resolved_id and
+                        resolved_id in soccer_ball_list and
+                        resolved_id not in target_list
+                    ):
+                        pickup_non_target = True
+        self.pickup_non_target = pickup_non_target
+        return self.pickup_non_target
+
     def calc_pickup_not_pickupable(self):
         ''' 
         Determine the number of times that the performer tried to
@@ -1214,6 +1294,35 @@ class Scorecard:
                         break
         self.walked_into_structures = walked_into_structures
         return self.walked_into_structures
+
+    def calc_num_rewards_achieved(self):
+        '''
+        Determine the number of reward soccer balls collected by
+        the performer.
+        '''
+        # Ignore passive scenes
+        if(self.scene["goal"]["sceneInfo"]["primaryType"] != "interactive"):
+            return None
+
+        steps_list = self.history['steps']
+
+        # track targets that are held
+        targets_picked_up = []
+
+        for single_step in steps_list:
+            action = single_step['action']
+            output = single_step['output']
+
+            if action == 'PickupObject' and output['return_status'] == 'SUCCESSFUL':
+                # Get the id of the object that was used, if any
+                obj_id = get_relevant_object(output)
+
+                if is_obj_target(self.scene, obj_id) and (obj_id not in targets_picked_up):
+                    targets_picked_up.append(obj_id)
+
+        self.number_of_rewards_achieved = len(targets_picked_up)
+        logging.debug(f"Total number of rewards achieved: {self.number_of_rewards_achieved}")
+        return self.number_of_rewards_achieved
 
     def calc_imitation_order_containers_are_opened_colors(self):
         ''' 

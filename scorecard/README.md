@@ -24,6 +24,8 @@ The actions that are counted (as of Eval 5):
 * Attempting physically impossible actions.  This is not implemented yet.
   * e.g., trying to pick up a sofa or another similarly large item; trying to interact with the floor or wall
   * Impossible actions will be counted from the first attempt.
+* Number of rewards achieved.
+  * For interactive scenes, will indicate how many reward balls are held by the time the scene is over.
 * Determine number of times the agent interacted with a non-agent
 * Determine number of times the agent picked up a non pickupable object
 * Determine number of times the agent walked into walls
@@ -32,7 +34,6 @@ The actions that are counted (as of Eval 5):
 Order is determined by color (green, blue, red, etc.)
 * Determine what door the agent opened (left, middle, right)
 
-  
 Some of these are mathematically vague;  for example, the space that the agent moves in is continous,
 so 'revisit' needs to have a particular distance.  Below, we discuss the way to count them.
 
@@ -275,6 +276,20 @@ The lanes are labed 1 through 5 and correspond to a global x position.
 * 3 = 0
 * 4 = 0.75
 * 5 = 1.5
+
+#### Number of Rewards Achieved
+
+Will indicate how many reward balls are held by the end of the scene for
+interactive tasks. Especially useful for multi retrieval tasks. If the scene
+is a non-interactive scene, value will be None. 
+
+#### Pickup Non Target
+
+Some tasks have multiple soccer balls, but not all of them are considered a
+"target object". For Tool Choice tasks, we expect the non-target soccer ball
+to always be inaccessible. This metric measures whether the non-target soccer
+ball was able to be accessed and picked-up anyway. This metric will ignore
+ambiguous multi-retrieval Arithmetic and Number Comparison scenes.
 
 ## Running the Scorecard
 
