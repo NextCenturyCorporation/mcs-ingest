@@ -919,10 +919,11 @@ class Scorecard:
               negative X being "left" and positive X being "right"
         '''
 
-        # Does this scene have a targetSide? If not, return
+        # Does this scene have a clear targetSide? If not, return
         # correct_platform_side (currently set to None).
         goal = self.scene.get('goal')
-        if 'sceneInfo' in goal and 'targetSide' in goal['sceneInfo']:
+        if ('sceneInfo' in goal and 'targetSide' in goal['sceneInfo'] and
+                goal['sceneInfo']['targetSide'] in ['left', 'right']):
             target_side = goal['sceneInfo']['targetSide']
         else:
             return self.correct_platform_side
