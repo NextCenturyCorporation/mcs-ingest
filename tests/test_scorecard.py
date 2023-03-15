@@ -52,6 +52,19 @@ TEST_HISTORY_OBSTRUCTED_PLAFTORM_LIPS = "obstructed_history_just_plaform_lips.js
 TEST_SCENE_IMITATION = "imitation_eval_5_ex_1.json"
 TEST_HISTORY_IMITATION = "imitation_eval_5_ex_1_history.json"
 
+TEST_SCENE_TOOL_CHOICE = "tool_choice_scene_debug.json"
+TEST_HISTORY_TOOL_CHOICE_PICKUP_FAILED = (
+    "tool_choice_pickup_failed_history.json"
+)
+TEST_HISTORY_TOOL_CHOICE_PICKUP_NON_TARGET = (
+    "tool_choice_pickup_non_target_history.json"
+)
+TEST_HISTORY_TOOL_CHOICE_PICKUP_NOTHING = (
+    "tool_choice_pickup_nothing_history.json"
+)
+TEST_HISTORY_TOOL_CHOICE_PICKUP_TARGET = (
+    "tool_choice_pickup_target_history.json"
+)
 
 TEST_FOLDER = "./tests/test_data"
 
@@ -170,6 +183,7 @@ class TestMcsScorecard(unittest.TestCase):
             'fastest_path',
             'ramp_actions',
             'tool_usage',
+            'pickup_non_target',
             'pickup_not_pickupable',
             'interact_with_non_agent',
             'walked_into_structures',
@@ -575,3 +589,236 @@ class TestMcsScorecard(unittest.TestCase):
         scorecard.calc_imitation_order_containers_are_opened_colors()
         assert scorecard.get_imitation_order_containers_are_opened() == \
             [['orange'], ['blue']]
+
+    def test_pickup_non_target_mock_false_because_no_pickup(self):
+        history = {'steps': [{
+            'action': 'MoveAhead',
+            'output': {
+                'return_status': 'SUCCESSFUL',
+                'resolved_object': None
+            }
+        }, {
+            'action': 'MoveAhead',
+            'output': {
+                'return_status': 'OBSTRUCTED',
+                'resolved_object': None
+            }
+        }]}
+        scene = {
+            'goal': {'category': 'retrieval', 'metadata': {'target': {'id': 'id_target'}}},
+            'objects': [
+                {'id': 'id_target', 'type': 'soccer_ball'},
+                {'id': 'id_non_target', 'type': 'soccer_ball'}
+            ]
+        }
+        scorecard = Scorecard(history, scene)
+        scorecard.calc_pickup_non_target()
+        assert scorecard.get_pickup_non_target() is False
+
+    def test_pickup_non_target_mock_false_because_pickup_target(self):
+        history = {'steps': [{
+            'action': 'MoveAhead',
+            'output': {
+                'return_status': 'SUCCESSFUL',
+                'resolved_object': None
+            }
+        }, {
+            'action': 'PickupObject',
+            'output': {
+                'return_status': 'SUCCESSFUL',
+                'resolved_object': 'id_target'
+            }
+        }]}
+        scene = {
+            'goal': {'category': 'retrieval', 'metadata': {'target': {'id': 'id_target'}}},
+            'objects': [
+                {'id': 'id_target', 'type': 'soccer_ball'},
+                {'id': 'id_non_target', 'type': 'soccer_ball'}
+            ]
+        }
+        scorecard = Scorecard(history, scene)
+        scorecard.calc_pickup_non_target()
+        assert scorecard.get_pickup_non_target() is False
+
+    def test_pickup_non_target_mock_false_because_pickup_failed(self):
+        history = {'steps': [{
+            'action': 'MoveAhead',
+            'output': {
+                'return_status': 'SUCCESSFUL',
+                'resolved_object': None
+            }
+        }, {
+            'action': 'PickupObject',
+            'output': {
+                'return_status': 'NOT_VISIBLE',
+                'resolved_object': 'id_non_target'
+            }
+        }]}
+        scene = {
+            'goal': {'category': 'retrieval', 'metadata': {'target': {'id': 'id_target'}}},
+            'objects': [
+                {'id': 'id_target', 'type': 'soccer_ball'},
+                {'id': 'id_non_target', 'type': 'soccer_ball'}
+            ]
+        }
+        scorecard = Scorecard(history, scene)
+        scorecard.calc_pickup_non_target()
+        assert scorecard.get_pickup_non_target() is False
+
+    def test_pickup_non_target_mock_true(self):
+        history = {'steps': [{
+            'action': 'MoveAhead',
+            'output': {
+                'return_status': 'SUCCESSFUL',
+                'resolved_object': None
+            }
+        }, {
+            'action': 'PickupObject',
+            'output': {
+                'return_status': 'SUCCESSFUL',
+                'resolved_object': 'id_non_target'
+            }
+        }]}
+        scene = {
+            'goal': {'category': 'retrieval', 'metadata': {'target': {'id': 'id_target'}}},
+            'objects': [
+                {'id': 'id_target', 'type': 'soccer_ball'},
+                {'id': 'id_non_target', 'type': 'soccer_ball'}
+            ]
+        }
+        scorecard = Scorecard(history, scene)
+        scorecard.calc_pickup_non_target()
+        assert scorecard.get_pickup_non_target() is True
+
+    def test_pickup_non_target_mock_multi_retrieval_false(self):
+        history = {'steps': [{
+            'action': 'PickupObject',
+            'output': {
+                'return_status': 'SUCCESSFUL',
+                'resolved_object': 'id_target_1'
+            }
+        }, {
+            'action': 'PickupObject',
+            'output': {
+                'return_status': 'SUCCESSFUL',
+                'resolved_object': 'id_target_2'
+            }
+        }]}
+        scene = {
+            'goal': {'category': 'multi retrieval', 'metadata': {'targets': [
+                {'id': 'id_target_1'}, {'id': 'id_target_2'}
+            ]}},
+            'objects': [
+                {'id': 'id_target_1', 'type': 'soccer_ball'},
+                {'id': 'id_target_2', 'type': 'soccer_ball'},
+                {'id': 'id_non_target', 'type': 'soccer_ball'}
+            ]
+        }
+        scorecard = Scorecard(history, scene)
+        scorecard.calc_pickup_non_target()
+        assert scorecard.get_pickup_non_target() is False
+
+    def test_pickup_non_target_mock_multi_retrieval_true(self):
+        history = {'steps': [{
+            'action': 'PickupObject',
+            'output': {
+                'return_status': 'SUCCESSFUL',
+                'resolved_object': 'id_non_target'
+            }
+        }]}
+        scene = {
+            'goal': {'category': 'multi retrieval', 'metadata': {'targets': [
+                {'id': 'id_target_1'}, {'id': 'id_target_2'}
+            ]}},
+            'objects': [
+                {'id': 'id_target_1', 'type': 'soccer_ball'},
+                {'id': 'id_target_2', 'type': 'soccer_ball'},
+                {'id': 'id_non_target', 'type': 'soccer_ball'}
+            ]
+        }
+        scorecard = Scorecard(history, scene)
+        scorecard.calc_pickup_non_target()
+        assert scorecard.get_pickup_non_target() is True
+
+    def test_pickup_non_target_mock_multi_retrieval_ambiguous(self):
+        history = {'steps': [{
+            'action': 'PickupObject',
+            'output': {
+                'return_status': 'SUCCESSFUL',
+                'resolved_object': 'non_id_target_1'
+            }
+        }, {
+            'action': 'PickupObject',
+            'output': {
+                'return_status': 'SUCCESSFUL',
+                'resolved_object': 'non_id_target_2'
+            }
+        }]}
+        scene = {
+            'goal': {'category': 'multi retrieval', 'metadata': {'targets': [
+                {'id': 'id_target_1'}, {'id': 'id_target_2'}
+            ]}},
+            'objects': [
+                {'id': 'id_target_1', 'type': 'soccer_ball'},
+                {'id': 'id_target_2', 'type': 'soccer_ball'},
+                {'id': 'id_non_target_1', 'type': 'soccer_ball'},
+                {'id': 'id_non_target_2', 'type': 'soccer_ball'}
+            ]
+        }
+        scorecard = Scorecard(history, scene)
+        scorecard.calc_pickup_non_target()
+        assert scorecard.get_pickup_non_target() is False
+
+    def test_pickup_non_target_mock_no_target(self):
+        history = {'steps': [{
+            'action': 'Pass',
+            'output': {
+                'return_status': 'SUCCESSFUL'
+            }
+        }]}
+        scene = {
+            'goal': {'category': 'passive'},
+            'objects': [
+                {'id': 'id_non_target_1', 'type': 'soccer_ball'},
+                {'id': 'id_non_target_2', 'type': 'soccer_ball'}
+            ]
+        }
+        scorecard = Scorecard(history, scene)
+        scorecard.calc_pickup_non_target()
+        assert scorecard.get_pickup_non_target() is False
+
+    def test_pickup_non_target_false_because_no_pickup(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_TOOL_CHOICE)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_TOOL_CHOICE_PICKUP_NOTHING)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_pickup_non_target()
+        assert scorecard.get_pickup_non_target() is False
+
+    def test_pickup_non_target_false_because_pickup_target(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_TOOL_CHOICE)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_TOOL_CHOICE_PICKUP_TARGET)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_pickup_non_target()
+        assert scorecard.get_pickup_non_target() is False
+
+    def test_pickup_non_target_false_because_pickup_failed(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_TOOL_CHOICE)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_TOOL_CHOICE_PICKUP_FAILED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_pickup_non_target()
+        assert scorecard.get_pickup_non_target() is False
+
+    def test_pickup_non_target_true(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_TOOL_CHOICE)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_TOOL_CHOICE_PICKUP_NON_TARGET)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_pickup_non_target()
+        assert scorecard.get_pickup_non_target() is True
