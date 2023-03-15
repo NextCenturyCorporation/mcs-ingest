@@ -215,10 +215,18 @@ This element of the scorecard determines the order the agent opened
 the imitation containers by color.
 
 #### Number of Rewards Achieved
+
 Will indicate how many reward balls are held by the end of the scene for
 interactive tasks. Especially useful for multi retrieval tasks. If the scene
 is a non-interactive scene, value will be None. 
 
+#### Pickup Non Target
+
+Some tasks have multiple soccer balls, but not all of them are considered a
+"target object". For Tool Choice tasks, we expect the non-target soccer ball
+to always be inaccessible. This metric measures whether the non-target soccer
+ball was able to be accessed and picked-up anyway. This metric will ignore
+ambiguous multi-retrieval Arithmetic and Number Comparison scenes.
 
 ## Running the Scorecard
 
