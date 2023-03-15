@@ -1261,8 +1261,12 @@ class Scorecard:
         }
         set_rotation_opened_container_position_absolute = ''
         set_rotation_opened_container_position_relative_to_baited = ''
-        self.set_rotation_opened_container_position_absolute = None
-        self.set_rotation_opened_container_position_relative_to_baited = None
+        if (not self.scene['goal']['sceneInfo'].get('tertiaryType') or
+                self.scene['goal']['sceneInfo']['tertiaryType'] != "set rotation"):
+            self.set_rotation_opened_container_position_absolute = None
+            self.set_rotation_opened_container_position_relative_to_baited = None
+            return (self.set_rotation_opened_container_position_absolute,
+                    self.set_rotation_opened_container_position_relative_to_baited)
         try:
             containers_and_lids = [
                 {
@@ -1345,77 +1349,76 @@ class Scorecard:
         steps_list = self.history['steps']
         shell_game_baited_container = None
         shell_game_opened_container = None
-        self.shell_game_baited_container = shell_game_baited_container
-        self.shell_game_opened_container = shell_game_opened_container
-        try:
-            containers_and_lids = [
-                {
-                    'id': obj['id'],
-                    'lid': obj['debug']['lidId'],
-                    'isTargetContainer': obj['debug']['isTargetContainer'],
-                    'position_x': obj['shows'][0]['position']['x'],
-                    'moves': obj.get('moves')
-                }
-                for obj in self.scene['objects'] if obj['type'] == 'separate_container']
-            for cl in containers_and_lids:
-                if cl['isTargetContainer']:
-                    shell_game_baited_container = find_shell_game_container_start_end(cl)
-                    break
-            found_container = False
-            for single_step in steps_list:
-                action = single_step['action']
-                output = single_step['output']
-                if (action == 'OpenObject'):
-                    resolved_obj_id = output['resolved_object']
-                    if output['return_status'] == "SUCCESSFUL":
-                        for cl in containers_and_lids:
-                            if resolved_obj_id == cl['id'] or resolved_obj_id == cl['lid']:
-                                shell_game_opened_container = find_shell_game_container_start_end(cl)
-                                found_container = True
-                                break
-                if found_container:
-                    break
+        if (not self.scene['goal']['sceneInfo'].get('tertiaryType') or
+                self.scene['goal']['sceneInfo']['tertiaryType'] != "shell game"):
             self.shell_game_baited_container = shell_game_baited_container
             self.shell_game_opened_container = shell_game_opened_container
-        except:
-            pass
-        finally:
             return self.shell_game_baited_container, self.shell_game_opened_container
+        containers_and_lids = [
+            {
+                'id': obj['id'],
+                'lid': obj['debug']['lidId'],
+                'isTargetContainer': obj['debug']['isTargetContainer'],
+                'position_x': obj['shows'][0]['position']['x'],
+                'moves': obj.get('moves')
+            }
+            for obj in self.scene['objects'] if obj['type'] == 'separate_container']
+        for cl in containers_and_lids:
+            if cl['isTargetContainer']:
+                shell_game_baited_container = find_shell_game_container_start_end(cl)
+                break
+        found_container = False
+        for single_step in steps_list:
+            action = single_step['action']
+            output = single_step['output']
+            if (action == 'OpenObject'):
+                resolved_obj_id = output['resolved_object']
+                if output['return_status'] == "SUCCESSFUL":
+                    for cl in containers_and_lids:
+                        if resolved_obj_id == cl['id'] or resolved_obj_id == cl['lid']:
+                            shell_game_opened_container = find_shell_game_container_start_end(cl)
+                            found_container = True
+                            break
+            if found_container:
+                break
+        self.shell_game_baited_container = shell_game_baited_container
+        self.shell_game_opened_container = shell_game_opened_container
+        return self.shell_game_baited_container, self.shell_game_opened_container
 
     def calc_door_opened_side(self):
-            ''' 
-            Determine the door the performer opened in the following scenes
-            with the options available:
-            Trajectory - Left, Right
-            InteractiveCollision - Left, Right
-            Solidity - Left, Middle, Right
-            SupportRelations - Left, Middle, Right
-            '''
-            steps_list = self.history['steps']
-            door_opened = ''
+        ''' 
+        Determine the door the performer opened in the following scenes
+        with the options available:
+        Trajectory - Left, Right
+        InteractiveCollision - Left, Right
+        Solidity - Left, Middle, Right
+        SupportRelations - Left, Middle, Right
+        '''
+        steps_list = self.history['steps']
+        door_opened = None
 
-            doors = [
-                [obj['id'], obj['shows'][0]['position']['x']]
-                for obj in self.scene['objects'] if obj['type'].startswith('door')]
-            found_door = False
-            for single_step in steps_list:
-                action = single_step['action']
-                output = single_step['output']
-                if (action == 'OpenObject'):
-                    resolved_obj_id = output['resolved_object']
-                    if output['return_status'] == "SUCCESSFUL":
-                        for door in doors:
-                            if resolved_obj_id == door[0]:
-                                door_opened = \
-                                    'left' if door[1] < 0 else \
-                                        'middle' if door[1] == 0 else 'right'
-                                found_door = True
-                                break
-                if found_door:
-                    break
+        doors = [
+            [obj['id'], obj['shows'][0]['position']['x']]
+            for obj in self.scene['objects'] if obj['type'].startswith('door')]
+        found_door = False
+        for single_step in steps_list:
+            action = single_step['action']
+            output = single_step['output']
+            if (action == 'OpenObject'):
+                resolved_obj_id = output['resolved_object']
+                if output['return_status'] == "SUCCESSFUL":
+                    for door in doors:
+                        if resolved_obj_id == door[0]:
+                            door_opened = \
+                                'left' if door[1] < 0 else \
+                                    'middle' if door[1] == 0 else 'right'
+                            found_door = True
+                            break
+            if found_door:
+                break
 
-            self.door_opened_side = door_opened
-            return self.door_opened_side
+        self.door_opened_side = door_opened
+        return self.door_opened_side
 
     def calc_interacted_with_blob_first(self):
         ''' 
