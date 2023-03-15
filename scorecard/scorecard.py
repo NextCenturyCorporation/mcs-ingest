@@ -228,6 +228,31 @@ def find_target_loc_by_step(scene, step):
 
     return None, 0, 0
 
+def is_obj_target(scene, obj_id):
+
+    # if not interactive, return
+    if scene["goal"]["sceneInfo"]["primaryType"] != "interactive":
+        return False
+
+    if(scene["goal"]["sceneInfo"]["secondaryType"] ==
+                MULTI_RETRIEVAL):
+        # if ambiguous multi retrieval, simply check if
+        # the object is a soccer_ball
+        if("ambiguous" in scene["goal"]["sceneInfo"] and scene["goal"]["sceneInfo"]["ambiguous"] is True):
+            for objs in scene["objects"]:
+                if(objs['id'] == obj_id and objs['type'] == "soccer_ball"):
+                    return True
+        else:
+            for target in scene["goal"]["metadata"]["targets"]:
+                if(target['id'] == obj_id):
+                    return True
+    else:
+        target_obj = scene["goal"]["metadata"]["target"]
+        if(target_obj['id'] == obj_id):
+            return True
+
+
+    return False
 
 class GridHistory:
     """A history of the times a grid square has been visited"""
@@ -296,6 +321,7 @@ class Scorecard:
         self.pickup_not_pickupable = 0
         self.interact_with_non_agent = 0
         self.interact_with_agent = 0
+        self.number_of_rewards_achieved = None
 
     def score_all(self) -> dict:
         self.calc_repeat_failed()
@@ -312,6 +338,7 @@ class Scorecard:
         self.calc_pickup_not_pickupable()
         self.calc_agent_interactions()
         self.calc_walked_into_structures()
+        self.calc_num_rewards_achieved()
         self.calc_imitation_order_containers_are_opened_colors()
 
         # To be implemented
@@ -334,6 +361,7 @@ class Scorecard:
             'interact_with_non_agent': self.interact_with_non_agent,
             'walked_into_structures': self.walked_into_structures,
             'interact_with_agent': self.interact_with_agent,
+            'number_of_rewards_achieved': self.number_of_rewards_achieved,
             'order_containers_are_opened_colors': self.order_containers_are_opened_colors
         }
 
@@ -370,8 +398,12 @@ class Scorecard:
     def get_walked_into_structures(self):
         return self.walked_into_structures
 
+    def get_number_of_rewards_achieved(self):
+        return self.number_of_rewards_achieved
+
     def get_imitation_order_containers_are_opened(self):
         return self.order_containers_are_opened_colors
+
 
     def calc_revisiting(self):
 
@@ -893,10 +925,11 @@ class Scorecard:
               negative X being "left" and positive X being "right"
         '''
 
-        # Does this scene have a targetSide? If not, return
+        # Does this scene have a clear targetSide? If not, return
         # correct_platform_side (currently set to None).
         goal = self.scene.get('goal')
-        if 'sceneInfo' in goal and 'targetSide' in goal['sceneInfo']:
+        if ('sceneInfo' in goal and 'targetSide' in goal['sceneInfo'] and
+                goal['sceneInfo']['targetSide'] in ['left', 'right']):
             target_side = goal['sceneInfo']['targetSide']
         else:
             return self.correct_platform_side
@@ -1220,6 +1253,35 @@ class Scorecard:
         self.walked_into_structures = walked_into_structures
         return self.walked_into_structures
 
+    def calc_num_rewards_achieved(self):
+        '''
+        Determine the number of reward soccer balls collected by
+        the performer.
+        '''
+        # Ignore passive scenes
+        if(self.scene["goal"]["sceneInfo"]["primaryType"] != "interactive"):
+            return None
+
+        steps_list = self.history['steps']
+
+        # track targets that are held
+        targets_picked_up = []
+
+        for single_step in steps_list:
+            action = single_step['action']
+            output = single_step['output']
+
+            if action == 'PickupObject' and output['return_status'] == 'SUCCESSFUL':
+                # Get the id of the object that was used, if any
+                obj_id = get_relevant_object(output)
+
+                if is_obj_target(self.scene, obj_id) and (obj_id not in targets_picked_up):
+                    targets_picked_up.append(obj_id)
+
+        self.number_of_rewards_achieved = len(targets_picked_up)
+        logging.debug(f"Total number of rewards achieved: {self.number_of_rewards_achieved}")
+        return self.number_of_rewards_achieved
+
     def calc_imitation_order_containers_are_opened_colors(self):
         ''' 
         Determine the order the performer opened containers by color
@@ -1242,3 +1304,4 @@ class Scorecard:
         self.order_containers_are_opened_colors = \
             order_containers_are_opened_colors
         return self.order_containers_are_opened_colors
+

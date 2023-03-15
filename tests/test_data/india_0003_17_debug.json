@@ -211,6 +211,7 @@
     "description": "Find and pick up the small light grey metal trophy.",
     "last_step": 10000,
     "sceneInfo": {
+      "primaryType": "interactive",
       "secondaryType": "retrieval"
     }
   },

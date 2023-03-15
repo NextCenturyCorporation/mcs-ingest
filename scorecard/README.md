@@ -24,6 +24,8 @@ The actions that are counted (as of Eval 5):
 * Attempting physically impossible actions.  This is not implemented yet.
   * e.g., trying to pick up a sofa or another similarly large item; trying to interact with the floor or wall
   * Impossible actions will be counted from the first attempt.
+* Number of rewards achieved.
+  * For interactive scenes, will indicate how many reward balls are held by the time the scene is over.
 * Determine number of times the agent interacted with a non-agent
 * Determine number of times the agent picked up a non pickupable object
 * Determine number of times the agent walked into walls
@@ -31,7 +33,6 @@ The actions that are counted (as of Eval 5):
 * Determine what order the agent opened the containers in an imitation task.
 Order is determined by color (green, blue, red, etc.)
 
-  
 Some of these are mathematically vague;  for example, the space that the agent moves in is continous,
 so 'revisit' needs to have a particular distance.  Below, we discuss the way to count them.
 
@@ -212,6 +213,12 @@ For imitation task scenes the agent opens one or two containers in order.
 If they open a wrong one or in the wrong order then the scene ends.
 This element of the scorecard determines the order the agent opened
 the imitation containers by color.
+
+#### Number of Rewards Achieved
+
+Will indicate how many reward balls are held by the end of the scene for
+interactive tasks. Especially useful for multi retrieval tasks. If the scene
+is a non-interactive scene, value will be None. 
 
 #### Pickup Non Target
 
