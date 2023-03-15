@@ -1419,7 +1419,7 @@ class Scorecard:
 
     def calc_interacted_with_blob_first(self):
         ''' 
-        Determine the door the performer went to the blob first in
+        Determine if the performer went to the blob first in
         the following scenes: Holes, Lava, Ramps
         '''
         steps_list = self.history['steps']
