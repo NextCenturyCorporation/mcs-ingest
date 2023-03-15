@@ -329,6 +329,7 @@ class Scorecard:
         self.calc_set_rotation()
         self.calc_shell_game()
         self.calc_door_opened_side()
+        self.calc_interacted_with_blob_first()
 
         # To be implemented
         # self.calc_attempt_impossible()
@@ -354,7 +355,8 @@ class Scorecard:
             'set_rotation_opened_container_position_relative_to_baited': self.set_rotation_opened_container_position_relative_to_baited,
             'shell_game_baited_container': self.shell_game_baited_container,
             'shell_game_opened_container': self.shell_game_opened_container,
-            'door_opened_side': self.door_opened_side
+            'door_opened_side': self.door_opened_side,
+            'interacted_with_blob_first': self.interacted_with_blob_first
         }
 
     def get_revisits(self):
@@ -404,6 +406,9 @@ class Scorecard:
 
     def get_door_opened_side(self):
         return self.door_opened_side
+
+    def get_interacted_with_blob_first(self):
+        return self.interacted_with_blob_first
 
     def calc_revisiting(self):
 
@@ -1411,3 +1416,31 @@ class Scorecard:
 
             self.door_opened_side = door_opened
             return self.door_opened_side
+
+    def calc_interacted_with_blob_first(self):
+        ''' 
+        Determine if the performer went to the blob first in
+        the following scenes: Holes, Lava, Ramps
+        '''
+        steps_list = self.history['steps']
+
+        interacted_with_blob_first = False
+        agent = [obj['id'] for obj in self.scene['objects'] if obj['type'].startswith('agent')]
+        blob = [obj['id'] for obj in self.scene['objects'] if obj['type'].startswith('blob')]
+        if len(agent) and len(blob):
+            for single_step in steps_list:
+                action = single_step['action']
+                output = single_step['output']
+                if (action == 'InteractWithAgent'):
+                    resolved_obj_id = output['resolved_object']
+                    if output['return_status'] == "NOT_AGENT":
+                        if resolved_obj_id == blob[0]:
+                            interacted_with_blob_first = True
+                            break
+                    if output['return_status'] == "SUCCESSFUL":
+                        if resolved_obj_id == agent[0]:
+                            interacted_with_blob_first = False
+                            break
+
+        self.interacted_with_blob_first = interacted_with_blob_first
+        return self.interacted_with_blob_first

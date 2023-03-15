@@ -100,6 +100,14 @@ TEST_HISTORY_SOLIDITY_DOOR_OPENED = "door_side/solidity_0001_03_history.json"
 TEST_SCENE_SUPPORT_RELATIONS_DOOR_OPENED = "door_side/support_relations_0001_09_I1_debug.json"
 TEST_HISTORY_SUPPORT_RELATIONS_DOOR_OPENED = "door_side/support_relations_0001_history.json"
 
+TEST_SCENE_INTERACTED_WITH_BLOB_FIRST_HOLES = "interact_with_blob_first/holes_0001_08_D2_debug.json"
+TEST_HISTORY_INTERACTED_WITH_BLOB_FIRST_HOLES = "interact_with_blob_first/holes_0001_history.json"
+
+TEST_SCENE_INTERACTED_WITH_BLOB_FIRST_LAVA = "interact_with_blob_first/lava_0001_08_D2_debug.json"
+TEST_HISTORY_INTERACTED_WITH_BLOB_FIRST_LAVA = "interact_with_blob_first/lava_0001_history.json"
+
+TEST_SCENE_INTERACTED_WITH_BLOB_FIRST_RAMPS = "interact_with_blob_first/ramps_0001_23_P2_debug.json"
+TEST_HISTORY_INTERACTED_WITH_BLOB_FIRST_RAMPS = "interact_with_blob_first/ramps_0001_history.json"
 
 TEST_FOLDER = "./tests/test_data"
 
@@ -227,7 +235,8 @@ class TestMcsScorecard(unittest.TestCase):
             'set_rotation_opened_container_position_relative_to_baited',
             'shell_game_baited_container',
             'shell_game_opened_container',
-            'door_opened_side']
+            'door_opened_side',
+            'interacted_with_blob_first']
         )
 
     def test_get_lookpoint(self):
@@ -783,3 +792,28 @@ class TestMcsScorecard(unittest.TestCase):
         scorecard = Scorecard(history_file, scene_file)
         scorecard.calc_door_opened_side()
         assert scorecard.get_door_opened_side() == 'middle'
+
+    def test_calc_interacted_with_blob_first(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_INTERACTED_WITH_BLOB_FIRST_HOLES)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_INTERACTED_WITH_BLOB_FIRST_HOLES)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_interacted_with_blob_first()
+        assert scorecard.get_interacted_with_blob_first() is False
+
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_INTERACTED_WITH_BLOB_FIRST_LAVA)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_INTERACTED_WITH_BLOB_FIRST_LAVA)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_interacted_with_blob_first()
+        assert scorecard.get_interacted_with_blob_first() is True
+
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_INTERACTED_WITH_BLOB_FIRST_RAMPS)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_INTERACTED_WITH_BLOB_FIRST_RAMPS)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_interacted_with_blob_first()
+        assert scorecard.get_interacted_with_blob_first() is True
