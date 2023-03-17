@@ -86,6 +86,8 @@ logging.basicConfig(
 def create_mock_step(
         action: str = 'Pass',
         object_coords: dict = None,
+        object_id: str = None,
+        receptacle_object_id: str = None,
         position: dict = None,
         resolved_object=None,
         resolved_receptacle=None,
@@ -106,7 +108,9 @@ def create_mock_step(
             'objectImageCoords': object_coords or {'x': 0, 'y': 0},
             'receptacleObjectImageCoords': (
                 receptacle_coords or {'x': 0, 'y': 0},
-            )
+            ),
+            'objectId': object_id,
+            'receptacleObjectId': object_id
         }
     }
 
@@ -436,6 +440,75 @@ class TestMcsScorecard(unittest.TestCase):
             )
         ])
         self.assertEqual(repeat_failed['total_repeat_failed'], 0)
+
+    def test_calc_repeat_failed_object_id_not_visible_status(self):
+        repeat_failed = calc_repeat_failed([
+            create_mock_step(
+                action='PickupObject',
+                object_id='ball',
+                return_status='NOT_VISIBLE'
+            ),
+            create_mock_step(
+                action='PickupObject',
+                object_id='ball',
+                return_status='NOT_VISIBLE'
+            ),
+            create_mock_step(),
+            create_mock_step(
+                action='PickupObject',
+                object_id='ball',
+                return_status='NOT_VISIBLE'
+            ),
+        ])
+        self.assertEqual(repeat_failed['total_repeat_failed'], 2)
+
+    def test_calc_repeat_failed_receptacle_object_id_not_visible_status(self):
+        repeat_failed = calc_repeat_failed([
+            create_mock_step(
+                action='PickupObject',
+                receptacle_object_id='container',
+                return_status='NOT_VISIBLE'
+            ),
+            create_mock_step(
+                action='PickupObject',
+                receptacle_object_id='container',
+                return_status='NOT_VISIBLE'
+            ),
+            create_mock_step(),
+            create_mock_step(
+                action='PickupObject',
+                receptacle_object_id='container',
+                return_status='NOT_VISIBLE'
+            ),
+        ])
+        self.assertEqual(repeat_failed['total_repeat_failed'], 2)
+
+
+    def test_calc_repeat_failed_receptacle_object_id_and_object_id_not_visible_status(self):
+        repeat_failed = calc_repeat_failed([
+            create_mock_step(
+                action='PickupObject',
+                receptacle_object_id='container',
+                return_status='NOT_VISIBLE'
+            ),
+            create_mock_step(
+                action='PickupObject',
+                object_id='container',
+                return_status='NOT_VISIBLE'
+            ),
+            create_mock_step(),
+            create_mock_step(
+                action='PickupObject',
+                receptacle_object_id='container',
+                return_status='NOT_VISIBLE'
+            ),
+            create_mock_step(
+                action='PickupObject',
+                object_id='container',
+                return_status='NOT_VISIBLE'
+            ),
+        ])
+        self.assertEqual(repeat_failed['total_repeat_failed'], 3)
 
     def test_on_ramp(self):
         scene_file = mcs_scene_ingest.load_json_file(
