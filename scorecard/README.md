@@ -32,6 +32,7 @@ The actions that are counted (as of Eval 5):
 * Determine number of times the agent walked into platform lips
 * Determine what order the agent opened the containers in an imitation task.
 Order is determined by color (green, blue, red, etc.)
+* Determine what door the agent opened (left, middle, right)
 
 Some of these are mathematically vague;  for example, the space that the agent moves in is continous,
 so 'revisit' needs to have a particular distance.  Below, we discuss the way to count them.
@@ -213,6 +214,68 @@ For imitation task scenes the agent opens one or two containers in order.
 If they open a wrong one or in the wrong order then the scene ends.
 This element of the scorecard determines the order the agent opened
 the imitation containers by color.
+
+#### Door Opened Side
+
+For "doorcluder" task types, such as Interactive Solidity
+Interactive Support Relations, Trajectory, Interactive Collisions
+the agent needs to choose to open one of two or three doors. 
+This element of the scorecard determines what door side opened
+by the performer opened (left, middle, right).
+
+### Set Rotation Opened Container Position Absolute
+
+For set rotation scenes the agent must open the correct container
+after the containers have been rotated around while on top of a turntable.
+This element of the scorecard determines what container was opened
+based on its absolute location on the turntable.
+* 1 = Far
+* 2 = Right
+* 3 = Near
+* 4 = Left
+* 5 = Center
+
+#### Set Rotation Opened Container Position Relative To Baited
+
+For set rotation scenes the agent must open the correct container
+after the containers have been rotated around while on top a turntable.
+This element of the scorecard determines what container was opened
+based on its relative position to the baited container.
+* For when the left or right container is picked
+  * Baited
+  * Middle
+  * Opposite
+* For when the middle container is picked. 
+  * Far
+  * Right
+  * Back
+  * Left
+
+#### Shell Game Baited Container
+
+For shell game scenes the agent needs to track containers
+that are moved horizontally. There are 5 lanes the containers can start
+and move to. This element of the scorecard determines what container was baited
+by calculating its start and end lanes.
+The lanes are labed 1 through 5 and correspond to a global x position.
+* 1 = -1.5 
+* 2 = -0.75
+* 3 = 0
+* 4 = 0.75
+* 5 = 1.5
+
+#### Shell Game Opened Container
+
+For shell game scenes the agent needs to track containers
+that are moved horizontally. There are 5 lanes the containers can start
+and move to. This element of the scorecard determines what container was opened
+by calculating its start and end lanes.
+The lanes are labed 1 through 5 and correspond to a global x position.
+* 1 = -1.5 
+* 2 = -0.75
+* 3 = 0
+* 4 = 0.75
+* 5 = 1.5
 
 #### Number of Rewards Achieved
 

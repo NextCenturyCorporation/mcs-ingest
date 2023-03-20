@@ -37,7 +37,7 @@ TEST_SCENE_SIDE = "prefix_0001_01_C4_debug.json"
 TEST_HISTORY_SIDE_1 = "gen_platform_side_1.json"
 TEST_HISTORY_SIDE_2 = "gen_platform_side_2.json"
 
-TEST_SCENE_DOOR = "prefix_0001_02_I1_debug.json"
+TEST_SCENE_DOOR_OPENED = "prefix_0001_02_I1_debug.json"
 TEST_HISTORY_DOOR_CORRECT = "gen_correct_door_ex.json"
 TEST_HISTORY_DOOR_INCORRECT = "gen_incorrect_door_ex.json"
 
@@ -59,6 +59,63 @@ TEST_HISTORY_NUM_REWARDS_AMB_R = "numcomp_0001_05_right.json"
 
 TEST_SCENE_IMITATION = "imitation_eval_5_ex_1.json"
 TEST_HISTORY_IMITATION = "imitation_eval_5_ex_1_history.json"
+
+TEST_SCENE_SET_ROTATION_TURNTABLE_MOVES_270_MIDDLE_BAITED_MIDDLE_PICKED = "set_rotation/setrotation_0001_17_I1_debug.json"
+TEST_HISTORY_SET_ROTATION_TURNTABLE_270_COUNTER_CLOCKWISE = "set_rotation/setrotation_0001_17_history.json"
+
+TEST_SCENE_SET_ROTATION_PERFORMER_MOVES_270_COUNTER_CLOCKWISE_LEFT_BAITED_LEFT_PICKED = "set_rotation/setrotation_0001_18_I2_debug.json"
+TEST_HISTORY_SET_ROTATION_PERFORMER_270_COUNTER_CLOCKWISE_LEFT_BAITED_LEFT_PICKED = "set_rotation/setrotation_0001_18_history.json"
+
+TEST_SCENE_SET_ROTATION_3_TABLE_270_CC_MIDDLE_BAITED_NEAR_PICKED = "set_rotation/setrotation_0002_17_I1_debug.json"
+TEST_HISTORY_SET_ROTATION_3_TABLE_270_CC_MIDDLE_BAITED_NEAR_PICKED = "set_rotation/setrotation_0002_17_history.json"
+
+TEST_SCENE_SET_ROTATION_3_PERF_270_CC_LEFT_BAITED_MIDDLE_PICKED = "set_rotation/setrotation_0002_18_I2_debug.json"
+TEST_HISTORY_SET_ROTATION_3_PERF_270_CC_LEFT_BAITED_MIDDLE_PICKED = "set_rotation/setrotation_0002_18_history.json"
+
+TEST_SCENE_SET_ROTATION_3_TABLE_180_CL_RIGHT_BAITED_RIGHT_PICKED = "set_rotation/setrotation_0003_11_F1_debug.json"
+TEST_HISTORY_SET_ROTATION_3_TABLE_180_CL_RIGHT_BAITED_RIGHT_PICKED = "set_rotation/setrotation_0003_11_history.json"
+
+TEST_SCENE_SET_ROTATION_2_TABLE_360_CL_LEFT_BAITED_RIGHT_PICKED = "set_rotation/setrotation_0003_21_K1_debug.json"
+TEST_HISTORY_SET_ROTATION_2_TABLE_360_CL_LEFT_BAITED_RIGHT_PICKED = "set_rotation/setrotation_0003_21_history.json"
+
+TEST_SCENE_SET_ROTATION_1_TABLE_90_CL_LEFT_BAITED_FAR_PICKED = "set_rotation/setrotation_0003_01_A1_debug.json"
+TEST_HISTORY_SET_ROTATION_1_TABLE_90_CL_LEFT_BAITED_FAR_PICKED = "set_rotation/setrotation_0003_01_history.json"
+
+TEST_SCENE_SHELL_GAME_CROSS_BAITED_PICKED_DISPLACEMENT = "shell_game/shellgame_0001_10_J1_debug.json"
+TEST_HISTORY_SHELL_GAME_CROSS_BAITED_PICKED_DISPLACEMENT = "shell_game/shellgame_0001_06_history.json"
+
+TEST_SCENE_SHELL_GAME_3_LATERAL_SUBSTITUTION_BAITED_PICKED_DISPLACEMENT = "shell_game/shellgame_0001_06_F1_debug.json"
+TEST_HISTORY_SHELL_GAME_3_LATERAL_SUBSTITUTION_BAITED_PICKED_DISPLACEMENT = "shell_game/shellgame_0001_10_history.json"
+
+TEST_SCENE_SHELL_GAME_2_LATERAL_BAITED_PICKED_NO_DISPLACEMENT = "shell_game/shellgame_0001_03_C1_debug.json"
+TEST_HISTORY_SHELL_GAME_2_LATERAL_BAITED_PICKED_NO_DISPLACEMENT = "shell_game/shellgame_0001_03_history.json"
+
+TEST_SCENE_SHELL_GAME_2_CROSS_CROSSED_PICKED_DISPLACEMENT = "shell_game/shellgame_0001_09_I1_debug.json"
+TEST_HISTORY_SHELL_GAME_2_CROSS_CROSSED_PICKED_DISPLACEMENT = "shell_game/shellgame_0001_09_history.json"
+
+TEST_SCENE_SHELL_GAME_3_LATERAL_SUBSTITUTION_SUBSTITUTED_PICKED_NO_DISPLACEMENT = "shell_game/shellgame_0001_08_H1_debug.json"
+TEST_HISTORY_SHELL_GAME_3_LATERAL_SUBSTITUTION_SUBSTITUTED_PICKED_NO_DISPLACEMENT = "shell_game/shellgame_0001_08_history.json"
+
+TEST_SCENE_INTERACTIVE_COLLISION_DOOR_OPENED = "door_side/interactive_collision_0001_03_C1_debug.json"
+TEST_HISTORY_INTERACTIVE_COLLISION_DOOR_OPENED = "door_side/interactive_collision_0001_03_history.json"
+
+TEST_SCENE_TRAJECTORY_DOOR_OPENED = "door_side/trajectory_0001_03_C1_debug.json"
+TEST_HISTORY_TRAJECTORY_DOOR_OPENED = "door_side/trajectory_0001_03_history.json"
+
+TEST_SCENE_SOLIDITY_DOOR_OPENED = "door_side/solidity_0001_03_C1_debug.json"
+TEST_HISTORY_SOLIDITY_DOOR_OPENED = "door_side/solidity_0001_03_history.json"
+
+TEST_SCENE_SUPPORT_RELATIONS_DOOR_OPENED = "door_side/support_relations_0001_09_I1_debug.json"
+TEST_HISTORY_SUPPORT_RELATIONS_DOOR_OPENED = "door_side/support_relations_0001_history.json"
+
+TEST_SCENE_INTERACTED_WITH_BLOB_FIRST_HOLES = "interact_with_blob_first/holes_0001_08_D2_debug.json"
+TEST_HISTORY_INTERACTED_WITH_BLOB_FIRST_HOLES = "interact_with_blob_first/holes_0001_history.json"
+
+TEST_SCENE_INTERACTED_WITH_BLOB_FIRST_LAVA = "interact_with_blob_first/lava_0001_08_D2_debug.json"
+TEST_HISTORY_INTERACTED_WITH_BLOB_FIRST_LAVA = "interact_with_blob_first/lava_0001_history.json"
+
+TEST_SCENE_INTERACTED_WITH_BLOB_FIRST_RAMPS = "interact_with_blob_first/ramps_0001_23_P2_debug.json"
+TEST_HISTORY_INTERACTED_WITH_BLOB_FIRST_RAMPS = "interact_with_blob_first/ramps_0001_history.json"
 
 TEST_SCENE_TOOL_CHOICE = "tool_choice_scene_debug.json"
 TEST_HISTORY_TOOL_CHOICE_PICKUP_FAILED = (
@@ -201,7 +258,13 @@ class TestMcsScorecard(unittest.TestCase):
             'walked_into_structures',
             'interact_with_agent' ,
             'number_of_rewards_achieved',
-            'order_containers_are_opened_colors']
+            'order_containers_are_opened_colors',
+            'set_rotation_opened_container_position_absolute',
+            'set_rotation_opened_container_position_relative_to_baited',
+            'shell_game_baited_container',
+            'shell_game_opened_container',
+            'door_opened_side',
+            'interacted_with_blob_first']
         )
 
     def test_get_lookpoint(self):
@@ -549,7 +612,7 @@ class TestMcsScorecard(unittest.TestCase):
 
     def test_which_door(self):
         scene_file = mcs_scene_ingest.load_json_file(
-            TEST_FOLDER, TEST_SCENE_DOOR)
+            TEST_FOLDER, TEST_SCENE_DOOR_OPENED)
         history_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, TEST_HISTORY_DOOR_CORRECT)
         scorecard = Scorecard(history_file, scene_file)
@@ -558,7 +621,7 @@ class TestMcsScorecard(unittest.TestCase):
         self.assertTrue(correct_door)
 
         scene_file = mcs_scene_ingest.load_json_file(
-            TEST_FOLDER, TEST_SCENE_DOOR)
+            TEST_FOLDER, TEST_SCENE_DOOR_OPENED)
         history_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, TEST_HISTORY_DOOR_INCORRECT)
         scorecard = Scorecard(history_file, scene_file)
@@ -744,6 +807,186 @@ class TestMcsScorecard(unittest.TestCase):
         scorecard.calc_imitation_order_containers_are_opened_colors()
         assert scorecard.get_imitation_order_containers_are_opened() == \
             [['orange'], ['blue']]
+
+    def test_calc_set_rotation(self):
+        # 3 containers, turntable moves 270 degrees counterclockwise, middle container is baited and picked
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SET_ROTATION_TURNTABLE_MOVES_270_MIDDLE_BAITED_MIDDLE_PICKED)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_TURNTABLE_270_COUNTER_CLOCKWISE)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '5 to 5'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'baited'
+
+        # 3 containers, turntable moves 270 degrees counterclockwise, left container is baited and picked
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SET_ROTATION_PERFORMER_MOVES_270_COUNTER_CLOCKWISE_LEFT_BAITED_LEFT_PICKED)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_PERFORMER_270_COUNTER_CLOCKWISE_LEFT_BAITED_LEFT_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '4 to 1'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'baited'
+
+        # 3 containers, turntable moves 270 degrees counterclockwise, middle container is baited,
+        # near container is picked after the rotation
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SET_ROTATION_3_TABLE_270_CC_MIDDLE_BAITED_NEAR_PICKED)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_3_TABLE_270_CC_MIDDLE_BAITED_NEAR_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '2 to 3'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'near'
+
+        # 3 containers, performer moves 270 degrees counterclockwise, left container is baited,
+        # middle container is picked after the rotation
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SET_ROTATION_3_PERF_270_CC_LEFT_BAITED_MIDDLE_PICKED)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_3_PERF_270_CC_LEFT_BAITED_MIDDLE_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '5 to 5'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'middle'
+
+        # 3 containers, turntable moves 180 degrees clockwise, right container is baited,
+        # right container is picked after the rotation
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SET_ROTATION_3_TABLE_180_CL_RIGHT_BAITED_RIGHT_PICKED)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_3_TABLE_180_CL_RIGHT_BAITED_RIGHT_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '4 to 2'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'opposite'
+
+        # 2 containers, turntable moves 360 degrees clockwise, left container is baited,
+        # right container is picked after the rotation
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SET_ROTATION_2_TABLE_360_CL_LEFT_BAITED_RIGHT_PICKED)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_2_TABLE_360_CL_LEFT_BAITED_RIGHT_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '2 to 2'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'opposite'
+
+        # 1 container, turntable moves 90 degrees clockwise, left container is baited,
+        # far container is picked after the rotation
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SET_ROTATION_1_TABLE_90_CL_LEFT_BAITED_FAR_PICKED)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_1_TABLE_90_CL_LEFT_BAITED_FAR_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '4 to 1'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'baited'
+
+    def test_calc_shell_game(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SHELL_GAME_CROSS_BAITED_PICKED_DISPLACEMENT)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SHELL_GAME_CROSS_BAITED_PICKED_DISPLACEMENT)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_shell_game()
+        assert scorecard.get_shell_game_baited_container() == '3 to 1'
+        assert scorecard.get_shell_game_opened_container() == '3 to 1'
+
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SHELL_GAME_3_LATERAL_SUBSTITUTION_BAITED_PICKED_DISPLACEMENT)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SHELL_GAME_3_LATERAL_SUBSTITUTION_BAITED_PICKED_DISPLACEMENT)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_shell_game()
+        assert scorecard.get_shell_game_baited_container() == '3 to 4'
+        assert scorecard.get_shell_game_opened_container() == '3 to 4'
+
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SHELL_GAME_2_LATERAL_BAITED_PICKED_NO_DISPLACEMENT)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SHELL_GAME_2_LATERAL_BAITED_PICKED_NO_DISPLACEMENT)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_shell_game()
+        assert scorecard.get_shell_game_baited_container() == '4 to 5'
+        assert scorecard.get_shell_game_opened_container() == '4 to 5'
+
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SHELL_GAME_2_CROSS_CROSSED_PICKED_DISPLACEMENT)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SHELL_GAME_2_CROSS_CROSSED_PICKED_DISPLACEMENT)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_shell_game()
+        assert scorecard.get_shell_game_baited_container() == '4 to 2'
+        assert scorecard.get_shell_game_opened_container() == '3 to 3'
+
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SHELL_GAME_3_LATERAL_SUBSTITUTION_SUBSTITUTED_PICKED_NO_DISPLACEMENT)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SHELL_GAME_3_LATERAL_SUBSTITUTION_SUBSTITUTED_PICKED_NO_DISPLACEMENT)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_shell_game()
+        assert scorecard.get_shell_game_baited_container() == '4 to 5'
+        assert scorecard.get_shell_game_opened_container() == '3 to 4'
+
+    def test_calc_door_opened_side(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_INTERACTIVE_COLLISION_DOOR_OPENED)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_INTERACTIVE_COLLISION_DOOR_OPENED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_door_opened_side()
+        assert scorecard.get_door_opened_side() == 'right'
+
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_TRAJECTORY_DOOR_OPENED)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_TRAJECTORY_DOOR_OPENED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_door_opened_side()
+        assert scorecard.get_door_opened_side() == 'left'
+
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SOLIDITY_DOOR_OPENED)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SOLIDITY_DOOR_OPENED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_door_opened_side()
+        assert scorecard.get_door_opened_side() == 'left'
+
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SUPPORT_RELATIONS_DOOR_OPENED)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SUPPORT_RELATIONS_DOOR_OPENED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_door_opened_side()
+        assert scorecard.get_door_opened_side() == 'middle'
+
+    def test_calc_interacted_with_blob_first(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_INTERACTED_WITH_BLOB_FIRST_HOLES)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_INTERACTED_WITH_BLOB_FIRST_HOLES)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_interacted_with_blob_first()
+        assert scorecard.get_interacted_with_blob_first() is False
+
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_INTERACTED_WITH_BLOB_FIRST_LAVA)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_INTERACTED_WITH_BLOB_FIRST_LAVA)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_interacted_with_blob_first()
+        assert scorecard.get_interacted_with_blob_first() is True
+
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_INTERACTED_WITH_BLOB_FIRST_RAMPS)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_INTERACTED_WITH_BLOB_FIRST_RAMPS)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_interacted_with_blob_first()
+        assert scorecard.get_interacted_with_blob_first() is True
 
     def test_pickup_non_target_mock_false_because_no_pickup(self):
         history = {'steps': [{
