@@ -1368,8 +1368,8 @@ class Scorecard:
             4: (-1.62, 1),
             5: (0, 1)
         }
-        set_rotation_opened_container_position_absolute = ''
-        set_rotation_opened_container_position_relative_to_baited = ''
+        self.set_rotation_opened_container_position_absolute = ''
+        self.set_rotation_opened_container_position_relative_to_baited = ''
         if (not self.scene['goal']['sceneInfo'].get('tertiaryType') or
                 self.scene['goal']['sceneInfo']['tertiaryType'] != "set rotation"):
             self.set_rotation_opened_container_position_absolute = None
@@ -1434,17 +1434,17 @@ class Scorecard:
                     if output['return_status'] == "SUCCESSFUL":
                         for cl in containers_and_lids:
                             if resolved_obj_id == cl['id'] or resolved_obj_id == cl['lid']:
-                                set_rotation_opened_container_position_absolute = \
+                                self.set_rotation_opened_container_position_absolute = \
                                     str(cl['absolute_pos_start']) + ' to ' + str(cl['absolute_pos_end'])
-                                set_rotation_opened_container_position_relative_to_baited = \
+                                self.set_rotation_opened_container_position_relative_to_baited = \
                                     cl['relative_to_baited']
                                 break
                 if found_container:
                     break
             self.set_rotation_opened_container_position_absolute = \
-                set_rotation_opened_container_position_absolute
+                self.set_rotation_opened_container_position_absolute
             self.set_rotation_opened_container_position_relative_to_baited = \
-                set_rotation_opened_container_position_relative_to_baited
+                self.set_rotation_opened_container_position_relative_to_baited
         except:
             pass
         finally:
