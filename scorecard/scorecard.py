@@ -1388,8 +1388,14 @@ class Scorecard:
                     'relative_to_baited': None
                 }
                 for obj in self.scene['objects'] if obj['type'] == 'separate_container']
-            rotation_direction = self.scene['goal']['sceneInfo']['rotation']
-            rotation = self.scene['goal']['sceneInfo']['degreesRotated']
+            rotation_direction = self.scene['goal']['sceneInfo'].get('rotation')
+            rotation = self.scene['goal']['sceneInfo'].get('degreesRotated')
+
+            if rotation_direction is None or rotation is None:
+                self.set_rotation_opened_container_position_absolute = None
+                self.set_rotation_opened_container_position_relative_to_baited = None
+                return (self.set_rotation_opened_container_position_absolute,
+                        self.set_rotation_opened_container_position_relative_to_baited)
 
             # absolute
             for cl in containers_and_lids:
@@ -1467,7 +1473,7 @@ class Scorecard:
             {
                 'id': obj['id'],
                 'lid': obj['debug']['lidId'],
-                'isTargetContainer': obj['debug']['isTargetContainer'],
+                'isTargetContainer': obj['debug'].get('isTargetContainer'),
                 'position_x': obj['shows'][0]['position']['x'],
                 'moves': obj.get('moves')
             }
