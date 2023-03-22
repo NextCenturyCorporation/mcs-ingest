@@ -1368,8 +1368,8 @@ class Scorecard:
             4: (-1.62, 1),
             5: (0, 1)
         }
-        set_rotation_opened_container_position_absolute = ''
-        set_rotation_opened_container_position_relative_to_baited = ''
+        self.set_rotation_opened_container_position_absolute = ''
+        self.set_rotation_opened_container_position_relative_to_baited = ''
         if (not self.scene['goal']['sceneInfo'].get('tertiaryType') or
                 self.scene['goal']['sceneInfo']['tertiaryType'] != "set rotation"):
             self.set_rotation_opened_container_position_absolute = None
@@ -1388,8 +1388,14 @@ class Scorecard:
                     'relative_to_baited': None
                 }
                 for obj in self.scene['objects'] if obj['type'] == 'separate_container']
-            rotation_direction = self.scene['goal']['sceneInfo']['rotation']
-            rotation = self.scene['goal']['sceneInfo']['degreesRotated']
+            rotation_direction = self.scene['goal']['sceneInfo'].get('rotation')
+            rotation = self.scene['goal']['sceneInfo'].get('degreesRotated')
+
+            if rotation_direction is None or rotation is None:
+                self.set_rotation_opened_container_position_absolute = None
+                self.set_rotation_opened_container_position_relative_to_baited = None
+                return (self.set_rotation_opened_container_position_absolute,
+                        self.set_rotation_opened_container_position_relative_to_baited)
 
             # absolute
             for cl in containers_and_lids:
@@ -1434,17 +1440,17 @@ class Scorecard:
                     if output['return_status'] == "SUCCESSFUL":
                         for cl in containers_and_lids:
                             if resolved_obj_id == cl['id'] or resolved_obj_id == cl['lid']:
-                                set_rotation_opened_container_position_absolute = \
+                                self.set_rotation_opened_container_position_absolute = \
                                     str(cl['absolute_pos_start']) + ' to ' + str(cl['absolute_pos_end'])
-                                set_rotation_opened_container_position_relative_to_baited = \
+                                self.set_rotation_opened_container_position_relative_to_baited = \
                                     cl['relative_to_baited']
                                 break
                 if found_container:
                     break
             self.set_rotation_opened_container_position_absolute = \
-                set_rotation_opened_container_position_absolute
+                self.set_rotation_opened_container_position_absolute
             self.set_rotation_opened_container_position_relative_to_baited = \
-                set_rotation_opened_container_position_relative_to_baited
+                self.set_rotation_opened_container_position_relative_to_baited
         except:
             pass
         finally:
@@ -1467,7 +1473,7 @@ class Scorecard:
             {
                 'id': obj['id'],
                 'lid': obj['debug']['lidId'],
-                'isTargetContainer': obj['debug']['isTargetContainer'],
+                'isTargetContainer': obj['debug'].get('isTargetContainer'),
                 'position_x': obj['shows'][0]['position']['x'],
                 'moves': obj.get('moves')
             }
