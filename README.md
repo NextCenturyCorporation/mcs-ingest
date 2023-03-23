@@ -58,23 +58,7 @@ python local_history_ingest.py --folder ../MCS/SCENE_HISTORY/
 
 To run the unit tests, run the command: `python -m unittest`
 
-You may get connection errors depending on how docker is installed on your machine, in which case, you should be able to do the following:
-`docker info && docker context ls` to confirm your current docker context and see their endpoints:
-```bash
-Client:
- Context:    desktop-linux
- Debug Mode: false
- Plugins:
-  buildx: Docker Buildx (Docker Inc., v0.10.0)
- ....
-
-NAME                TYPE             DESCRIPTION                        DOCKER ENDPOINT
-default             moby             Current DOCKER_HOST based          unix:///var/run/docker.sock
-                                      configuration
-desktop-linux *     moby                                                unix:///somepath/.docker/run/docker.sock
-```
-In this case, the DOCKER_HOST environment variable needs to be set to the endpoint specified in the active context:
-`export DOCKER_HOST=unix:///somepath/.docker/run/docker.sock`
+You may get connection errors depending on how Docker is installed on your machine and whether or not your DOCKER_HOST environment variable is set. You should be able to unset it manually and allow the tests to set them programatically if needed. 
 
 
 ### Notes
