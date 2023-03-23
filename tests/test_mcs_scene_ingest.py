@@ -19,6 +19,7 @@ class TestMcsSceneIngestMongo(unittest.TestCase):
 
     mongo_client = None
     mongo_host_port = 27027
+    os_environ_none = False
 
     @classmethod
     def create_mongo_container(cls, docker_client, api_client, timeout=60):
@@ -53,6 +54,7 @@ class TestMcsSceneIngestMongo(unittest.TestCase):
             docker_host = docker.context.ContextAPI.get_current_context().Host
             os.environ["DOCKER_HOST"] = docker_host
             docker_url = docker_host
+            cls.os_environ_none = True
 
         # connect to docker daemon
         cls.docker_client = docker.from_env()
@@ -70,6 +72,8 @@ class TestMcsSceneIngestMongo(unittest.TestCase):
         cls.mongo_container.stop()
         cls.docker_client.close()
         cls.api_client.close()
+        if cls.os_environ_none:
+            os.environ.pop('DOCKER_HOST', None)
 
     def setUp(self):
         '''Create the client and insert a single document'''
