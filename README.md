@@ -58,6 +58,9 @@ python local_history_ingest.py --folder ../MCS/SCENE_HISTORY/
 
 To run the unit tests, run the command: `python -m unittest`
 
+You may get connection errors depending on how Docker is installed on your machine and whether or not your DOCKER_HOST environment variable is set. You should be able to unset it manually and allow the tests to set them programatically if needed. 
+
+
 ### Notes
 
 - Some unit tests will start a MongoDB instance in a docker container, and then stop it once the tests are done. Each time you run the unit tests, python will automatically download the latest `mongo` docker image, if needed.
