@@ -56,21 +56,26 @@ EVAL_HIST_MAPPING_DICT = {
 SHAPE_CONSTANCY_DUPLICATE_CUBE = ["A1", "B1"]
 SHAPE_CONSTANCY_8X_CUBE = ["A2", "B2", "C2", "D2"]
 PASSIVE_OBJ_PERM_DUPLICATE_CUBE = ["G3", "H3", "I3"]
+SEEING_LEADS_KNOWING_3X_CUBE = ["A1", "F1"]
 
 # Passing Weighting, everything besides these cube IDs will
 #  be set to zero in the weight scoring.  This should all be 
 #  moved to the scoring module when we refactor ingest
-#  Support Relations and Solidity use all cube ids
+#  Support Relations, Trajectory, Interactive Collisions,
+#    Number Comparison, Arthimetic, Imitation, and Solidity use all cube ids
 PASSING_CELLS = {
     "agent identification": ["A1", "B1", "C1", "E1", "F1",
                              "G1", "A2", "B2", "C2", "E2",
                              "F2", "G2"],
     "spatial elimination": ["A1", "A2"],
     "moving target prediction": ["A1", "B1", "E1", "F1", "I1", "J1"],
-    "holes": ["B1", "C1"],
-    "lava": ["B1", "C1"],
-    "ramp": ["B1", "C1", "E1", "F1", "H1", "I1", "K1", "L1"],
-    "tool use": ["A1", "C1", "E1", "G1"],
+    "holes": ["B1", "C1", "E1", "F1", "B2", "C2", "E2", "F2"],
+    "lava": ["B1", "C1", "E1", "F1", "B2", "C2", "E2", "F2"],
+    "ramp": ["B1", "C1", "E1", "F1", "H1", "I1", "K1", "L1", "N1", 
+             "O1", "Q1", "R1", "T1", "U1", "W1", "X1", "B2", "E2", "N2", "Q2"],
+    "tool use": ["A1", "C1", "E1", "G1", "I1", "K1", "M1", "O1", "Q1", "S1", 
+                 "U1", "W1", "A2", "B2", "C2", "D2", "E2", "F2", "A3", "E3", 
+                 "I3", "M3"],
     "interactive object permanence": ["A1", "C1"],
     "container": ["A1", "A2", "G1", "G2", "M1", "M2"],
     "obstacle": ["A1", "C1", "A2", "C2"],
@@ -78,7 +83,17 @@ PASSING_CELLS = {
                  "G2", "I1", "I2", "K1", "K2"],
     "gravity support": ["A1", "B1", "C1", "D1", "I1", "J1", "K1", "L1",
                         "M1", "N1", "O1", "P1", "S1", "T1", "W1", "X1",
-                        "Y1", "Z1", "AA1", "CC1", "SS1", "TT1"]
+                        "Y1", "Z1", "AA1", "CC1", "SS1", "TT1"],
+    "spatial reference": ["A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "A2", 
+                          "B2", "C2", "D2", "E2", "F2", "G2", "H2", "A3", "B3", "C3", 
+                          "D3", "E3", "F3", "G3", "H3"],
+    "spatial reorientation": ["B1", "C1", "D1", "E1", "F1", "G1", "H1", "I1", "J1", 
+                              "K1", "L1", "N1", "O1", "P1", "Q1", "R1", "B2", "C2", 
+                              "D2", "E2", "F2", "G2", "H2", "I2", "J2", "K2", "L2",
+                              "N2", "O2", "P2", "Q2", "R2"],
+    "shell game": ["A1", "B1", "E1", "F1", "I1", "J1"],
+    "set rotation": ["B1", "C1", "E1", "F1", "H1", "I1", "K1", "L1", "B2", 
+                     "C2", "E2", "F2", "H2", "I2", "K2", "L2"]
 }
 
 MAX_XY_VIOLATIONS = 50
@@ -560,6 +575,9 @@ def add_weighted_cube_scoring(history_item: dict, scene: dict) -> tuple:
         elif scene["goal"]["sceneInfo"]["tertiaryType"] == "object permanence":
             if history_item["scene_goal_id"] in PASSIVE_OBJ_PERM_DUPLICATE_CUBE:
                 return (history_item["score"]["score"] * 2, 2, calculate_weighted_confidence(history_item, 2))
+        elif scene["goal"]["sceneInfo"]["tertiaryType"] == "seeing leads to knowing":
+            if history_item["scene_goal_id"] in SEEING_LEADS_KNOWING_3X_CUBE:
+                return (history_item["score"]["score"] * 3, 3, calculate_weighted_confidence(history_item, 3))    
         elif scene["goal"]["sceneInfo"]["tertiaryType"] in PASSING_CELLS.keys():
             if history_item["scene_goal_id"] not in PASSING_CELLS[scene["goal"]["sceneInfo"]["tertiaryType"]]:
                 return (0,0,0)
