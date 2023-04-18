@@ -37,6 +37,14 @@ TEST_SCENE_SIDE = "prefix_0001_01_C4_debug.json"
 TEST_HISTORY_SIDE_1 = "gen_platform_side_1.json"
 TEST_HISTORY_SIDE_2 = "gen_platform_side_2.json"
 
+TEST_SCENE_TOOL_CHOICE_SIDE = "lima_0001_06_debug.json"
+TEST_HISTORY_TOOL_CHOICE_SIDE_CORRECT = (
+    "lima_0001_06_correct_side_history.json"
+)
+TEST_HISTORY_TOOL_CHOICE_SIDE_INCORRECT = (
+    "lima_0001_06_incorrect_side_history.json"
+)
+
 TEST_SCENE_DOOR_OPENED = "prefix_0001_02_I1_debug.json"
 TEST_HISTORY_DOOR_CORRECT = "gen_correct_door_ex.json"
 TEST_HISTORY_DOOR_INCORRECT = "gen_incorrect_door_ex.json"
@@ -605,6 +613,25 @@ class TestMcsScorecard(unittest.TestCase):
             TEST_FOLDER, TEST_SCENE_SIDE)
         history_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, TEST_HISTORY_SIDE_2)
+        scorecard = Scorecard(history_file, scene_file)
+
+        correct_side = scorecard.calc_correct_platform_side()
+        self.assertFalse(correct_side)
+
+    def test_platform_side_tool_choice(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_TOOL_CHOICE_SIDE)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_TOOL_CHOICE_SIDE_CORRECT)
+        scorecard = Scorecard(history_file, scene_file)
+
+        correct_side = scorecard.calc_correct_platform_side()
+        self.assertTrue(correct_side)
+
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_TOOL_CHOICE_SIDE)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_TOOL_CHOICE_SIDE_INCORRECT)
         scorecard = Scorecard(history_file, scene_file)
 
         correct_side = scorecard.calc_correct_platform_side()
