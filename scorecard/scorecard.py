@@ -973,6 +973,13 @@ class Scorecard:
         if ('sceneInfo' in goal and 'targetSide' in goal['sceneInfo'] and
                 goal['sceneInfo']['targetSide'] in ['left', 'right']):
             target_side = goal['sceneInfo']['targetSide']
+        elif (
+            'sceneInfo' in goal and
+            'toolChoiceValidSide' in goal['sceneInfo'] and
+            goal['sceneInfo']['toolChoiceValidSide'] in ['left', 'right']
+        ):
+            # Support Eval 6 Tool Choice scenes.
+            target_side = goal['sceneInfo']['toolChoiceValidSide']
         else:
             return self.correct_platform_side
 
