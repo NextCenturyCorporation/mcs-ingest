@@ -1,11 +1,11 @@
 from pymongo import MongoClient
-from scripts._0_6_5_3_fix_agent_pair_scoring import rescore_passive_agents
+from scripts._0_6_5_4_fix_shape_constancy_weight import correct_shape_constancy_weights
 # We might want to move mongo user/pass to new file
 VERSION_COLLECTION = "mcs_version"
 
 # Change this version if running a new deploy script
 # Make sure the first two numbers match the current MCS API Release
-db_version = "0.6.5.3"
+db_version = "0.6.5.4"
 
 
 def check_version(mongoDB):
@@ -29,7 +29,7 @@ def main():
     if(check_version(mongoDB)):
         print("New db version, execute scripts")
         # Place scripts here to run
-        rescore_passive_agents(mongoDB, client, 'mcs')
+        correct_shape_constancy_weights(mongoDB)
 
         # Now update db version
         update_db_version(mongoDB)
@@ -42,7 +42,7 @@ def main():
     if(check_version(mongoDB)):
         print("New db version, execute scripts")
         # Place scripts here to run
-        rescore_passive_agents(mongoDB, client, 'dev')
+        correct_shape_constancy_weights(mongoDB)
 
         # Now update db version
         update_db_version(mongoDB)
