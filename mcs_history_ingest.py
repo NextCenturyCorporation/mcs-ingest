@@ -53,8 +53,6 @@ EVAL_HIST_MAPPING_DICT = {
 
 # Weight from Design, some plausible scenes are worth more,
 #   because there aren't as many as the implausible ones
-SHAPE_CONSTANCY_DUPLICATE_CUBE = ["A1", "B1"]
-SHAPE_CONSTANCY_8X_CUBE = ["A2", "B2", "C2", "D2"]
 PASSIVE_OBJ_PERM_DUPLICATE_CUBE = ["G3", "H3", "I3"]
 SEEING_LEADS_KNOWING_3X_CUBE = ["A1", "F1"]
 
@@ -67,6 +65,7 @@ PASSING_CELLS = {
     "agent identification": ["A1", "B1", "C1", "E1", "F1",
                              "G1", "A2", "B2", "C2", "E2",
                              "F2", "G2"],
+    "shape constancy": ["A1", "A2", "B1", "D2", "E1", "E3", "J1", "L4"],
     "spatial elimination": ["A1", "A2"],
     "moving target prediction": ["A1", "B1", "E1", "F1", "I1", "J1"],
     "holes": ["B1", "C1", "E1", "F1", "B2", "C2", "E2", "F2"],
@@ -567,12 +566,7 @@ def calculate_weighted_confidence(history_item: dict, multiplier: int) -> Union[
 
 def add_weighted_cube_scoring(history_item: dict, scene: dict) -> tuple:
     if "goal" in scene and "sceneInfo" in scene["goal"]:
-        if scene["goal"]["sceneInfo"]["tertiaryType"] == "shape constancy":
-            if history_item["scene_goal_id"] in SHAPE_CONSTANCY_DUPLICATE_CUBE:
-                return (history_item["score"]["score"] * 2, 2, calculate_weighted_confidence(history_item, 2))
-            elif history_item["scene_goal_id"] in SHAPE_CONSTANCY_8X_CUBE:
-                return (history_item["score"]["score"] * 8, 8, calculate_weighted_confidence(history_item, 8))
-        elif scene["goal"]["sceneInfo"]["tertiaryType"] == "object permanence":
+        if scene["goal"]["sceneInfo"]["tertiaryType"] == "object permanence":
             if history_item["scene_goal_id"] in PASSIVE_OBJ_PERM_DUPLICATE_CUBE:
                 return (history_item["score"]["score"] * 2, 2, calculate_weighted_confidence(history_item, 2))
         elif scene["goal"]["sceneInfo"]["tertiaryType"] == "seeing leads to knowing":
