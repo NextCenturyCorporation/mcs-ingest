@@ -447,6 +447,9 @@ class Scorecard:
     def get_interacted_with_blob_first(self):
         return self.interacted_with_blob_first
 
+    def get_correct_platform_side(self):
+        return self.correct_platform_side
+
     def calc_revisiting(self):
 
         steps_list = self.history['steps']
