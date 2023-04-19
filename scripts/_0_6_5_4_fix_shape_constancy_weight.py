@@ -4,8 +4,6 @@ def correct_shape_constancy_weights(mongoDB):
     results_collection = mongoDB["eval_6_results"]
     scenes_collection = mongoDB["eval_6_scenes"]
 
-    # This will only get NYU agent tasks, "seeing leads to knowing" has
-    #   a test_type of "passive" 
     history_files = results_collection.find({"category_type": "shape constancy"})
 
     for history in history_files:
