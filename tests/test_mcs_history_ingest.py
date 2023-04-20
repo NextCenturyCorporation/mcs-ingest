@@ -525,9 +525,9 @@ class TestMcsHistoryIngest(unittest.TestCase):
         history_item["score"] = mcs_history_ingest.process_score(
             history_item, test_scene, True, False, None, False, None, None)
         self.assertEqual(history_item['score']['score'], 1)
-        self.assertEqual(history_item['score']['weighted_score'], 2)
-        self.assertEqual(history_item['score']['weighted_score_worth'], 2)
-        self.assertEqual(history_item['score']['weighted_confidence'], 2)
+        self.assertEqual(history_item['score']['weighted_score'], 1)
+        self.assertEqual(history_item['score']['weighted_score_worth'], 1)
+        self.assertEqual(history_item['score']['weighted_confidence'], 1)
 
         history_item = {
             'category': 'passive',
@@ -546,9 +546,9 @@ class TestMcsHistoryIngest(unittest.TestCase):
         history_item["score"] = mcs_history_ingest.process_score(
             history_item, test_scene, True, False, None, False, None, None)
         self.assertEqual(history_item['score']['score'], 1)
-        self.assertEqual(history_item['score']['weighted_score'], 8)
-        self.assertEqual(history_item['score']['weighted_score_worth'], 8)
-        self.assertEqual(history_item['score']['weighted_confidence'], 8)
+        self.assertEqual(history_item['score']['weighted_score'], 1)
+        self.assertEqual(history_item['score']['weighted_score_worth'], 1)
+        self.assertEqual(history_item['score']['weighted_confidence'], 1)
 
         test_scene = {
             "goal": {
@@ -609,8 +609,8 @@ class TestMcsHistoryIngest(unittest.TestCase):
         history_item["score"] = mcs_history_ingest.process_score(
             history_item, test_scene, True, False, None, False, None, None)
         self.assertEqual(history_item['score']['score'], 1)
-        self.assertEqual(history_item['score']['weighted_score'], 2)
-        self.assertEqual(history_item['score']['weighted_score_worth'], 2)
+        self.assertEqual(history_item['score']['weighted_score'], 1)
+        self.assertEqual(history_item['score']['weighted_score_worth'], 1)
         self.assertIsNone(history_item['score']['weighted_confidence'])
 
         history_item = {
@@ -630,8 +630,8 @@ class TestMcsHistoryIngest(unittest.TestCase):
         history_item["score"] = mcs_history_ingest.process_score(
             history_item, test_scene, True, False, None, False, None, None)
         self.assertEqual(history_item['score']['score'], 1)
-        self.assertEqual(history_item['score']['weighted_score'], 8)
-        self.assertEqual(history_item['score']['weighted_score_worth'], 8)
+        self.assertEqual(history_item['score']['weighted_score'], 1)
+        self.assertEqual(history_item['score']['weighted_score_worth'], 1)
         self.assertIsNone(history_item['score']['weighted_confidence'])
 
         test_scene = {
