@@ -1,11 +1,11 @@
 from pymongo import MongoClient
-from scripts._0_6_5_5_tool_use_scorecard_new_types import update_tool_use_test_types_and_scorecard
+from scripts._0_6_5_6_fix_agent_scoring_wrong_ground_truth import rescore_agents_imitation
 # We might want to move mongo user/pass to new file
 VERSION_COLLECTION = "mcs_version"
 
 # Change this version if running a new deploy script
 # Make sure the first two numbers match the current MCS API Release
-db_version = "0.6.5.5"
+db_version = "0.6.5.6"
 
 
 def check_version(mongoDB):
@@ -29,7 +29,7 @@ def main():
     if(check_version(mongoDB)):
         print("New db version, execute scripts")
         # Place scripts here to run
-        update_tool_use_test_types_and_scorecard(mongoDB)
+        rescore_agents_imitation(mongoDB, client, "mcs")
 
         # Now update db version
         update_db_version(mongoDB)
@@ -42,7 +42,7 @@ def main():
     if(check_version(mongoDB)):
         print("New db version, execute scripts")
         # Place scripts here to run
-        update_tool_use_test_types_and_scorecard(mongoDB)
+        rescore_agents_imitation(mongoDB, client, "dev")
 
         # Now update db version
         update_db_version(mongoDB)
