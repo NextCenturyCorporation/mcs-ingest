@@ -116,6 +116,7 @@ class TestMcsHistoryIngestMongo(unittest.TestCase):
     def test_build_interactive_history_item(self):
         '''Generates history item for an interactive, which follows
         a different code path (and includes scorecard)'''
+        # Will log a "step data" warning due to using an old scene history file
         history_item = mcs_history_ingest.build_history_item(
             TEST_INTERACTIVE_HISTORY_FILE_NAME, TEST_FOLDER,
             self.mongo_client, "mcs")

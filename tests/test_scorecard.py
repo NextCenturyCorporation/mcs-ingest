@@ -230,6 +230,7 @@ class TestMcsScorecard(unittest.TestCase):
         self.assertEqual(container, [])
 
     def test_load_json_file(self):
+        # Will log a "step data" warning due to using an old scene history file
         scene_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, TEST_SCENE_FILE_NAME)
         history_file = mcs_scene_ingest.load_json_file(
@@ -242,6 +243,7 @@ class TestMcsScorecard(unittest.TestCase):
         logging.debug(f"{scorecard_vals}")
 
     def test_score_all_keys(self):
+        # Will log a "step data" warning due to using an old scene history file
         scene_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, TEST_SCENE_FILE_NAME)
         history_file = mcs_scene_ingest.load_json_file(
@@ -276,10 +278,12 @@ class TestMcsScorecard(unittest.TestCase):
         )
 
     def test_get_lookpoint(self):
+        # THOMAS Not computing dist, tilt is 0.0
         import numpy as np
         import math
 
         # Not looking down, so no lookpoint
+        # Will log a warning due to the tilt being 0
         x, z = get_lookpoint(0., 0., 0., 0., 0.)
         np.testing.assert_almost_equal(x, 0.)
         np.testing.assert_almost_equal(z, 0.)
@@ -307,6 +311,7 @@ class TestMcsScorecard(unittest.TestCase):
 
     def test_find_target_location_no_target(self):
         '''Test trying to find a target, when there is not one'''
+        # Will log a "step data" warning due to using an old scene history file
         scene_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, TEST_SCENE_NO_TARGET)
         hist_file = mcs_scene_ingest.load_json_file(
@@ -350,6 +355,7 @@ class TestMcsScorecard(unittest.TestCase):
         self.assertGreater(not_moving, 0)
 
     def test_calc_repeat_failed_ignore_failed(self):
+        # Will log some warnings due to failed actions
         repeat_failed = calc_repeat_failed([
             create_mock_step(action='MoveAhead', return_status='FAILED'),
             create_mock_step(action='MoveAhead', return_status='FAILED')
