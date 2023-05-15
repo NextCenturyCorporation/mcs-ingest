@@ -969,25 +969,27 @@ class Scorecard:
             - correct performer position X should match targetSide, with
               negative X being "left" and positive X being "right"
         '''
+        target_side = None
 
         # Does this scene have a clear targetSide? If not, return
         # correct_platform_side (currently set to None).
         goal = self.scene.get('goal')
-        if ('sceneInfo' in goal and 'targetSide' in goal['sceneInfo'] and
-                goal['sceneInfo']['targetSide'] in ['left', 'right']):
-            target_side = goal['sceneInfo']['targetSide']
-        elif (
-            'sceneInfo' in goal and
-            'toolChoiceValidSide' in goal['sceneInfo'] and
-            goal['sceneInfo']['toolChoiceValidSide'] in ['left', 'right']
-        ):
-            # Support Eval 6 Tool Choice scenes.
-            target_side = goal['sceneInfo']['toolChoiceValidSide']
-        else:
+        if 'sceneInfo' in goal:
+            if goal['sceneInfo'].get('targetSide'):
+                target_side = goal['sceneInfo']['targetSide']
+            if goal['sceneInfo'].get('toolChoiceValidSide'):
+                # Support Eval 6 Tool Choice scenes.
+                target_side = goal['sceneInfo']['toolChoiceValidSide']
+            if goal['sceneInfo'].get('correctDoor'):
+                # Use correctDoor if it exists because it's more accurate.
+                target_side = goal['sceneInfo']['correctDoor']
+
+        if target_side is None:
             return self.correct_platform_side
 
-        # If they never leave the platform, mark it as None.
-        self.correct_platform_side = None
+        # If they never leave the platform, mark it as False,
+        # unless they're not supposed to leave the platform.
+        self.correct_platform_side = (target_side == 'center')
 
         steps_list = self.history['steps']
         output = steps_list[0]['output']
