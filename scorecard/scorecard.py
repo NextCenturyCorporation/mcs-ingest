@@ -986,8 +986,8 @@ class Scorecard:
         else:
             return self.correct_platform_side
 
-        # If they never leave the platform, mark it as failed.
-        self.correct_platform_side = False
+        # If they never leave the platform, mark it as None.
+        self.correct_platform_side = None
 
         steps_list = self.history['steps']
         output = steps_list[0]['output']
