@@ -55,9 +55,11 @@ def rescore_opics_imitation_task(mongoDB):
     print("Begin looping through scene file names.")
 
     for history_file_name in scene_file_names:
-        history_files = results_collection.find({"category_type": "agents imitation", "performer": "OPICS", "name": history_file_name})
 
-        result = history_files.update_many(
+        result = results_collection.update_many(
+            {
+                "category_type": "imitation task", "performer": "OPICS", "name": history_file_name
+            },             
             [{
                 "$set": {
                     'score.weighted_score': 0,

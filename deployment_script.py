@@ -12,7 +12,8 @@ def check_version(mongoDB):
     collection = mongoDB[VERSION_COLLECTION]
     version_obj = collection.find_one()
     # return true if it is a newer db version
-    return db_version > version_obj['version']
+    return True
+    # return db_version > version_obj['version']
 
 
 def update_db_version(mongoDB):
@@ -42,7 +43,7 @@ def main():
     if(check_version(mongoDB)):
         print("New db version, execute scripts")
         # Place scripts here to run
-        rescore_agents_imitation(mongoDB, client, "dev")
+        rescore_opics_imitation_task(mongoDB)
 
         # Now update db version
         update_db_version(mongoDB)
