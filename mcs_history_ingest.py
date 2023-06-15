@@ -505,7 +505,7 @@ def build_new_step_obj(
         if "target_visible" in step:
             new_step["target_visible"] = step["target_visible"]
 
-        target_keys = ['target', 'target_1', 'target_2']
+        target_keys = ['targets', 'target', 'target_1', 'target_2']
 
         for target in target_keys:
             if target in step["output"]["goal"]["metadata"]:
