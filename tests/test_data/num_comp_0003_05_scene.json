@@ -1,19 +1,195 @@
 {
   "debug": {
     "floorColors": [
-      "green"
-    ],
-    "wallColors": [
+      "white",
       "grey"
     ],
+    "wallColors": [
+      "brown"
+    ],
     "evaluationOnly": true,
-    "hypercubeNumber": 1,
+    "hypercubeNumber": 3,
     "sceneNumber": 5,
-    "evaluation": "Evaluation 6 Scenes",
+    "evaluation": "Evaluation 7 Scenes",
     "training": false
   },
   "goal": {
+    "action_list": [],
     "category": "multi retrieval",
+    "description": "Find and pick up as many objects as possible of type: small light black white rubber ball.",
+    "last_step": 2100,
+    "metadata": {
+      "targets": [
+        {
+          "id": "c63a6308-351d-401b-a57d-c85f30f918ee",
+          "info": [
+            "small",
+            "light",
+            "black",
+            "white",
+            "rubber",
+            "ball",
+            "black white",
+            "small light",
+            "small rubber",
+            "small black white",
+            "small ball",
+            "light rubber",
+            "light black white",
+            "light ball",
+            "rubber black white",
+            "rubber ball",
+            "black white ball",
+            "small light black white rubber ball",
+            "target"
+          ]
+        },
+        {
+          "id": "3f24da27-42c2-42b4-a55d-096da7800415",
+          "info": [
+            "small",
+            "light",
+            "black",
+            "white",
+            "rubber",
+            "ball",
+            "black white",
+            "small light",
+            "small rubber",
+            "small black white",
+            "small ball",
+            "light rubber",
+            "light black white",
+            "light ball",
+            "rubber black white",
+            "rubber ball",
+            "black white ball",
+            "small light black white rubber ball",
+            "non target"
+          ]
+        }
+      ],
+      "pickup_number": 1
+    },
+    "domainsInfo": {
+      "objects": [],
+      "places": [],
+      "agents": [],
+      "all": []
+    },
+    "objectsInfo": {
+      "all": [
+        "trained category",
+        "light black white",
+        "black white ball",
+        "trained combination",
+        "small light black white rubber ball",
+        "brown",
+        "small",
+        "white",
+        "small black white",
+        "trained shape",
+        "uncontained",
+        "platform",
+        "small rubber",
+        "light ball",
+        "target",
+        "black white",
+        "non target",
+        "structural",
+        "rubber black white",
+        "rubber",
+        "trained size",
+        "wall",
+        "light rubber",
+        "light",
+        "black",
+        "small ball",
+        "black wall",
+        "ball",
+        "trained color",
+        "brown platform",
+        "small light",
+        "rubber ball"
+      ],
+      "agent": [],
+      "blob": [],
+      "collider": [],
+      "confusor": [],
+      "container": [],
+      "context": [],
+      "home": [],
+      "key": [],
+      "intuitive_physics_occluder": [],
+      "lid": [],
+      "non_target": [
+        "trained category",
+        "light black white",
+        "black white ball",
+        "trained combination",
+        "small light black white rubber ball",
+        "small",
+        "white",
+        "small black white",
+        "trained shape",
+        "uncontained",
+        "small rubber",
+        "light ball",
+        "black white",
+        "rubber black white",
+        "rubber",
+        "trained size",
+        "light rubber",
+        "light",
+        "black",
+        "small ball",
+        "ball",
+        "trained color",
+        "small light",
+        "rubber ball"
+      ],
+      "obstacle": [],
+      "occluder": [],
+      "paddle": [],
+      "static_object": [],
+      "structural": [
+        "brown platform",
+        "wall",
+        "platform",
+        "brown",
+        "black",
+        "black wall"
+      ],
+      "target": [
+        "trained category",
+        "light black white",
+        "black white ball",
+        "trained combination",
+        "small light black white rubber ball",
+        "small",
+        "white",
+        "small black white",
+        "trained shape",
+        "uncontained",
+        "small rubber",
+        "light ball",
+        "black white",
+        "rubber black white",
+        "rubber",
+        "trained size",
+        "light rubber",
+        "light",
+        "black",
+        "small ball",
+        "ball",
+        "trained color",
+        "small light",
+        "rubber ball"
+      ],
+      "tool": [],
+      "wall": [],
+      "guiderail": []
+    },
     "sceneInfo": {
       "primaryType": "interactive",
       "secondaryType": "multi retrieval",
@@ -22,8 +198,8 @@
         "interactive",
         "multi retrieval",
         "number comparison",
-        "reference side left",
-        "target side left",
+        "target side right",
+        "reference side right",
         "non target 1",
         "structural 2",
         "target 1",
@@ -52,32 +228,33 @@
         "occluded no",
         "comparison amount 1"
       ],
+      "skintone": null,
       "ambiguous": true,
       "angle": null,
       "corner": null,
       "correctDoor": null,
       "direction": null,
-      "extensionSide": null,
       "fallDown": null,
       "moveAcross": null,
       "numFloorFeatures": null,
       "pathRatio": null,
-      "referenceSide": "left",
       "rotation": null,
       "sceneSetup": null,
-      "stableLandmarkWall": null,
-      "targetSide": "left",
-      "wall": null,
-      "turntableContainerTargetSide": null,
-      "unstableLandmarkStartingSide": null,
-      "unstableLandmarkType": null,
+      "targetSide": "either",
+      "tipsy": null,
+      "referenceSide": "right",
       "containersSide": null,
       "containersKidnapRotation": null,
       "containerTriggerOrderSides": null,
+      "agentFacingDirection": null,
+      "targetBinGlobalLocation": null,
+      "turntableContainerTargetSide": null,
       "shellGameMovementDirection": null,
       "shellGameContainerPicked": null,
-      "targetBinGlobalLocation": null,
-      "agentFacingDirection": null,
+      "extensionSide": null,
+      "stableLandmarkWall": null,
+      "unstableLandmarkStartingSide": null,
+      "unstableLandmarkType": null,
       "count": {
         "all": 4,
         "agent": 0,
@@ -452,176 +629,27 @@
       "occluded": "no",
       "comparisonAmount": "1",
       "name": "numcomp_E1",
-      "hypercubeId": "numcomp_E1_BF1DE7C6-11B8-4FD9-82A7-188C16D2B362",
+      "hypercubeId": "numcomp_E1_542B9CA8-A8BA-4B10-B02B-465FFEDC86DE",
       "domainType": "interactive objects",
       "quaternaryType": "action full"
-    },
-    "domainsInfo": {
-      "objects": [],
-      "places": [],
-      "agents": [],
-      "all": []
-    },
-    "objectsInfo": {
-      "all": [
-        "rubber ball",
-        "light rubber",
-        "wall",
-        "small",
-        "light ball",
-        "trained size",
-        "small ball",
-        "rubber",
-        "black wall",
-        "trained combination",
-        "black",
-        "trained category",
-        "uncontained",
-        "platform",
-        "structural",
-        "small light",
-        "non target",
-        "grey",
-        "target",
-        "black white",
-        "trained shape",
-        "small rubber",
-        "light",
-        "trained color",
-        "light black white",
-        "rubber black white",
-        "small black white",
-        "small light black white rubber ball",
-        "grey platform",
-        "black white ball",
-        "ball",
-        "white"
-      ],
-      "agent": [],
-      "blob": [],
-      "collider": [],
-      "confusor": [],
-      "container": [],
-      "context": [],
-      "home": [],
-      "key": [],
-      "intuitive_physics_occluder": [],
-      "lid": [],
-      "non_target": [
-        "rubber ball",
-        "light rubber",
-        "small",
-        "light ball",
-        "trained size",
-        "small ball",
-        "rubber",
-        "trained combination",
-        "black",
-        "trained category",
-        "uncontained",
-        "small light",
-        "black white",
-        "small rubber",
-        "trained shape",
-        "light",
-        "trained color",
-        "light black white",
-        "rubber black white",
-        "small black white",
-        "small light black white rubber ball",
-        "black white ball",
-        "ball",
-        "white"
-      ],
-      "obstacle": [],
-      "occluder": [],
-      "paddle": [],
-      "static_object": [],
-      "structural": [
-        "wall",
-        "black wall",
-        "black",
-        "grey",
-        "grey platform",
-        "platform"
-      ],
-      "target": [
-        "rubber ball",
-        "light rubber",
-        "small",
-        "light ball",
-        "trained size",
-        "small ball",
-        "rubber",
-        "trained combination",
-        "black",
-        "trained category",
-        "uncontained",
-        "small light",
-        "black white",
-        "small rubber",
-        "trained shape",
-        "light",
-        "trained color",
-        "light black white",
-        "rubber black white",
-        "small black white",
-        "small light black white rubber ball",
-        "black white ball",
-        "ball",
-        "white"
-      ],
-      "tool": [],
-      "wall": [],
-      "guiderail": []
-    },
-    "metadata": {
-      "targets": [
-        {
-          "id": "f7fc4c29-ca2b-4cae-ad75-ed263078bd20",
-          "info": [
-            "small",
-            "light",
-            "black",
-            "white",
-            "rubber",
-            "ball",
-            "black white",
-            "small light",
-            "small rubber",
-            "small black white",
-            "small ball",
-            "light rubber",
-            "light black white",
-            "light ball",
-            "rubber black white",
-            "rubber ball",
-            "black white ball",
-            "small light black white rubber ball"
-          ]
-        }
-      ]
-    },
-    "description": "Find and pick up as many objects as possible of type: small light black white rubber ball.",
-    "last_step": 2500,
-    "action_list": []
+    }
   },
   "holes": [],
   "isometric": false,
   "lava": [],
-  "name": "nc_0001_05",
+  "name": "nc_0003_05",
   "objects": [
     {
-      "id": "platform_a725e583-a7f0-4b1f-b543-5480dcd479ec",
+      "id": "platform_ca83f3e1-4099-4be9-b4a1-a001e1a00390",
       "type": "cube",
       "debug": {
         "color": [
-          "grey"
+          "brown"
         ],
         "info": [
-          "grey",
+          "brown",
           "platform",
-          "grey platform",
+          "brown platform",
           "structural"
         ],
         "dimensions": {
@@ -652,7 +680,7 @@
         "role": "structural"
       },
       "mass": 750,
-      "materials": ["Custom/Materials/GreyWoodMCS"],
+      "materials": ["AI2-THOR/Materials/Metals/BrownMetal 1"],
       "kinematic": true,
       "structure": true,
       "lips": {
@@ -725,7 +753,7 @@
       ]
     },
     {
-      "id": "wall_d5bd7936-70fc-4c1d-ad92-bf6717da9cbf6e3ddd36-b28c-4423-bd8f-a53779207888",
+      "id": "wall_d7b4b7ac-d529-470c-ad0e-ac38c7aa2db5934ddb5a-8b57-4510-a21f-d494838a57bc",
       "type": "cube",
       "debug": {
         "color": [
@@ -832,7 +860,7 @@
       ]
     },
     {
-      "id": "f7fc4c29-ca2b-4cae-ad75-ed263078bd20",
+      "id": "c63a6308-351d-401b-a57d-c85f30f918ee",
       "type": "soccer_ball",
       "mass": 2.0,
       "salientMaterials": ["rubber"],
@@ -921,9 +949,9 @@
       "shows": [
         {
           "position": {
-            "x": -1.75,
+            "x": 1.75,
             "y": 0.22,
-            "z": 2.75
+            "z": 3.0
           },
           "rotation": {
             "x": 0.0,
@@ -938,44 +966,44 @@
           },
           "boundingBox": [
             {
-              "x": -1.53,
+              "x": 1.97,
               "y": 0.0,
-              "z": 2.97
+              "z": 3.22
             },
             {
-              "x": -1.53,
+              "x": 1.97,
               "y": 0.0,
-              "z": 2.53
+              "z": 2.78
             },
             {
-              "x": -1.97,
+              "x": 1.53,
               "y": 0.0,
-              "z": 2.53
+              "z": 2.78
             },
             {
-              "x": -1.97,
+              "x": 1.53,
               "y": 0.0,
-              "z": 2.97
+              "z": 3.22
             },
             {
-              "x": -1.53,
+              "x": 1.97,
               "y": 0.44,
-              "z": 2.97
+              "z": 3.22
             },
             {
-              "x": -1.53,
+              "x": 1.97,
               "y": 0.44,
-              "z": 2.53
+              "z": 2.78
             },
             {
-              "x": -1.97,
+              "x": 1.53,
               "y": 0.44,
-              "z": 2.53
+              "z": 2.78
             },
             {
-              "x": -1.97,
+              "x": 1.53,
               "y": 0.44,
-              "z": 2.97
+              "z": 3.22
             }
           ]
         }
@@ -983,7 +1011,7 @@
       "materials": []
     },
     {
-      "id": "890ccbbd-4797-4e59-b18a-97d005f890b9",
+      "id": "3f24da27-42c2-42b4-a55d-096da7800415",
       "type": "soccer_ball",
       "mass": 2.0,
       "salientMaterials": ["rubber"],
@@ -1072,9 +1100,9 @@
       "shows": [
         {
           "position": {
-            "x": 1.75,
+            "x": -1.75,
             "y": 0.22,
-            "z": 2.75
+            "z": 3.0
           },
           "rotation": {
             "x": 0.0,
@@ -1089,44 +1117,44 @@
           },
           "boundingBox": [
             {
-              "x": 1.97,
+              "x": -1.53,
               "y": 0.0,
-              "z": 2.97
+              "z": 3.22
             },
             {
-              "x": 1.97,
+              "x": -1.53,
               "y": 0.0,
-              "z": 2.53
+              "z": 2.78
             },
             {
-              "x": 1.53,
+              "x": -1.97,
               "y": 0.0,
-              "z": 2.53
+              "z": 2.78
             },
             {
-              "x": 1.53,
+              "x": -1.97,
               "y": 0.0,
-              "z": 2.97
+              "z": 3.22
             },
             {
-              "x": 1.97,
+              "x": -1.53,
               "y": 0.44,
-              "z": 2.97
+              "z": 3.22
             },
             {
-              "x": 1.97,
+              "x": -1.53,
               "y": 0.44,
-              "z": 2.53
+              "z": 2.78
             },
             {
-              "x": 1.53,
+              "x": -1.97,
               "y": 0.44,
-              "z": 2.53
+              "z": 2.78
             },
             {
-              "x": 1.53,
+              "x": -1.97,
               "y": 0.44,
-              "z": 2.97
+              "z": 3.22
             }
           ]
         }
@@ -1136,8 +1164,8 @@
   ],
   "screenshot": false,
   "version": 2,
-  "ceilingMaterial": "AI2-THOR/Materials/Walls/DrywallBeige",
-  "floorMaterial": "AI2-THOR/Materials/Fabrics/CarpetDarkGreen",
+  "ceilingMaterial": "AI2-THOR/Materials/Walls/Drywall4Tiled",
+  "floorMaterial": "AI2-THOR/Materials/Fabrics/CarpetWhite 3",
   "floorTextures": [],
   "intuitivePhysics": false,
   "performerStart": {
@@ -1157,5 +1185,5 @@
     "y": 8.0,
     "z": 12.0
   },
-  "wallMaterial": "Custom/Materials/GreyWoodMCS"
+  "wallMaterial": "AI2-THOR/Materials/Metals/BrownMetal 1"
 }
