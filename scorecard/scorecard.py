@@ -999,8 +999,8 @@ class Scorecard:
             collision = goal['sceneInfo']['type']
             x_pos = throwing_device[0]['shows'][0]['position']['x']
 
-            isSameSide = relation == 'sameSide' and collision == 'noCollision'
-            if isSameSide:
+            is_target_same_side = relation == 'sameSide' and collision == 'noCollision'
+            if is_target_same_side:
                 target_side = 'left' if x_pos < 0 else 'right'
             else:
                 target_side = 'right' if x_pos < 0 else 'left'
@@ -1076,8 +1076,8 @@ class Scorecard:
             collision = goal['sceneInfo']['type']
             x_pos = throwing_device[0]['shows'][0]['position']['x']
 
-            isSameSide = relation == 'sameSide' and collision == 'noCollision'
-            if isSameSide:
+            is_target_same_side = relation == 'sameSide' and collision == 'noCollision'
+            if is_target_same_side:
                 correct_door = 'left' if x_pos < 0 else 'right'
             else:
                 correct_door = 'right' if x_pos < 0 else 'left'
