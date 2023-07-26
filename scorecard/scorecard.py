@@ -981,7 +981,9 @@ class Scorecard:
             target_side = goal['sceneInfo']['toolChoiceValidSide']
         elif (
             'sceneInfo' in goal and 'relation' in goal['sceneInfo'] and
-            goal['sceneInfo']['relation'] in ['sameSide', 'oppositeSide']
+            goal['sceneInfo']['relation'] in ['sameSide', 'oppositeSide'] and
+            'type' in goal['sceneInfo'] and
+            goal['sceneInfo']['type'] in ['collision', 'noCollision']
         ):
 
             # Support for Eval 6 Interactive Collisions
@@ -994,9 +996,11 @@ class Scorecard:
                 return self.correct_platform_side
 
             relation = goal['sceneInfo']['relation']
+            collision = goal['sceneInfo']['type']
             x_pos = throwing_device[0]['shows'][0]['position']['x']
 
-            if relation == 'sameSide':
+            isSameSide = relation == 'sameSide' and collision == 'noCollision'
+            if isSameSide:
                 target_side = 'left' if x_pos < 0 else 'right'
             else:
                 target_side = 'right' if x_pos < 0 else 'left'
@@ -1055,7 +1059,9 @@ class Scorecard:
             correct_door = goal['sceneInfo']['correctDoor']
         elif (
             'sceneInfo' in goal and 'relation' in goal['sceneInfo'] and
-            goal['sceneInfo']['relation'] in ['sameSide', 'oppositeSide']
+            goal['sceneInfo']['relation'] in ['sameSide', 'oppositeSide'] and
+            'type' in goal['sceneInfo'] and
+            goal['sceneInfo']['type'] in ['collision', 'noCollision']
         ):
             # Support for Eval 6 Interactive Collisions
             throwing_device = [obj for obj in self.scene['objects']
@@ -1067,9 +1073,11 @@ class Scorecard:
                 return self.correct_door_opened
 
             relation = goal['sceneInfo']['relation']
+            collision = goal['sceneInfo']['type']
             x_pos = throwing_device[0]['shows'][0]['position']['x']
 
-            if relation == 'sameSide':
+            isSameSide = relation == 'sameSide' and collision == 'noCollision'
+            if isSameSide:
                 correct_door = 'left' if x_pos < 0 else 'right'
             else:
                 correct_door = 'right' if x_pos < 0 else 'left'
