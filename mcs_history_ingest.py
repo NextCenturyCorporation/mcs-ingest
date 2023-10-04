@@ -368,6 +368,47 @@ def build_history_item(
         history_item["scene_num"] = scene["scene_num"]
         history_item["test_num"] = scene["test_num"]
 
+        # distance calculation between target start and performer start (interactive scenes only)
+        if (scene["goal"]["sceneInfo"]["primaryType"] == "interactive"):
+            perf_start = history_item["steps"][0]["output"]["position"]
+
+            if(scene["goal"]["sceneInfo"]["secondaryType"] == "multi retrieval"):
+                # for multi-retrival, find closest target
+                if len(history_item["steps"]) > 0 and "targets" in history_item["steps"][0]["output"]:
+                    old_target_xyz = history_item["steps"][0]["output"]["targets"][0]["position"]
+
+                    shortest_distance = math.sqrt(
+                        pow((old_target_xyz["x"] - perf_start["x"]), 2) +
+                        pow((old_target_xyz["y"] - perf_start["y"]), 2) + 
+                        pow((old_target_xyz["z"] - perf_start["z"]), 2)
+                    )
+
+                    for target in history_item["steps"][0]["output"]["targets"]:
+                        tar_xyz = target["position"]
+                        distance = math.sqrt(
+                            pow((tar_xyz["x"] - perf_start["x"]), 2) +
+                            pow((tar_xyz["y"] - perf_start["y"]), 2) + 
+                            pow((tar_xyz["z"] - perf_start["z"]), 2)
+                        )
+
+                        if(distance < shortest_distance):
+                            shortest_distance = distance
+
+                    history_item["start_distance_between_performer_and_target"] = shortest_distance
+
+            else:
+                # single target case
+                if len(history_item["steps"]) > 0 and "target" in history_item["steps"][0]["output"]:
+                    target_xyz = history_item["steps"][0]["output"]["target"]["position"]
+
+                    distance = math.sqrt(
+                        pow((target_xyz["x"] - perf_start["x"]), 2) +
+                        pow((target_xyz["y"] - perf_start["y"]), 2) + 
+                        pow((target_xyz["z"] - perf_start["z"]), 2)
+                    )
+
+                    history_item["start_distance_between_performer_and_target"] = distance
+
         history_item["scene_goal_id"] = scene["goal"]["sceneInfo"]["id"][0]
         if "slices" in scene["goal"]["sceneInfo"]:
             history_item["slices"] = scene["goal"]["sceneInfo"]["slices"]
