@@ -72,9 +72,10 @@ PASSING_CELLS = {
     "lava": ["B1", "C1", "E1", "F1", "B2", "C2", "E2", "F2"],
     "ramp": ["B1", "C1", "E1", "F1", "H1", "I1", "K1", "L1", "N1", 
              "O1", "Q1", "R1", "T1", "U1", "W1", "X1", "B2", "E2", "N2", "Q2"],
-    "tool use": ["A1", "C1", "E1", "G1", "I1", "K1", "M1", "O1", "Q1", "S1", 
-                 "U1", "W1", "A2", "B2", "C2", "D2", "E2", "F2", "E3", "K3", 
-                 "Q3", "W3"],
+    "symmetric tool use": ["A1", "C1", "E1", "G1", "I1", "K1", "M1", "O1", "Q1", "S1",
+                 "U1", "W1"],
+    "tool choice": ["A2", "B2", "C2", "D2", "E2", "F2"],
+    "asymmetric tool use": ["E3", "K3", "Q3", "W3"],
     "interactive object permanence": ["A1", "C1"],
     "container": ["A1", "A2", "G1", "G2", "M1", "M2"],
     "obstacle": ["A1", "C1", "A2", "C2"],
@@ -316,16 +317,6 @@ def build_history_item(
     reorientation_scoring_override = (
         scene["goal"]["sceneInfo"]["tertiaryType"] == "reorientation")
 
-    # Needed for ALL multi retrieval scenes
-    multi_retrieval_scoring_override = (
-        scene["goal"]["sceneInfo"]["secondaryType"] == "multi retrieval"
-    )
-
-    total_targets_multi_retrieval = None
-
-    if(multi_retrieval_scoring_override):
-        total_targets_multi_retrieval = len(scene["goal"]["metadata"]["targets"])
-
     # set all corners incorrect at beginning of scene
     (
         incorrect_corners,
@@ -341,17 +332,13 @@ def build_history_item(
     interactive_goal_achieved = 0
     interactive_reward = 0
 
-    # for multi retrieval
-    multi_retrieval_rewards_picked_up = []
-
     for step in history["steps"]:
         number_steps += 1
         (
             new_step,
             interactive_reward,
             interactive_goal_achieved,
-            corner_visit_order,
-            multi_retrieval_rewards_picked_up
+            corner_visit_order
         ) = build_new_step_obj(
             step,
             interactive_reward,
@@ -360,10 +347,7 @@ def build_history_item(
             incorrect_corners,
             correct_corners,
             corner_visit_order,
-            reorientation_scoring_override,
-            multi_retrieval_scoring_override,
-            total_targets_multi_retrieval,
-            multi_retrieval_rewards_picked_up
+            reorientation_scoring_override
             )
         steps.append(new_step)
 
@@ -469,10 +453,7 @@ def build_new_step_obj(
         incorrect_corners: List[dict],
         correct_corners: List[dict],
         corner_visit_order: List[dict],
-        reorientation_scoring_override: bool,
-        multi_retrieval_scoring_override: bool,
-        total_targets_multi_retrieval: int,
-        multi_retrieval_rewards_picked_up: List[str]) -> tuple:
+        reorientation_scoring_override: bool) -> tuple:
     new_step = {
         'stepNumber': step["step"],
         'action': step["action"],
@@ -522,25 +503,10 @@ def build_new_step_obj(
         if interactive_reward >= 0 - ((number_steps - 1) * 0.001) + 1:
             interactive_goal_achieved = 1
 
-        # For now, keep track of object ids that are picked up (ignoring drops).
-        # Soccer balls are the only thing pickupable in these scenes
-        # TODO: MCS-1707 & MCS-1708: Move handling of multi
-        # retrieval scenes to Python API + update multi retrieval scene files
-        if(multi_retrieval_scoring_override):
-            if(new_step["action"] == "PickupObject" and 
-               output["return_status"] == "SUCCESSFUL"):
-                resolved_obj = step["output"].get('resolved_object')
-                if(resolved_obj is not None and len(resolved_obj) > 0 and
-                   resolved_obj not in multi_retrieval_rewards_picked_up):
-                    multi_retrieval_rewards_picked_up.append(resolved_obj)
-
-            if(total_targets_multi_retrieval == len(multi_retrieval_rewards_picked_up) and interactive_goal_achieved != 1):
-                interactive_goal_achieved = 1
-
         if "target_visible" in step:
             new_step["target_visible"] = step["target_visible"]
 
-        target_keys = ['target', 'target_1', 'target_2']
+        target_keys = ['targets', 'target', 'target_1', 'target_2']
 
         for target in target_keys:
             if target in step["output"]["goal"]["metadata"]:
@@ -552,8 +518,7 @@ def build_new_step_obj(
         new_step,
         interactive_reward,
         interactive_goal_achieved,
-        corner_visit_order,
-        multi_retrieval_rewards_picked_up)
+        corner_visit_order)
 
 
 def calculate_weighted_confidence(history_item: dict, multiplier: int) -> Union[float,None]:

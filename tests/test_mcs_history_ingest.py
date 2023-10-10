@@ -706,14 +706,12 @@ class TestMcsHistoryIngest(unittest.TestCase):
         corner_visit_order = []
         interactive_goal_achieved = 0
         interactive_reward = 0
-        multi_retrieval_rewards_picked_up = []
 
         (
             new_step,
             interactive_reward,
             interactive_goal_achieved,
-            corner_visit_order,
-            multi_retrieval_rewards_picked_up
+            corner_visit_order
         ) = mcs_history_ingest.build_new_step_obj(
             step,
             interactive_reward,
@@ -722,10 +720,7 @@ class TestMcsHistoryIngest(unittest.TestCase):
             [],
             [],
             [],
-            False,
-            False,
-            None,
-            [])
+            False)
 
         self.assertIsNotNone(new_step)
         self.assertEqual(new_step["stepNumber"], 1)
@@ -747,11 +742,10 @@ class TestMcsHistoryIngest(unittest.TestCase):
         self.assertEqual(interactive_reward, -0.001)
         self.assertEqual(interactive_goal_achieved, 0)
         self.assertEqual(corner_visit_order, [])
-        self.assertEqual(multi_retrieval_rewards_picked_up, [])
 
     def test_build_new_step_obj_ambiguous_multi_retrieval(self):
         step = {
-            "step": 1,
+            "step": 2,
             "action": "PickupObject",
             "args": {},
             "classification": None,
@@ -781,7 +775,7 @@ class TestMcsHistoryIngest(unittest.TestCase):
                 "resolved_object": "someid",
                 "physics_frames_per_second": 20,
                 "return_status": "SUCCESSFUL",
-                "reward": -0.001,
+                "reward": 0.999,
                 "rotation": 90.0
             },
             "delta_time_millis": 12464.299655999997,
@@ -791,29 +785,24 @@ class TestMcsHistoryIngest(unittest.TestCase):
         corner_visit_order = []
         interactive_goal_achieved = 0
         interactive_reward = 0
-        multi_retrieval_rewards_picked_up = []
 
         (
             new_step,
             interactive_reward,
             interactive_goal_achieved,
-            corner_visit_order,
-            multi_retrieval_rewards_picked_up
+            corner_visit_order
         ) = mcs_history_ingest.build_new_step_obj(
             step,
             interactive_reward,
             interactive_goal_achieved,
-            1,
+            2,
             [],
             [],
             [],
-            False,
-            True,
-            1,
-            [])
+            False)
 
         self.assertIsNotNone(new_step)
-        self.assertEqual(new_step["stepNumber"], 1)
+        self.assertEqual(new_step["stepNumber"], 2)
         self.assertEqual(new_step["action"], "PickupObject")
         self.assertEqual(new_step["args"], {})
         self.assertIsNone(new_step["classification"])
@@ -829,10 +818,9 @@ class TestMcsHistoryIngest(unittest.TestCase):
         self.assertEqual(new_step["output"]["rotation"], step["output"]["rotation"])
         self.assertEqual(new_step["target_visible"], step["target_visible"])
         self.assertEqual(new_step["output"]["target"], step["output"]["goal"]["metadata"]["target"])
-        self.assertEqual(interactive_reward, -0.001)
+        self.assertEqual(interactive_reward, 0.999)
         self.assertEqual(interactive_goal_achieved, 1)
         self.assertEqual(corner_visit_order, [])
-        self.assertEqual(multi_retrieval_rewards_picked_up, ['someid'])
 
 
 if __name__ == '__main__':

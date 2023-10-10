@@ -251,16 +251,9 @@ def is_obj_target(scene, obj_id):
 
     if(scene["goal"]["sceneInfo"]["secondaryType"] ==
                 MULTI_RETRIEVAL):
-        # if ambiguous multi retrieval, simply check if
-        # the object is a soccer_ball
-        if("ambiguous" in scene["goal"]["sceneInfo"] and scene["goal"]["sceneInfo"]["ambiguous"] is True):
-            for objs in scene["objects"]:
-                if(objs['id'] == obj_id and objs['type'] == "soccer_ball"):
-                    return True
-        else:
-            for target in scene["goal"]["metadata"]["targets"]:
-                if(target['id'] == obj_id):
-                    return True
+        for target in scene["goal"]["metadata"]["targets"]:
+            if(target['id'] == obj_id):
+                return True
     else:
         target_obj = scene["goal"]["metadata"]["target"]
         if(target_obj['id'] == obj_id):
@@ -449,6 +442,9 @@ class Scorecard:
 
     def get_correct_platform_side(self):
         return self.correct_platform_side
+
+    def get_correct_door_opened(self):
+        return self.correct_door_opened
 
     def calc_revisiting(self):
 
@@ -977,10 +973,41 @@ class Scorecard:
         if 'sceneInfo' in goal:
             if goal['sceneInfo'].get('targetSide'):
                 target_side = goal['sceneInfo']['targetSide']
-            if goal['sceneInfo'].get('toolChoiceValidSide'):
+            elif goal['sceneInfo'].get('toolChoiceValidSide'):
                 # Support Eval 6 Tool Choice scenes.
                 target_side = goal['sceneInfo']['toolChoiceValidSide']
-            if goal['sceneInfo'].get('correctDoor'):
+            elif (
+                goal['sceneInfo'].get('relation')
+                in ['sameSide', 'oppositeSide'] and
+                goal['sceneInfo'].get('type') in ['collision', 'noCollision']
+            ):
+                # Support Eval 6 Interactive Collision scenes.
+                throwing_device = [obj for obj in self.scene['objects']
+                        if obj['id'].startswith('throwing_device_')]
+
+                # if for whatever reason, we can't find the
+                # throwing device, return
+                if len(throwing_device) == 0:
+                    return self.correct_platform_side
+
+                relation = goal['sceneInfo']['relation']
+                collision = goal['sceneInfo']['type']
+                x_pos = throwing_device[0]['shows'][0]['position']['x']
+
+                is_target_same_side = relation == 'sameSide' and collision == 'noCollision'
+                if is_target_same_side:
+                    target_side = 'left' if x_pos < 0 else 'right'
+                else:
+                    target_side = 'right' if x_pos < 0 else 'left'
+            elif (
+                goal['sceneInfo'].get('finalRewardLocation')
+                in ['left', 'right']
+            ):
+                # Support Eval 6 Occluded Trajectory scenes.
+                finalRewardLoc = goal['sceneInfo']['finalRewardLocation']
+
+                target_side = 'left' if finalRewardLoc == 'left' else 'right'
+            elif goal['sceneInfo'].get('correctDoor'):
                 # Use correctDoor if it exists because it's more accurate.
                 target_side = goal['sceneInfo']['correctDoor']
 
@@ -1027,8 +1054,42 @@ class Scorecard:
         # Does this scene have a correctDoor? If not, return
         # correct_door_opened (currently set to None).
         goal = self.scene.get('goal')
-        if 'sceneInfo' in goal and 'correctDoor' in goal['sceneInfo']:
+        if ('sceneInfo' in goal and 'correctDoor' in goal['sceneInfo'] and
+                goal['sceneInfo']['correctDoor'] is not None):
             correct_door = goal['sceneInfo']['correctDoor']
+        elif (
+            'sceneInfo' in goal and 'relation' in goal['sceneInfo'] and
+            goal['sceneInfo']['relation'] in ['sameSide', 'oppositeSide'] and
+            'type' in goal['sceneInfo'] and
+            goal['sceneInfo']['type'] in ['collision', 'noCollision']
+        ):
+            # Support for Eval 6 Interactive Collisions
+            throwing_device = [obj for obj in self.scene['objects']
+                    if obj['id'].startswith('throwing_device_')]
+
+            # if for whatever reason, we can't find the
+            # throwing device, return
+            if len(throwing_device) == 0:
+                return self.correct_door_opened
+
+            relation = goal['sceneInfo']['relation']
+            collision = goal['sceneInfo']['type']
+            x_pos = throwing_device[0]['shows'][0]['position']['x']
+
+            is_target_same_side = relation == 'sameSide' and collision == 'noCollision'
+            if is_target_same_side:
+                correct_door = 'left' if x_pos < 0 else 'right'
+            else:
+                correct_door = 'right' if x_pos < 0 else 'left'
+
+        elif (
+            'sceneInfo' in goal and 'finalRewardLocation' in goal['sceneInfo'] and
+            goal['sceneInfo']['finalRewardLocation'] in ['left', 'right']):
+
+            # Support for Eval 6 Trajectory Scenes
+            finalRewardLoc = goal['sceneInfo']['finalRewardLocation']
+
+            correct_door = 'left' if finalRewardLoc == 'left' else 'right'
         else:
             return self.correct_door_opened
 
