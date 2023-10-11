@@ -394,7 +394,7 @@ def build_history_item(
                         if(distance < shortest_distance):
                             shortest_distance = distance
 
-                    history_item["start_distance_between_performer_and_target"] = shortest_distance
+                    history_item["start_distance_between_performer_and_target"] = round(shortest_distance, 4)
 
             else:
                 # single target case
@@ -407,7 +407,7 @@ def build_history_item(
                         pow((target_xyz["z"] - perf_start["z"]), 2)
                     )
 
-                    history_item["start_distance_between_performer_and_target"] = distance
+                    history_item["start_distance_between_performer_and_target"] = round(distance, 4)
 
         history_item["scene_goal_id"] = scene["goal"]["sceneInfo"]["id"][0]
         if "slices" in scene["goal"]["sceneInfo"]:

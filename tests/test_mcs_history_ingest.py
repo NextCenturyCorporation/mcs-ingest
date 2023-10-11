@@ -131,7 +131,7 @@ class TestMcsHistoryIngestMongo(unittest.TestCase):
             self.mongo_client, "mcs")
         self.assertIsNotNone(history_item)
         self.assertTrue(history_item["target_is_visible_at_start"])
-        self.assertEqual(history_item["start_distance_between_performer_and_target"], 6.824257779421877)
+        self.assertEqual(history_item["start_distance_between_performer_and_target"], 6.8243)
 
     def test_build_interactive_history_item_multi_ret(self):
         '''Generates history item for an interactive Multi-Retrieval scene,
@@ -141,7 +141,7 @@ class TestMcsHistoryIngestMongo(unittest.TestCase):
             self.mongo_client, "mcs")
         self.assertIsNotNone(history_item)
         self.assertFalse(history_item["target_is_visible_at_start"])
-        self.assertEqual(history_item["start_distance_between_performer_and_target"], 7.206959414343888)
+        self.assertEqual(history_item["start_distance_between_performer_and_target"], 7.207)
 
 
 class TestMcsHistoryIngest(unittest.TestCase):
