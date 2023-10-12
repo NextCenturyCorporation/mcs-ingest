@@ -12,8 +12,11 @@ import mcs_scene_ingest
 
 TEST_HISTORY_FILE_NAME = "test_data/test_eval_3-5_level2_baseline_juliett_0001_01.json"
 TEST_SCENE_FILE_NAME = "test_data/test_juliett_0001_01_debug.json"
-TEST_INTERACTIVE_HISTORY_FILE_NAME = "test_data/occluders_0001_17_baseline.json"
+TEST_INTERACTIVE_HISTORY_FILE_NAME = "test_data/occluders_0001_17_hist_updated.json"
 TEST_INTERACTIVE_SCENE_FILE = "test_data/occluders_0001_17_I1_debug.json"
+TEST_MULTI_RET_SCENE_FILE = "test_data/arth_0001_13_ex.json"
+TEST_MULTI_RET_HIST_FILE = "test_data/arth_0001_13_hist_all_targets.json"
+
 TEST_FOLDER = "tests"
 
 
@@ -91,6 +94,11 @@ class TestMcsHistoryIngestMongo(unittest.TestCase):
             folder=TEST_FOLDER,
             db_string="mcs",
             client=self.mongo_client)
+        mcs_scene_ingest.automated_scene_ingest_file(
+            file_name=TEST_MULTI_RET_SCENE_FILE,
+            folder=TEST_FOLDER,
+            db_string="mcs",
+            client=self.mongo_client)
         mcs_history_ingest.automated_history_ingest_file(
             history_file=TEST_HISTORY_FILE_NAME,
             folder=TEST_FOLDER,
@@ -112,6 +120,7 @@ class TestMcsHistoryIngestMongo(unittest.TestCase):
         self.assertIsNotNone(history_item)
         self.assertIsNotNone(history_item["slices"])
         self.assertEqual(history_item["domain_type"], "passive objects")
+        self.assertNotIn("start_distance_between_performer_and_target", history_item)
 
     def test_build_interactive_history_item(self):
         '''Generates history item for an interactive, which follows
@@ -122,6 +131,17 @@ class TestMcsHistoryIngestMongo(unittest.TestCase):
             self.mongo_client, "mcs")
         self.assertIsNotNone(history_item)
         self.assertTrue(history_item["target_is_visible_at_start"])
+        self.assertEqual(history_item["start_distance_between_performer_and_target"], 6.8243)
+
+    def test_build_interactive_history_item_multi_ret(self):
+        '''Generates history item for an interactive Multi-Retrieval scene,
+        which follows a different code path (and includes scorecard)'''
+        history_item = mcs_history_ingest.build_history_item(
+            TEST_MULTI_RET_HIST_FILE, TEST_FOLDER,
+            self.mongo_client, "mcs")
+        self.assertIsNotNone(history_item)
+        self.assertFalse(history_item["target_is_visible_at_start"])
+        self.assertEqual(history_item["start_distance_between_performer_and_target"], 7.207)
 
 
 class TestMcsHistoryIngest(unittest.TestCase):
