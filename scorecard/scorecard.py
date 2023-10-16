@@ -330,6 +330,7 @@ class Scorecard:
         self.interact_with_non_agent = 0
         self.interact_with_agent = 0
         self.number_of_rewards_achieved = None
+        self.stepped_in_lava = None
 
     def score_all(self) -> dict:
         self.calc_repeat_failed()
@@ -352,6 +353,7 @@ class Scorecard:
         self.calc_shell_game()
         self.calc_door_opened_side()
         self.calc_interacted_with_blob_first()
+        self.calc_stepped_in_lava()
 
         # To be implemented
         # self.calc_attempt_impossible()
@@ -445,6 +447,9 @@ class Scorecard:
 
     def get_correct_door_opened(self):
         return self.correct_door_opened
+
+    def get_stepped_in_lava(self):
+        return self.stepped_in_lava
 
     def calc_revisiting(self):
 
@@ -930,10 +935,17 @@ class Scorecard:
         return self.repeat_failed
 
     def calc_tool_usage(self):
-        """Calculate the torques, push, pulls, moves."""
+        """Calculate the torques, push, pulls, moves. Also includes
+        calculations for multi tool specific scorecard values."""
         steps_list = self.history['steps']
 
         tool_usage = defaultdict(int)
+
+        is_multi_tool = (self.scene['goal']['sceneInfo'].get('tertiaryType') and
+                    self.scene['goal']['sceneInfo']['tertiaryType'] == "multi tool use")
+        unique_tools = set()
+        is_hooked_rotated = False
+        is_straight_rotated = False
 
         for single_step in steps_list:
             action = single_step['action']
@@ -946,8 +958,26 @@ class Scorecard:
                 resolved_obj = get_relevant_object(output)
                 if resolved_obj.startswith('tool') and return_status == 'SUCCESSFUL':
                     tool_usage[action] += 1
+
+                    if is_multi_tool:
+                        unique_tools.add(resolved_obj)
+
+                        if action in ['RotateObject', 'TorqueObject']:
+                            tool_object = [obj for obj in self.scene['objects']
+                                if obj['id'] == resolved_obj]
+                            if(len(tool_object) > 0):
+                                if(is_straight_rotated == False and tool_object[0]['type'].startswith('tool_rect')):
+                                    is_straight_rotated = True
+                                if(is_hooked_rotated == False and tool_object[0]['type'].startswith('tool_hooked')):
+                                    is_hooked_rotated = True
+
                 else:
                     tool_usage[action + '_failed'] += 1
+
+        if(is_multi_tool):
+            tool_usage["total_tools_used"] = len(unique_tools)
+            tool_usage["is_hooked_rotated"] = is_hooked_rotated
+            tool_usage["is_straight_rotated"] = is_hooked_rotated
 
         self.tool_usage = tool_usage
         return self.tool_usage
@@ -1635,3 +1665,16 @@ class Scorecard:
 
         self.interacted_with_blob_first = interacted_with_blob_first
         return self.interacted_with_blob_first
+
+    def calc_stepped_in_lava(self):
+        if('lava' not in self.scene):
+            return None
+
+        stepped_in_lava = False
+        last_step = self.history['steps'][-1]
+        output = last_step['output']
+        if(output['steps_on_lava'] > 0):
+            stepped_in_lava = True
+
+        self.stepped_in_lava = stepped_in_lava
+        return self.stepped_in_lava
