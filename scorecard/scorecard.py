@@ -977,7 +977,7 @@ class Scorecard:
         if(is_multi_tool):
             tool_usage["total_tools_used"] = len(unique_tools)
             tool_usage["is_hooked_rotated"] = is_hooked_rotated
-            tool_usage["is_straight_rotated"] = is_hooked_rotated
+            tool_usage["is_straight_rotated"] = is_straight_rotated
 
         self.tool_usage = tool_usage
         return self.tool_usage
