@@ -382,7 +382,8 @@ class Scorecard:
             'shell_game_baited_container': self.shell_game_baited_container,
             'shell_game_opened_container': self.shell_game_opened_container,
             'door_opened_side': self.door_opened_side,
-            'interacted_with_blob_first': self.interacted_with_blob_first
+            'interacted_with_blob_first': self.interacted_with_blob_first,
+            'stepped_in_lava': self.stepped_in_lava
         }
 
     def get_revisits(self):
