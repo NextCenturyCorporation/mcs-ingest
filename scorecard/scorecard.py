@@ -969,7 +969,8 @@ class Scorecard:
                             if(len(tool_object) > 0):
                                 if(is_straight_rotated == False and tool_object[0]['type'].startswith('tool_rect')):
                                     is_straight_rotated = True
-                                if(is_hooked_rotated == False and tool_object[0]['type'].startswith('tool_hooked')):
+                                if(is_hooked_rotated == False and (tool_object[0]['type'].startswith('tool_hooked') or
+                                                                   tool_object[0]['type'].startswith('tool_isosceles'))):
                                     is_hooked_rotated = True
 
                 else:

@@ -286,7 +286,8 @@ class TestMcsScorecard(unittest.TestCase):
             'shell_game_baited_container',
             'shell_game_opened_container',
             'door_opened_side',
-            'interacted_with_blob_first']
+            'interacted_with_blob_first',
+            'stepped_in_lava']
         )
 
     def test_get_lookpoint(self):
