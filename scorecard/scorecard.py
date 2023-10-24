@@ -379,7 +379,7 @@ class Scorecard:
             'order_containers_are_opened_colors': self.order_containers_are_opened_colors,
             'set_rotation_opened_container_position_absolute': self.set_rotation_opened_container_position_absolute,
             'set_rotation_opened_container_position_relative_to_baited': self.set_rotation_opened_container_position_relative_to_baited,
-            'shell_game_baited_container': self.shell_game_baited_container,
+            'shell_game_opened_container_position_relative_to_baited': self.shell_game_opened_container_position_relative_to_baited,
             'shell_game_opened_container': self.shell_game_opened_container,
             'door_opened_side': self.door_opened_side,
             'interacted_with_blob_first': self.interacted_with_blob_first,
@@ -431,8 +431,8 @@ class Scorecard:
     def get_set_rotation_opened_container_position_relative_to_baited(self): 
         return self.set_rotation_opened_container_position_relative_to_baited
 
-    def get_shell_game_baited_container(self):
-        return self.shell_game_baited_container
+    def get_shell_game_opened_container_position_relative_to_baited(self):
+        return self.shell_game_opened_container_position_relative_to_baited
 
     def get_shell_game_opened_container(self):
         return self.shell_game_opened_container
@@ -1567,13 +1567,14 @@ class Scorecard:
         Determine the container the performer opened in shell game scenes
         '''
         steps_list = self.history['steps']
-        shell_game_baited_container = None
         shell_game_opened_container = None
+        baited_ctr_end_pos = None
+        baited_ctr_id = None
         if (not self.scene['goal']['sceneInfo'].get('tertiaryType') or
                 self.scene['goal']['sceneInfo']['tertiaryType'] != "shell game"):
-            self.shell_game_baited_container = shell_game_baited_container
+            self.shell_game_opened_container_position_relative_to_baited = None
             self.shell_game_opened_container = shell_game_opened_container
-            return self.shell_game_baited_container, self.shell_game_opened_container
+            return self.shell_game_opened_container_position_relative_to_baited, self.shell_game_opened_container
         containers_and_lids = [
             {
                 'id': obj['id'],
@@ -1583,10 +1584,18 @@ class Scorecard:
                 'moves': obj.get('moves')
             }
             for obj in self.scene['objects'] if obj['type'] == 'separate_container']
-        for cl in containers_and_lids:
-            if cl['isTargetContainer']:
-                shell_game_baited_container = find_shell_game_container_start_end(cl)
-                break
+
+        if('baitedContainerMovement' in self.scene['goal']['sceneInfo']):
+            baited_ctr_end_pos = self.scene['goal']['sceneInfo']['baitedContainerMovement'][-1]
+        else:
+            # in case the tag isn't in the scene file, calculate baited container movement
+            for cl in containers_and_lids:
+                if cl['isTargetContainer']:
+                    baited_ctr_end_pos = find_shell_game_container_start_end(cl)[-1]
+                    baited_ctr_id = cl['id']
+                    break
+
+        relative_pos = None
         found_container = False
         for single_step in steps_list:
             action = single_step['action']
@@ -1597,13 +1606,43 @@ class Scorecard:
                     for cl in containers_and_lids:
                         if resolved_obj_id == cl['id'] or resolved_obj_id == cl['lid']:
                             shell_game_opened_container = find_shell_game_container_start_end(cl)
+                            opened_ctr_end_pos = shell_game_opened_container[-1]
+
+                            # if the opened container was the baited one, no additional calculations needed
+                            if(opened_ctr_end_pos == baited_ctr_end_pos):
+                                relative_pos = 'baited'
+                            else:
+                                # if a non-baited container was opened
+                                if(self.scene['goal']['sceneInfo']['numberOfContainers'] == 2):
+                                    relative_pos = ('left' if opened_ctr_end_pos < baited_ctr_end_pos else 'right')
+                                else:
+                                    # three container case
+                                    # we have the opened container info and the baited one, figure out where the third one is to get
+                                    # relative position of opened one to baited
+                                    third_ctr = [cl for cl in containers_and_lids if (cl['id'] not in [resolved_obj_id, baited_ctr_id])][0]
+                                    third_ctr_end_pos = find_shell_game_container_start_end(third_ctr)[-1]
+
+                                    if ((baited_ctr_end_pos < third_ctr_end_pos and baited_ctr_end_pos > opened_ctr_end_pos) or
+                                        (baited_ctr_end_pos < opened_ctr_end_pos and baited_ctr_end_pos > third_ctr_end_pos)):
+                                        # baited is in the middle
+                                        relative_pos = 'left' if opened_ctr_end_pos < baited_ctr_end_pos else 'right'
+                                    else:
+                                        # baited is on one of the ends
+                                        if(baited_ctr_end_pos < third_ctr_end_pos and baited_ctr_end_pos < opened_ctr_end_pos):
+                                            # baited on left
+                                            relative_pos = 'middle' if opened_ctr_end_pos < third_ctr_end_pos else 'opposite'
+                                        else:
+                                            # baited on right
+                                            relative_pos = 'middle' if third_ctr_end_pos < opened_ctr_end_pos else 'opposite'
+
                             found_container = True
                             break
             if found_container:
                 break
-        self.shell_game_baited_container = shell_game_baited_container
+
+        self.shell_game_opened_container_position_relative_to_baited = relative_pos
         self.shell_game_opened_container = shell_game_opened_container
-        return self.shell_game_baited_container, self.shell_game_opened_container
+        return self.shell_game_opened_container_position_relative_to_baited, self.shell_game_opened_container
 
     def calc_door_opened_side(self):
         ''' 
