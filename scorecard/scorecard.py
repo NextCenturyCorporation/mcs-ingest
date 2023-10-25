@@ -1587,6 +1587,7 @@ class Scorecard:
 
         if('baitedContainerMovement' in self.scene['goal']['sceneInfo']):
             baited_ctr_end_pos = self.scene['goal']['sceneInfo']['baitedContainerMovement'][-1]
+            baited_ctr_id = [cl for cl in containers_and_lids if cl['isTargetContainer']][0]['id']
         else:
             # in case the tag isn't in the scene file, calculate baited container movement
             for cl in containers_and_lids:
@@ -1619,7 +1620,8 @@ class Scorecard:
                                     # three container case
                                     # we have the opened container info and the baited one, figure out where the third one is to get
                                     # relative position of opened one to baited
-                                    third_ctr = [cl for cl in containers_and_lids if (cl['id'] not in [resolved_obj_id, baited_ctr_id])][0]
+                                    third_ctr = [cl for cl in containers_and_lids if ((cl['id'] not in [resolved_obj_id, baited_ctr_id])
+                                                 and (cl['lid'] not in [resolved_obj_id, baited_ctr_id]))][0]
                                     third_ctr_end_pos = find_shell_game_container_start_end(third_ctr)[-1]
 
                                     if ((baited_ctr_end_pos < third_ctr_end_pos and baited_ctr_end_pos > opened_ctr_end_pos) or
