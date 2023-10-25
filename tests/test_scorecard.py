@@ -104,6 +104,13 @@ TEST_HISTORY_SHELL_GAME_2_CROSS_CROSSED_PICKED_DISPLACEMENT = "shell_game/shellg
 TEST_SCENE_SHELL_GAME_3_LATERAL_SUBSTITUTION_SUBSTITUTED_PICKED_NO_DISPLACEMENT = "shell_game/shellgame_0001_08_H1_debug.json"
 TEST_HISTORY_SHELL_GAME_3_LATERAL_SUBSTITUTION_SUBSTITUTED_PICKED_NO_DISPLACEMENT = "shell_game/shellgame_0001_08_history.json"
 
+TEST_SCENE_UPDATED_SHELL_GAME_3_LATERAL_DISPLACEMENT = "shell_game/shell-game_0004_02_B1_debug.json"
+TEST_HISTORY_UPDATED_SHELL_GAME_3_LATERAL_DISPLACEMENT = "shell_game/shell-game_0004_02-left.json"
+
+TEST_SCENE_UPDATED_SHELL_GAME_3_CROSS_DISPLACEMENT = "shell_game/shell-game_0004_10_J1_debug.json"
+TEST_HISTORY_UPDATED_SHELL_GAME_3_CROSS_DISPLACEMENT_CORRECT = "shell_game/shell-game_0004_10-correct.json"
+TEST_HISTORY_UPDATED_SHELL_GAME_3_CROSS_DISPLACEMENT_LEFT = "shell_game/shell-game_0004_10-left.json"
+
 TEST_SCENE_INTERACTIVE_COLLISION_DOOR_OPENED = "door_side/interactive_collision_0001_03_C1_debug.json"
 TEST_HISTORY_INTERACTIVE_COLLISION_DOOR_OPENED = "door_side/interactive_collision_0001_03_history.json"
 
@@ -283,7 +290,7 @@ class TestMcsScorecard(unittest.TestCase):
             'order_containers_are_opened_colors',
             'set_rotation_opened_container_position_absolute',
             'set_rotation_opened_container_position_relative_to_baited',
-            'shell_game_baited_container',
+            'shell_game_opened_container_position_relative_to_baited',
             'shell_game_opened_container',
             'door_opened_side',
             'interacted_with_blob_first',
@@ -937,7 +944,7 @@ class TestMcsScorecard(unittest.TestCase):
             TEST_FOLDER, TEST_HISTORY_SHELL_GAME_CROSS_BAITED_PICKED_DISPLACEMENT)
         scorecard = Scorecard(history_file, scene_file)
         scorecard.calc_shell_game()
-        assert scorecard.get_shell_game_baited_container() == '3 to 1'
+        assert scorecard.get_shell_game_opened_container_position_relative_to_baited() == 'baited'
         assert scorecard.get_shell_game_opened_container() == '3 to 1'
 
         scene_file = mcs_scene_ingest.load_json_file(
@@ -946,7 +953,7 @@ class TestMcsScorecard(unittest.TestCase):
             TEST_FOLDER, TEST_HISTORY_SHELL_GAME_3_LATERAL_SUBSTITUTION_BAITED_PICKED_DISPLACEMENT)
         scorecard = Scorecard(history_file, scene_file)
         scorecard.calc_shell_game()
-        assert scorecard.get_shell_game_baited_container() == '3 to 4'
+        assert scorecard.get_shell_game_opened_container_position_relative_to_baited() == 'baited'
         assert scorecard.get_shell_game_opened_container() == '3 to 4'
 
         scene_file = mcs_scene_ingest.load_json_file(
@@ -955,7 +962,7 @@ class TestMcsScorecard(unittest.TestCase):
             TEST_FOLDER, TEST_HISTORY_SHELL_GAME_2_LATERAL_BAITED_PICKED_NO_DISPLACEMENT)
         scorecard = Scorecard(history_file, scene_file)
         scorecard.calc_shell_game()
-        assert scorecard.get_shell_game_baited_container() == '4 to 5'
+        assert scorecard.get_shell_game_opened_container_position_relative_to_baited() == 'baited'
         assert scorecard.get_shell_game_opened_container() == '4 to 5'
 
         scene_file = mcs_scene_ingest.load_json_file(
@@ -964,7 +971,7 @@ class TestMcsScorecard(unittest.TestCase):
             TEST_FOLDER, TEST_HISTORY_SHELL_GAME_2_CROSS_CROSSED_PICKED_DISPLACEMENT)
         scorecard = Scorecard(history_file, scene_file)
         scorecard.calc_shell_game()
-        assert scorecard.get_shell_game_baited_container() == '4 to 2'
+        assert scorecard.get_shell_game_opened_container_position_relative_to_baited() == 'right'
         assert scorecard.get_shell_game_opened_container() == '3 to 3'
 
         scene_file = mcs_scene_ingest.load_json_file(
@@ -973,8 +980,35 @@ class TestMcsScorecard(unittest.TestCase):
             TEST_FOLDER, TEST_HISTORY_SHELL_GAME_3_LATERAL_SUBSTITUTION_SUBSTITUTED_PICKED_NO_DISPLACEMENT)
         scorecard = Scorecard(history_file, scene_file)
         scorecard.calc_shell_game()
-        assert scorecard.get_shell_game_baited_container() == '4 to 5'
+        assert scorecard.get_shell_game_opened_container_position_relative_to_baited() == 'middle'
         assert scorecard.get_shell_game_opened_container() == '3 to 4'
+
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_UPDATED_SHELL_GAME_3_LATERAL_DISPLACEMENT)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_UPDATED_SHELL_GAME_3_LATERAL_DISPLACEMENT)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_shell_game()
+        assert scorecard.get_shell_game_opened_container_position_relative_to_baited() == 'opposite'
+        assert scorecard.get_shell_game_opened_container() == '1 to 1'
+
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_UPDATED_SHELL_GAME_3_CROSS_DISPLACEMENT)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_UPDATED_SHELL_GAME_3_CROSS_DISPLACEMENT_CORRECT)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_shell_game()
+        assert scorecard.get_shell_game_opened_container_position_relative_to_baited() == 'baited'
+        assert scorecard.get_shell_game_opened_container() == '4 to 2'
+
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_UPDATED_SHELL_GAME_3_CROSS_DISPLACEMENT)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_UPDATED_SHELL_GAME_3_CROSS_DISPLACEMENT_LEFT)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_shell_game()
+        assert scorecard.get_shell_game_opened_container_position_relative_to_baited() == 'left'
+        assert scorecard.get_shell_game_opened_container() == '1 to 1'
 
     def test_calc_door_opened_side(self):
         scene_file = mcs_scene_ingest.load_json_file(
