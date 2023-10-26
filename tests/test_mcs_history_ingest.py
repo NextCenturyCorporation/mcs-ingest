@@ -717,7 +717,8 @@ class TestMcsHistoryIngest(unittest.TestCase):
                 "physics_frames_per_second": 20,
                 "return_status": "SUCCESSFUL",
                 "reward": -0.001,
-                "rotation": 90.0
+                "rotation": 90.0,
+                "steps_on_lava": 0
             },
             "delta_time_millis": 12464.299655999997,
             "target_visible": True
@@ -757,6 +758,7 @@ class TestMcsHistoryIngest(unittest.TestCase):
         self.assertEqual(new_step["output"]["return_status"], step["output"]["return_status"])
         self.assertEqual(new_step["output"]["reward"], step["output"]["reward"])
         self.assertEqual(new_step["output"]["rotation"], step["output"]["rotation"])
+        self.assertEqual(new_step["output"]["steps_on_lava"], step["output"]["steps_on_lava"])
         self.assertEqual(new_step["target_visible"], step["target_visible"])
         self.assertEqual(new_step["output"]["target"], step["output"]["goal"]["metadata"]["target"])
         self.assertEqual(interactive_reward, -0.001)
@@ -796,7 +798,8 @@ class TestMcsHistoryIngest(unittest.TestCase):
                 "physics_frames_per_second": 20,
                 "return_status": "SUCCESSFUL",
                 "reward": 0.999,
-                "rotation": 90.0
+                "rotation": 90.0,
+                "steps_on_lava": 1
             },
             "delta_time_millis": 12464.299655999997,
             "target_visible": True
@@ -836,6 +839,7 @@ class TestMcsHistoryIngest(unittest.TestCase):
         self.assertEqual(new_step["output"]["return_status"], step["output"]["return_status"])
         self.assertEqual(new_step["output"]["reward"], step["output"]["reward"])
         self.assertEqual(new_step["output"]["rotation"], step["output"]["rotation"])
+        self.assertEqual(new_step["output"]["steps_on_lava"], step["output"]["steps_on_lava"])
         self.assertEqual(new_step["target_visible"], step["target_visible"])
         self.assertEqual(new_step["output"]["target"], step["output"]["goal"]["metadata"]["target"])
         self.assertEqual(interactive_reward, 0.999)

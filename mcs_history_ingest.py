@@ -536,6 +536,7 @@ def build_new_step_obj(
         output["return_status"] = step["output"]["return_status"]
         output["reward"] = step["output"]["reward"]
         output["rotation"] = step["output"]["rotation"]
+        output["steps_on_lava"] = step["output"]["steps_on_lava"]
         # TODO: Added if check because key error in 3.75 and earlier
         if "physics_frames_per_second" in step["output"]:
             output["physics_frames_per_second"] = step[

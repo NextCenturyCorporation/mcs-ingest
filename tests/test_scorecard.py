@@ -139,6 +139,18 @@ TEST_HISTORY_TOOL_CHOICE_PICKUP_TARGET = (
     "tool_choice_pickup_target_history.json"
 )
 
+TEST_SCENE_TOOL_USE = "eval_6_lima_0001_02_debug.json"
+TEST_HISTORY_TOOL_USE = "eval_6_lima_0001_02_tool_usage_hist.json"
+
+TEST_SCENE_MULTI_TOOL = "multi_tool/multi-tool_0001_01_scene_debug.json"
+TEST_HISTORY_MULTI_TOOL_BOTH_TOOLS_ROTATED = "multi_tool/multi-tool_0001_01_both_rotated.json"
+TEST_HISTORY_MULTI_TOOL_NO_TOOLS_USED = "multi_tool/multi-tool_0001_01_no_tools_used.json"
+TEST_HISTORY_MULTI_TOOL_HOOKED_ROTATED = "multi_tool/multi-tool_0001_01_hooked_tool_rotated.json"
+TEST_HISTORY_MULTI_TOOL_RECT_ROTATED = "multi_tool/multi-tool_0001_01_rect_tool_rotated.json"
+
+TEST_SCENE_LAVA_STEP = "eval_6_mars_0010_01_debug.json"
+TEST_HISTORY_LAVA_STEP = "eval_6_mars_0010_01_lava_step_hist.json"
+
 TEST_FOLDER = "./tests/test_data"
 
 # Hide all non-error log messages while running these unit tests.
@@ -274,7 +286,8 @@ class TestMcsScorecard(unittest.TestCase):
             'shell_game_baited_container',
             'shell_game_opened_container',
             'door_opened_side',
-            'interacted_with_blob_first']
+            'interacted_with_blob_first',
+            'stepped_in_lava']
         )
 
     def test_get_lookpoint(self):
@@ -1253,3 +1266,105 @@ class TestMcsScorecard(unittest.TestCase):
         scorecard = Scorecard(history_file, scene_file)
         scorecard.calc_pickup_non_target()
         assert scorecard.get_pickup_non_target() is True
+
+    def test_basic_tool_usage_stats(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_TOOL_USE)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_TOOL_USE)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_tool_usage()
+        tool_usage = scorecard.get_tool_usage()
+        expected = {'PushObject': 2, 'PullObject': 3, 'MoveObject': 2}
+        assert tool_usage == expected
+
+    def test_stepped_in_lava_false(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_TOOL_USE)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_TOOL_USE)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_stepped_in_lava()
+        lava_step = scorecard.get_stepped_in_lava()
+        assert lava_step is False
+
+    def test_stepped_in_lava_true(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_LAVA_STEP)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_LAVA_STEP)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_stepped_in_lava()
+        lava_step = scorecard.get_stepped_in_lava()
+        assert lava_step is True
+
+    def test_multi_tool_choice_stats_both_tools(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_MULTI_TOOL)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_MULTI_TOOL_BOTH_TOOLS_ROTATED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_tool_usage()
+        tool_usage = scorecard.get_tool_usage()
+        expected = {
+            'PushObject_failed': 21, 
+            'PushObject': 43, 
+            'RotateObject': 3,
+            'RotateObject_failed': 1, 
+            'total_tools_used': 2, 
+            'is_hooked_rotated': True, 
+            'is_straight_rotated': True
+        }
+        assert tool_usage == expected
+
+
+    def test_multi_tool_choice_stats_no_tools_used(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_MULTI_TOOL)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_MULTI_TOOL_NO_TOOLS_USED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_tool_usage()
+        tool_usage = scorecard.get_tool_usage()
+        expected = {
+            'total_tools_used': 0,
+            'is_hooked_rotated': False, 
+            'is_straight_rotated': False
+        }
+        assert tool_usage == expected
+
+    def test_multi_tool_choice_stats_straight_tool_rotated(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_MULTI_TOOL)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_MULTI_TOOL_RECT_ROTATED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_tool_usage()
+        tool_usage = scorecard.get_tool_usage()
+        expected = {
+            'PushObject': 1,
+            'RotateObject': 1,
+            'total_tools_used': 1,
+            'is_hooked_rotated': False, 
+            'is_straight_rotated': True
+        }
+        assert tool_usage == expected
+
+    def test_multi_tool_choice_stats_hooked_tool_rotated(self):
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_MULTI_TOOL)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_MULTI_TOOL_HOOKED_ROTATED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_tool_usage()
+        tool_usage = scorecard.get_tool_usage()
+        expected = {
+            'PushObject_failed': 8,
+            'PushObject': 31,
+            'RotateObject_failed': 1,
+            'RotateObject': 1,
+            'total_tools_used': 2, 
+            'is_hooked_rotated': True, 
+            'is_straight_rotated': False
+        }
+        assert tool_usage == expected

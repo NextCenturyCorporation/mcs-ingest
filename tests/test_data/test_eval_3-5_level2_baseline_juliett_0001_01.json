@@ -252,6 +252,7 @@
         "reward": -0.001,
         "rotation": 0.0,
         "step_number": 1,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -499,6 +500,7 @@
         "reward": -0.002,
         "rotation": 0.0,
         "step_number": 2,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -746,6 +748,7 @@
         "reward": -0.003,
         "rotation": 0.0,
         "step_number": 3,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -993,6 +996,7 @@
         "reward": -0.004,
         "rotation": 0.0,
         "step_number": 4,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -1240,6 +1244,7 @@
         "reward": -0.005,
         "rotation": 0.0,
         "step_number": 5,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -1487,6 +1492,7 @@
         "reward": -0.006,
         "rotation": 0.0,
         "step_number": 6,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -1734,6 +1740,7 @@
         "reward": -0.007,
         "rotation": 0.0,
         "step_number": 7,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -1981,6 +1988,7 @@
         "reward": -0.008,
         "rotation": 0.0,
         "step_number": 8,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -2228,6 +2236,7 @@
         "reward": -0.009000000000000001,
         "rotation": 0.0,
         "step_number": 9,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -2475,6 +2484,7 @@
         "reward": -0.01,
         "rotation": 0.0,
         "step_number": 10,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -2722,6 +2732,7 @@
         "reward": -0.011,
         "rotation": 0.0,
         "step_number": 11,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -2969,6 +2980,7 @@
         "reward": -0.012,
         "rotation": 0.0,
         "step_number": 12,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -3216,6 +3228,7 @@
         "reward": -0.013000000000000001,
         "rotation": 0.0,
         "step_number": 13,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -3463,6 +3476,7 @@
         "reward": -0.014,
         "rotation": 0.0,
         "step_number": 14,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -3710,6 +3724,7 @@
         "reward": -0.015,
         "rotation": 0.0,
         "step_number": 15,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -3957,6 +3972,7 @@
         "reward": -0.016,
         "rotation": 0.0,
         "step_number": 16,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -4204,6 +4220,7 @@
         "reward": -0.017,
         "rotation": 0.0,
         "step_number": 17,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -4451,6 +4468,7 @@
         "reward": -0.018000000000000002,
         "rotation": 0.0,
         "step_number": 18,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -4698,6 +4716,7 @@
         "reward": -0.019,
         "rotation": 0.0,
         "step_number": 19,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -4945,6 +4964,7 @@
         "reward": -0.02,
         "rotation": 0.0,
         "step_number": 20,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -5192,6 +5212,7 @@
         "reward": -0.021,
         "rotation": 0.0,
         "step_number": 21,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -5439,6 +5460,7 @@
         "reward": -0.022,
         "rotation": 0.0,
         "step_number": 22,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -5686,6 +5708,7 @@
         "reward": -0.023,
         "rotation": 0.0,
         "step_number": 23,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -5933,6 +5956,7 @@
         "reward": -0.024,
         "rotation": 0.0,
         "step_number": 24,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -6180,6 +6204,7 @@
         "reward": -0.025,
         "rotation": 0.0,
         "step_number": 25,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -6427,6 +6452,7 @@
         "reward": -0.026000000000000002,
         "rotation": 0.0,
         "step_number": 26,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -6674,6 +6700,7 @@
         "reward": -0.027,
         "rotation": 0.0,
         "step_number": 27,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -6921,6 +6948,7 @@
         "reward": -0.028,
         "rotation": 0.0,
         "step_number": 28,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -7168,6 +7196,7 @@
         "reward": -0.029,
         "rotation": 0.0,
         "step_number": 29,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -7415,6 +7444,7 @@
         "reward": -0.03,
         "rotation": 0.0,
         "step_number": 30,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -7662,6 +7692,7 @@
         "reward": -0.031,
         "rotation": 0.0,
         "step_number": 31,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -7909,6 +7940,7 @@
         "reward": -0.032,
         "rotation": 0.0,
         "step_number": 32,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -8156,6 +8188,7 @@
         "reward": -0.033,
         "rotation": 0.0,
         "step_number": 33,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -8403,6 +8436,7 @@
         "reward": -0.034,
         "rotation": 0.0,
         "step_number": 34,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -8650,6 +8684,7 @@
         "reward": -0.035,
         "rotation": 0.0,
         "step_number": 35,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -8897,6 +8932,7 @@
         "reward": -0.036000000000000004,
         "rotation": 0.0,
         "step_number": 36,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -9144,6 +9180,7 @@
         "reward": -0.037,
         "rotation": 0.0,
         "step_number": 37,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -9391,6 +9428,7 @@
         "reward": -0.038,
         "rotation": 0.0,
         "step_number": 38,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -9638,6 +9676,7 @@
         "reward": -0.039,
         "rotation": 0.0,
         "step_number": 39,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -9885,6 +9924,7 @@
         "reward": -0.04,
         "rotation": 0.0,
         "step_number": 40,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -10132,6 +10172,7 @@
         "reward": -0.041,
         "rotation": 0.0,
         "step_number": 41,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -10379,6 +10420,7 @@
         "reward": -0.042,
         "rotation": 0.0,
         "step_number": 42,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -10626,6 +10668,7 @@
         "reward": -0.043000000000000003,
         "rotation": 0.0,
         "step_number": 43,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -10873,6 +10916,7 @@
         "reward": -0.044,
         "rotation": 0.0,
         "step_number": 44,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -11120,6 +11164,7 @@
         "reward": -0.045,
         "rotation": 0.0,
         "step_number": 45,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -11367,6 +11412,7 @@
         "reward": -0.046,
         "rotation": 0.0,
         "step_number": 46,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -11614,6 +11660,7 @@
         "reward": -0.047,
         "rotation": 0.0,
         "step_number": 47,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -11861,6 +11908,7 @@
         "reward": -0.048,
         "rotation": 0.0,
         "step_number": 48,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -12108,6 +12156,7 @@
         "reward": -0.049,
         "rotation": 0.0,
         "step_number": 49,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -12355,6 +12404,7 @@
         "reward": -0.05,
         "rotation": 0.0,
         "step_number": 50,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -12602,6 +12652,7 @@
         "reward": -0.051000000000000004,
         "rotation": 0.0,
         "step_number": 51,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -12849,6 +12900,7 @@
         "reward": -0.052000000000000005,
         "rotation": 0.0,
         "step_number": 52,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -13096,6 +13148,7 @@
         "reward": -0.053,
         "rotation": 0.0,
         "step_number": 53,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -13343,6 +13396,7 @@
         "reward": -0.054,
         "rotation": 0.0,
         "step_number": 54,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -13590,6 +13644,7 @@
         "reward": -0.055,
         "rotation": 0.0,
         "step_number": 55,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -13837,6 +13892,7 @@
         "reward": -0.056,
         "rotation": 0.0,
         "step_number": 56,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -14084,6 +14140,7 @@
         "reward": -0.057,
         "rotation": 0.0,
         "step_number": 57,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -14331,6 +14388,7 @@
         "reward": -0.058,
         "rotation": 0.0,
         "step_number": 58,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -14578,6 +14636,7 @@
         "reward": -0.059000000000000004,
         "rotation": 0.0,
         "step_number": 59,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     },
@@ -14825,6 +14884,7 @@
         "reward": -0.06,
         "rotation": 0.0,
         "step_number": 60,
+        "steps_on_lava": 0,
         "structural_object_list": null
       }
     }
