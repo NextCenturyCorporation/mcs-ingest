@@ -1458,20 +1458,77 @@ class Scorecard:
         '''
         steps_list = self.history['steps']
         """
+
+        Eval 6:
         Absolute Container Position
-             1
-             |  
-        4 -- 5 -- 2
-             |  
-             3
+               1
+               |
+               |
+               |
+        4 ---- 5 ---- 2
+               |
+               |
+               |
+               3
           Performer
+
+        positions:
+         1: far
+         3: near
+         5: middle
+         4: left
+         2: right
+
+
+        For Eval 7 we need:
+
+        Absolute Container Position
+                1
+                |               positions same as old, along with:
+                6               6: farMiddle
+                |               7: rightMiddle
+        4 --9-- 5 --7-- 2       8: nearMiddle
+                |               9: left Middle
+                8
+                |
+                3
+            Performer
+
+
+        if baited container is in the middle, relative keyword will be:
+        {
+            1: 'far',
+            2: 'right',
+            3: 'near',
+            4: 'left',
+            6: 'farMiddle',
+            7: 'rightMiddle',
+            8: 'nearMiddle',
+            9: 'leftMiddle'
+        }
+
+
+        if baited container is not in middle:
+        3 container case:
+        [ ]           [ ]           [ ]
+        baited      middle      opposite
+
+
+        5 container case:
+        [ ]    [ ]    [ ]    [ ]    [ ]
+        ???
+
         """
         absolute_positions = {
             1: (0, 2.62),
             2: (1.62, 1),
-            3: (0, 0.62),
+            3: (0, -0.62),
             4: (-1.62, 1),
-            5: (0, 1)
+            5: (0, 1),
+            6: (0, 1.81),
+            7: (0.81, 1),
+            8: (0, 0.19),
+            9: (-0.81, 1)
         }
         self.set_rotation_opened_container_position_absolute = ''
         self.set_rotation_opened_container_position_relative_to_baited = ''
@@ -1513,7 +1570,7 @@ class Scorecard:
                     continue
                 increments = int(rotation / 90 * (
                     -1 if rotation_direction.startswith('counter') else 1))
-                edge_positions = [1, 2, 3, 4]
+                edge_positions = [1, 2, 3, 4] if absolute_pos in [1, 2, 3, 4] else [6, 7, 8, 9]
                 end_pos = edge_positions[
                     (edge_positions.index(absolute_pos) + increments) % len(edge_positions)]
                 cl['absolute_pos_end'] = end_pos
@@ -1524,11 +1581,33 @@ class Scorecard:
             if isSideContainer:
                 for cl in containers_and_lids:
                     cl['relative_to_baited'] = (
+                        # middle
+                        # TODO: MCS-1985: do we need more cases here? i think so....
+                        # hasFiveCtrs = len(containers_and_lids) == 5
                         'baited' if cl['start_position_x'] == target_x else
                         'middle' if cl['start_position_x'] == 0 else
                         'opposite')
             else:
-                absolute_pos_to_relative_dict = {1: 'far', 2: 'right', 3: 'near', 4: 'left'}
+                # TODO: MCS-1985:
+                # absolute_pos_to_relative_dict = {1: 'far', 2: 'right', 3: 'near', 4: 'left'}
+                # rerun existing tests to make sure they still work (should be fine)
+                """"
+                Absolute Container Position
+                            1
+                            |
+                            6
+                            |
+                    4 --9-- 5 --7-- 2
+                            |
+                            8
+                            |
+                            3
+                        Performer
+
+                """
+                absolute_pos_to_relative_dict = {1: 'far', 2: 'right', 3: 'near', 4: 'left',
+                                                 6: 'farMiddle', 7: 'rightMiddle',
+                                                 8: 'nearMiddle', 9: 'leftMiddle'}
                 for cl in containers_and_lids:
                     if cl['start_position_x'] == target_x:
                         cl['relative_to_baited'] = 'baited'
