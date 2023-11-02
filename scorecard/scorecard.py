@@ -1547,16 +1547,9 @@ class Scorecard:
                         mid_right_x = absolute_positions.get(7)[0]
                         right_x = absolute_positions.get(2)[0]
 
-                        # need to reverse labeling direction in this case
-                        flipped = (
-                            (rotation_direction.startswith(('counter')) and rotation == 270) or
-                            (rotation_direction.startswith(('clock')) and rotation == 90) or
-                            rotation == 180)
-
-                        if(baited_ctr['start_position_x'] == left_x or 
-                            (baited_ctr['start_position_x'] == right_x and flipped)):
+                        if(baited_ctr['start_position_x'] == left_x):
                             """
-                            baited on the left (or nearest to performer) after rotation:
+                            baited on the left:
                                     [ ]        [ ]          [ ]           [ ]        [ ]
                                   baited    baited + 1   baited + 2   baited + 3   opposite
 
@@ -1567,10 +1560,9 @@ class Scorecard:
                                 'baited + 2' if cl['start_position_x'] == middle else
                                 'baited + 3' if cl['start_position_x'] == mid_right_x else
                                 'opposite')
-                        elif(baited_ctr['start_position_x'] == mid_left_x or
-                            (baited_ctr['start_position_x'] == mid_right_x and flipped)):
+                        elif(baited_ctr['start_position_x'] == mid_left_x):
                             """
-                            baited between middle container and left (or nearest) after rotation:
+                            baited between middle container and left:
                                    [ ]          [ ]        [ ]        [ ]         [ ]
                                 baited - 1     baited  baited + 1   opposite   baited + 3
 
@@ -1581,10 +1573,9 @@ class Scorecard:
                                 'opposite' if cl['start_position_x'] == mid_right_x else
                                 'baited + 3' if cl['start_position_x'] == right_x else
                                 'baited - 1')
-                        elif(baited_ctr['start_position_x'] == mid_right_x or
-                            (baited_ctr['start_position_x'] == mid_left_x and flipped)):
+                        elif(baited_ctr['start_position_x'] == mid_right_x):
                             """
-                                baited between middle container and right (or furthest) after rotation:
+                                baited between middle container and right:
                                     [ ]           [ ]        [ ]         [ ]       [ ]
                                   baited - 3   opposite   baited - 1   baited   baited + 1
                             """
@@ -1596,7 +1587,7 @@ class Scorecard:
                                 'baited - 3')
                         else:
                             """
-                               baited on right (or furthest from performer) after rotation:
+                               baited on right:
                                   [ ]          [ ]          [ ]           [ ]         [ ]
                                 opposite   baited - 3   baited - 2     baited - 1   baited
                             """
