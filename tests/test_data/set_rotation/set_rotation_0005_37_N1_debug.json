@@ -1,0 +1,3474 @@
+{
+  "debug": {
+    "floorColors": [
+      "red"
+    ],
+    "wallColors": [
+      "brown"
+    ],
+    "containsSeparateLids": true,
+    "evaluationOnly": true,
+    "hypercubeNumber": 5,
+    "sceneNumber": 37,
+    "evaluation": "Evaluation 7 Scenes",
+    "training": false
+  },
+  "goal": {
+    "action_list": [["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"],["Pass"]],
+    "category": "retrieval",
+    "description": "Find and pick up the tiny light black white rubber ball.",
+    "last_step": 2900,
+    "metadata": {
+      "target": {
+        "id": "80fcbc13-9eb3-4269-89b2-7c7ec5f80040",
+        "info": ["tiny","light","black","white","rubber","ball","black white","tiny light","tiny rubber","tiny black white","tiny ball","light rubber","light black white","light ball","rubber black white","rubber ball","black white ball","tiny light black white rubber ball","target"]
+      }
+    },
+    "domainsInfo": {
+      "objects": [],
+      "places": [],
+      "agents": [],
+      "all": []
+    },
+    "objectsInfo": {
+      "all": [
+        "small wood",
+        "magenta placer",
+        "massive wood",
+        "structural",
+        "grey",
+        "wood",
+        "uncontained",
+        "rubber",
+        "tiny black white",
+        "black white",
+        "massive container",
+        "rubber black white",
+        "tiny lid",
+        "green container",
+        "wood lid",
+        "light rubber",
+        "trained size",
+        "small container",
+        "tiny light black white rubber ball",
+        "tiny green",
+        "turntable",
+        "massive lid",
+        "trained category",
+        "magenta",
+        "cyan",
+        "rubber ball",
+        "tiny light",
+        "massive green",
+        "tiny massive green wood lid",
+        "target",
+        "trained combination",
+        "small",
+        "magenta cyan placer",
+        "massive",
+        "black white ball",
+        "light black white",
+        "tiny",
+        "placer",
+        "wood green",
+        "small massive green wood container",
+        "trained shape",
+        "tiny rubber",
+        "wood container",
+        "green lid",
+        "lid",
+        "container",
+        "black",
+        "ball",
+        "light",
+        "small green",
+        "tiny wood",
+        "green",
+        "white",
+        "tiny ball",
+        "small massive",
+        "trained color",
+        "tiny massive",
+        "grey turntable",
+        "light ball",
+        "cyan placer"
+      ],
+      "agent": [],
+      "blob": [],
+      "collider": [],
+      "confusor": [],
+      "container": [
+        "small wood",
+        "massive wood",
+        "wood",
+        "uncontained",
+        "massive container",
+        "green container",
+        "trained size",
+        "small container",
+        "trained category",
+        "massive green",
+        "trained combination",
+        "small",
+        "massive",
+        "wood green",
+        "small massive green wood container",
+        "trained shape",
+        "wood container",
+        "small green",
+        "green",
+        "small massive",
+        "trained color"
+      ],
+      "context": [],
+      "home": [],
+      "key": [],
+      "intuitive_physics_occluder": [],
+      "lid": [
+        "massive wood",
+        "wood",
+        "uncontained",
+        "tiny lid",
+        "wood lid",
+        "trained size",
+        "tiny green",
+        "massive lid",
+        "trained category",
+        "massive green",
+        "tiny massive green wood lid",
+        "trained combination",
+        "massive",
+        "tiny",
+        "wood green",
+        "trained shape",
+        "green lid",
+        "tiny wood",
+        "green",
+        "trained color",
+        "tiny massive"
+      ],
+      "non_target": [],
+      "obstacle": [],
+      "occluder": [],
+      "paddle": [],
+      "static_object": [],
+      "structural": [
+        "magenta placer",
+        "magenta cyan placer",
+        "grey",
+        "placer",
+        "turntable",
+        "magenta",
+        "cyan",
+        "grey turntable",
+        "cyan placer"
+      ],
+      "target": [
+        "uncontained",
+        "rubber",
+        "tiny black white",
+        "black white",
+        "rubber black white",
+        "light rubber",
+        "trained size",
+        "tiny light black white rubber ball",
+        "rubber ball",
+        "trained category",
+        "tiny light",
+        "trained combination",
+        "black white ball",
+        "light black white",
+        "tiny",
+        "tiny rubber",
+        "trained shape",
+        "black",
+        "ball",
+        "light",
+        "white",
+        "tiny ball",
+        "trained color",
+        "light ball"
+      ],
+      "tool": [],
+      "wall": [],
+      "guiderail": []
+    },
+    "sceneInfo": {
+      "primaryType": "interactive",
+      "secondaryType": "retrieval",
+      "tertiaryType": "set rotation",
+      "all": [
+        "interactive",
+        "retrieval",
+        "set rotation",
+        "container 5",
+        "lid 5",
+        "structural 7",
+        "target 1",
+        "container present",
+        "lid present",
+        "structural present",
+        "target present",
+        "container trained",
+        "lid trained",
+        "target trained",
+        "container trained category",
+        "lid trained category",
+        "target trained category",
+        "container trained color",
+        "lid trained color",
+        "target trained color",
+        "container trained combination",
+        "lid trained combination",
+        "target trained combination",
+        "container trained shape",
+        "lid trained shape",
+        "target trained shape",
+        "container trained size",
+        "lid trained size",
+        "target trained size",
+        "container uncontained",
+        "lid uncontained",
+        "target uncontained",
+        "setrot_N1",
+        "N1"
+      ],
+      "slices": [
+        "occluded no",
+        "degrees rotated 180",
+        "turntable or performer moves turntable",
+        "number of containers 5",
+        "landmark no"
+      ],
+      "skintone": null,
+      "ambiguous": null,
+      "angle": null,
+      "corner": null,
+      "correctDoor": null,
+      "direction": null,
+      "fallDown": null,
+      "knowledgeableAgentsDirectionOfFirstPlacer": null,
+      "leftAgentFacing": null,
+      "leftAgentPosition": null,
+      "rightAgentFacing": null,
+      "rightAgentPosition": null,
+      "knowledgeableAgentsLineOfSight": null,
+      "knowledgeableAgentsLocation": null,
+      "moveAcross": null,
+      "numFloorFeatures": null,
+      "pathRatio": null,
+      "rotation": "counterClockwise",
+      "sceneSetup": null,
+      "targetSide": null,
+      "tipsy": null,
+      "referenceSide": null,
+      "containersSide": null,
+      "containersKidnapRotation": null,
+      "containerTriggerOrderSides": null,
+      "agentFacingDirection": null,
+      "targetBinGlobalLocation": null,
+      "turntableContainerTargetSide": "middle",
+      "shellGameMovementDirection": null,
+      "shellGameContainerPicked": null,
+      "extensionSide": null,
+      "stableLandmarkWall": null,
+      "stableLandmarkContainer": null,
+      "unstableLandmarkStartingSide": null,
+      "unstableLandmarkType": null,
+      "degreesRotated": 180,
+      "turntableOrPerformerMoves": "turntable",
+      "numberOfContainers": 5,
+      "count": {
+        "all": 18,
+        "agent": 0,
+        "blob": 0,
+        "collider": 0,
+        "confusor": 0,
+        "container": 5,
+        "context": 0,
+        "home": 0,
+        "key": 0,
+        "intuitive_physics_occluder": 0,
+        "lid": 5,
+        "non_target": 0,
+        "obstacle": 0,
+        "occluder": 0,
+        "paddle": 0,
+        "static_object": 0,
+        "structural": 7,
+        "target": 1,
+        "tool": 0,
+        "wall": 0,
+        "guiderail": 0
+      },
+      "present": {
+        "agent": false,
+        "blob": false,
+        "collider": false,
+        "confusor": false,
+        "container": true,
+        "context": false,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "lid": true,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": false,
+        "paddle": false,
+        "static_object": false,
+        "structural": true,
+        "target": true,
+        "tool": false,
+        "wall": false,
+        "guiderail": false
+      },
+      "trained": {
+        "any": true,
+        "agent": false,
+        "blob": false,
+        "collider": false,
+        "confusor": false,
+        "container": true,
+        "context": false,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "lid": true,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": false,
+        "paddle": false,
+        "static_object": false,
+        "structural": false,
+        "target": true,
+        "tool": false,
+        "wall": false,
+        "guiderail": false
+      },
+      "trainedCategory": {
+        "any": true,
+        "agent": false,
+        "blob": false,
+        "collider": false,
+        "confusor": false,
+        "container": true,
+        "context": false,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "lid": true,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": false,
+        "paddle": false,
+        "static_object": false,
+        "structural": false,
+        "target": true,
+        "tool": false,
+        "wall": false,
+        "guiderail": false
+      },
+      "trainedColor": {
+        "any": true,
+        "agent": false,
+        "blob": false,
+        "collider": false,
+        "confusor": false,
+        "container": true,
+        "context": false,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "lid": true,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": false,
+        "paddle": false,
+        "static_object": false,
+        "structural": false,
+        "target": true,
+        "tool": false,
+        "wall": false,
+        "guiderail": false
+      },
+      "trainedCombination": {
+        "any": true,
+        "agent": false,
+        "blob": false,
+        "collider": false,
+        "confusor": false,
+        "container": true,
+        "context": false,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "lid": true,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": false,
+        "paddle": false,
+        "static_object": false,
+        "structural": false,
+        "target": true,
+        "tool": false,
+        "wall": false,
+        "guiderail": false
+      },
+      "trainedShape": {
+        "any": true,
+        "agent": false,
+        "blob": false,
+        "collider": false,
+        "confusor": false,
+        "container": true,
+        "context": false,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "lid": true,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": false,
+        "paddle": false,
+        "static_object": false,
+        "structural": false,
+        "target": true,
+        "tool": false,
+        "wall": false,
+        "guiderail": false
+      },
+      "trainedSize": {
+        "any": true,
+        "agent": false,
+        "blob": false,
+        "collider": false,
+        "confusor": false,
+        "container": true,
+        "context": false,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "lid": true,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": false,
+        "paddle": false,
+        "static_object": false,
+        "structural": false,
+        "target": true,
+        "tool": false,
+        "wall": false,
+        "guiderail": false
+      },
+      "untrained": {
+        "any": false,
+        "agent": false,
+        "blob": false,
+        "collider": false,
+        "confusor": false,
+        "container": false,
+        "context": false,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "lid": false,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": false,
+        "paddle": false,
+        "static_object": false,
+        "structural": false,
+        "target": false,
+        "tool": false,
+        "wall": false,
+        "guiderail": false
+      },
+      "untrainedCategory": {
+        "any": false,
+        "agent": false,
+        "blob": false,
+        "collider": false,
+        "confusor": false,
+        "container": false,
+        "context": false,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "lid": false,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": false,
+        "paddle": false,
+        "static_object": false,
+        "structural": false,
+        "target": false,
+        "tool": false,
+        "wall": false,
+        "guiderail": false
+      },
+      "untrainedColor": {
+        "any": false,
+        "agent": false,
+        "blob": false,
+        "collider": false,
+        "confusor": false,
+        "container": false,
+        "context": false,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "lid": false,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": false,
+        "paddle": false,
+        "static_object": false,
+        "structural": false,
+        "target": false,
+        "tool": false,
+        "wall": false,
+        "guiderail": false
+      },
+      "untrainedCombination": {
+        "any": false,
+        "agent": false,
+        "blob": false,
+        "collider": false,
+        "confusor": false,
+        "container": false,
+        "context": false,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "lid": false,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": false,
+        "paddle": false,
+        "static_object": false,
+        "structural": false,
+        "target": false,
+        "tool": false,
+        "wall": false,
+        "guiderail": false
+      },
+      "untrainedShape": {
+        "any": false,
+        "agent": false,
+        "blob": false,
+        "collider": false,
+        "confusor": false,
+        "container": false,
+        "context": false,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "lid": false,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": false,
+        "paddle": false,
+        "static_object": false,
+        "structural": false,
+        "target": false,
+        "tool": false,
+        "wall": false,
+        "guiderail": false
+      },
+      "untrainedSize": {
+        "any": false,
+        "agent": false,
+        "blob": false,
+        "collider": false,
+        "confusor": false,
+        "container": false,
+        "context": false,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "lid": false,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": false,
+        "paddle": false,
+        "static_object": false,
+        "structural": false,
+        "target": false,
+        "tool": false,
+        "wall": false,
+        "guiderail": false
+      },
+      "contained": {
+        "any": false,
+        "agent": false,
+        "blob": false,
+        "collider": false,
+        "confusor": false,
+        "container": false,
+        "context": false,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "lid": false,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": false,
+        "paddle": false,
+        "static_object": false,
+        "structural": false,
+        "target": false,
+        "tool": false,
+        "wall": false,
+        "guiderail": false
+      },
+      "uncontained": {
+        "any": false,
+        "agent": false,
+        "blob": false,
+        "collider": false,
+        "confusor": false,
+        "container": true,
+        "context": false,
+        "home": false,
+        "key": false,
+        "intuitive_physics_occluder": false,
+        "lid": true,
+        "non_target": false,
+        "obstacle": false,
+        "occluder": false,
+        "paddle": false,
+        "static_object": false,
+        "structural": false,
+        "target": true,
+        "tool": false,
+        "wall": false,
+        "guiderail": false
+      },
+      "occluded": "no",
+      "id": [
+        "N1"
+      ],
+      "containerBaited": "middle",
+      "containerBaitedIndex": "middle",
+      "landmark": "no",
+      "distance": 6.2936,
+      "name": "setrot_N1",
+      "hypercubeId": "setrot_N1_8FE7F986-62D4-4F2A-A36F-8D739CDB13B3",
+      "domainType": "interactive places",
+      "quaternaryType": "action variable"
+    }
+  },
+  "holes": [],
+  "isometric": false,
+  "lava": [],
+  "name": "set_rotation_0005_37",
+  "objects": [
+    {
+      "id": "80fcbc13-9eb3-4269-89b2-7c7ec5f80040",
+      "type": "soccer_ball",
+      "mass": 1.0,
+      "salientMaterials": ["rubber"],
+      "debug": {
+        "dimensions": {
+          "x": 0.22,
+          "y": 0.22,
+          "z": 0.22
+        },
+        "info": [
+          "tiny",
+          "light",
+          "black",
+          "white",
+          "rubber",
+          "ball",
+          "black white",
+          "tiny light",
+          "tiny rubber",
+          "tiny black white",
+          "tiny ball",
+          "light rubber",
+          "light black white",
+          "light ball",
+          "rubber black white",
+          "rubber ball",
+          "black white ball",
+          "tiny light black white rubber ball",
+          "target"
+        ],
+        "positionY": 0.11,
+        "role": "target",
+        "shape": [
+          "ball"
+        ],
+        "size": "tiny",
+        "untrainedCategory": false,
+        "untrainedColor": false,
+        "untrainedCombination": false,
+        "untrainedShape": false,
+        "untrainedSize": false,
+        "offset": {
+          "x": 0.0,
+          "y": 0.11,
+          "z": 0.0
+        },
+        "originalRotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "materialCategory": [],
+        "color": [
+          "black",
+          "white"
+        ],
+        "weight": "light",
+        "goalString": "tiny light black white rubber ball",
+        "salientMaterials": [
+          "rubber"
+        ],
+        "enclosedAreas": [],
+        "isAgent": false,
+        "isBlob": false,
+        "isCollider": false,
+        "isConfusor": false,
+        "isContainer": false,
+        "isContext": false,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isLid": false,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isPaddle": false,
+        "isStaticObject": false,
+        "isStructural": false,
+        "isTarget": true,
+        "isTool": false,
+        "isWall": false,
+        "isGuiderail": false
+      },
+      "moveable": true,
+      "pickupable": true,
+      "shows": [
+        {
+          "position": {
+            "x": 0.0,
+            "y": 4.4,
+            "z": 1.0
+          },
+          "rotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "boundingBox": [
+            {
+              "x": 0.11,
+              "y": 4.29,
+              "z": 1.11
+            },
+            {
+              "x": 0.11,
+              "y": 4.29,
+              "z": 0.89
+            },
+            {
+              "x": -0.11,
+              "y": 4.29,
+              "z": 0.89
+            },
+            {
+              "x": -0.11,
+              "y": 4.29,
+              "z": 1.11
+            },
+            {
+              "x": 0.11,
+              "y": 4.51,
+              "z": 1.11
+            },
+            {
+              "x": 0.11,
+              "y": 4.51,
+              "z": 0.89
+            },
+            {
+              "x": -0.11,
+              "y": 4.51,
+              "z": 0.89
+            },
+            {
+              "x": -0.11,
+              "y": 4.51,
+              "z": 1.11
+            }
+          ]
+        }
+      ],
+      "materials": [],
+      "kinematic": true,
+      "moves": [
+        {
+          "stepBegin": 0,
+          "stepEnd": 14,
+          "vector": {
+            "x": 0,
+            "y": -0.25,
+            "z": 0
+          }
+        }
+      ],
+      "togglePhysics": [
+        {
+          "stepBegin": 20
+        }
+      ]
+    },
+    {
+      "id": "e53871dc-cae6-4137-83c8-03c874896de4",
+      "type": "separate_container",
+      "mass": 4.0,
+      "salientMaterials": ["wood"],
+      "debug": {
+        "dimensions": {
+          "x": 0.4,
+          "y": 0.4,
+          "z": 0.4
+        },
+        "info": [
+          "small",
+          "massive",
+          "green",
+          "wood",
+          "container",
+          "small massive",
+          "small wood",
+          "small green",
+          "small container",
+          "massive wood",
+          "massive green",
+          "massive container",
+          "wood green",
+          "wood container",
+          "green container",
+          "small massive green wood container",
+          "container"
+        ],
+        "positionY": 0.0,
+        "role": "container",
+        "shape": [
+          "container"
+        ],
+        "size": "small",
+        "untrainedCategory": false,
+        "untrainedColor": false,
+        "untrainedCombination": false,
+        "untrainedShape": false,
+        "untrainedSize": false,
+        "offset": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "originalRotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "materialCategory": [],
+        "color": [
+          "green"
+        ],
+        "weight": "massive",
+        "goalString": "small massive green wood container",
+        "salientMaterials": [
+          "wood"
+        ],
+        "enclosedAreas": [
+          {
+            "id": "",
+            "dimensions": {
+              "x": 0.36,
+              "y": 0.384,
+              "z": 0.36
+            },
+            "position": {
+              "x": 0.0,
+              "y": 0.016,
+              "z": 0.0
+            }
+          }
+        ],
+        "isContainer": true,
+        "lidId": "b999d9fb-0651-41ef-846c-a30602eb7630",
+        "lidPlacerId": "placer_5f00ee39-d95e-45f7-be43-497072c5c3fc",
+        "isAgent": false,
+        "isBlob": false,
+        "isCollider": false,
+        "isConfusor": false,
+        "isContext": false,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isLid": false,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isPaddle": false,
+        "isStaticObject": false,
+        "isStructural": false,
+        "isTarget": false,
+        "isTool": false,
+        "isWall": false,
+        "isGuiderail": false
+      },
+      "receptacle": true,
+      "openable": true,
+      "shows": [
+        {
+          "position": {
+            "x": -1.62,
+            "y": 0.1,
+            "z": 1.0
+          },
+          "rotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 0.4,
+            "y": 0.4,
+            "z": 0.4
+          },
+          "boundingBox": [
+            {
+              "x": -1.42,
+              "y": 0.1,
+              "z": 1.2
+            },
+            {
+              "x": -1.42,
+              "y": 0.1,
+              "z": 0.8
+            },
+            {
+              "x": -1.82,
+              "y": 0.1,
+              "z": 0.8
+            },
+            {
+              "x": -1.82,
+              "y": 0.1,
+              "z": 1.2
+            },
+            {
+              "x": -1.42,
+              "y": 0.5,
+              "z": 1.2
+            },
+            {
+              "x": -1.42,
+              "y": 0.5,
+              "z": 0.8
+            },
+            {
+              "x": -1.82,
+              "y": 0.5,
+              "z": 0.8
+            },
+            {
+              "x": -1.82,
+              "y": 0.5,
+              "z": 1.2
+            }
+          ]
+        }
+      ],
+      "materials": ["Custom/Materials/GreenWoodMCS"]
+    },
+    {
+      "id": "4f2c4125-c437-4e4e-aadc-b339a8b99afd",
+      "type": "separate_container",
+      "mass": 4.0,
+      "salientMaterials": ["wood"],
+      "debug": {
+        "dimensions": {
+          "x": 0.4,
+          "y": 0.4,
+          "z": 0.4
+        },
+        "info": [
+          "small",
+          "massive",
+          "green",
+          "wood",
+          "container",
+          "small massive",
+          "small wood",
+          "small green",
+          "small container",
+          "massive wood",
+          "massive green",
+          "massive container",
+          "wood green",
+          "wood container",
+          "green container",
+          "small massive green wood container",
+          "container"
+        ],
+        "positionY": 0.0,
+        "role": "container",
+        "shape": [
+          "container"
+        ],
+        "size": "small",
+        "untrainedCategory": false,
+        "untrainedColor": false,
+        "untrainedCombination": false,
+        "untrainedShape": false,
+        "untrainedSize": false,
+        "offset": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "originalRotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "materialCategory": [],
+        "color": [
+          "green"
+        ],
+        "weight": "massive",
+        "goalString": "small massive green wood container",
+        "salientMaterials": [
+          "wood"
+        ],
+        "enclosedAreas": [
+          {
+            "id": "",
+            "dimensions": {
+              "x": 0.36,
+              "y": 0.384,
+              "z": 0.36
+            },
+            "position": {
+              "x": 0.0,
+              "y": 0.016,
+              "z": 0.0
+            }
+          }
+        ],
+        "isContainer": true,
+        "lidId": "56a105a3-5617-402e-8c51-8e1a5ebaab46",
+        "lidPlacerId": "placer_1d7e3d67-e216-4cd5-94d8-0d2f3b0b80f5",
+        "isAgent": false,
+        "isBlob": false,
+        "isCollider": false,
+        "isConfusor": false,
+        "isContext": false,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isLid": false,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isPaddle": false,
+        "isStaticObject": false,
+        "isStructural": false,
+        "isTarget": false,
+        "isTool": false,
+        "isWall": false,
+        "isGuiderail": false
+      },
+      "receptacle": true,
+      "openable": true,
+      "shows": [
+        {
+          "position": {
+            "x": -0.81,
+            "y": 0.1,
+            "z": 1.0
+          },
+          "rotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 0.4,
+            "y": 0.4,
+            "z": 0.4
+          },
+          "boundingBox": [
+            {
+              "x": -0.61,
+              "y": 0.1,
+              "z": 1.2
+            },
+            {
+              "x": -0.61,
+              "y": 0.1,
+              "z": 0.8
+            },
+            {
+              "x": -1.01,
+              "y": 0.1,
+              "z": 0.8
+            },
+            {
+              "x": -1.01,
+              "y": 0.1,
+              "z": 1.2
+            },
+            {
+              "x": -0.61,
+              "y": 0.5,
+              "z": 1.2
+            },
+            {
+              "x": -0.61,
+              "y": 0.5,
+              "z": 0.8
+            },
+            {
+              "x": -1.01,
+              "y": 0.5,
+              "z": 0.8
+            },
+            {
+              "x": -1.01,
+              "y": 0.5,
+              "z": 1.2
+            }
+          ]
+        }
+      ],
+      "materials": ["Custom/Materials/GreenWoodMCS"]
+    },
+    {
+      "id": "9306c39b-d582-4888-92f3-05b81ee915b4",
+      "type": "separate_container",
+      "mass": 4.0,
+      "salientMaterials": ["wood"],
+      "debug": {
+        "dimensions": {
+          "x": 0.4,
+          "y": 0.4,
+          "z": 0.4
+        },
+        "info": [
+          "small",
+          "massive",
+          "green",
+          "wood",
+          "container",
+          "small massive",
+          "small wood",
+          "small green",
+          "small container",
+          "massive wood",
+          "massive green",
+          "massive container",
+          "wood green",
+          "wood container",
+          "green container",
+          "small massive green wood container",
+          "container"
+        ],
+        "positionY": 0.0,
+        "role": "container",
+        "shape": [
+          "container"
+        ],
+        "size": "small",
+        "untrainedCategory": false,
+        "untrainedColor": false,
+        "untrainedCombination": false,
+        "untrainedShape": false,
+        "untrainedSize": false,
+        "offset": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "originalRotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "materialCategory": [],
+        "color": [
+          "green"
+        ],
+        "weight": "massive",
+        "goalString": "small massive green wood container",
+        "salientMaterials": [
+          "wood"
+        ],
+        "enclosedAreas": [
+          {
+            "id": "",
+            "dimensions": {
+              "x": 0.36,
+              "y": 0.384,
+              "z": 0.36
+            },
+            "position": {
+              "x": 0.0,
+              "y": 0.016,
+              "z": 0.0
+            }
+          }
+        ],
+        "isContainer": true,
+        "lidId": "fe804d12-d4e1-42c1-bd99-ba0b3725be95",
+        "lidPlacerId": "placer_40e37765-3e81-45a1-a635-5d122f945346",
+        "isAgent": false,
+        "isBlob": false,
+        "isCollider": false,
+        "isConfusor": false,
+        "isContext": false,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isLid": false,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isPaddle": false,
+        "isStaticObject": false,
+        "isStructural": false,
+        "isTarget": false,
+        "isTool": false,
+        "isWall": false,
+        "isGuiderail": false
+      },
+      "receptacle": true,
+      "openable": true,
+      "shows": [
+        {
+          "position": {
+            "x": 0.0,
+            "y": 0.1,
+            "z": 1.0
+          },
+          "rotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 0.4,
+            "y": 0.4,
+            "z": 0.4
+          },
+          "boundingBox": [
+            {
+              "x": 0.2,
+              "y": 0.1,
+              "z": 1.2
+            },
+            {
+              "x": 0.2,
+              "y": 0.1,
+              "z": 0.8
+            },
+            {
+              "x": -0.2,
+              "y": 0.1,
+              "z": 0.8
+            },
+            {
+              "x": -0.2,
+              "y": 0.1,
+              "z": 1.2
+            },
+            {
+              "x": 0.2,
+              "y": 0.5,
+              "z": 1.2
+            },
+            {
+              "x": 0.2,
+              "y": 0.5,
+              "z": 0.8
+            },
+            {
+              "x": -0.2,
+              "y": 0.5,
+              "z": 0.8
+            },
+            {
+              "x": -0.2,
+              "y": 0.5,
+              "z": 1.2
+            }
+          ]
+        }
+      ],
+      "materials": ["Custom/Materials/GreenWoodMCS"]
+    },
+    {
+      "id": "3e52f4ae-b781-4edf-b388-50f219c85f32",
+      "type": "separate_container",
+      "mass": 4.0,
+      "salientMaterials": ["wood"],
+      "debug": {
+        "dimensions": {
+          "x": 0.4,
+          "y": 0.4,
+          "z": 0.4
+        },
+        "info": [
+          "small",
+          "massive",
+          "green",
+          "wood",
+          "container",
+          "small massive",
+          "small wood",
+          "small green",
+          "small container",
+          "massive wood",
+          "massive green",
+          "massive container",
+          "wood green",
+          "wood container",
+          "green container",
+          "small massive green wood container",
+          "container"
+        ],
+        "positionY": 0.0,
+        "role": "container",
+        "shape": [
+          "container"
+        ],
+        "size": "small",
+        "untrainedCategory": false,
+        "untrainedColor": false,
+        "untrainedCombination": false,
+        "untrainedShape": false,
+        "untrainedSize": false,
+        "offset": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "originalRotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "materialCategory": [],
+        "color": [
+          "green"
+        ],
+        "weight": "massive",
+        "goalString": "small massive green wood container",
+        "salientMaterials": [
+          "wood"
+        ],
+        "enclosedAreas": [
+          {
+            "id": "",
+            "dimensions": {
+              "x": 0.36,
+              "y": 0.384,
+              "z": 0.36
+            },
+            "position": {
+              "x": 0.0,
+              "y": 0.016,
+              "z": 0.0
+            }
+          }
+        ],
+        "isContainer": true,
+        "lidId": "b9e6b2ad-eb5c-4d8b-8dd1-3f7bbaf5027e",
+        "lidPlacerId": "placer_5d03ec75-fe9b-4c94-848d-fd8851af1655",
+        "isAgent": false,
+        "isBlob": false,
+        "isCollider": false,
+        "isConfusor": false,
+        "isContext": false,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isLid": false,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isPaddle": false,
+        "isStaticObject": false,
+        "isStructural": false,
+        "isTarget": false,
+        "isTool": false,
+        "isWall": false,
+        "isGuiderail": false
+      },
+      "receptacle": true,
+      "openable": true,
+      "shows": [
+        {
+          "position": {
+            "x": 0.81,
+            "y": 0.1,
+            "z": 1.0
+          },
+          "rotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 0.4,
+            "y": 0.4,
+            "z": 0.4
+          },
+          "boundingBox": [
+            {
+              "x": 1.01,
+              "y": 0.1,
+              "z": 1.2
+            },
+            {
+              "x": 1.01,
+              "y": 0.1,
+              "z": 0.8
+            },
+            {
+              "x": 0.61,
+              "y": 0.1,
+              "z": 0.8
+            },
+            {
+              "x": 0.61,
+              "y": 0.1,
+              "z": 1.2
+            },
+            {
+              "x": 1.01,
+              "y": 0.5,
+              "z": 1.2
+            },
+            {
+              "x": 1.01,
+              "y": 0.5,
+              "z": 0.8
+            },
+            {
+              "x": 0.61,
+              "y": 0.5,
+              "z": 0.8
+            },
+            {
+              "x": 0.61,
+              "y": 0.5,
+              "z": 1.2
+            }
+          ]
+        }
+      ],
+      "materials": ["Custom/Materials/GreenWoodMCS"]
+    },
+    {
+      "id": "50d6a48b-e43b-43e5-8710-7a3d1d036a04",
+      "type": "separate_container",
+      "mass": 4.0,
+      "salientMaterials": ["wood"],
+      "debug": {
+        "dimensions": {
+          "x": 0.4,
+          "y": 0.4,
+          "z": 0.4
+        },
+        "info": [
+          "small",
+          "massive",
+          "green",
+          "wood",
+          "container",
+          "small massive",
+          "small wood",
+          "small green",
+          "small container",
+          "massive wood",
+          "massive green",
+          "massive container",
+          "wood green",
+          "wood container",
+          "green container",
+          "small massive green wood container",
+          "container"
+        ],
+        "positionY": 0.0,
+        "role": "container",
+        "shape": [
+          "container"
+        ],
+        "size": "small",
+        "untrainedCategory": false,
+        "untrainedColor": false,
+        "untrainedCombination": false,
+        "untrainedShape": false,
+        "untrainedSize": false,
+        "offset": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "originalRotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "materialCategory": [],
+        "color": [
+          "green"
+        ],
+        "weight": "massive",
+        "goalString": "small massive green wood container",
+        "salientMaterials": [
+          "wood"
+        ],
+        "enclosedAreas": [
+          {
+            "id": "",
+            "dimensions": {
+              "x": 0.36,
+              "y": 0.384,
+              "z": 0.36
+            },
+            "position": {
+              "x": 0.0,
+              "y": 0.016,
+              "z": 0.0
+            }
+          }
+        ],
+        "isContainer": true,
+        "lidId": "f953552a-a3c3-47de-aa76-27067f316097",
+        "lidPlacerId": "placer_72188638-f5b7-48b3-9781-600c54ebc50e",
+        "isAgent": false,
+        "isBlob": false,
+        "isCollider": false,
+        "isConfusor": false,
+        "isContext": false,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isLid": false,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isPaddle": false,
+        "isStaticObject": false,
+        "isStructural": false,
+        "isTarget": false,
+        "isTool": false,
+        "isWall": false,
+        "isGuiderail": false
+      },
+      "receptacle": true,
+      "openable": true,
+      "shows": [
+        {
+          "position": {
+            "x": 1.62,
+            "y": 0.1,
+            "z": 1.0
+          },
+          "rotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 0.4,
+            "y": 0.4,
+            "z": 0.4
+          },
+          "boundingBox": [
+            {
+              "x": 1.82,
+              "y": 0.1,
+              "z": 1.2
+            },
+            {
+              "x": 1.82,
+              "y": 0.1,
+              "z": 0.8
+            },
+            {
+              "x": 1.42,
+              "y": 0.1,
+              "z": 0.8
+            },
+            {
+              "x": 1.42,
+              "y": 0.1,
+              "z": 1.2
+            },
+            {
+              "x": 1.82,
+              "y": 0.5,
+              "z": 1.2
+            },
+            {
+              "x": 1.82,
+              "y": 0.5,
+              "z": 0.8
+            },
+            {
+              "x": 1.42,
+              "y": 0.5,
+              "z": 0.8
+            },
+            {
+              "x": 1.42,
+              "y": 0.5,
+              "z": 1.2
+            }
+          ]
+        }
+      ],
+      "materials": ["Custom/Materials/GreenWoodMCS"]
+    },
+    {
+      "id": "b999d9fb-0651-41ef-846c-a30602eb7630",
+      "type": "lid",
+      "mass": 0.1,
+      "salientMaterials": ["wood"],
+      "debug": {
+        "dimensions": {
+          "x": 0.4,
+          "y": 0.032,
+          "z": 0.4
+        },
+        "info": [
+          "tiny",
+          "massive",
+          "green",
+          "wood",
+          "lid",
+          "tiny massive",
+          "tiny wood",
+          "tiny green",
+          "tiny lid",
+          "massive wood",
+          "massive green",
+          "massive lid",
+          "wood green",
+          "wood lid",
+          "green lid",
+          "tiny massive green wood lid",
+          "lid"
+        ],
+        "positionY": 0.0,
+        "role": "lid",
+        "shape": [
+          "lid"
+        ],
+        "size": "tiny",
+        "untrainedCategory": false,
+        "untrainedColor": false,
+        "untrainedCombination": false,
+        "untrainedShape": false,
+        "untrainedSize": false,
+        "offset": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "originalRotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "materialCategory": [],
+        "color": [
+          "green"
+        ],
+        "weight": "massive",
+        "goalString": "tiny massive green wood lid",
+        "salientMaterials": [
+          "wood"
+        ],
+        "enclosedAreas": [],
+        "isAgent": false,
+        "isBlob": false,
+        "isCollider": false,
+        "isConfusor": false,
+        "isContainer": false,
+        "isContext": false,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isLid": true,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isPaddle": false,
+        "isStaticObject": false,
+        "isStructural": false,
+        "isTarget": false,
+        "isTool": false,
+        "isWall": false,
+        "isGuiderail": false
+      },
+      "openable": true,
+      "shows": [
+        {
+          "position": {
+            "x": -1.62,
+            "y": 4.5,
+            "z": 1.0
+          },
+          "rotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 0.4,
+            "y": 0.4,
+            "z": 0.4
+          },
+          "boundingBox": [
+            {
+              "x": -1.42,
+              "y": 0.5,
+              "z": 1.2
+            },
+            {
+              "x": -1.42,
+              "y": 0.5,
+              "z": 0.8
+            },
+            {
+              "x": -1.82,
+              "y": 0.5,
+              "z": 0.8
+            },
+            {
+              "x": -1.82,
+              "y": 0.5,
+              "z": 1.2
+            },
+            {
+              "x": -1.42,
+              "y": 0.532,
+              "z": 1.2
+            },
+            {
+              "x": -1.42,
+              "y": 0.532,
+              "z": 0.8
+            },
+            {
+              "x": -1.82,
+              "y": 0.532,
+              "z": 0.8
+            },
+            {
+              "x": -1.82,
+              "y": 0.532,
+              "z": 1.2
+            }
+          ]
+        }
+      ],
+      "materials": ["Custom/Materials/GreenWoodMCS"],
+      "lidAttachment": {
+        "stepBegin": 55,
+        "lidAttachmentObjId": "e53871dc-cae6-4137-83c8-03c874896de4"
+      },
+      "moves": [
+        {
+          "stepBegin": 40,
+          "stepEnd": 55,
+          "vector": {
+            "x": 0,
+            "y": -0.25,
+            "z": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "56a105a3-5617-402e-8c51-8e1a5ebaab46",
+      "type": "lid",
+      "mass": 0.1,
+      "salientMaterials": ["wood"],
+      "debug": {
+        "dimensions": {
+          "x": 0.4,
+          "y": 0.032,
+          "z": 0.4
+        },
+        "info": [
+          "tiny",
+          "massive",
+          "green",
+          "wood",
+          "lid",
+          "tiny massive",
+          "tiny wood",
+          "tiny green",
+          "tiny lid",
+          "massive wood",
+          "massive green",
+          "massive lid",
+          "wood green",
+          "wood lid",
+          "green lid",
+          "tiny massive green wood lid",
+          "lid"
+        ],
+        "positionY": 0.0,
+        "role": "lid",
+        "shape": [
+          "lid"
+        ],
+        "size": "tiny",
+        "untrainedCategory": false,
+        "untrainedColor": false,
+        "untrainedCombination": false,
+        "untrainedShape": false,
+        "untrainedSize": false,
+        "offset": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "originalRotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "materialCategory": [],
+        "color": [
+          "green"
+        ],
+        "weight": "massive",
+        "goalString": "tiny massive green wood lid",
+        "salientMaterials": [
+          "wood"
+        ],
+        "enclosedAreas": [],
+        "isAgent": false,
+        "isBlob": false,
+        "isCollider": false,
+        "isConfusor": false,
+        "isContainer": false,
+        "isContext": false,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isLid": true,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isPaddle": false,
+        "isStaticObject": false,
+        "isStructural": false,
+        "isTarget": false,
+        "isTool": false,
+        "isWall": false,
+        "isGuiderail": false
+      },
+      "openable": true,
+      "shows": [
+        {
+          "position": {
+            "x": -0.81,
+            "y": 4.5,
+            "z": 1.0
+          },
+          "rotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 0.4,
+            "y": 0.4,
+            "z": 0.4
+          },
+          "boundingBox": [
+            {
+              "x": -0.61,
+              "y": 0.5,
+              "z": 1.2
+            },
+            {
+              "x": -0.61,
+              "y": 0.5,
+              "z": 0.8
+            },
+            {
+              "x": -1.01,
+              "y": 0.5,
+              "z": 0.8
+            },
+            {
+              "x": -1.01,
+              "y": 0.5,
+              "z": 1.2
+            },
+            {
+              "x": -0.61,
+              "y": 0.532,
+              "z": 1.2
+            },
+            {
+              "x": -0.61,
+              "y": 0.532,
+              "z": 0.8
+            },
+            {
+              "x": -1.01,
+              "y": 0.532,
+              "z": 0.8
+            },
+            {
+              "x": -1.01,
+              "y": 0.532,
+              "z": 1.2
+            }
+          ]
+        }
+      ],
+      "materials": ["Custom/Materials/GreenWoodMCS"],
+      "lidAttachment": {
+        "stepBegin": 55,
+        "lidAttachmentObjId": "4f2c4125-c437-4e4e-aadc-b339a8b99afd"
+      },
+      "moves": [
+        {
+          "stepBegin": 40,
+          "stepEnd": 55,
+          "vector": {
+            "x": 0,
+            "y": -0.25,
+            "z": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "fe804d12-d4e1-42c1-bd99-ba0b3725be95",
+      "type": "lid",
+      "mass": 0.1,
+      "salientMaterials": ["wood"],
+      "debug": {
+        "dimensions": {
+          "x": 0.4,
+          "y": 0.032,
+          "z": 0.4
+        },
+        "info": [
+          "tiny",
+          "massive",
+          "green",
+          "wood",
+          "lid",
+          "tiny massive",
+          "tiny wood",
+          "tiny green",
+          "tiny lid",
+          "massive wood",
+          "massive green",
+          "massive lid",
+          "wood green",
+          "wood lid",
+          "green lid",
+          "tiny massive green wood lid",
+          "lid"
+        ],
+        "positionY": 0.0,
+        "role": "lid",
+        "shape": [
+          "lid"
+        ],
+        "size": "tiny",
+        "untrainedCategory": false,
+        "untrainedColor": false,
+        "untrainedCombination": false,
+        "untrainedShape": false,
+        "untrainedSize": false,
+        "offset": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "originalRotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "materialCategory": [],
+        "color": [
+          "green"
+        ],
+        "weight": "massive",
+        "goalString": "tiny massive green wood lid",
+        "salientMaterials": [
+          "wood"
+        ],
+        "enclosedAreas": [],
+        "isAgent": false,
+        "isBlob": false,
+        "isCollider": false,
+        "isConfusor": false,
+        "isContainer": false,
+        "isContext": false,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isLid": true,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isPaddle": false,
+        "isStaticObject": false,
+        "isStructural": false,
+        "isTarget": false,
+        "isTool": false,
+        "isWall": false,
+        "isGuiderail": false
+      },
+      "openable": true,
+      "shows": [
+        {
+          "position": {
+            "x": 0.0,
+            "y": 4.5,
+            "z": 1.0
+          },
+          "rotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 0.4,
+            "y": 0.4,
+            "z": 0.4
+          },
+          "boundingBox": [
+            {
+              "x": 0.2,
+              "y": 0.5,
+              "z": 1.2
+            },
+            {
+              "x": 0.2,
+              "y": 0.5,
+              "z": 0.8
+            },
+            {
+              "x": -0.2,
+              "y": 0.5,
+              "z": 0.8
+            },
+            {
+              "x": -0.2,
+              "y": 0.5,
+              "z": 1.2
+            },
+            {
+              "x": 0.2,
+              "y": 0.532,
+              "z": 1.2
+            },
+            {
+              "x": 0.2,
+              "y": 0.532,
+              "z": 0.8
+            },
+            {
+              "x": -0.2,
+              "y": 0.532,
+              "z": 0.8
+            },
+            {
+              "x": -0.2,
+              "y": 0.532,
+              "z": 1.2
+            }
+          ]
+        }
+      ],
+      "materials": ["Custom/Materials/GreenWoodMCS"],
+      "lidAttachment": {
+        "stepBegin": 55,
+        "lidAttachmentObjId": "9306c39b-d582-4888-92f3-05b81ee915b4"
+      },
+      "moves": [
+        {
+          "stepBegin": 40,
+          "stepEnd": 55,
+          "vector": {
+            "x": 0,
+            "y": -0.25,
+            "z": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "b9e6b2ad-eb5c-4d8b-8dd1-3f7bbaf5027e",
+      "type": "lid",
+      "mass": 0.1,
+      "salientMaterials": ["wood"],
+      "debug": {
+        "dimensions": {
+          "x": 0.4,
+          "y": 0.032,
+          "z": 0.4
+        },
+        "info": [
+          "tiny",
+          "massive",
+          "green",
+          "wood",
+          "lid",
+          "tiny massive",
+          "tiny wood",
+          "tiny green",
+          "tiny lid",
+          "massive wood",
+          "massive green",
+          "massive lid",
+          "wood green",
+          "wood lid",
+          "green lid",
+          "tiny massive green wood lid",
+          "lid"
+        ],
+        "positionY": 0.0,
+        "role": "lid",
+        "shape": [
+          "lid"
+        ],
+        "size": "tiny",
+        "untrainedCategory": false,
+        "untrainedColor": false,
+        "untrainedCombination": false,
+        "untrainedShape": false,
+        "untrainedSize": false,
+        "offset": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "originalRotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "materialCategory": [],
+        "color": [
+          "green"
+        ],
+        "weight": "massive",
+        "goalString": "tiny massive green wood lid",
+        "salientMaterials": [
+          "wood"
+        ],
+        "enclosedAreas": [],
+        "isAgent": false,
+        "isBlob": false,
+        "isCollider": false,
+        "isConfusor": false,
+        "isContainer": false,
+        "isContext": false,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isLid": true,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isPaddle": false,
+        "isStaticObject": false,
+        "isStructural": false,
+        "isTarget": false,
+        "isTool": false,
+        "isWall": false,
+        "isGuiderail": false
+      },
+      "openable": true,
+      "shows": [
+        {
+          "position": {
+            "x": 0.81,
+            "y": 4.5,
+            "z": 1.0
+          },
+          "rotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 0.4,
+            "y": 0.4,
+            "z": 0.4
+          },
+          "boundingBox": [
+            {
+              "x": 1.01,
+              "y": 0.5,
+              "z": 1.2
+            },
+            {
+              "x": 1.01,
+              "y": 0.5,
+              "z": 0.8
+            },
+            {
+              "x": 0.61,
+              "y": 0.5,
+              "z": 0.8
+            },
+            {
+              "x": 0.61,
+              "y": 0.5,
+              "z": 1.2
+            },
+            {
+              "x": 1.01,
+              "y": 0.532,
+              "z": 1.2
+            },
+            {
+              "x": 1.01,
+              "y": 0.532,
+              "z": 0.8
+            },
+            {
+              "x": 0.61,
+              "y": 0.532,
+              "z": 0.8
+            },
+            {
+              "x": 0.61,
+              "y": 0.532,
+              "z": 1.2
+            }
+          ]
+        }
+      ],
+      "materials": ["Custom/Materials/GreenWoodMCS"],
+      "lidAttachment": {
+        "stepBegin": 55,
+        "lidAttachmentObjId": "3e52f4ae-b781-4edf-b388-50f219c85f32"
+      },
+      "moves": [
+        {
+          "stepBegin": 40,
+          "stepEnd": 55,
+          "vector": {
+            "x": 0,
+            "y": -0.25,
+            "z": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "f953552a-a3c3-47de-aa76-27067f316097",
+      "type": "lid",
+      "mass": 0.1,
+      "salientMaterials": ["wood"],
+      "debug": {
+        "dimensions": {
+          "x": 0.4,
+          "y": 0.032,
+          "z": 0.4
+        },
+        "info": [
+          "tiny",
+          "massive",
+          "green",
+          "wood",
+          "lid",
+          "tiny massive",
+          "tiny wood",
+          "tiny green",
+          "tiny lid",
+          "massive wood",
+          "massive green",
+          "massive lid",
+          "wood green",
+          "wood lid",
+          "green lid",
+          "tiny massive green wood lid",
+          "lid"
+        ],
+        "positionY": 0.0,
+        "role": "lid",
+        "shape": [
+          "lid"
+        ],
+        "size": "tiny",
+        "untrainedCategory": false,
+        "untrainedColor": false,
+        "untrainedCombination": false,
+        "untrainedShape": false,
+        "untrainedSize": false,
+        "offset": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "originalRotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "materialCategory": [],
+        "color": [
+          "green"
+        ],
+        "weight": "massive",
+        "goalString": "tiny massive green wood lid",
+        "salientMaterials": [
+          "wood"
+        ],
+        "enclosedAreas": [],
+        "isAgent": false,
+        "isBlob": false,
+        "isCollider": false,
+        "isConfusor": false,
+        "isContainer": false,
+        "isContext": false,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isLid": true,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isPaddle": false,
+        "isStaticObject": false,
+        "isStructural": false,
+        "isTarget": false,
+        "isTool": false,
+        "isWall": false,
+        "isGuiderail": false
+      },
+      "openable": true,
+      "shows": [
+        {
+          "position": {
+            "x": 1.62,
+            "y": 4.5,
+            "z": 1.0
+          },
+          "rotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "stepBegin": 0,
+          "scale": {
+            "x": 0.4,
+            "y": 0.4,
+            "z": 0.4
+          },
+          "boundingBox": [
+            {
+              "x": 1.82,
+              "y": 0.5,
+              "z": 1.2
+            },
+            {
+              "x": 1.82,
+              "y": 0.5,
+              "z": 0.8
+            },
+            {
+              "x": 1.42,
+              "y": 0.5,
+              "z": 0.8
+            },
+            {
+              "x": 1.42,
+              "y": 0.5,
+              "z": 1.2
+            },
+            {
+              "x": 1.82,
+              "y": 0.532,
+              "z": 1.2
+            },
+            {
+              "x": 1.82,
+              "y": 0.532,
+              "z": 0.8
+            },
+            {
+              "x": 1.42,
+              "y": 0.532,
+              "z": 0.8
+            },
+            {
+              "x": 1.42,
+              "y": 0.532,
+              "z": 1.2
+            }
+          ]
+        }
+      ],
+      "materials": ["Custom/Materials/GreenWoodMCS"],
+      "lidAttachment": {
+        "stepBegin": 55,
+        "lidAttachmentObjId": "50d6a48b-e43b-43e5-8710-7a3d1d036a04"
+      },
+      "moves": [
+        {
+          "stepBegin": 40,
+          "stepEnd": 55,
+          "vector": {
+            "x": 0,
+            "y": -0.25,
+            "z": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "placer_974536c2-ffb9-4906-b242-8602fbd31304",
+      "type": "cylinder",
+      "mass": 1,
+      "materials": ["Custom/Materials/Magenta"],
+      "kinematic": true,
+      "structure": true,
+      "shows": [
+        {
+          "stepBegin": 0,
+          "position": {
+            "x": 0.0,
+            "y": 6.335,
+            "z": 1.0
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "scale": {
+            "x": 0.05,
+            "y": 1.825,
+            "z": 0.05
+          },
+          "boundingBox": [
+            {
+              "x": 0.025,
+              "y": 5.4225,
+              "z": 1.025
+            },
+            {
+              "x": 0.025,
+              "y": 5.4225,
+              "z": 0.975
+            },
+            {
+              "x": -0.025,
+              "y": 5.4225,
+              "z": 0.975
+            },
+            {
+              "x": -0.025,
+              "y": 5.4225,
+              "z": 1.025
+            },
+            {
+              "x": 0.025,
+              "y": 7.2475,
+              "z": 1.025
+            },
+            {
+              "x": 0.025,
+              "y": 7.2475,
+              "z": 0.975
+            },
+            {
+              "x": -0.025,
+              "y": 7.2475,
+              "z": 0.975
+            },
+            {
+              "x": -0.025,
+              "y": 7.2475,
+              "z": 1.025
+            }
+          ]
+        }
+      ],
+      "moves": [
+        {
+          "stepBegin": 0,
+          "stepEnd": 14,
+          "vector": {
+            "x": 0,
+            "y": -0.25,
+            "z": 0
+          }
+        },
+        {
+          "stepBegin": 25,
+          "stepEnd": 39,
+          "vector": {
+            "x": 0,
+            "y": 0.25,
+            "z": 0
+          }
+        }
+      ],
+      "changeMaterials": [
+        {
+          "stepBegin": 20,
+          "materials": [
+            "Custom/Materials/Cyan"
+          ]
+        }
+      ],
+      "debug": {
+        "color": [
+          "magenta",
+          "cyan"
+        ],
+        "info": [
+          "magenta",
+          "cyan",
+          "placer",
+          "magenta placer",
+          "cyan placer",
+          "magenta cyan placer",
+          "structural"
+        ],
+        "role": "structural",
+        "shape": [
+          "placer"
+        ],
+        "size": "medium",
+        "dimensions": {
+          "x": 0.05,
+          "y": 1.825,
+          "z": 0.05
+        },
+        "isAgent": false,
+        "isBlob": false,
+        "isCollider": false,
+        "isConfusor": false,
+        "isContainer": false,
+        "isContext": false,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isLid": false,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isPaddle": false,
+        "isStaticObject": false,
+        "isStructural": true,
+        "isTarget": false,
+        "isTool": false,
+        "isWall": false,
+        "isGuiderail": false
+      },
+      "states": [["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["inactive"]]
+    },
+    {
+      "id": "placer_5f00ee39-d95e-45f7-be43-497072c5c3fc",
+      "type": "cylinder",
+      "mass": 1,
+      "materials": ["Custom/Materials/Magenta"],
+      "kinematic": true,
+      "structure": true,
+      "shows": [
+        {
+          "stepBegin": 0,
+          "position": {
+            "x": -1.62,
+            "y": 6.282,
+            "z": 1.0
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "scale": {
+            "x": 0.08,
+            "y": 1.75,
+            "z": 0.08
+          },
+          "boundingBox": [
+            {
+              "x": -1.58,
+              "y": 5.407,
+              "z": 1.04
+            },
+            {
+              "x": -1.58,
+              "y": 5.407,
+              "z": 0.96
+            },
+            {
+              "x": -1.66,
+              "y": 5.407,
+              "z": 0.96
+            },
+            {
+              "x": -1.66,
+              "y": 5.407,
+              "z": 1.04
+            },
+            {
+              "x": -1.58,
+              "y": 7.157,
+              "z": 1.04
+            },
+            {
+              "x": -1.58,
+              "y": 7.157,
+              "z": 0.96
+            },
+            {
+              "x": -1.66,
+              "y": 7.157,
+              "z": 0.96
+            },
+            {
+              "x": -1.66,
+              "y": 7.157,
+              "z": 1.04
+            }
+          ]
+        }
+      ],
+      "moves": [
+        {
+          "stepBegin": 40,
+          "stepEnd": 55,
+          "vector": {
+            "x": 0,
+            "y": -0.25,
+            "z": 0
+          }
+        },
+        {
+          "stepBegin": 66,
+          "stepEnd": 81,
+          "vector": {
+            "x": 0,
+            "y": 0.25,
+            "z": 0
+          }
+        }
+      ],
+      "changeMaterials": [
+        {
+          "stepBegin": 61,
+          "materials": [
+            "Custom/Materials/Cyan"
+          ]
+        }
+      ],
+      "debug": {
+        "color": [
+          "magenta",
+          "cyan"
+        ],
+        "info": [
+          "magenta",
+          "cyan",
+          "placer",
+          "magenta placer",
+          "cyan placer",
+          "magenta cyan placer",
+          "structural"
+        ],
+        "role": "structural",
+        "shape": [
+          "placer"
+        ],
+        "size": "medium",
+        "dimensions": {
+          "x": 0.08,
+          "y": 1.75,
+          "z": 0.08
+        },
+        "isAgent": false,
+        "isBlob": false,
+        "isCollider": false,
+        "isConfusor": false,
+        "isContainer": false,
+        "isContext": false,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isLid": false,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isPaddle": false,
+        "isStaticObject": false,
+        "isStructural": true,
+        "isTarget": false,
+        "isTool": false,
+        "isWall": false,
+        "isGuiderail": false
+      },
+      "states": [["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["inactive"]]
+    },
+    {
+      "id": "placer_1d7e3d67-e216-4cd5-94d8-0d2f3b0b80f5",
+      "type": "cylinder",
+      "mass": 1,
+      "materials": ["Custom/Materials/Magenta"],
+      "kinematic": true,
+      "structure": true,
+      "shows": [
+        {
+          "stepBegin": 0,
+          "position": {
+            "x": -0.81,
+            "y": 6.282,
+            "z": 1.0
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "scale": {
+            "x": 0.08,
+            "y": 1.75,
+            "z": 0.08
+          },
+          "boundingBox": [
+            {
+              "x": -0.77,
+              "y": 5.407,
+              "z": 1.04
+            },
+            {
+              "x": -0.77,
+              "y": 5.407,
+              "z": 0.96
+            },
+            {
+              "x": -0.85,
+              "y": 5.407,
+              "z": 0.96
+            },
+            {
+              "x": -0.85,
+              "y": 5.407,
+              "z": 1.04
+            },
+            {
+              "x": -0.77,
+              "y": 7.157,
+              "z": 1.04
+            },
+            {
+              "x": -0.77,
+              "y": 7.157,
+              "z": 0.96
+            },
+            {
+              "x": -0.85,
+              "y": 7.157,
+              "z": 0.96
+            },
+            {
+              "x": -0.85,
+              "y": 7.157,
+              "z": 1.04
+            }
+          ]
+        }
+      ],
+      "moves": [
+        {
+          "stepBegin": 40,
+          "stepEnd": 55,
+          "vector": {
+            "x": 0,
+            "y": -0.25,
+            "z": 0
+          }
+        },
+        {
+          "stepBegin": 66,
+          "stepEnd": 81,
+          "vector": {
+            "x": 0,
+            "y": 0.25,
+            "z": 0
+          }
+        }
+      ],
+      "changeMaterials": [
+        {
+          "stepBegin": 61,
+          "materials": [
+            "Custom/Materials/Cyan"
+          ]
+        }
+      ],
+      "debug": {
+        "color": [
+          "magenta",
+          "cyan"
+        ],
+        "info": [
+          "magenta",
+          "cyan",
+          "placer",
+          "magenta placer",
+          "cyan placer",
+          "magenta cyan placer",
+          "structural"
+        ],
+        "role": "structural",
+        "shape": [
+          "placer"
+        ],
+        "size": "medium",
+        "dimensions": {
+          "x": 0.08,
+          "y": 1.75,
+          "z": 0.08
+        },
+        "isAgent": false,
+        "isBlob": false,
+        "isCollider": false,
+        "isConfusor": false,
+        "isContainer": false,
+        "isContext": false,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isLid": false,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isPaddle": false,
+        "isStaticObject": false,
+        "isStructural": true,
+        "isTarget": false,
+        "isTool": false,
+        "isWall": false,
+        "isGuiderail": false
+      },
+      "states": [["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["inactive"]]
+    },
+    {
+      "id": "placer_40e37765-3e81-45a1-a635-5d122f945346",
+      "type": "cylinder",
+      "mass": 1,
+      "materials": ["Custom/Materials/Magenta"],
+      "kinematic": true,
+      "structure": true,
+      "shows": [
+        {
+          "stepBegin": 0,
+          "position": {
+            "x": 0.0,
+            "y": 6.282,
+            "z": 1.0
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "scale": {
+            "x": 0.08,
+            "y": 1.75,
+            "z": 0.08
+          },
+          "boundingBox": [
+            {
+              "x": 0.04,
+              "y": 5.407,
+              "z": 1.04
+            },
+            {
+              "x": 0.04,
+              "y": 5.407,
+              "z": 0.96
+            },
+            {
+              "x": -0.04,
+              "y": 5.407,
+              "z": 0.96
+            },
+            {
+              "x": -0.04,
+              "y": 5.407,
+              "z": 1.04
+            },
+            {
+              "x": 0.04,
+              "y": 7.157,
+              "z": 1.04
+            },
+            {
+              "x": 0.04,
+              "y": 7.157,
+              "z": 0.96
+            },
+            {
+              "x": -0.04,
+              "y": 7.157,
+              "z": 0.96
+            },
+            {
+              "x": -0.04,
+              "y": 7.157,
+              "z": 1.04
+            }
+          ]
+        }
+      ],
+      "moves": [
+        {
+          "stepBegin": 40,
+          "stepEnd": 55,
+          "vector": {
+            "x": 0,
+            "y": -0.25,
+            "z": 0
+          }
+        },
+        {
+          "stepBegin": 66,
+          "stepEnd": 81,
+          "vector": {
+            "x": 0,
+            "y": 0.25,
+            "z": 0
+          }
+        }
+      ],
+      "changeMaterials": [
+        {
+          "stepBegin": 61,
+          "materials": [
+            "Custom/Materials/Cyan"
+          ]
+        }
+      ],
+      "debug": {
+        "color": [
+          "magenta",
+          "cyan"
+        ],
+        "info": [
+          "magenta",
+          "cyan",
+          "placer",
+          "magenta placer",
+          "cyan placer",
+          "magenta cyan placer",
+          "structural"
+        ],
+        "role": "structural",
+        "shape": [
+          "placer"
+        ],
+        "size": "medium",
+        "dimensions": {
+          "x": 0.08,
+          "y": 1.75,
+          "z": 0.08
+        },
+        "isAgent": false,
+        "isBlob": false,
+        "isCollider": false,
+        "isConfusor": false,
+        "isContainer": false,
+        "isContext": false,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isLid": false,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isPaddle": false,
+        "isStaticObject": false,
+        "isStructural": true,
+        "isTarget": false,
+        "isTool": false,
+        "isWall": false,
+        "isGuiderail": false
+      },
+      "states": [["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["inactive"]]
+    },
+    {
+      "id": "placer_5d03ec75-fe9b-4c94-848d-fd8851af1655",
+      "type": "cylinder",
+      "mass": 1,
+      "materials": ["Custom/Materials/Magenta"],
+      "kinematic": true,
+      "structure": true,
+      "shows": [
+        {
+          "stepBegin": 0,
+          "position": {
+            "x": 0.81,
+            "y": 6.282,
+            "z": 1.0
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "scale": {
+            "x": 0.08,
+            "y": 1.75,
+            "z": 0.08
+          },
+          "boundingBox": [
+            {
+              "x": 0.85,
+              "y": 5.407,
+              "z": 1.04
+            },
+            {
+              "x": 0.85,
+              "y": 5.407,
+              "z": 0.96
+            },
+            {
+              "x": 0.77,
+              "y": 5.407,
+              "z": 0.96
+            },
+            {
+              "x": 0.77,
+              "y": 5.407,
+              "z": 1.04
+            },
+            {
+              "x": 0.85,
+              "y": 7.157,
+              "z": 1.04
+            },
+            {
+              "x": 0.85,
+              "y": 7.157,
+              "z": 0.96
+            },
+            {
+              "x": 0.77,
+              "y": 7.157,
+              "z": 0.96
+            },
+            {
+              "x": 0.77,
+              "y": 7.157,
+              "z": 1.04
+            }
+          ]
+        }
+      ],
+      "moves": [
+        {
+          "stepBegin": 40,
+          "stepEnd": 55,
+          "vector": {
+            "x": 0,
+            "y": -0.25,
+            "z": 0
+          }
+        },
+        {
+          "stepBegin": 66,
+          "stepEnd": 81,
+          "vector": {
+            "x": 0,
+            "y": 0.25,
+            "z": 0
+          }
+        }
+      ],
+      "changeMaterials": [
+        {
+          "stepBegin": 61,
+          "materials": [
+            "Custom/Materials/Cyan"
+          ]
+        }
+      ],
+      "debug": {
+        "color": [
+          "magenta",
+          "cyan"
+        ],
+        "info": [
+          "magenta",
+          "cyan",
+          "placer",
+          "magenta placer",
+          "cyan placer",
+          "magenta cyan placer",
+          "structural"
+        ],
+        "role": "structural",
+        "shape": [
+          "placer"
+        ],
+        "size": "medium",
+        "dimensions": {
+          "x": 0.08,
+          "y": 1.75,
+          "z": 0.08
+        },
+        "isAgent": false,
+        "isBlob": false,
+        "isCollider": false,
+        "isConfusor": false,
+        "isContainer": false,
+        "isContext": false,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isLid": false,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isPaddle": false,
+        "isStaticObject": false,
+        "isStructural": true,
+        "isTarget": false,
+        "isTool": false,
+        "isWall": false,
+        "isGuiderail": false
+      },
+      "states": [["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["inactive"]]
+    },
+    {
+      "id": "placer_72188638-f5b7-48b3-9781-600c54ebc50e",
+      "type": "cylinder",
+      "mass": 1,
+      "materials": ["Custom/Materials/Magenta"],
+      "kinematic": true,
+      "structure": true,
+      "shows": [
+        {
+          "stepBegin": 0,
+          "position": {
+            "x": 1.62,
+            "y": 6.282,
+            "z": 1.0
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "scale": {
+            "x": 0.08,
+            "y": 1.75,
+            "z": 0.08
+          },
+          "boundingBox": [
+            {
+              "x": 1.66,
+              "y": 5.407,
+              "z": 1.04
+            },
+            {
+              "x": 1.66,
+              "y": 5.407,
+              "z": 0.96
+            },
+            {
+              "x": 1.58,
+              "y": 5.407,
+              "z": 0.96
+            },
+            {
+              "x": 1.58,
+              "y": 5.407,
+              "z": 1.04
+            },
+            {
+              "x": 1.66,
+              "y": 7.157,
+              "z": 1.04
+            },
+            {
+              "x": 1.66,
+              "y": 7.157,
+              "z": 0.96
+            },
+            {
+              "x": 1.58,
+              "y": 7.157,
+              "z": 0.96
+            },
+            {
+              "x": 1.58,
+              "y": 7.157,
+              "z": 1.04
+            }
+          ]
+        }
+      ],
+      "moves": [
+        {
+          "stepBegin": 40,
+          "stepEnd": 55,
+          "vector": {
+            "x": 0,
+            "y": -0.25,
+            "z": 0
+          }
+        },
+        {
+          "stepBegin": 66,
+          "stepEnd": 81,
+          "vector": {
+            "x": 0,
+            "y": 0.25,
+            "z": 0
+          }
+        }
+      ],
+      "changeMaterials": [
+        {
+          "stepBegin": 61,
+          "materials": [
+            "Custom/Materials/Cyan"
+          ]
+        }
+      ],
+      "debug": {
+        "color": [
+          "magenta",
+          "cyan"
+        ],
+        "info": [
+          "magenta",
+          "cyan",
+          "placer",
+          "magenta placer",
+          "cyan placer",
+          "magenta cyan placer",
+          "structural"
+        ],
+        "role": "structural",
+        "shape": [
+          "placer"
+        ],
+        "size": "medium",
+        "dimensions": {
+          "x": 0.08,
+          "y": 1.75,
+          "z": 0.08
+        },
+        "isAgent": false,
+        "isBlob": false,
+        "isCollider": false,
+        "isConfusor": false,
+        "isContainer": false,
+        "isContext": false,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isLid": false,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isPaddle": false,
+        "isStaticObject": false,
+        "isStructural": true,
+        "isTarget": false,
+        "isTool": false,
+        "isWall": false,
+        "isGuiderail": false
+      },
+      "states": [["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["active"],["inactive"]]
+    },
+    {
+      "id": "turntable_fcb2efa4-a6c4-4d43-9494-f00f2e1ca2b4",
+      "type": "rotating_cog",
+      "debug": {
+        "color": [
+          "grey"
+        ],
+        "info": [
+          "grey",
+          "turntable",
+          "grey turntable",
+          "structural"
+        ],
+        "dimensions": {
+          "x": 4.0,
+          "y": 5.0,
+          "z": 4.0
+        },
+        "isAgent": false,
+        "isBlob": false,
+        "isCollider": false,
+        "isConfusor": false,
+        "isContainer": false,
+        "isContext": false,
+        "isHome": false,
+        "isKey": false,
+        "isIntuitivePhysicsOccluder": false,
+        "isLid": false,
+        "isNonTarget": false,
+        "isObstacle": false,
+        "isOccluder": false,
+        "isPaddle": false,
+        "isStaticObject": false,
+        "isStructural": true,
+        "isTarget": false,
+        "isTool": false,
+        "isWall": false,
+        "isGuiderail": false,
+        "role": "structural"
+      },
+      "mass": 10000,
+      "materials": ["Custom/Materials/GreyWoodMCS"],
+      "kinematic": true,
+      "structure": true,
+      "shows": [
+        {
+          "stepBegin": 0,
+          "position": {
+            "x": 0,
+            "y": 0.05,
+            "z": 1
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "scale": {
+            "x": 4.0,
+            "y": 5.0,
+            "z": 4.0
+          },
+          "boundingBox": [
+            {
+              "x": 2.0,
+              "y": 0.0,
+              "z": 3.0
+            },
+            {
+              "x": 2.0,
+              "y": 0.0,
+              "z": -1.0
+            },
+            {
+              "x": -2.0,
+              "y": 0.0,
+              "z": -1.0
+            },
+            {
+              "x": -2.0,
+              "y": 0.0,
+              "z": 3.0
+            },
+            {
+              "x": 2.0,
+              "y": 0.1,
+              "z": 3.0
+            },
+            {
+              "x": 2.0,
+              "y": 0.1,
+              "z": -1.0
+            },
+            {
+              "x": -2.0,
+              "y": 0.1,
+              "z": -1.0
+            },
+            {
+              "x": -2.0,
+              "y": 0.1,
+              "z": 3.0
+            }
+          ]
+        }
+      ],
+      "rotates": [
+        {
+          "stepBegin": 80,
+          "stepEnd": 115,
+          "vector": {
+            "x": 0,
+            "y": -5,
+            "z": 0
+          }
+        }
+      ]
+    }
+  ],
+  "screenshot": false,
+  "version": 2,
+  "ceilingMaterial": "AI2-THOR/Materials/Walls/DrywallBeige",
+  "floorMaterial": "UnityAssetStore/Kindergarten_Interior/Models/Materials/color wood 2",
+  "floorTextures": [],
+  "intuitivePhysics": false,
+  "isometricFrontRight": false,
+  "performerStart": {
+    "position": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": -3.5
+    },
+    "rotation": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    }
+  },
+  "restrictOpenObjects": true,
+  "roomDimensions": {
+    "x": 12.0,
+    "y": 4.0,
+    "z": 12.0
+  },
+  "wallMaterial": "AI2-THOR/Materials/Wood/WoodGrain_Brown"
+}
