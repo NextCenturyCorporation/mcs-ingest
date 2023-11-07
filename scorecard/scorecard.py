@@ -1536,11 +1536,8 @@ class Scorecard:
 
             if is_side_ctr:
                 for cl in containers_and_lids:
-                    # TODO: MCS-1985:
-                    # reran existing tests, need to make new tests for five container case
-                    # special handling for the five container case (keywords
-                    # depend on position of baited container)
                     if(has_five_ctrs is True):
+                        # use start positions to help figure out relative keyword
                         left_x = absolute_positions.get(4)[0]
                         mid_left_x = absolute_positions.get(9)[0]
                         middle = absolute_positions.get(5)[0]
