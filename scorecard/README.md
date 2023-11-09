@@ -33,6 +33,8 @@ The actions that are counted (as of Eval 5):
 * Determine what order the agent opened the containers in an imitation task.
 Order is determined by color (green, blue, red, etc.)
 * Determine what door the agent opened (left, middle, right)
+* Determine (for multi tool use) how many unique tools were touched and which tools were rotated.
+* Determine whether or not the performer stepped in "lava"
 
 Some of these are mathematically vague;  for example, the space that the agent moves in is continous,
 so 'revisit' needs to have a particular distance.  Below, we discuss the way to count them.
@@ -165,6 +167,9 @@ object to achieve a goal.  This counts the different types of manipulation,
 inlcuding pushing, pulling, rotating, torquing, and moving. It also counts 
 the number of times that they attempted to do so and failed.
 
+For tool choice tasks, there are additional checks for how many tools
+the performer interacted with, and which ones were rotated. 
+
 #### Platform Side Correctness
 
 For several task types that force a binary choice, such as Agent 
@@ -234,6 +239,10 @@ based on its absolute location on the turntable.
 * 3 = Near
 * 4 = Left
 * 5 = Center
+* 6 = Far Middle
+* 7 = Right Middle
+* 8 = Near Middle
+* 9 = Left Middle
 
 #### Set Rotation Opened Container Position Relative To Baited
 
@@ -250,6 +259,10 @@ based on its relative position to the baited container.
   * Right
   * Back
   * Left
+* For the five container case:
+  * Baited
+  * Baited +/- 1, 2, or 3 (+ if baited is on the left or nearest to the performer post-rotation, - if otherwise).
+  * Opposite
 
 #### Shell Game Baited Container
 
@@ -269,13 +282,14 @@ The lanes are labed 1 through 5 and correspond to a global x position.
 For shell game scenes the agent needs to track containers
 that are moved horizontally. There are 5 lanes the containers can start
 and move to. This element of the scorecard determines what container was opened
-by calculating its start and end lanes.
-The lanes are labed 1 through 5 and correspond to a global x position.
-* 1 = -1.5 
-* 2 = -0.75
-* 3 = 0
-* 4 = 0.75
-* 5 = 1.5
+by calculating its position relative to the baited container.
+* For two container case:
+  * Baited
+  * Left or Right
+* For three container case:
+  * Baited
+  * Middle 
+  * Opposite
 
 #### Number of Rewards Achieved
 
@@ -290,6 +304,11 @@ Some tasks have multiple soccer balls, but not all of them are considered a
 to always be inaccessible. This metric measures whether the non-target soccer
 ball was able to be accessed and picked-up anyway. This metric will ignore
 ambiguous multi-retrieval Arithmetic and Number Comparison scenes.
+
+#### Stepped In Lava
+
+Some tasks have lava pools in them. This checks whether or not the performer
+stepped in one, which would end the scene.
 
 ## Running the Scorecard
 

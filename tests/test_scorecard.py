@@ -89,6 +89,48 @@ TEST_HISTORY_SET_ROTATION_2_TABLE_360_CL_LEFT_BAITED_RIGHT_PICKED = "set_rotatio
 TEST_SCENE_SET_ROTATION_1_TABLE_90_CL_LEFT_BAITED_FAR_PICKED = "set_rotation/setrotation_0003_01_A1_debug.json"
 TEST_HISTORY_SET_ROTATION_1_TABLE_90_CL_LEFT_BAITED_FAR_PICKED = "set_rotation/setrotation_0003_01_history.json"
 
+TEST_SCENE_SET_ROTATION_5_TEST_5_TABLE_MOVES_90_CCW = "set_rotation/set_rotation_0005_33_M1_debug.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_5_TABLE_MOVES_90_CCW_CORRECT = "set_rotation/set_rotation_0005_33-ball-middle-correct.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_5_TABLE_MOVES_90_CCW_FAR_PICKED = "set_rotation/set_rotation_0005_33-ball-middle-opened-far.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_5_TABLE_MOVES_90_CCW_FAR_MID_PICKED = "set_rotation/set_rotation_0005_33-ball-middle-opened-far-mid.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_5_TABLE_MOVES_90_CCW_NEAR_MID_PICKED = "set_rotation/set_rotation_0005_33-ball-middle-opened-near-mid.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_5_TABLE_MOVES_90_CCW_NEAR_PICKED = "set_rotation/set_rotation_0005_33-ball-middle-opened-near.json"
+
+TEST_SCENE_SET_ROTATION_5_TEST_5_TABLE_MOVES_180_CCW = "set_rotation/set_rotation_0005_37_N1_debug.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_5_TABLE_MOVES_180_CCW_CORRECT = "set_rotation/set_rotation_0005_37-ball-middle-correct.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_5_TABLE_MOVES_180_CCW_LEFT_MID_PICKED = "set_rotation/set_rotation_0005_37-ball-middle-opened-left-mid.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_5_TABLE_MOVES_180_CCW_RIGHT_MID_PICKED = "set_rotation/set_rotation_0005_37-ball-middle-opened-right-mid.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_5_TABLE_MOVES_180_CCW_LEFT_PICKED = "set_rotation/set_rotation_0005_37-ball-middle-opened-left.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_5_TABLE_MOVES_180_CCW_RIGHT_PICKED = "set_rotation/set_rotation_0005_37-ball-middle-opened-right.json"
+
+TEST_SCENE_SET_ROTATION_5_TEST_6_TABLE_MOVES_90_CCW = "set_rotation/set_rotation_0006_33_M1_debug.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_6_TABLE_MOVES_90_CCW_CORRECT = "set_rotation/set_rotation_0006_33-ball-right-correct.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_6_TABLE_MOVES_90_CCW_LEFT_PICKED = "set_rotation/set_rotation_0006_33-ball-right-opened-left.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_6_TABLE_MOVES_90_CCW_LEFT_MID_PICKED = "set_rotation/set_rotation_0006_33-ball-right-opened-left-mid.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_6_TABLE_MOVES_90_CCW_RIGHT_MID_PICKED = "set_rotation/set_rotation_0006_33-ball-right-opened-right-mid.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_6_TABLE_MOVES_90_CCW_MIDDLE_PICKED = "set_rotation/set_rotation_0006_33-ball-right-opened-middle.json"
+
+TEST_SCENE_SET_ROTATION_5_TEST_8_TABLE_MOVES_90_CW = "set_rotation/set_rotation_0008_33_M1_debug.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_8_TABLE_MOVES_90_CW_CORRECT = "set_rotation/set_rotation_0008_33-ball-rightmid-correct.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_8_TABLE_MOVES_90_CW_LEFT_PICKED = "set_rotation/set_rotation_0008_33-ball-rightmid-opened-left.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_8_TABLE_MOVES_90_CW_LEFT_MID_PICKED = "set_rotation/set_rotation_0008_33-ball-rightmid-opened-left-mid.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_8_TABLE_MOVES_90_CW_RIGHT_PICKED = "set_rotation/set_rotation_0008_33-ball-rightmid-opened-right.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_8_TABLE_MOVES_90_CW_MIDDLE_PICKED = "set_rotation/set_rotation_0008_33-ball-rightmid-opened-middle.json"
+
+TEST_SCENE_SET_ROTATION_5_TEST_9_TABLE_MOVES_90_CCW = "set_rotation/set_rotation_0009_33_M1_debug.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_9_TABLE_MOVES_90_CCW_CORRECT = "set_rotation/set_rotation_0009_33-ball-leftmid-correct.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_9_TABLE_MOVES_90_CCW_LEFT_PICKED = "set_rotation/set_rotation_0009_33-ball-leftmid-opened-left.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_9_TABLE_MOVES_90_CCW_RIGHT_MID_PICKED = "set_rotation/set_rotation_0009_33-ball-leftmid-opened-right-mid.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_9_TABLE_MOVES_90_CCW_RIGHT_PICKED = "set_rotation/set_rotation_0009_33-ball-leftmid-opened-right.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_9_TABLE_MOVES_90_CCW_MIDDLE_PICKED = "set_rotation/set_rotation_0009_33-ball-leftmid-opened-middle.json"
+
+TEST_SCENE_SET_ROTATION_5_TEST_10_TABLE_MOVES_90_CCW = "set_rotation/set_rotation_0010_33_M1_debug.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_10_TABLE_MOVES_90_CCW_CORRECT = "set_rotation/set_rotation_0010_33-ball-left-correct.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_10_TABLE_MOVES_90_CCW_LEFT_MID_PICKED = "set_rotation/set_rotation_0010_33-ball-left-opened-left-mid.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_10_TABLE_MOVES_90_CCW_RIGHT_MID_PICKED = "set_rotation/set_rotation_0010_33-ball-left-opened-right-mid.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_10_TABLE_MOVES_90_CCW_RIGHT_PICKED = "set_rotation/set_rotation_0010_33-ball-left-opened-right.json"
+TEST_HISTORY_SET_ROTATION_5_TEST_10_TABLE_MOVES_90_CCW_MIDDLE_PICKED = "set_rotation/set_rotation_0010_33-ball-left-opened-middle.json"
+
 TEST_SCENE_SHELL_GAME_CROSS_BAITED_PICKED_DISPLACEMENT = "shell_game/shellgame_0001_10_J1_debug.json"
 TEST_HISTORY_SHELL_GAME_CROSS_BAITED_PICKED_DISPLACEMENT = "shell_game/shellgame_0001_10_history.json"
 
@@ -936,6 +978,277 @@ class TestMcsScorecard(unittest.TestCase):
         scorecard.calc_set_rotation()
         assert scorecard.get_set_rotation_opened_container_position_absolute() == '4 to 1'
         assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'baited'
+
+
+    def test_calc_set_rotation_five_container_baited_middle(self):
+        # 5 containers, turntable moves 90 degrees counterclockwise, middle container is baited
+        # history when middle container is picked
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SET_ROTATION_5_TEST_5_TABLE_MOVES_90_CCW)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_5_TABLE_MOVES_90_CCW_CORRECT)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '5 to 5'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'baited'
+
+        # history when furthest container picked
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_5_TABLE_MOVES_90_CCW_FAR_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '2 to 1'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'far'
+
+        # history when container betweeen middle and furthest is picked
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_5_TABLE_MOVES_90_CCW_FAR_MID_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '7 to 6'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'farMiddle'
+
+        # history when container betweeen middle and nearest is picked
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_5_TABLE_MOVES_90_CCW_NEAR_MID_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '9 to 8'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'nearMiddle'
+
+        # history when nearest container is picked
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_5_TABLE_MOVES_90_CCW_NEAR_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '4 to 3'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'near'
+
+        # 5 containers, turntable moves 180 degrees counterclockwise, middle container is baited
+        # history when middle container is picked
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SET_ROTATION_5_TEST_5_TABLE_MOVES_180_CCW)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_5_TABLE_MOVES_180_CCW_CORRECT)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '5 to 5'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'baited'
+
+        # history when right-most container picked
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_5_TABLE_MOVES_180_CCW_RIGHT_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '4 to 2'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'right'
+
+        # history when container betweeen middle and right is picked
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_5_TABLE_MOVES_180_CCW_RIGHT_MID_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '9 to 7'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'rightMiddle'
+
+        # history when container betweeen middle and left is picked
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_5_TABLE_MOVES_180_CCW_LEFT_MID_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '7 to 9'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'leftMiddle'
+
+        # history when right-most container picked
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_5_TABLE_MOVES_180_CCW_LEFT_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '2 to 4'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'left'
+
+
+    def test_calc_set_rotation_five_container_baited_starts_on_right(self):
+        # 5 containers, turntable moves 90 degrees counterclockwise, container starting on right is baited
+        # history when right container is picked
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SET_ROTATION_5_TEST_6_TABLE_MOVES_90_CCW)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_6_TABLE_MOVES_90_CCW_CORRECT)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '2 to 1'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'baited'
+
+        # history when left container picked
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_6_TABLE_MOVES_90_CCW_LEFT_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '4 to 3'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'opposite'
+
+        # history when container betweeen middle and right is picked
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_6_TABLE_MOVES_90_CCW_RIGHT_MID_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '7 to 6'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'baited - 1'
+
+        # history when container betweeen middle and left is picked
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_6_TABLE_MOVES_90_CCW_LEFT_MID_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '9 to 8'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'baited - 3'
+
+        # history when middle container is picked
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_6_TABLE_MOVES_90_CCW_MIDDLE_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '5 to 5'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'baited - 2'
+
+
+    def test_calc_set_rotation_five_container_baited_starts_on_middle_right_flipped_labels(self):
+        # 5 containers, turntable moves 90 degrees clockwise, container starting on middle right is baited
+        # history when middle right container is picked
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SET_ROTATION_5_TEST_8_TABLE_MOVES_90_CW)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_8_TABLE_MOVES_90_CW_CORRECT)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '7 to 8'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'baited'
+
+        # history when left container picked
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_8_TABLE_MOVES_90_CW_LEFT_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '4 to 1'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'baited + 3'
+
+        # history when container betweeen middle and left is picked
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_8_TABLE_MOVES_90_CW_LEFT_MID_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '9 to 6'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'opposite'
+
+        # history when right container picked
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_8_TABLE_MOVES_90_CW_RIGHT_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '2 to 3'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'baited - 1'
+
+        # history when middle container is picked
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_8_TABLE_MOVES_90_CW_MIDDLE_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '5 to 5'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'baited + 1'
+
+
+    def test_calc_set_rotation_five_container_baited_starts_on_middle_left(self):
+        # 5 containers, turntable moves 90 degrees counterclockwise, container starting on 
+        # middle left is baited
+        # history when middle left container is picked
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SET_ROTATION_5_TEST_9_TABLE_MOVES_90_CCW)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_9_TABLE_MOVES_90_CCW_CORRECT)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '9 to 8'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'baited'
+
+        # history when left container picked
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_9_TABLE_MOVES_90_CCW_LEFT_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '4 to 3'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'baited - 1'
+
+        # history when right container picked
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_9_TABLE_MOVES_90_CCW_RIGHT_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '2 to 1'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'baited + 3'
+
+        # history when container betweeen middle and right is picked
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_9_TABLE_MOVES_90_CCW_RIGHT_MID_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '7 to 6'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'opposite'
+
+        # history when middle container is picked
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_9_TABLE_MOVES_90_CCW_MIDDLE_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '5 to 5'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'baited + 1'
+
+
+    def test_calc_set_rotation_five_container_baited_starts_on_left(self):
+        # 5 containers, turntable moves 90 degrees counterclockwise, container starting on 
+        # left is baited
+        # history when left container is picked
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SET_ROTATION_5_TEST_10_TABLE_MOVES_90_CCW)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_10_TABLE_MOVES_90_CCW_CORRECT)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '4 to 3'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'baited'
+
+        # history when container betweeen middle and left is picked
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_10_TABLE_MOVES_90_CCW_LEFT_MID_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '9 to 8'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'baited + 1'
+
+        # history when right container picked
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_10_TABLE_MOVES_90_CCW_RIGHT_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '2 to 1'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'opposite'
+
+        # history when container betweeen middle and right is picked
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_10_TABLE_MOVES_90_CCW_RIGHT_MID_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '7 to 6'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'baited + 3'
+
+        # history when middle container is picked
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SET_ROTATION_5_TEST_10_TABLE_MOVES_90_CCW_MIDDLE_PICKED)
+        scorecard = Scorecard(history_file, scene_file)
+        scorecard.calc_set_rotation()
+        assert scorecard.get_set_rotation_opened_container_position_absolute() == '5 to 5'
+        assert scorecard.get_set_rotation_opened_container_position_relative_to_baited() == 'baited + 2'
+
 
     def test_calc_shell_game(self):
         scene_file = mcs_scene_ingest.load_json_file(

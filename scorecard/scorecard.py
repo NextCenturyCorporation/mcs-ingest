@@ -1458,20 +1458,30 @@ class Scorecard:
         '''
         steps_list = self.history['steps']
         """
+
         Absolute Container Position
-             1
-             |  
-        4 -- 5 -- 2
-             |  
-             3
-          Performer
+                1
+                |
+                6
+                |
+        4 --9-- 5 --7-- 2
+                |
+                8
+                |
+                3
+            Performer
+
         """
         absolute_positions = {
             1: (0, 2.62),
             2: (1.62, 1),
-            3: (0, 0.62),
+            3: (0, -0.62),
             4: (-1.62, 1),
-            5: (0, 1)
+            5: (0, 1),
+            6: (0, 1.81),
+            7: (0.81, 1),
+            8: (0, 0.19),
+            9: (-0.81, 1)
         }
         self.set_rotation_opened_container_position_absolute = ''
         self.set_rotation_opened_container_position_relative_to_baited = ''
@@ -1513,22 +1523,117 @@ class Scorecard:
                     continue
                 increments = int(rotation / 90 * (
                     -1 if rotation_direction.startswith('counter') else 1))
-                edge_positions = [1, 2, 3, 4]
+                edge_positions = [1, 2, 3, 4] if absolute_pos in [1, 2, 3, 4] else [6, 7, 8, 9]
                 end_pos = edge_positions[
                     (edge_positions.index(absolute_pos) + increments) % len(edge_positions)]
                 cl['absolute_pos_end'] = end_pos
 
             # relative
             target_x = self.scene['objects'][0]['shows'][0]['position']['x']
-            isSideContainer = target_x != 0
-            if isSideContainer:
+            is_side_ctr = target_x != 0
+            has_five_ctrs = len(containers_and_lids) == 5
+            baited_ctr = [obj for obj in containers_and_lids if obj['start_position_x'] == target_x][0]
+
+            if is_side_ctr:
                 for cl in containers_and_lids:
-                    cl['relative_to_baited'] = (
-                        'baited' if cl['start_position_x'] == target_x else
-                        'middle' if cl['start_position_x'] == 0 else
-                        'opposite')
+                    if(has_five_ctrs is True):
+                        # use start positions to help figure out relative keyword
+                        left_x = absolute_positions.get(4)[0]
+                        mid_left_x = absolute_positions.get(9)[0]
+                        middle = absolute_positions.get(5)[0]
+                        mid_right_x = absolute_positions.get(7)[0]
+                        right_x = absolute_positions.get(2)[0]
+
+                        # need to reverse +/- of other containers in this case
+                        flipped = (
+                            (rotation_direction.startswith(('counter')) and rotation == 270) or
+                            (rotation_direction.startswith(('clock')) and rotation == 90) or
+                            rotation == 180)
+
+                        """
+                            Breakdown of labeling for five container case:
+
+                            baited on the left (or nearest to performer) after rotation:
+                                [ ]        [ ]          [ ]           [ ]        [ ]
+                                baited    baited + 1   baited + 2   baited + 3   opposite
+
+
+                            baited between middle container and left (or nearest) after rotation:
+                                [ ]          [ ]        [ ]        [ ]         [ ]
+                            baited - 1     baited  baited + 1   opposite   baited + 3
+
+
+                            baited between middle container and right (or furthest) after rotation:
+                                [ ]           [ ]        [ ]         [ ]       [ ]
+                                baited - 3   opposite   baited - 1   baited   baited + 1
+
+
+                            baited on right (or furthest from performer) after rotation:
+                                [ ]          [ ]          [ ]           [ ]         [ ]
+                                opposite   baited - 3   baited - 2     baited - 1   baited
+                        """
+
+                        if(baited_ctr['start_position_x'] == left_x):
+                            baited_1_away = 'baited - 1' if flipped else 'baited + 1'
+                            baited_2_away = 'baited - 2' if flipped else 'baited + 2'
+                            baited_3_away = 'baited - 3' if flipped else 'baited + 3'
+
+                            cl['relative_to_baited'] = (
+                                'baited' if cl['start_position_x'] == left_x else
+                                baited_1_away if cl['start_position_x'] == mid_left_x else
+                                baited_2_away if cl['start_position_x'] == middle else
+                                baited_3_away if cl['start_position_x'] == mid_right_x else
+                                'opposite')
+                        elif(baited_ctr['start_position_x'] == mid_left_x):
+                            starts_left_of_baited = 'baited + 1' if flipped else 'baited - 1'
+                            middle_container = 'baited - 1' if flipped else 'baited + 1'
+                            at_other_end = 'baited - 3' if flipped else 'baited + 3'
+
+                            cl['relative_to_baited'] = (
+                                'baited' if cl['start_position_x'] == mid_left_x else
+                                middle_container if cl['start_position_x'] == middle else
+                                'opposite' if cl['start_position_x'] == mid_right_x else
+                                at_other_end if cl['start_position_x'] == right_x else
+                                starts_left_of_baited)
+                        elif(baited_ctr['start_position_x'] == mid_right_x):
+                            starts_right_of_baited = 'baited - 1' if flipped else 'baited + 1'
+                            middle_container = 'baited + 1' if flipped else 'baited - 1'
+                            at_other_end = 'baited + 3' if flipped else 'baited - 3'
+
+                            cl['relative_to_baited'] = (
+                                'baited' if cl['start_position_x'] == mid_right_x else
+                                starts_right_of_baited if cl['start_position_x'] == right_x else
+                                middle_container if cl['start_position_x'] == middle else
+                                'opposite' if cl['start_position_x'] == mid_left_x else
+                                at_other_end)
+                        else:
+                            baited_1_away = 'baited + 1' if flipped else 'baited - 1'
+                            baited_2_away = 'baited + 2' if flipped else 'baited - 2'
+                            baited_3_away = 'baited + 3' if flipped else 'baited - 3'
+
+                            cl['relative_to_baited'] = (
+                                'baited' if cl['start_position_x'] == right_x else
+                                baited_1_away if cl['start_position_x'] == mid_right_x else
+                                baited_2_away if cl['start_position_x'] == middle else
+                                baited_3_away if cl['start_position_x'] == mid_left_x else
+                                'opposite')
+                    else:
+                        """
+                            3 container case:
+                            if baited container is not in middle:
+
+                            [ ]           [ ]           [ ]
+                            baited      middle      opposite
+                        """
+                        cl['relative_to_baited'] = (
+                            'baited' if cl['start_position_x'] == target_x else
+                            'middle' if cl['start_position_x'] == 0 else
+                            'opposite')
             else:
-                absolute_pos_to_relative_dict = {1: 'far', 2: 'right', 3: 'near', 4: 'left'}
+                # baited container in the middle
+                absolute_pos_to_relative_dict = {1: 'far', 2: 'right', 3: 'near', 4: 'left',
+                                                 6: 'farMiddle', 7: 'rightMiddle',
+                                                 8: 'nearMiddle', 9: 'leftMiddle'}
                 for cl in containers_and_lids:
                     if cl['start_position_x'] == target_x:
                         cl['relative_to_baited'] = 'baited'
