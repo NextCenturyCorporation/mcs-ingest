@@ -53,24 +53,29 @@ EVAL_HIST_MAPPING_DICT = {
 
 # Weight from Design, some plausible scenes are worth more,
 #   because there aren't as many as the implausible ones
-SHAPE_CONSTANCY_DUPLICATE_CUBE = ["A1", "B1"]
-SHAPE_CONSTANCY_8X_CUBE = ["A2", "B2", "C2", "D2"]
 PASSIVE_OBJ_PERM_DUPLICATE_CUBE = ["G3", "H3", "I3"]
+SEEING_LEADS_KNOWING_3X_CUBE = ["A1", "F1"]
 
 # Passing Weighting, everything besides these cube IDs will
 #  be set to zero in the weight scoring.  This should all be 
 #  moved to the scoring module when we refactor ingest
-#  Support Relations and Solidity use all cube ids
+#  Support Relations, Trajectory, Interactive Collisions,
+#    Number Comparison, Arthimetic, Imitation, and Solidity use all cube ids
 PASSING_CELLS = {
     "agent identification": ["A1", "B1", "C1", "E1", "F1",
                              "G1", "A2", "B2", "C2", "E2",
                              "F2", "G2"],
+    "shape constancy": ["A1", "A2", "B1", "D2", "E1", "E3", "J1", "L4"],
     "spatial elimination": ["A1", "A2"],
     "moving target prediction": ["A1", "B1", "E1", "F1", "I1", "J1"],
-    "holes": ["B1", "C1"],
-    "lava": ["B1", "C1"],
-    "ramp": ["B1", "C1", "E1", "F1", "H1", "I1", "K1", "L1"],
-    "tool use": ["A1", "C1", "E1", "G1"],
+    "holes": ["B1", "C1", "E1", "F1", "B2", "C2", "E2", "F2"],
+    "lava": ["B1", "C1", "E1", "F1", "B2", "C2", "E2", "F2"],
+    "ramp": ["B1", "C1", "E1", "F1", "H1", "I1", "K1", "L1", "N1", 
+             "O1", "Q1", "R1", "T1", "U1", "W1", "X1", "B2", "E2", "N2", "Q2"],
+    "symmetric tool use": ["A1", "C1", "E1", "G1", "I1", "K1", "M1", "O1", "Q1", "S1",
+                 "U1", "W1"],
+    "tool choice": ["A2", "B2", "C2", "D2", "E2", "F2"],
+    "asymmetric tool use": ["E3", "K3", "Q3", "W3"],
     "interactive object permanence": ["A1", "C1"],
     "container": ["A1", "A2", "G1", "G2", "M1", "M2"],
     "obstacle": ["A1", "C1", "A2", "C2"],
@@ -79,12 +84,25 @@ PASSING_CELLS = {
     "gravity support": ["A1", "B1", "C1", "D1", "I1", "J1", "K1", "L1",
                         "M1", "N1", "O1", "P1", "S1", "T1", "W1", "X1",
                         "Y1", "Z1", "AA1", "CC1", "SS1", "TT1"],
-    "set_rotation":["C1", "F1", "I1", "L1", "C2", "F2", "I2", "L2", "M1", "N1",
+
+    "set rotation":["C1", "F1", "I1", "L1", "C2", "F2", "I2", "L2", "M1", "N1",
                     "O1", "P1", "M2", "N2", "O2", "P2", "Q1", "R1", "S1", "T1",
                     "Q2", "R2", "S2", "T2", "Q3", "R3", "S3", "T3", "Q4", "R4",
                     "S4", "T4"],
-    "multi_tool_use":["B1", "C1", "E1", "F1", "H1", "I1", "K1", "L1", "B2",
+    "multi tool use":["B1", "C1", "E1", "F1", "H1", "I1", "K1", "L1", "B2",
                       "C2", "E2", "F2", "H2", "I2", "K2", "L2"]
+
+    "spatial reference": ["A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "A2", 
+                          "B2", "C2", "D2", "E2", "F2", "G2", "H2", "A3", "B3", "C3", 
+                          "D3", "E3", "F3", "G3", "H3"],
+    "spatial reorientation": ["B1", "C1", "D1", "E1", "F1", "G1", "H1", "I1", "J1", 
+                              "K1", "L1", "N1", "O1", "P1", "Q1", "R1", "B2", "C2", 
+                              "D2", "E2", "F2", "G2", "H2", "I2", "J2", "K2", "L2",
+                              "N2", "O2", "P2", "Q2", "R2"],
+    "shell game": ["A1", "B1", "E1", "F1", "I1", "J1"],
+    "set rotation": ["B1", "C1", "E1", "F1", "H1", "I1", "K1", "L1", "B2", 
+                     "C2", "E2", "F2", "H2", "I2", "K2", "L2"]
+
 }
 
 MAX_XY_VIOLATIONS = 50
@@ -338,7 +356,8 @@ def build_history_item(
             incorrect_corners,
             correct_corners,
             corner_visit_order,
-            reorientation_scoring_override)
+            reorientation_scoring_override
+            )
         steps.append(new_step)
 
     history_item["steps"] = steps
@@ -357,6 +376,47 @@ def build_history_item(
         #    UI load times faster then having to query scene every time
         history_item["scene_num"] = scene["scene_num"]
         history_item["test_num"] = scene["test_num"]
+
+        # distance calculation between target start and performer start (interactive scenes only)
+        if (scene["goal"]["sceneInfo"]["primaryType"] == "interactive"):
+            perf_start = history_item["steps"][0]["output"]["position"]
+
+            if(scene["goal"]["sceneInfo"]["secondaryType"] == "multi retrieval"):
+                # for multi-retrival, find closest target
+                if len(history_item["steps"]) > 0 and "targets" in history_item["steps"][0]["output"]:
+                    old_target_xyz = history_item["steps"][0]["output"]["targets"][0]["position"]
+
+                    shortest_distance = math.sqrt(
+                        pow((old_target_xyz["x"] - perf_start["x"]), 2) +
+                        pow((old_target_xyz["y"] - perf_start["y"]), 2) + 
+                        pow((old_target_xyz["z"] - perf_start["z"]), 2)
+                    )
+
+                    for target in history_item["steps"][0]["output"]["targets"]:
+                        tar_xyz = target["position"]
+                        distance = math.sqrt(
+                            pow((tar_xyz["x"] - perf_start["x"]), 2) +
+                            pow((tar_xyz["y"] - perf_start["y"]), 2) + 
+                            pow((tar_xyz["z"] - perf_start["z"]), 2)
+                        )
+
+                        if(distance < shortest_distance):
+                            shortest_distance = distance
+
+                    history_item["start_distance_between_performer_and_target"] = round(shortest_distance, 4)
+
+            else:
+                # single target case
+                if len(history_item["steps"]) > 0 and "target" in history_item["steps"][0]["output"]:
+                    target_xyz = history_item["steps"][0]["output"]["target"]["position"]
+
+                    distance = math.sqrt(
+                        pow((target_xyz["x"] - perf_start["x"]), 2) +
+                        pow((target_xyz["y"] - perf_start["y"]), 2) + 
+                        pow((target_xyz["z"] - perf_start["z"]), 2)
+                    )
+
+                    history_item["start_distance_between_performer_and_target"] = round(distance, 4)
 
         history_item["scene_goal_id"] = scene["goal"]["sceneInfo"]["id"][0]
         if "slices" in scene["goal"]["sceneInfo"]:
@@ -485,6 +545,7 @@ def build_new_step_obj(
         output["return_status"] = step["output"]["return_status"]
         output["reward"] = step["output"]["reward"]
         output["rotation"] = step["output"]["rotation"]
+        output["steps_on_lava"] = step["output"]["steps_on_lava"]
         # TODO: Added if check because key error in 3.75 and earlier
         if "physics_frames_per_second" in step["output"]:
             output["physics_frames_per_second"] = step[
@@ -496,7 +557,7 @@ def build_new_step_obj(
         if "target_visible" in step:
             new_step["target_visible"] = step["target_visible"]
 
-        target_keys = ['target', 'target_1', 'target_2']
+        target_keys = ['targets', 'target', 'target_1', 'target_2']
 
         for target in target_keys:
             if target in step["output"]["goal"]["metadata"]:
@@ -521,14 +582,12 @@ def calculate_weighted_confidence(history_item: dict, multiplier: int) -> Union[
 
 def add_weighted_cube_scoring(history_item: dict, scene: dict) -> tuple:
     if "goal" in scene and "sceneInfo" in scene["goal"]:
-        if scene["goal"]["sceneInfo"]["tertiaryType"] == "shape constancy":
-            if history_item["scene_goal_id"] in SHAPE_CONSTANCY_DUPLICATE_CUBE:
-                return (history_item["score"]["score"] * 2, 2, calculate_weighted_confidence(history_item, 2))
-            elif history_item["scene_goal_id"] in SHAPE_CONSTANCY_8X_CUBE:
-                return (history_item["score"]["score"] * 8, 8, calculate_weighted_confidence(history_item, 8))
-        elif scene["goal"]["sceneInfo"]["tertiaryType"] == "object permanence":
+        if scene["goal"]["sceneInfo"]["tertiaryType"] == "object permanence":
             if history_item["scene_goal_id"] in PASSIVE_OBJ_PERM_DUPLICATE_CUBE:
                 return (history_item["score"]["score"] * 2, 2, calculate_weighted_confidence(history_item, 2))
+        elif scene["goal"]["sceneInfo"]["tertiaryType"] == "seeing leads to knowing":
+            if history_item["scene_goal_id"] in SEEING_LEADS_KNOWING_3X_CUBE:
+                return (history_item["score"]["score"] * 3, 3, calculate_weighted_confidence(history_item, 3))    
         elif scene["goal"]["sceneInfo"]["tertiaryType"] in PASSING_CELLS.keys():
             if history_item["scene_goal_id"] not in PASSING_CELLS[scene["goal"]["sceneInfo"]["tertiaryType"]]:
                 return (0,0,0)

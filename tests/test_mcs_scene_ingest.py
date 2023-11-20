@@ -1,5 +1,6 @@
 import docker
 import logging
+import os
 import time
 import unittest
 import warnings
@@ -18,6 +19,7 @@ class TestMcsSceneIngestMongo(unittest.TestCase):
 
     mongo_client = None
     mongo_host_port = 27027
+    os_environ_none = False
 
     @classmethod
     def create_mongo_container(cls, docker_client, api_client, timeout=60):
@@ -45,11 +47,20 @@ class TestMcsSceneIngestMongo(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         '''Start the mongo docker container'''
+        # Get current context host value, attempt to set as DOCKER_HOST
+        docker_url = "unix://var/run/docker.sock"
+        if os.environ.get('DOCKER_HOST') is None:
+            print("DOCKER HOST WAS NONE")
+            docker_host = docker.context.ContextAPI.get_current_context().Host
+            os.environ["DOCKER_HOST"] = docker_host
+            docker_url = docker_host
+            cls.os_environ_none = True
+
         # connect to docker daemon
         cls.docker_client = docker.from_env()
         # create low-level API client for health checks
         cls.api_client = docker.APIClient(
-            base_url="unix://var/run/docker.sock")
+            base_url=docker_url)
         cls.mongo_container = cls.create_mongo_container(
             cls.docker_client,
             cls.api_client)
@@ -61,6 +72,8 @@ class TestMcsSceneIngestMongo(unittest.TestCase):
         cls.mongo_container.stop()
         cls.docker_client.close()
         cls.api_client.close()
+        if cls.os_environ_none:
+            os.environ.pop('DOCKER_HOST', None)
 
     def setUp(self):
         '''Create the client and insert a single document'''

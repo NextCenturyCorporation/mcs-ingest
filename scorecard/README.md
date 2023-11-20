@@ -24,7 +24,18 @@ The actions that are counted (as of Eval 5):
 * Attempting physically impossible actions.  This is not implemented yet.
   * e.g., trying to pick up a sofa or another similarly large item; trying to interact with the floor or wall
   * Impossible actions will be counted from the first attempt.
-  
+* Number of rewards achieved.
+  * For interactive scenes, will indicate how many reward balls are held by the time the scene is over.
+* Determine number of times the agent interacted with a non-agent
+* Determine number of times the agent picked up a non pickupable object
+* Determine number of times the agent walked into walls
+* Determine number of times the agent walked into platform lips
+* Determine what order the agent opened the containers in an imitation task.
+Order is determined by color (green, blue, red, etc.)
+* Determine what door the agent opened (left, middle, right)
+* Determine (for multi tool use) how many unique tools were touched and which tools were rotated.
+* Determine whether or not the performer stepped in "lava"
+
 Some of these are mathematically vague;  for example, the space that the agent moves in is continous,
 so 'revisit' needs to have a particular distance.  Below, we discuss the way to count them.
 
@@ -156,6 +167,9 @@ object to achieve a goal.  This counts the different types of manipulation,
 inlcuding pushing, pulling, rotating, torquing, and moving. It also counts 
 the number of times that they attempted to do so and failed.
 
+For tool choice tasks, there are additional checks for how many tools
+the performer interacted with, and which ones were rotated. 
+
 #### Platform Side Correctness
 
 For several task types that force a binary choice, such as Agent 
@@ -179,6 +193,122 @@ of the scorecard determines if the agent used the shorter or longer path
 by calculating the distance from each step to the ideal path of each.  
 The path with the smaller culmulative distance is assumed to be the path
 the agent chose.
+
+#### Interact With Non-Agent
+
+For agent identification related task types the agent needs to interact
+with a simulation agent to retrieve the target.
+This element of the scorecard determines the number of times the agent
+interacted with anything other than an simulation agent
+
+#### Walked Into Walls
+
+For any interactive scene the agent can walk into walls.
+This element of the scorecard determines the number of times the agent
+walked into walls.
+
+#### Walked Into Platform Lips
+
+For ramp scenes the agent can walk into platform lips.
+This element of the scorecard determines the number of times the agent
+walked into platform lips.
+
+#### Imitation Containers Are Opened
+
+For imitation task scenes the agent opens one or two containers in order.
+If they open a wrong one or in the wrong order then the scene ends.
+This element of the scorecard determines the order the agent opened
+the imitation containers by color.
+
+#### Door Opened Side
+
+For "doorcluder" task types, such as Interactive Solidity
+Interactive Support Relations, Trajectory, Interactive Collisions
+the agent needs to choose to open one of two or three doors. 
+This element of the scorecard determines what door side opened
+by the performer opened (left, middle, right).
+
+### Set Rotation Opened Container Position Absolute
+
+For set rotation scenes the agent must open the correct container
+after the containers have been rotated around while on top of a turntable.
+This element of the scorecard determines what container was opened
+based on its absolute location on the turntable.
+* 1 = Far
+* 2 = Right
+* 3 = Near
+* 4 = Left
+* 5 = Center
+* 6 = Far Middle
+* 7 = Right Middle
+* 8 = Near Middle
+* 9 = Left Middle
+
+#### Set Rotation Opened Container Position Relative To Baited
+
+For set rotation scenes the agent must open the correct container
+after the containers have been rotated around while on top a turntable.
+This element of the scorecard determines what container was opened
+based on its relative position to the baited container.
+* For when the left or right container is picked
+  * Baited
+  * Middle
+  * Opposite
+* For when the middle container is picked. 
+  * Far
+  * Right
+  * Back
+  * Left
+* For the five container case:
+  * Baited
+  * Baited +/- 1, 2, or 3 (+ if baited is on the left or nearest to the performer post-rotation, - if otherwise).
+  * Opposite
+
+#### Shell Game Baited Container
+
+For shell game scenes the agent needs to track containers
+that are moved horizontally. There are 5 lanes the containers can start
+and move to. This element of the scorecard determines what container was baited
+by calculating its start and end lanes.
+The lanes are labed 1 through 5 and correspond to a global x position.
+* 1 = -1.5 
+* 2 = -0.75
+* 3 = 0
+* 4 = 0.75
+* 5 = 1.5
+
+#### Shell Game Opened Container
+
+For shell game scenes the agent needs to track containers
+that are moved horizontally. There are 5 lanes the containers can start
+and move to. This element of the scorecard determines what container was opened
+by calculating its position relative to the baited container.
+* For two container case:
+  * Baited
+  * Left or Right
+* For three container case:
+  * Baited
+  * Middle 
+  * Opposite
+
+#### Number of Rewards Achieved
+
+Will indicate how many reward balls are held by the end of the scene for
+interactive tasks. Especially useful for multi retrieval tasks. If the scene
+is a non-interactive scene, value will be None. 
+
+#### Pickup Non Target
+
+Some tasks have multiple soccer balls, but not all of them are considered a
+"target object". For Tool Choice tasks, we expect the non-target soccer ball
+to always be inaccessible. This metric measures whether the non-target soccer
+ball was able to be accessed and picked-up anyway. This metric will ignore
+ambiguous multi-retrieval Arithmetic and Number Comparison scenes.
+
+#### Stepped In Lava
+
+Some tasks have lava pools in them. This checks whether or not the performer
+stepped in one, which would end the scene.
 
 ## Running the Scorecard
 

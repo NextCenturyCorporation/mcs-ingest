@@ -1,3 +1,7 @@
+import re
+
+# Added check for '-' for dash because some scorecard fields have object ids, same for
+#  the numerical check.  None of our regular fields have '-' or numbers.
 def recursive_find_keys(x, keys, append_string):
     key_list = list(x.keys())
     for item in key_list:
@@ -8,9 +12,11 @@ def recursive_find_keys(x, keys, append_string):
                 if isinstance(arrayItem, dict):
                     recursive_find_keys(
                         arrayItem, keys, append_string + item + ".")
-                elif append_string + item not in keys:
+                elif append_string + item not in keys and "-" not in (append_string + item) \
+                         and not bool(re.search(r'\d', (append_string + item))):
                     keys.append(append_string + item)
-        elif append_string + item not in keys:
+        elif append_string + item not in keys and "-" not in (append_string + item) \
+                and not bool(re.search(r'\d', (append_string + item))):
             keys.append(append_string + item)
 
 

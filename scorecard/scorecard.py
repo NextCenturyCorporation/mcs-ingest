@@ -228,6 +228,39 @@ def find_target_loc_by_step(scene, step):
 
     return None, 0, 0
 
+def find_shell_game_container_start_end(container):
+    lanes = { -1.5: 1, -0.75: 2, 0: 3, 0.75: 4, 1.5: 5 }
+    start = str(lanes[container['position_x']])
+    end = str(lanes[container['position_x']])
+
+    horizontal_move = container.get('moves')
+    if not horizontal_move:
+        return start + ' to ' + end
+    move_per_step = horizontal_move[1]['vector']['x']
+    steps = horizontal_move[1]['stepEnd'] - horizontal_move[1]['stepBegin'] + 1
+    distance = move_per_step * steps
+
+    end = str(lanes[container['position_x'] + distance])
+    return start + ' to ' + end
+
+def is_obj_target(scene, obj_id):
+
+    # if not interactive, return
+    if scene["goal"]["sceneInfo"]["primaryType"] != "interactive":
+        return False
+
+    if(scene["goal"]["sceneInfo"]["secondaryType"] ==
+                MULTI_RETRIEVAL):
+        for target in scene["goal"]["metadata"]["targets"]:
+            if(target['id'] == obj_id):
+                return True
+    else:
+        target_obj = scene["goal"]["metadata"]["target"]
+        if(target_obj['id'] == obj_id):
+            return True
+
+
+    return False
 
 class GridHistory:
     """A history of the times a grid square has been visited"""
@@ -292,9 +325,12 @@ class Scorecard:
         self.tool_usage = None
         self.correct_platform_side = None
         self.correct_door_opened = None
+        self.pickup_non_target = False
         self.pickup_not_pickupable = 0
         self.interact_with_non_agent = 0
         self.interact_with_agent = 0
+        self.number_of_rewards_achieved = None
+        self.stepped_in_lava = None
 
     def score_all(self) -> dict:
         self.calc_repeat_failed()
@@ -307,9 +343,17 @@ class Scorecard:
         self.calc_tool_usage()
         self.calc_correct_platform_side()
         self.calc_correct_door_opened()
+        self.calc_pickup_non_target()
         self.calc_pickup_not_pickupable()
         self.calc_agent_interactions()
         self.calc_walked_into_structures()
+        self.calc_num_rewards_achieved()
+        self.calc_imitation_order_containers_are_opened_colors()
+        self.calc_set_rotation()
+        self.calc_shell_game()
+        self.calc_door_opened_side()
+        self.calc_interacted_with_blob_first()
+        self.calc_stepped_in_lava()
 
         # To be implemented
         # self.calc_attempt_impossible()
@@ -326,10 +370,20 @@ class Scorecard:
             'fastest_path': self.is_fastest_path,
             'ramp_actions': self.ramp_actions,
             'tool_usage': self.tool_usage,
+            'pickup_non_target': self.pickup_non_target,
             'pickup_not_pickupable': self.pickup_not_pickupable,
             'interact_with_non_agent': self.interact_with_non_agent,
             'walked_into_structures': self.walked_into_structures,
-            'interact_with_agent': self.interact_with_agent
+            'interact_with_agent': self.interact_with_agent,
+            'number_of_rewards_achieved': self.number_of_rewards_achieved,
+            'order_containers_are_opened_colors': self.order_containers_are_opened_colors,
+            'set_rotation_opened_container_position_absolute': self.set_rotation_opened_container_position_absolute,
+            'set_rotation_opened_container_position_relative_to_baited': self.set_rotation_opened_container_position_relative_to_baited,
+            'shell_game_opened_container_position_relative_to_baited': self.shell_game_opened_container_position_relative_to_baited,
+            'shell_game_opened_container': self.shell_game_opened_container,
+            'door_opened_side': self.door_opened_side,
+            'interacted_with_blob_first': self.interacted_with_blob_first,
+            'stepped_in_lava': self.stepped_in_lava
         }
 
     def get_revisits(self):
@@ -356,11 +410,47 @@ class Scorecard:
     def get_interact_with_agent(self):
         return self.interact_with_agent
     
+    def get_pickup_non_target(self):
+        return self.pickup_non_target
+
     def get_pickup_not_pickupable(self):
         return self.pickup_not_pickupable
 
     def get_walked_into_structures(self):
         return self.walked_into_structures
+
+    def get_number_of_rewards_achieved(self):
+        return self.number_of_rewards_achieved
+
+    def get_imitation_order_containers_are_opened(self):
+        return self.order_containers_are_opened_colors
+
+    def get_set_rotation_opened_container_position_absolute(self): 
+        return self.set_rotation_opened_container_position_absolute
+
+    def get_set_rotation_opened_container_position_relative_to_baited(self): 
+        return self.set_rotation_opened_container_position_relative_to_baited
+
+    def get_shell_game_opened_container_position_relative_to_baited(self):
+        return self.shell_game_opened_container_position_relative_to_baited
+
+    def get_shell_game_opened_container(self):
+        return self.shell_game_opened_container
+
+    def get_door_opened_side(self):
+        return self.door_opened_side
+
+    def get_interacted_with_blob_first(self):
+        return self.interacted_with_blob_first
+
+    def get_correct_platform_side(self):
+        return self.correct_platform_side
+
+    def get_correct_door_opened(self):
+        return self.correct_door_opened
+
+    def get_stepped_in_lava(self):
+        return self.stepped_in_lava
 
     def calc_revisiting(self):
 
@@ -846,10 +936,17 @@ class Scorecard:
         return self.repeat_failed
 
     def calc_tool_usage(self):
-        """Calculate the torques, push, pulls, moves."""
+        """Calculate the torques, push, pulls, moves. Also includes
+        calculations for multi tool specific scorecard values."""
         steps_list = self.history['steps']
 
         tool_usage = defaultdict(int)
+
+        is_multi_tool = (self.scene['goal']['sceneInfo'].get('tertiaryType') and
+                    self.scene['goal']['sceneInfo']['tertiaryType'] == "multi tool use")
+        unique_tools = set()
+        is_hooked_rotated = False
+        is_straight_rotated = False
 
         for single_step in steps_list:
             action = single_step['action']
@@ -862,8 +959,27 @@ class Scorecard:
                 resolved_obj = get_relevant_object(output)
                 if resolved_obj.startswith('tool') and return_status == 'SUCCESSFUL':
                     tool_usage[action] += 1
+
+                    if is_multi_tool:
+                        unique_tools.add(resolved_obj)
+
+                        if action in ['RotateObject', 'TorqueObject']:
+                            tool_object = [obj for obj in self.scene['objects']
+                                if obj['id'] == resolved_obj]
+                            if(len(tool_object) > 0):
+                                if(is_straight_rotated == False and tool_object[0]['type'].startswith('tool_rect')):
+                                    is_straight_rotated = True
+                                if(is_hooked_rotated == False and (tool_object[0]['type'].startswith('tool_hooked') or
+                                                                   tool_object[0]['type'].startswith('tool_isosceles'))):
+                                    is_hooked_rotated = True
+
                 else:
                     tool_usage[action + '_failed'] += 1
+
+        if(is_multi_tool):
+            tool_usage["total_tools_used"] = len(unique_tools)
+            tool_usage["is_hooked_rotated"] = is_hooked_rotated
+            tool_usage["is_straight_rotated"] = is_straight_rotated
 
         self.tool_usage = tool_usage
         return self.tool_usage
@@ -882,11 +998,52 @@ class Scorecard:
               negative X being "left" and positive X being "right"
         '''
 
-        # Does this scene have a targetSide? If not, return
+        # Does this scene have a clear targetSide? If not, return
         # correct_platform_side (currently set to None).
         goal = self.scene.get('goal')
-        if 'sceneInfo' in goal and 'targetSide' in goal['sceneInfo']:
+        if ('sceneInfo' in goal and 'targetSide' in goal['sceneInfo'] and
+                goal['sceneInfo']['targetSide'] in ['left', 'right']):
             target_side = goal['sceneInfo']['targetSide']
+        elif (
+            'sceneInfo' in goal and
+            'toolChoiceValidSide' in goal['sceneInfo'] and
+            goal['sceneInfo']['toolChoiceValidSide'] in ['left', 'right']
+        ):
+            # Support Eval 6 Tool Choice scenes.
+            target_side = goal['sceneInfo']['toolChoiceValidSide']
+        elif (
+            'sceneInfo' in goal and 'relation' in goal['sceneInfo'] and
+            goal['sceneInfo']['relation'] in ['sameSide', 'oppositeSide'] and
+            'type' in goal['sceneInfo'] and
+            goal['sceneInfo']['type'] in ['collision', 'noCollision']
+        ):
+
+            # Support for Eval 6 Interactive Collisions
+            throwing_device = [obj for obj in self.scene['objects']
+                    if obj['id'].startswith('throwing_device_')]
+
+            # if for whatever reason, we can't find the
+            # throwing device, return
+            if len(throwing_device) == 0:
+                return self.correct_platform_side
+
+            relation = goal['sceneInfo']['relation']
+            collision = goal['sceneInfo']['type']
+            x_pos = throwing_device[0]['shows'][0]['position']['x']
+
+            is_target_same_side = relation == 'sameSide' and collision == 'noCollision'
+            if is_target_same_side:
+                target_side = 'left' if x_pos < 0 else 'right'
+            else:
+                target_side = 'right' if x_pos < 0 else 'left'
+        elif (
+            'sceneInfo' in goal and 'finalRewardLocation' in goal['sceneInfo'] and
+            goal['sceneInfo']['finalRewardLocation'] in ['left', 'right']):
+
+            # Support for Eval 6 Trajectory Scenes
+            finalRewardLoc = goal['sceneInfo']['finalRewardLocation']
+
+            target_side = 'left' if finalRewardLoc == 'left' else 'right'
         else:
             return self.correct_platform_side
 
@@ -929,8 +1086,42 @@ class Scorecard:
         # Does this scene have a correctDoor? If not, return
         # correct_door_opened (currently set to None).
         goal = self.scene.get('goal')
-        if 'sceneInfo' in goal and 'correctDoor' in goal['sceneInfo']:
+        if ('sceneInfo' in goal and 'correctDoor' in goal['sceneInfo'] and
+                goal['sceneInfo']['correctDoor'] is not None):
             correct_door = goal['sceneInfo']['correctDoor']
+        elif (
+            'sceneInfo' in goal and 'relation' in goal['sceneInfo'] and
+            goal['sceneInfo']['relation'] in ['sameSide', 'oppositeSide'] and
+            'type' in goal['sceneInfo'] and
+            goal['sceneInfo']['type'] in ['collision', 'noCollision']
+        ):
+            # Support for Eval 6 Interactive Collisions
+            throwing_device = [obj for obj in self.scene['objects']
+                    if obj['id'].startswith('throwing_device_')]
+
+            # if for whatever reason, we can't find the
+            # throwing device, return
+            if len(throwing_device) == 0:
+                return self.correct_door_opened
+
+            relation = goal['sceneInfo']['relation']
+            collision = goal['sceneInfo']['type']
+            x_pos = throwing_device[0]['shows'][0]['position']['x']
+
+            is_target_same_side = relation == 'sameSide' and collision == 'noCollision'
+            if is_target_same_side:
+                correct_door = 'left' if x_pos < 0 else 'right'
+            else:
+                correct_door = 'right' if x_pos < 0 else 'left'
+
+        elif (
+            'sceneInfo' in goal and 'finalRewardLocation' in goal['sceneInfo'] and
+            goal['sceneInfo']['finalRewardLocation'] in ['left', 'right']):
+
+            # Support for Eval 6 Trajectory Scenes
+            finalRewardLoc = goal['sceneInfo']['finalRewardLocation']
+
+            correct_door = 'left' if finalRewardLoc == 'left' else 'right'
         else:
             return self.correct_door_opened
 
@@ -1003,6 +1194,48 @@ class Scorecard:
             p1 = p2
         return dist
     
+    def calc_pickup_non_target(self):
+        """
+        Calculate whether the performer agent picked up a non-target
+        soccer ball. Will ignore ambiguous multi-retrieval scenes.
+        """
+        if (
+            self.scene['goal']['category'] == MULTI_RETRIEVAL and
+            self.scene['goal'].get('sceneInfo', {}).get('ambiguous')
+        ):
+            return False
+        pickup_non_target = False
+        target_list = []
+        if 'metadata' in self.scene['goal']:
+            if 'target' in self.scene['goal']['metadata']:
+                target_list = [self.scene['goal']['metadata']['target']]
+            if 'targets' in self.scene['goal']['metadata']:
+                target_list = self.scene['goal']['metadata']['targets']
+        # Identify all the target ID(s) in the scene file
+        target_list = [target['id'] for target in target_list]
+        # Identify the soccer ball ID(s) in the scene file
+        soccer_ball_list = [
+            instance['id'] for instance in self.scene['objects']
+            if instance['type'] == 'soccer_ball'
+        ]
+        if target_list and soccer_ball_list:
+            for step_data in self.history['steps']:
+                # Identify a successful pickup
+                if (
+                    step_data['action'] == 'PickupObject' and
+                    step_data['output']['return_status'] == "SUCCESSFUL"
+                ):
+                    # Use "get" for backwards compatibility with old histories
+                    resolved_id = step_data['output'].get('resolved_object')
+                    if (
+                        resolved_id and
+                        resolved_id in soccer_ball_list and
+                        resolved_id not in target_list
+                    ):
+                        pickup_non_target = True
+        self.pickup_non_target = pickup_non_target
+        return self.pickup_non_target
+
     def calc_pickup_not_pickupable(self):
         ''' 
         Determine the number of times that the performer tried to
@@ -1166,3 +1399,430 @@ class Scorecard:
                         break
         self.walked_into_structures = walked_into_structures
         return self.walked_into_structures
+
+    def calc_num_rewards_achieved(self):
+        '''
+        Determine the number of reward soccer balls collected by
+        the performer.
+        '''
+        # Ignore passive scenes
+        if(self.scene["goal"]["sceneInfo"]["primaryType"] != "interactive"):
+            return None
+
+        steps_list = self.history['steps']
+
+        # track targets that are held
+        targets_picked_up = []
+
+        for single_step in steps_list:
+            action = single_step['action']
+            output = single_step['output']
+
+            if action == 'PickupObject' and output['return_status'] == 'SUCCESSFUL':
+                # Get the id of the object that was used, if any
+                obj_id = get_relevant_object(output)
+
+                if is_obj_target(self.scene, obj_id) and (obj_id not in targets_picked_up):
+                    targets_picked_up.append(obj_id)
+
+        self.number_of_rewards_achieved = len(targets_picked_up)
+        logging.debug(f"Total number of rewards achieved: {self.number_of_rewards_achieved}")
+        return self.number_of_rewards_achieved
+
+    def calc_imitation_order_containers_are_opened_colors(self):
+        ''' 
+        Determine the order the performer opened containers by color
+        '''
+        steps_list = self.history['steps']
+        order_containers_are_opened_colors = []
+
+        containers = [(obj['id'], obj['debug']['color']) for obj in self.scene['objects']
+            if obj['type'].startswith('chest')]
+        for single_step in steps_list:
+            action = single_step['action']
+            output = single_step['output']
+            if (action == 'OpenObject'):
+                resolved_obj_id = output['resolved_object']
+                if output['return_status'] == "SUCCESSFUL":
+                    for c in containers:
+                         if resolved_obj_id == c[0]:
+                            order_containers_are_opened_colors.append(c[1])
+
+        self.order_containers_are_opened_colors = \
+            order_containers_are_opened_colors
+        return self.order_containers_are_opened_colors
+
+    def calc_set_rotation(self):
+        ''' 
+        Determine the container the performer opened in set rotation scenes
+        '''
+        steps_list = self.history['steps']
+        """
+
+        Absolute Container Position
+                1
+                |
+                6
+                |
+        4 --9-- 5 --7-- 2
+                |
+                8
+                |
+                3
+            Performer
+
+        """
+        absolute_positions = {
+            1: (0, 2.62),
+            2: (1.62, 1),
+            3: (0, -0.62),
+            4: (-1.62, 1),
+            5: (0, 1),
+            6: (0, 1.81),
+            7: (0.81, 1),
+            8: (0, 0.19),
+            9: (-0.81, 1)
+        }
+        self.set_rotation_opened_container_position_absolute = ''
+        self.set_rotation_opened_container_position_relative_to_baited = ''
+        if (not self.scene['goal']['sceneInfo'].get('tertiaryType') or
+                self.scene['goal']['sceneInfo']['tertiaryType'] != "set rotation"):
+            self.set_rotation_opened_container_position_absolute = None
+            self.set_rotation_opened_container_position_relative_to_baited = None
+            return (self.set_rotation_opened_container_position_absolute,
+                    self.set_rotation_opened_container_position_relative_to_baited)
+        try:
+            containers_and_lids = [
+                {
+                    'id': obj['id'],
+                    'lid': obj['debug']['lidId'],
+                    'start_position_x': obj['shows'][0]['position']['x'],
+                    'start_position_z': obj['shows'][0]['position']['z'],
+                    'absolute_pos_start': None,
+                    'absolute_pos_end': None,
+                    'relative_to_baited': None
+                }
+                for obj in self.scene['objects'] if obj['type'] == 'separate_container']
+            rotation_direction = self.scene['goal']['sceneInfo'].get('rotation')
+            rotation = self.scene['goal']['sceneInfo'].get('degreesRotated')
+
+            if rotation_direction is None or rotation is None:
+                self.set_rotation_opened_container_position_absolute = None
+                self.set_rotation_opened_container_position_relative_to_baited = None
+                return (self.set_rotation_opened_container_position_absolute,
+                        self.set_rotation_opened_container_position_relative_to_baited)
+
+            # absolute
+            for cl in containers_and_lids:
+                absolute_pos = [
+                    k for k, v in absolute_positions.items() if
+                    cl['start_position_x'] == v[0] and cl['start_position_z'] == v[1]][0]
+                cl['absolute_pos_start'] = absolute_pos
+                if absolute_pos == 5:
+                    cl['absolute_pos_end'] = absolute_pos
+                    continue
+                increments = int(rotation / 90 * (
+                    -1 if rotation_direction.startswith('counter') else 1))
+                edge_positions = [1, 2, 3, 4] if absolute_pos in [1, 2, 3, 4] else [6, 7, 8, 9]
+                end_pos = edge_positions[
+                    (edge_positions.index(absolute_pos) + increments) % len(edge_positions)]
+                cl['absolute_pos_end'] = end_pos
+
+            # relative
+            target_x = self.scene['objects'][0]['shows'][0]['position']['x']
+            is_side_ctr = target_x != 0
+            has_five_ctrs = len(containers_and_lids) == 5
+            baited_ctr = [obj for obj in containers_and_lids if obj['start_position_x'] == target_x][0]
+
+            if is_side_ctr:
+                for cl in containers_and_lids:
+                    if(has_five_ctrs is True):
+                        # use start positions to help figure out relative keyword
+                        left_x = absolute_positions.get(4)[0]
+                        mid_left_x = absolute_positions.get(9)[0]
+                        middle = absolute_positions.get(5)[0]
+                        mid_right_x = absolute_positions.get(7)[0]
+                        right_x = absolute_positions.get(2)[0]
+
+                        # need to reverse +/- of other containers in this case
+                        flipped = (
+                            (rotation_direction.startswith(('counter')) and rotation == 270) or
+                            (rotation_direction.startswith(('clock')) and rotation == 90) or
+                            rotation == 180)
+
+                        """
+                            Breakdown of labeling for five container case:
+
+                            baited on the left (or nearest to performer) after rotation:
+                                [ ]        [ ]          [ ]           [ ]        [ ]
+                                baited    baited + 1   baited + 2   baited + 3   opposite
+
+
+                            baited between middle container and left (or nearest) after rotation:
+                                [ ]          [ ]        [ ]        [ ]         [ ]
+                            baited - 1     baited  baited + 1   opposite   baited + 3
+
+
+                            baited between middle container and right (or furthest) after rotation:
+                                [ ]           [ ]        [ ]         [ ]       [ ]
+                                baited - 3   opposite   baited - 1   baited   baited + 1
+
+
+                            baited on right (or furthest from performer) after rotation:
+                                [ ]          [ ]          [ ]           [ ]         [ ]
+                                opposite   baited - 3   baited - 2     baited - 1   baited
+                        """
+
+                        if(baited_ctr['start_position_x'] == left_x):
+                            baited_1_away = 'baited - 1' if flipped else 'baited + 1'
+                            baited_2_away = 'baited - 2' if flipped else 'baited + 2'
+                            baited_3_away = 'baited - 3' if flipped else 'baited + 3'
+
+                            cl['relative_to_baited'] = (
+                                'baited' if cl['start_position_x'] == left_x else
+                                baited_1_away if cl['start_position_x'] == mid_left_x else
+                                baited_2_away if cl['start_position_x'] == middle else
+                                baited_3_away if cl['start_position_x'] == mid_right_x else
+                                'opposite')
+                        elif(baited_ctr['start_position_x'] == mid_left_x):
+                            starts_left_of_baited = 'baited + 1' if flipped else 'baited - 1'
+                            middle_container = 'baited - 1' if flipped else 'baited + 1'
+                            at_other_end = 'baited - 3' if flipped else 'baited + 3'
+
+                            cl['relative_to_baited'] = (
+                                'baited' if cl['start_position_x'] == mid_left_x else
+                                middle_container if cl['start_position_x'] == middle else
+                                'opposite' if cl['start_position_x'] == mid_right_x else
+                                at_other_end if cl['start_position_x'] == right_x else
+                                starts_left_of_baited)
+                        elif(baited_ctr['start_position_x'] == mid_right_x):
+                            starts_right_of_baited = 'baited - 1' if flipped else 'baited + 1'
+                            middle_container = 'baited + 1' if flipped else 'baited - 1'
+                            at_other_end = 'baited + 3' if flipped else 'baited - 3'
+
+                            cl['relative_to_baited'] = (
+                                'baited' if cl['start_position_x'] == mid_right_x else
+                                starts_right_of_baited if cl['start_position_x'] == right_x else
+                                middle_container if cl['start_position_x'] == middle else
+                                'opposite' if cl['start_position_x'] == mid_left_x else
+                                at_other_end)
+                        else:
+                            baited_1_away = 'baited + 1' if flipped else 'baited - 1'
+                            baited_2_away = 'baited + 2' if flipped else 'baited - 2'
+                            baited_3_away = 'baited + 3' if flipped else 'baited - 3'
+
+                            cl['relative_to_baited'] = (
+                                'baited' if cl['start_position_x'] == right_x else
+                                baited_1_away if cl['start_position_x'] == mid_right_x else
+                                baited_2_away if cl['start_position_x'] == middle else
+                                baited_3_away if cl['start_position_x'] == mid_left_x else
+                                'opposite')
+                    else:
+                        """
+                            3 container case:
+                            if baited container is not in middle:
+
+                            [ ]           [ ]           [ ]
+                            baited      middle      opposite
+                        """
+                        cl['relative_to_baited'] = (
+                            'baited' if cl['start_position_x'] == target_x else
+                            'middle' if cl['start_position_x'] == 0 else
+                            'opposite')
+            else:
+                # baited container in the middle
+                absolute_pos_to_relative_dict = {1: 'far', 2: 'right', 3: 'near', 4: 'left',
+                                                 6: 'farMiddle', 7: 'rightMiddle',
+                                                 8: 'nearMiddle', 9: 'leftMiddle'}
+                for cl in containers_and_lids:
+                    if cl['start_position_x'] == target_x:
+                        cl['relative_to_baited'] = 'baited'
+                    else:
+                        cl['relative_to_baited'] = \
+                            absolute_pos_to_relative_dict[cl['absolute_pos_end']]
+
+            found_container = False
+            for single_step in steps_list:
+                action = single_step['action']
+                output = single_step['output']
+                if (action == 'OpenObject'):
+                    resolved_obj_id = output['resolved_object']
+                    if output['return_status'] == "SUCCESSFUL":
+                        for cl in containers_and_lids:
+                            if resolved_obj_id == cl['id'] or resolved_obj_id == cl['lid']:
+                                self.set_rotation_opened_container_position_absolute = \
+                                    str(cl['absolute_pos_start']) + ' to ' + str(cl['absolute_pos_end'])
+                                self.set_rotation_opened_container_position_relative_to_baited = \
+                                    cl['relative_to_baited']
+                                break
+                if found_container:
+                    break
+            self.set_rotation_opened_container_position_absolute = \
+                self.set_rotation_opened_container_position_absolute
+            self.set_rotation_opened_container_position_relative_to_baited = \
+                self.set_rotation_opened_container_position_relative_to_baited
+        except:
+            pass
+        finally:
+            return (self.set_rotation_opened_container_position_absolute,
+                    self.set_rotation_opened_container_position_relative_to_baited)
+
+    def calc_shell_game(self):
+        ''' 
+        Determine the container the performer opened in shell game scenes
+        '''
+        steps_list = self.history['steps']
+        shell_game_opened_container = None
+        baited_ctr_end_pos = None
+        baited_ctr_id = None
+        if (not self.scene['goal']['sceneInfo'].get('tertiaryType') or
+                self.scene['goal']['sceneInfo']['tertiaryType'] != "shell game"):
+            self.shell_game_opened_container_position_relative_to_baited = None
+            self.shell_game_opened_container = shell_game_opened_container
+            return self.shell_game_opened_container_position_relative_to_baited, self.shell_game_opened_container
+        containers_and_lids = [
+            {
+                'id': obj['id'],
+                'lid': obj['debug']['lidId'],
+                'isTargetContainer': obj['debug'].get('isTargetContainer'),
+                'position_x': obj['shows'][0]['position']['x'],
+                'moves': obj.get('moves')
+            }
+            for obj in self.scene['objects'] if obj['type'] == 'separate_container']
+
+        if('baitedContainerMovement' in self.scene['goal']['sceneInfo']):
+            baited_ctr_end_pos = self.scene['goal']['sceneInfo']['baitedContainerMovement'][-1]
+            baited_ctr_id = [cl for cl in containers_and_lids if cl['isTargetContainer']][0]['id']
+        else:
+            # in case the tag isn't in the scene file, calculate baited container movement
+            for cl in containers_and_lids:
+                if cl['isTargetContainer']:
+                    baited_ctr_end_pos = find_shell_game_container_start_end(cl)[-1]
+                    baited_ctr_id = cl['id']
+                    break
+
+        relative_pos = None
+        found_container = False
+        for single_step in steps_list:
+            action = single_step['action']
+            output = single_step['output']
+            if (action == 'OpenObject'):
+                resolved_obj_id = output['resolved_object']
+                if output['return_status'] == "SUCCESSFUL":
+                    for cl in containers_and_lids:
+                        if resolved_obj_id == cl['id'] or resolved_obj_id == cl['lid']:
+                            shell_game_opened_container = find_shell_game_container_start_end(cl)
+                            opened_ctr_end_pos = shell_game_opened_container[-1]
+
+                            # if the opened container was the baited one, no additional calculations needed
+                            if(opened_ctr_end_pos == baited_ctr_end_pos):
+                                relative_pos = 'baited'
+                            else:
+                                # if a non-baited container was opened
+                                if(self.scene['goal']['sceneInfo']['numberOfContainers'] == 2):
+                                    relative_pos = ('left' if opened_ctr_end_pos < baited_ctr_end_pos else 'right')
+                                else:
+                                    # three container case
+                                    # we have the opened container info and the baited one, figure out where the third one is to get
+                                    # relative position of opened one to baited
+                                    third_ctr = [cl for cl in containers_and_lids if ((cl['id'] not in [resolved_obj_id, baited_ctr_id])
+                                                 and (cl['lid'] not in [resolved_obj_id, baited_ctr_id]))][0]
+                                    third_ctr_end_pos = find_shell_game_container_start_end(third_ctr)[-1]
+
+                                    if ((baited_ctr_end_pos < third_ctr_end_pos and baited_ctr_end_pos > opened_ctr_end_pos) or
+                                        (baited_ctr_end_pos < opened_ctr_end_pos and baited_ctr_end_pos > third_ctr_end_pos)):
+                                        # baited is in the middle
+                                        relative_pos = 'left' if opened_ctr_end_pos < baited_ctr_end_pos else 'right'
+                                    else:
+                                        # baited is on one of the ends
+                                        if(baited_ctr_end_pos < third_ctr_end_pos and baited_ctr_end_pos < opened_ctr_end_pos):
+                                            # baited on left
+                                            relative_pos = 'middle' if opened_ctr_end_pos < third_ctr_end_pos else 'opposite'
+                                        else:
+                                            # baited on right
+                                            relative_pos = 'middle' if third_ctr_end_pos < opened_ctr_end_pos else 'opposite'
+
+                            found_container = True
+                            break
+            if found_container:
+                break
+
+        self.shell_game_opened_container_position_relative_to_baited = relative_pos
+        self.shell_game_opened_container = shell_game_opened_container
+        return self.shell_game_opened_container_position_relative_to_baited, self.shell_game_opened_container
+
+    def calc_door_opened_side(self):
+        ''' 
+        Determine the door the performer opened in the following scenes
+        with the options available:
+        Trajectory - Left, Right
+        InteractiveCollision - Left, Right
+        Solidity - Left, Middle, Right
+        SupportRelations - Left, Middle, Right
+        '''
+        steps_list = self.history['steps']
+        door_opened = None
+
+        doors = [
+            [obj['id'], obj['shows'][0]['position']['x']]
+            for obj in self.scene['objects'] if obj['type'].startswith('door')]
+        found_door = False
+        for single_step in steps_list:
+            action = single_step['action']
+            output = single_step['output']
+            if (action == 'OpenObject'):
+                resolved_obj_id = output['resolved_object']
+                if output['return_status'] == "SUCCESSFUL":
+                    for door in doors:
+                        if resolved_obj_id == door[0]:
+                            door_opened = \
+                                'left' if door[1] < 0 else \
+                                    'middle' if door[1] == 0 else 'right'
+                            found_door = True
+                            break
+            if found_door:
+                break
+
+        self.door_opened_side = door_opened
+        return self.door_opened_side
+
+    def calc_interacted_with_blob_first(self):
+        ''' 
+        Determine if the performer went to the blob first in
+        the following scenes: Holes, Lava, Ramps
+        '''
+        steps_list = self.history['steps']
+
+        interacted_with_blob_first = False
+        agent = [obj['id'] for obj in self.scene['objects'] if obj['type'].startswith('agent')]
+        blob = [obj['id'] for obj in self.scene['objects'] if obj['type'].startswith('blob')]
+        if len(agent) and len(blob):
+            for single_step in steps_list:
+                action = single_step['action']
+                output = single_step['output']
+                if (action == 'InteractWithAgent'):
+                    resolved_obj_id = output['resolved_object']
+                    if output['return_status'] == "NOT_AGENT":
+                        if resolved_obj_id == blob[0]:
+                            interacted_with_blob_first = True
+                            break
+                    if output['return_status'] == "SUCCESSFUL":
+                        if resolved_obj_id == agent[0]:
+                            interacted_with_blob_first = False
+                            break
+
+        self.interacted_with_blob_first = interacted_with_blob_first
+        return self.interacted_with_blob_first
+
+    def calc_stepped_in_lava(self):
+        if('lava' not in self.scene):
+            return None
+
+        stepped_in_lava = False
+        last_step = self.history['steps'][-1]
+        output = last_step['output']
+        if(output['steps_on_lava'] > 0):
+            stepped_in_lava = True
+
+        self.stepped_in_lava = stepped_in_lava
+        return self.stepped_in_lava

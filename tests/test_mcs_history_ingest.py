@@ -1,4 +1,5 @@
 from enum import auto
+import os
 import time
 import unittest
 import warnings
@@ -11,8 +12,11 @@ import mcs_scene_ingest
 
 TEST_HISTORY_FILE_NAME = "test_data/test_eval_3-5_level2_baseline_juliett_0001_01.json"
 TEST_SCENE_FILE_NAME = "test_data/test_juliett_0001_01_debug.json"
-TEST_INTERACTIVE_HISTORY_FILE_NAME = "test_data/occluders_0001_17_baseline.json"
+TEST_INTERACTIVE_HISTORY_FILE_NAME = "test_data/occluders_0001_17_hist_updated.json"
 TEST_INTERACTIVE_SCENE_FILE = "test_data/occluders_0001_17_I1_debug.json"
+TEST_MULTI_RET_SCENE_FILE = "test_data/arth_0001_13_ex.json"
+TEST_MULTI_RET_HIST_FILE = "test_data/arth_0001_13_hist_all_targets.json"
+
 TEST_FOLDER = "tests"
 
 
@@ -21,6 +25,7 @@ class TestMcsHistoryIngestMongo(unittest.TestCase):
 
     mongo_client = None
     mongo_host_port = 27027
+    os_environ_none = False
 
     @classmethod
     def create_mongo_container(cls, docker_client, api_client, timeout=60):
@@ -48,11 +53,19 @@ class TestMcsHistoryIngestMongo(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         '''Start the mongo docker container'''
+        # Get current context host value, attempt to set as DOCKER_HOST
+        docker_url = "unix://var/run/docker.sock"
+        if os.environ.get('DOCKER_HOST') is None:
+            docker_host = docker.context.ContextAPI.get_current_context().Host
+            os.environ["DOCKER_HOST"] = docker_host
+            docker_url = docker_host
+            cls.os_environ_none = True
+
         # connect to docker daemon
         cls.docker_client = docker.from_env()
         # create low-level API client for health checks
         cls.api_client = docker.APIClient(
-            base_url="unix://var/run/docker.sock")
+            base_url=docker_url)
         cls.mongo_container = cls.create_mongo_container(
             cls.docker_client,
             cls.api_client)
@@ -64,6 +77,8 @@ class TestMcsHistoryIngestMongo(unittest.TestCase):
         cls.mongo_container.stop()
         cls.docker_client.close()
         cls.api_client.close()
+        if cls.os_environ_none:
+            os.environ.pop('DOCKER_HOST', None)
 
     def setUp(self):
         '''Create the client and insert a single document'''
@@ -76,6 +91,11 @@ class TestMcsHistoryIngestMongo(unittest.TestCase):
             client=self.mongo_client)
         mcs_scene_ingest.automated_scene_ingest_file(
             file_name=TEST_INTERACTIVE_SCENE_FILE,
+            folder=TEST_FOLDER,
+            db_string="mcs",
+            client=self.mongo_client)
+        mcs_scene_ingest.automated_scene_ingest_file(
+            file_name=TEST_MULTI_RET_SCENE_FILE,
             folder=TEST_FOLDER,
             db_string="mcs",
             client=self.mongo_client)
@@ -100,15 +120,28 @@ class TestMcsHistoryIngestMongo(unittest.TestCase):
         self.assertIsNotNone(history_item)
         self.assertIsNotNone(history_item["slices"])
         self.assertEqual(history_item["domain_type"], "passive objects")
+        self.assertNotIn("start_distance_between_performer_and_target", history_item)
 
     def test_build_interactive_history_item(self):
         '''Generates history item for an interactive, which follows
         a different code path (and includes scorecard)'''
+        # Will log a "step data" warning due to using an old scene history file
         history_item = mcs_history_ingest.build_history_item(
             TEST_INTERACTIVE_HISTORY_FILE_NAME, TEST_FOLDER,
             self.mongo_client, "mcs")
         self.assertIsNotNone(history_item)
         self.assertTrue(history_item["target_is_visible_at_start"])
+        self.assertEqual(history_item["start_distance_between_performer_and_target"], 6.8243)
+
+    def test_build_interactive_history_item_multi_ret(self):
+        '''Generates history item for an interactive Multi-Retrieval scene,
+        which follows a different code path (and includes scorecard)'''
+        history_item = mcs_history_ingest.build_history_item(
+            TEST_MULTI_RET_HIST_FILE, TEST_FOLDER,
+            self.mongo_client, "mcs")
+        self.assertIsNotNone(history_item)
+        self.assertFalse(history_item["target_is_visible_at_start"])
+        self.assertEqual(history_item["start_distance_between_performer_and_target"], 7.207)
 
 
 class TestMcsHistoryIngest(unittest.TestCase):
@@ -513,9 +546,9 @@ class TestMcsHistoryIngest(unittest.TestCase):
         history_item["score"] = mcs_history_ingest.process_score(
             history_item, test_scene, True, False, None, False, None, None)
         self.assertEqual(history_item['score']['score'], 1)
-        self.assertEqual(history_item['score']['weighted_score'], 2)
-        self.assertEqual(history_item['score']['weighted_score_worth'], 2)
-        self.assertEqual(history_item['score']['weighted_confidence'], 2)
+        self.assertEqual(history_item['score']['weighted_score'], 1)
+        self.assertEqual(history_item['score']['weighted_score_worth'], 1)
+        self.assertEqual(history_item['score']['weighted_confidence'], 1)
 
         history_item = {
             'category': 'passive',
@@ -534,9 +567,9 @@ class TestMcsHistoryIngest(unittest.TestCase):
         history_item["score"] = mcs_history_ingest.process_score(
             history_item, test_scene, True, False, None, False, None, None)
         self.assertEqual(history_item['score']['score'], 1)
-        self.assertEqual(history_item['score']['weighted_score'], 8)
-        self.assertEqual(history_item['score']['weighted_score_worth'], 8)
-        self.assertEqual(history_item['score']['weighted_confidence'], 8)
+        self.assertEqual(history_item['score']['weighted_score'], 1)
+        self.assertEqual(history_item['score']['weighted_score_worth'], 1)
+        self.assertEqual(history_item['score']['weighted_confidence'], 1)
 
         test_scene = {
             "goal": {
@@ -597,8 +630,8 @@ class TestMcsHistoryIngest(unittest.TestCase):
         history_item["score"] = mcs_history_ingest.process_score(
             history_item, test_scene, True, False, None, False, None, None)
         self.assertEqual(history_item['score']['score'], 1)
-        self.assertEqual(history_item['score']['weighted_score'], 2)
-        self.assertEqual(history_item['score']['weighted_score_worth'], 2)
+        self.assertEqual(history_item['score']['weighted_score'], 1)
+        self.assertEqual(history_item['score']['weighted_score_worth'], 1)
         self.assertIsNone(history_item['score']['weighted_confidence'])
 
         history_item = {
@@ -618,8 +651,8 @@ class TestMcsHistoryIngest(unittest.TestCase):
         history_item["score"] = mcs_history_ingest.process_score(
             history_item, test_scene, True, False, None, False, None, None)
         self.assertEqual(history_item['score']['score'], 1)
-        self.assertEqual(history_item['score']['weighted_score'], 8)
-        self.assertEqual(history_item['score']['weighted_score_worth'], 8)
+        self.assertEqual(history_item['score']['weighted_score'], 1)
+        self.assertEqual(history_item['score']['weighted_score_worth'], 1)
         self.assertIsNone(history_item['score']['weighted_confidence'])
 
         test_scene = {
@@ -684,7 +717,8 @@ class TestMcsHistoryIngest(unittest.TestCase):
                 "physics_frames_per_second": 20,
                 "return_status": "SUCCESSFUL",
                 "reward": -0.001,
-                "rotation": 90.0
+                "rotation": 90.0,
+                "steps_on_lava": 0
             },
             "delta_time_millis": 12464.299655999997,
             "target_visible": True
@@ -724,8 +758,93 @@ class TestMcsHistoryIngest(unittest.TestCase):
         self.assertEqual(new_step["output"]["return_status"], step["output"]["return_status"])
         self.assertEqual(new_step["output"]["reward"], step["output"]["reward"])
         self.assertEqual(new_step["output"]["rotation"], step["output"]["rotation"])
+        self.assertEqual(new_step["output"]["steps_on_lava"], step["output"]["steps_on_lava"])
         self.assertEqual(new_step["target_visible"], step["target_visible"])
         self.assertEqual(new_step["output"]["target"], step["output"]["goal"]["metadata"]["target"])
+        self.assertEqual(interactive_reward, -0.001)
+        self.assertEqual(interactive_goal_achieved, 0)
+        self.assertEqual(corner_visit_order, [])
+
+    def test_build_new_step_obj_ambiguous_multi_retrieval(self):
+        step = {
+            "step": 2,
+            "action": "PickupObject",
+            "args": {},
+            "classification": None,
+            "confidence": None,
+            "violations_xy_list": None,
+            "internal_state": None,
+            "output": {
+                "head_tilt": 15.0,
+                "goal": {
+                    "metadata": {
+                        "target": {
+                            "id": "9d31fa87-193f-4c08-bf6c-9eff9b30e341",
+                            "position": {
+                                "x": -3.654195547103882,
+                                "y": 3.2224996089935303,
+                                "z": 3.75
+                            }
+                        },
+                        "category": "multi retrieval"
+                    }
+                },
+                "position": {
+                    "x": 2.2,
+                    "y": 1.0,
+                    "z": 2.2
+                },
+                "resolved_object": "someid",
+                "physics_frames_per_second": 20,
+                "return_status": "SUCCESSFUL",
+                "reward": 0.999,
+                "rotation": 90.0,
+                "steps_on_lava": 1
+            },
+            "delta_time_millis": 12464.299655999997,
+            "target_visible": True
+        }
+
+        corner_visit_order = []
+        interactive_goal_achieved = 0
+        interactive_reward = 0
+
+        (
+            new_step,
+            interactive_reward,
+            interactive_goal_achieved,
+            corner_visit_order
+        ) = mcs_history_ingest.build_new_step_obj(
+            step,
+            interactive_reward,
+            interactive_goal_achieved,
+            2,
+            [],
+            [],
+            [],
+            False)
+
+        self.assertIsNotNone(new_step)
+        self.assertEqual(new_step["stepNumber"], 2)
+        self.assertEqual(new_step["action"], "PickupObject")
+        self.assertEqual(new_step["args"], {})
+        self.assertIsNone(new_step["classification"])
+        self.assertIsNone(new_step["confidence"])
+        self.assertIsNone(new_step["internal_state"])
+        self.assertEqual(new_step["delta_time_millis"], step["delta_time_millis"])
+        self.assertIsNone(new_step["violations_xy_list"], step["violations_xy_list"])
+        self.assertEqual(new_step["output"]["head_tilt"], step["output"]["head_tilt"])
+        self.assertEqual(new_step["output"]["position"], step["output"]["position"])
+        self.assertEqual(new_step["output"]["physics_frames_per_second"], step["output"]["physics_frames_per_second"])
+        self.assertEqual(new_step["output"]["return_status"], step["output"]["return_status"])
+        self.assertEqual(new_step["output"]["reward"], step["output"]["reward"])
+        self.assertEqual(new_step["output"]["rotation"], step["output"]["rotation"])
+        self.assertEqual(new_step["output"]["steps_on_lava"], step["output"]["steps_on_lava"])
+        self.assertEqual(new_step["target_visible"], step["target_visible"])
+        self.assertEqual(new_step["output"]["target"], step["output"]["goal"]["metadata"]["target"])
+        self.assertEqual(interactive_reward, 0.999)
+        self.assertEqual(interactive_goal_achieved, 1)
+        self.assertEqual(corner_visit_order, [])
 
 
 if __name__ == '__main__':

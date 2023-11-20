@@ -35,6 +35,8 @@ python -m pip install -r requirements.txt
 ## Ingest Sample Commands (for testing locally)
 
 ### Ingest scene file
+
+Note that all ingested scene files must end with `_debug.json` and have the debug property contain `"evaluation": "Evaluation {num} Scenes"`
 ```
 python local_scene_ingest.py --folder ../genScenes/
 ```
@@ -55,6 +57,9 @@ python local_history_ingest.py --folder ../MCS/SCENE_HISTORY/
 ## Unit Tests
 
 To run the unit tests, run the command: `python -m unittest`
+
+You may get connection errors depending on how Docker is installed on your machine and whether or not your DOCKER_HOST environment variable is set. You should be able to unset it manually and allow the tests to set them programatically if needed. 
+
 
 ### Notes
 
