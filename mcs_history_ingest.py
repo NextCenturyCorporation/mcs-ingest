@@ -97,7 +97,8 @@ PASSING_CELLS = {
     "set rotation":["C1", "F1", "I1", "L1", "C2", "F2", "I2", "L2", "M1", "N1",
                     "O1", "P1", "M2", "N2", "O2", "P2", "Q1", "R1", "S1", "T1",
                     "Q2", "R2", "S2", "T2", "Q3", "R3", "S3", "T3", "Q4", "R4",
-                    "S4", "T4"]
+                    "S4", "T4"],
+    "knowledgeable agents":["E1", "F1", "G1", "H1"]
 
 }
 
