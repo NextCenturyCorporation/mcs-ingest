@@ -36,6 +36,7 @@ TEST_HISTORY_RAMP_UP_DOWN = "ramps_test_all_combos.json"
 TEST_SCENE_SIDE = "prefix_0001_01_C4_debug.json"
 TEST_HISTORY_SIDE_1 = "gen_platform_side_1.json"
 TEST_HISTORY_SIDE_2 = "gen_platform_side_2.json"
+TEST_HISTORY_SIDE_3 = "gen_platform_side_3.json"
 
 TEST_SCENE_TOOL_CHOICE_SIDE = "lima_0001_06_debug.json"
 TEST_HISTORY_TOOL_CHOICE_SIDE_CORRECT = (
@@ -668,6 +669,7 @@ class TestMcsScorecard(unittest.TestCase):
         self.assertEqual(ramp_id, "")
 
     def test_platform_side(self):
+        # Robot leaves platform on correct side
         scene_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, TEST_SCENE_SIDE)
         history_file = mcs_scene_ingest.load_json_file(
@@ -677,10 +679,42 @@ class TestMcsScorecard(unittest.TestCase):
         correct_side = scorecard.calc_correct_platform_side()
         self.assertTrue(correct_side)
 
+        # Robot leaves platform on incorrect side
         scene_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, TEST_SCENE_SIDE)
         history_file = mcs_scene_ingest.load_json_file(
             TEST_FOLDER, TEST_HISTORY_SIDE_2)
+        scorecard = Scorecard(history_file, scene_file)
+
+        correct_side = scorecard.calc_correct_platform_side()
+        self.assertFalse(correct_side)
+
+        # Robot stays on platform (incorrect)
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_SIDE)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_SIDE_3)
+        scorecard = Scorecard(history_file, scene_file)
+
+        correct_side = scorecard.calc_correct_platform_side()
+        self.assertFalse(correct_side)
+
+    def test_platform_side_triple_door(self):
+        # Robot stays on platform (correct)
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_DOOR_OPENED)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_DOOR_CORRECT)
+        scorecard = Scorecard(history_file, scene_file)
+
+        correct_side = scorecard.calc_correct_platform_side()
+        self.assertTrue(correct_side)
+
+        # Robot leaves platform on any side (incorrect)
+        scene_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_SCENE_DOOR_OPENED)
+        history_file = mcs_scene_ingest.load_json_file(
+            TEST_FOLDER, TEST_HISTORY_DOOR_INCORRECT)
         scorecard = Scorecard(history_file, scene_file)
 
         correct_side = scorecard.calc_correct_platform_side()
