@@ -62,9 +62,8 @@ SEEING_LEADS_KNOWING_3X_CUBE = ["A1", "F1"]
 #  Support Relations, Trajectory, Interactive Collisions,
 #    Number Comparison, Arthimetic, Imitation, and Solidity use all cube ids
 PASSING_CELLS = {
-    "agent identification": ["A1", "B1", "C1", "E1", "F1",
-                             "G1", "A2", "B2", "C2", "E2",
-                             "F2", "G2"],
+    "agent identification": ["A1", "B1", "E1", "F1",
+                             "A2", "B2", "E2", "F2"],
     "shape constancy": ["A1", "A2", "B1", "D2", "E1", "E3", "J1", "L4"],
     "spatial elimination": ["A1", "A2"],
     "moving target prediction": ["A1", "B1", "E1", "F1", "I1", "J1"],
