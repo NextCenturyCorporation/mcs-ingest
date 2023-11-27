@@ -62,21 +62,23 @@ SEEING_LEADS_KNOWING_3X_CUBE = ["A1", "F1"]
 #  Support Relations, Trajectory, Interactive Collisions,
 #    Number Comparison, Arthimetic, Imitation, and Solidity use all cube ids
 PASSING_CELLS = {
-    "agent identification": ["A1", "B1", "C1", "E1", "F1",
-                             "G1", "A2", "B2", "C2", "E2",
-                             "F2", "G2"],
+    "agent identification": ["A1", "B1", "E1", "F1",
+                             "A2", "B2", "E2", "F2"],
     "shape constancy": ["A1", "A2", "B1", "D2", "E1", "E3", "J1", "L4"],
     "spatial elimination": ["A1", "A2"],
     "moving target prediction": ["A1", "B1", "E1", "F1", "I1", "J1"],
-    "holes": ["B1", "C1", "E1", "F1", "B2", "C2", "E2", "F2"],
-    "lava": ["B1", "C1", "E1", "F1", "B2", "C2", "E2", "F2"],
+    "holes": ["B1", "C1", "E1", "F1", "H1", "I1", "K1", "L1", "B2", "C2",
+              "E2", "F2", "H2", "I2", "K2", "L2"],
+    "lava": ["B1", "C1", "E1", "F1", "H1", "I1", "K1", "L1", "B2", "C2",
+              "E2", "F2", "H2", "I2", "K2", "L2"],
     "ramp": ["B1", "C1", "E1", "F1", "H1", "I1", "K1", "L1", "N1", 
              "O1", "Q1", "R1", "T1", "U1", "W1", "X1", "B2", "E2", "N2", "Q2"],
     "symmetric tool use": ["A1", "C1", "E1", "G1", "I1", "K1", "M1", "O1", "Q1", "S1",
                  "U1", "W1"],
-    "tool choice": ["A2", "B2", "C2", "D2", "E2", "F2"],
+    "tool choice": ["A2", "B2", "C2", "D2", "E2", "F2", "G2", "A4", "B4", "C4",
+                    "D4", "E4", "F4", "G4"],
     "asymmetric tool use": ["E3", "K3", "Q3", "W3"],
-    "interactive object permanence": ["A1", "C1"],
+    "interactive object permanence": ["A1", "C1", "E1", "F1"],
     "container": ["A1", "A2", "G1", "G2", "M1", "M2"],
     "obstacle": ["A1", "C1", "A2", "C2"],
     "occluder": ["A1", "A2", "C1", "C2", "E1", "E2", "G1",
@@ -84,6 +86,8 @@ PASSING_CELLS = {
     "gravity support": ["A1", "B1", "C1", "D1", "I1", "J1", "K1", "L1",
                         "M1", "N1", "O1", "P1", "S1", "T1", "W1", "X1",
                         "Y1", "Z1", "AA1", "CC1", "SS1", "TT1"],
+    "multi tool use":["B1", "C1", "E1", "F1", "H1", "I1", "K1", "L1", "B2",
+                      "C2", "E2", "F2", "H2", "I2", "K2", "L2"],
     "spatial reference": ["A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "A2", 
                           "B2", "C2", "D2", "E2", "F2", "G2", "H2", "A3", "B3", "C3", 
                           "D3", "E3", "F3", "G3", "H3"],
@@ -92,8 +96,12 @@ PASSING_CELLS = {
                               "D2", "E2", "F2", "G2", "H2", "I2", "J2", "K2", "L2",
                               "N2", "O2", "P2", "Q2", "R2"],
     "shell game": ["A1", "B1", "E1", "F1", "I1", "J1"],
-    "set rotation": ["B1", "C1", "E1", "F1", "H1", "I1", "K1", "L1", "B2", 
-                     "C2", "E2", "F2", "H2", "I2", "K2", "L2"]
+    "set rotation":["C1", "F1", "I1", "L1", "C2", "F2", "I2", "L2", "M1", "N1",
+                    "O1", "P1", "M2", "N2", "O2", "P2", "Q1", "R1", "S1", "T1",
+                    "Q2", "R2", "S2", "T2", "Q3", "R3", "S3", "T3", "Q4", "R4",
+                    "S4", "T4"],
+    "knowledgeable agents":["E1", "F1", "G1", "H1"]
+
 }
 
 MAX_XY_VIOLATIONS = 50
